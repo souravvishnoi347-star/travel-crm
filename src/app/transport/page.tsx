@@ -82,7 +82,19 @@ export default function TransportVouchers() {
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+      let heightLeft = pdfHeight;
+      let position = 0;
+      
+      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
+      heightLeft -= pdf.internal.pageSize.getHeight();
+      
+      while (heightLeft > 0) {
+        position = heightLeft - pdfHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
+        heightLeft -= pdf.internal.pageSize.getHeight();
+      }
+      
       pdf.save(`Transport_Voucher_${data.guestName.replace(/\s+/g, "_")}.pdf`);
     } catch (error: any) {
       console.error("PDF generation failed:", error);
@@ -337,7 +349,7 @@ export default function TransportVouchers() {
                   <tbody>
                     {data.itinerary.map((item, i) => (
                       <tr key={i}>
-                        <td className="border border-black py-2 px-3 font-bold text-black text-center whitespace-pre-wrap">{item.date.replace(' ', '\\n')}</td>
+                        <td className="border border-black py-2 px-3 font-bold text-black text-center whitespace-pre-wrap">{item.date.replace(' ', '\n')}</td>
                         <td className="border border-black py-2 px-3 text-black">{item.details}</td>
                         <td className="border border-black py-2 px-3 text-black">{item.hotel}</td>
                       </tr>
