@@ -492,18 +492,45 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
   "motto": "ॐ नमः शिवाय"
 }`;
 
-      // Call Gemini API with automatic model fallback
+      // Call Gemini API by discovering available models or trying supported model list
       const cleanKey = apiKey.trim();
-      const modelsToTry = [
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro-latest",
-        "gemini-1.5-flash",
-        "gemini-1.5-pro"
-      ];
       let response: Response | null = null;
       let lastErrorMessage = "";
+
+      // 1. First, attempt to discover exact models supported by this specific user API key
+      let candidateModels: string[] = [];
+      try {
+        const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
+        if (listRes.ok) {
+          const listJson = await listRes.json();
+          if (Array.isArray(listJson?.models)) {
+            candidateModels = listJson.models
+              .filter((m: any) => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes("generateContent"))
+              .map((m: any) => m.name.replace(/^models\//, ""))
+              // Sort to prioritize flash and newer models
+              .sort((a: string, b: string) => {
+                const aScore = a.includes("flash") ? 2 : a.includes("pro") ? 1 : 0;
+                const bScore = b.includes("flash") ? 2 : b.includes("pro") ? 1 : 0;
+                return bScore - aScore;
+              });
+          }
+        }
+      } catch {}
+
+      // Fallback model list if listing is restricted or empty
+      const fallbackList = [
+        "gemini-2.5-flash",
+        "gemini-2.5-flash-lite",
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-3.5-flash",
+        "gemini-2.5-pro",
+        "gemini-2.0-pro-exp-02-05",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro-latest"
+      ];
+
+      const modelsToTry = Array.from(new Set([...candidateModels, ...fallbackList]));
 
       for (const model of modelsToTry) {
         try {
