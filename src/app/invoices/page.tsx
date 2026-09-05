@@ -270,7 +270,7 @@ export default function InvoicesPage() {
               BILL OF SUPPLY & SERVICE INVOICE
             </p>
             <div className="text-[10px] text-gray-500 mt-1 flex flex-wrap justify-center gap-2">
-              <span>Contact: <strong className="text-gray-700">+91 84452 14371</strong></span>
+              <span>Contact: <strong className="text-gray-700">+91 9719038278</strong></span>
               <span>·</span>
               <span>Email: <strong className="text-gray-700">info@traveltouttarakhand.com</strong></span>
               <span>·</span>
@@ -300,7 +300,7 @@ export default function InvoicesPage() {
               <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.companySettings}</h3>
               <p className="text-gray-700 text-[10px]">Registered Office: Haridwar / Dehradun, Uttarakhand</p>
               <p className="text-gray-700 text-[10px]">GSTIN: <strong className="font-mono text-gray-900">05AAACT1234A1Z5</strong></p>
-              <p className="text-gray-700 text-[10px]">Helpline: +91 84452 14371</p>
+              <p className="text-gray-700 text-[10px]">Helpline: +91 9719038278</p>
             </div>
           </div>
 
@@ -396,7 +396,7 @@ export default function InvoicesPage() {
               <div>
                 <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600 font-medium">Tarun Kaushik · +91 84452 14371</p>
+                <p className="text-[9.5px] text-gray-600 font-medium">Mr. Amit kumar · +91 9719038278</p>
               </div>
             </div>
             <div className="text-right">
@@ -406,7 +406,7 @@ export default function InvoicesPage() {
           </div>
 
           <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
-            <span>Travel to Uttarakhand · +91 84452 14371</span>
+            <span>Travel to Uttarakhand · +91 9719038278</span>
             <span>Tax Invoice · Page 1 of 1</span>
           </div>
         </div>

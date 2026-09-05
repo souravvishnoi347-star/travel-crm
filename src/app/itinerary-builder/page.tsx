@@ -294,8 +294,8 @@ const CHARDHAM_PRESET: ItineraryData = {
   ],
 
   contactAgency: "Travel to Uttarakhand",
-  contactPerson: "Mr. Tarun Kaushik",
-  contactPhone: "+91 84452 14371",
+  contactPerson: "Mr. Amit kumar",
+  contactPhone: "+91 9719038278",
   motto: "ॐ नमः शिवाय"
 };
 
@@ -495,8 +495,8 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
     "Balance payment due prior to departure."
   ],
   "contactAgency": "Travel to Uttarakhand",
-  "contactPerson": "Mr. Tarun Kaushik",
-  "contactPhone": "+91 84452 14371",
+  "contactPerson": "Mr. Amit kumar",
+  "contactPhone": "+91 9719038278",
   "motto": "ॐ नमः शिवाय"
 }`;
 

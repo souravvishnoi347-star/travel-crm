@@ -26,7 +26,7 @@ interface SettingsData {
 const defaultSettings: Omit<SettingsData, "id"> = {
   company_name: "Travel to Uttarakhand",
   gst_number: "05AAAPL1234F1Z1",
-  phone: "+91 84452 14371",
+  phone: "+91 9719038278",
   email: "info@traveltouttarakhand.com",
   website: "https://traveltouttarakhand.com",
   logo_url: "/logo.png",

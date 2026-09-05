@@ -312,7 +312,7 @@ export default function HotelVouchers() {
               <div>
                 <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600 font-medium">Tarun Kaushik · +91 84452 14371</p>
+                <p className="text-[9.5px] text-gray-600 font-medium">Mr. Amit kumar · +91 9719038278</p>
               </div>
             </div>
             <div className="text-right">
@@ -322,7 +322,7 @@ export default function HotelVouchers() {
           </div>
 
           <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
-            <span>Travel to Uttarakhand · +91 84452 14371</span>
+            <span>Travel to Uttarakhand · +91 9719038278</span>
             <span>Hotel Service Voucher · Page 1 of 1</span>
           </div>
         </div>
