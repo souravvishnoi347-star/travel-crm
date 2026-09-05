@@ -377,9 +377,16 @@ export default function ItineraryBuilder() {
     setManualZoom(null);
   };
 
-  // Fetch API key from cache or Supabase settings
+  // Fetch API key from env variable, cache or Supabase settings
   useEffect(() => {
-    // Immediate read from localStorage cache
+    // 1. Check if configured in Vercel/Environment variable
+    const envKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_KEY;
+    if (envKey && envKey.trim()) {
+      setApiKey(envKey.trim());
+      return;
+    }
+
+    // 2. Immediate read from localStorage cache
     if (typeof window !== "undefined") {
       try {
         const cachedSettings = localStorage.getItem("triloki_settings_cache");
@@ -390,6 +397,7 @@ export default function ItineraryBuilder() {
       } catch {}
     }
 
+    // 3. Fallback check from Supabase settings
     async function fetchKey() {
       try {
         const { data: settings } = await supabase.from("settings").select("openai_key").limit(1).single();
