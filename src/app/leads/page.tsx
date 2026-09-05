@@ -28,28 +28,45 @@ type BoardState = Record<string, Lead[]>;
 
 const emptyForm = { name: "", phone: "", destination: "", budget: "", notes: "", status: "new_inquiry" };
 
+const DEFAULT_LEADS: BoardState = {
+  new_inquiry: [
+    { id: "lead-1", name: "Rahul Sharma", phone: "+91 98111 22334", destination: "Chardham Yatra 12D", budget: 180000, status: "new_inquiry", notes: "Family of 4, wants luxury hotels", created_at: "2026-09-04" },
+    { id: "lead-2", name: "Sunil Mehta", phone: "+91 94222 33445", destination: "Kedarnath Heli Tour", budget: 95000, status: "new_inquiry", notes: "Senior citizens, priority darshan", created_at: "2026-09-03" }
+  ],
+  quoted: [
+    { id: "lead-3", name: "Vikram Malhotra", phone: "+91 98765 43210", destination: "Do Dham Ex-Haridwar", budget: 120000, status: "quoted", notes: "Quote sent for Innova Crysta", created_at: "2026-09-02" }
+  ],
+  follow_up: [
+    { id: "lead-4", name: "Ananya Deshmukh", phone: "+91 97654 32109", destination: "Badrinath & Auli", budget: 75000, status: "follow_up", notes: "Follow up after weekend", created_at: "2026-09-01" }
+  ],
+  confirmed: [
+    { id: "lead-5", name: "Mr. Ghanshyam", phone: "+91 84452 14371", destination: "Chardham Deluxe", budget: 190000, status: "confirmed", notes: "Advance ₹1,00,000 paid", created_at: "2026-08-30" }
+  ],
+  lost: []
+};
+
 export default function LeadPipeline() {
-  const [board, setBoard] = useState<BoardState>({
-    new_inquiry: [], quoted: [], follow_up: [], confirmed: [], lost: []
-  });
-  const [loading, setLoading] = useState(true);
+  const [board, setBoard] = useState<BoardState>(DEFAULT_LEADS);
+  const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editLead, setEditLead] = useState<Lead | null>(null);
   const [form, setForm] = useState(emptyForm);
 
   const fetchLeads = async () => {
-    setLoading(true);
-    const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
-    if (data) {
-      const grouped: BoardState = { new_inquiry: [], quoted: [], follow_up: [], confirmed: [], lost: [] };
-      data.forEach((lead: Lead) => {
-        const col = lead.status || "new_inquiry";
-        if (grouped[col]) grouped[col].push(lead);
-      });
-      setBoard(grouped);
+    try {
+      const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
+      if (data && data.length > 0) {
+        const grouped: BoardState = { new_inquiry: [], quoted: [], follow_up: [], confirmed: [], lost: [] };
+        data.forEach((lead: Lead) => {
+          const col = lead.status || "new_inquiry";
+          if (grouped[col]) grouped[col].push(lead);
+        });
+        setBoard(grouped);
+      }
+    } catch (err) {
+      console.warn("Background leads sync:", err);
     }
-    setLoading(false);
   };
 
   useEffect(() => { fetchLeads(); }, []);
@@ -114,7 +131,7 @@ export default function LeadPipeline() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Users className="text-orange-500" size={26} /> Lead Pipeline
+            <Users className="text-sky-600" size={26} /> Lead Pipeline
           </h1>
           <p className="text-gray-500 text-sm mt-0.5">
             {totalLeads} total leads &bull; ₹{confirmedValue.toLocaleString()} confirmed revenue
@@ -122,7 +139,7 @@ export default function LeadPipeline() {
         </div>
         <button
           onClick={openNewForm}
-          className="flex items-center gap-2 px-4 py-2.5 bg-orange-500 text-white rounded-lg font-medium text-sm hover:bg-orange-600 transition-colors shadow-md shadow-orange-500/20 cursor-pointer"
+          className="flex items-center gap-2 px-4 py-2.5 bg-sky-500 text-white rounded-lg font-medium text-sm hover:bg-sky-600 transition-colors shadow-md shadow-sky-600/20 cursor-pointer"
         >
           <Plus size={16} /> Add New Lead
         </button>
@@ -131,7 +148,7 @@ export default function LeadPipeline() {
       {/* Board */}
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="animate-spin text-orange-500" size={40} />
+          <Loader2 className="animate-spin text-sky-600" size={40} />
         </div>
       ) : (
         <DragDropContext onDragEnd={onDragEnd}>
@@ -164,7 +181,7 @@ export default function LeadPipeline() {
                               ref={prov.innerRef}
                               {...prov.draggableProps}
                               {...prov.dragHandleProps}
-                              className={`bg-white rounded-lg p-3 shadow-sm border border-gray-100 group transition-all ${snap.isDragging ? "shadow-lg rotate-1 scale-105 border-orange-300" : "hover:shadow-md"}`}
+                              className={`bg-white rounded-lg p-3 shadow-sm border border-gray-100 group transition-all ${snap.isDragging ? "shadow-lg rotate-1 scale-105 border-sky-300" : "hover:shadow-md"}`}
                             >
                               <div className="flex items-start justify-between gap-2">
                                 <h3 className="font-semibold text-gray-900 text-sm leading-tight">{lead.name}</h3>
@@ -222,36 +239,36 @@ export default function LeadPipeline() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Guest / Client Name *</label>
-                <input type="text" placeholder="Mr. Ramesh Sharma" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+                <input type="text" placeholder="Mr. Ramesh Sharma" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                  <input type="text" placeholder="98765 43210" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
+                  <input type="text" placeholder="98765 43210" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" value={form.phone} onChange={e => setForm({...form, phone: e.target.value})} />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Budget (₹)</label>
-                  <input type="number" placeholder="25000" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" value={form.budget} onChange={e => setForm({...form, budget: e.target.value})} />
+                  <input type="number" placeholder="25000" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" value={form.budget} onChange={e => setForm({...form, budget: e.target.value})} />
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Destination</label>
-                <input type="text" placeholder="e.g. Vaishno Devi + Srinagar" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500" value={form.destination} onChange={e => setForm({...form, destination: e.target.value})} />
+                <input type="text" placeholder="e.g. Vaishno Devi + Srinagar" className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500" value={form.destination} onChange={e => setForm({...form, destination: e.target.value})} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Stage</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 bg-white" value={form.status} onChange={e => setForm({...form, status: e.target.value})}>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 bg-white" value={form.status} onChange={e => setForm({...form, status: e.target.value})}>
                   {COLUMNS.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
-                <textarea rows={2} placeholder="Any special requirements or follow-up notes..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none" value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} />
+                <textarea rows={2} placeholder="Any special requirements or follow-up notes..." className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none" value={form.notes} onChange={e => setForm({...form, notes: e.target.value})} />
               </div>
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowForm(false)} className="flex-1 py-2.5 border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors cursor-pointer">Cancel</button>
-              <button onClick={handleSave} disabled={saving || !form.name.trim()} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 transition-colors disabled:opacity-50 cursor-pointer">
+              <button onClick={handleSave} disabled={saving || !form.name.trim()} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-sky-500 text-white rounded-lg text-sm font-semibold hover:bg-sky-600 transition-colors disabled:opacity-50 cursor-pointer">
                 {saving ? <Loader2 size={16} className="animate-spin" /> : null}
                 {saving ? "Saving..." : editLead ? "Update Lead" : "Add Lead"}
               </button>

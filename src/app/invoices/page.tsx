@@ -1,15 +1,32 @@
 "use client";
 
-import { useState, useMemo } from "react";
-import { Plus, Trash2, Download, Loader2, MessageCircle } from "lucide-react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { 
+  Plus, 
+  Trash2, 
+  Download, 
+  Loader2, 
+  MessageCircle, 
+  FileText, 
+  Calendar, 
+  User, 
+  IndianRupee, 
+  RotateCcw,
+  Maximize2, 
+  Minimize2,
+  Building2,
+  Phone,
+  Mail,
+  ShieldCheck,
+  ZoomIn,
+  ZoomOut
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-// Helper for Indian number to words
 function numberToWords(num: number): string {
   if (num === 0) return "Zero Rupees Only";
   const a = ["", "One ", "Two ", "Three ", "Four ", "Five ", "Six ", "Seven ", "Eight ", "Nine ", "Ten ", "Eleven ", "Twelve ", "Thirteen ", "Fourteen ", "Fifteen ", "Sixteen ", "Seventeen ", "Eighteen ", "Nineteen "];
   const b = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-  
   let numStr = Math.floor(num).toString();
   if (numStr.length > 9) return "Amount too large";
   const n = ("000000000" + numStr).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
@@ -23,30 +40,104 @@ function numberToWords(num: number): string {
   return str;
 }
 
-export default function InvoiceGenerator() {
+const DEFAULT_INVOICE_DATA = {
+  companySettings: "Travel to Uttarakhand",
+  invoiceNumber: "INV-2026-0089",
+  guestName: "Mr. Ghanshyam",
+  guestPhone: "+91 84452 14371",
+  guestEmail: "ghanshyam.travels@gmail.com",
+  guestGst: "09AAAPL1234F1Z1",
+  dateType: "Travel Date",
+  travelDate: "10 – 21 Sep 2026",
+  bookingDate: "05 Sep 2026",
+  packages: [
+    { 
+      detail: "12 Days Chardham Yatra Deluxe Package (Yamunotri, Gangotri, Kedarnath Heli, Badrinath with Innova Crysta & 3-Star Hotels)", 
+      person: 2, 
+      rate: 45500, 
+      amount: 91000 
+    },
+    { 
+      detail: "Kedarnath Helicopter Sector Tickets (Guptkashi / Phata ⇄ Kedarnath) Return Tickets", 
+      person: 2, 
+      rate: 9500, 
+      amount: 19000 
+    }
+  ],
+  taxPercent: "5",
+  discount: "0",
+  amountPaid: "50000",
+  notes: `Bank Details for Remittance:\n• Beneficiary: Travel to Uttarakhand\n• Bank Name: Bandhan Bank\n• Account No: 10180000573933\n• IFSC Code: BDBL0001536\n• UPI ID: traveluttarakhand@hdfcbank\n\nTerms & Payment Conditions:\n• 100% advance payment required prior to trip commencement.\n• Rates include all applicable toll taxes, parking fees, and driver allowances.\n• Cancellation and rescheduling are governed by civil aviation and partner hotel policies.`
+};
+
+export default function InvoicesPage() {
+  const [data, setData] = useState(DEFAULT_INVOICE_DATA);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [data, setData] = useState({
-    companySettings: "Triloki Group",
-    invoiceNumber: "INV-00001",
-    guestName: "",
-    guestPhone: "",
-    guestEmail: "",
-    guestGst: "",
-    dateType: "Travel Date",
-    travelDate: "",
-    bookingDate: "",
-    packages: [] as { detail: string; person: number; rate: number; amount: number }[],
-    taxPercent: "",
-    discount: "",
-    amountPaid: "",
-    notes: `Banking Details for Payment:\n• Bank: Bandhan Bank\n• IFSC: BDBL0001536\n• Account No: 10180000573933\n\nImportant Points / Terms & Conditions:\n• Booking is confirmed after receipt of advance payment.\n• Balance must be paid before the travel date.\n• Changes/cancellations are subject to partner policies and may incur charges.\n• Valid ID proof is required for all travelers.\n• Hotel check-in/check-out as per hotel policy; early check-in subject to availability/charges.\n• We are not responsible for delays due to traffic, weather, strikes or force majeure.\n• Any damage during the trip will be chargeable to the guest.`
-  });
+  const [isFormCollapsed, setIsFormCollapsed] = useState(false);
+  const [autoScale, setAutoScale] = useState<number>(0.55);
+  const [manualZoom, setManualZoom] = useState<number | null>(null);
+  const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-fit screen and fit-width scaling
+  useEffect(() => {
+    const updateScale = () => {
+      if (!previewContainerRef.current) return;
+      const el = previewContainerRef.current;
+      const padX = 40;
+      const padY = 40;
+      const availW = Math.max(300, el.clientWidth - padX);
+      const availH = Math.max(300, el.clientHeight - padY);
+
+      const scaleW = availW / 794;
+      const scaleH = availH / 1122;
+
+      if (fitMode === "width") {
+        setAutoScale(Math.max(0.4, Math.min(1.3, Number(scaleW.toFixed(3)))));
+      } else {
+        const fitScale = Math.min(scaleW, scaleH);
+        setAutoScale(Math.max(0.35, Math.min(0.95, Number(fitScale.toFixed(3)))));
+      }
+    };
+
+    updateScale();
+    const timer = setTimeout(updateScale, 150);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && previewContainerRef.current) {
+      ro = new ResizeObserver(() => updateScale());
+      ro.observe(previewContainerRef.current);
+    }
+
+    window.addEventListener("resize", updateScale);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateScale);
+      if (ro) ro.disconnect();
+    };
+  }, [isFormCollapsed, fitMode]);
+
+  const currentScale = manualZoom !== null ? manualZoom : autoScale;
+
+  const handleZoomIn = () => {
+    const next = Math.min(1.5, Number((currentScale + 0.1).toFixed(2)));
+    setManualZoom(next);
+  };
+
+  const handleZoomOut = () => {
+    const next = Math.max(0.35, Number((currentScale - 0.1).toFixed(2)));
+    setManualZoom(next);
+  };
+
+  const handleSetFitMode = (mode: "screen" | "width") => {
+    setFitMode(mode);
+    setManualZoom(null);
+  };
 
   const handlePackageChange = (index: number, field: string, value: string | number) => {
     const newPackages = [...data.packages];
     newPackages[index] = { ...newPackages[index], [field]: value };
     
-    // Auto-calculate amount
     if (field === 'person' || field === 'rate') {
       const person = Number(newPackages[index].person) || 0;
       const rate = Number(newPackages[index].rate) || 0;
@@ -78,43 +169,37 @@ export default function InvoiceGenerator() {
     const total = Math.round(afterDiscount + taxAmount);
     const paid = Number(data.amountPaid) || 0;
     const pending = total - paid;
-    return { subTotal, total, paid, pending, totalWords: numberToWords(total) };
+    return { subTotal, discount, taxAmount, total, paid, pending, totalWords: numberToWords(total) };
   }, [data.packages, data.discount, data.taxPercent, data.amountPaid]);
 
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
-      const element = document.getElementById("pdf-content");
+      const element = document.getElementById("print-invoice");
       if (!element) {
-        alert("Could not find the invoice content to download.");
+        alert("Could not find the print container.");
         setIsDownloading(false);
         return;
       }
-      
+
       // Save to Supabase Cloud
       try {
         if (data.guestName) {
           let clientId = null;
-          
           if (data.guestPhone) {
             const { data: existingClient } = await supabase.from("clients").select("id").eq("phone", data.guestPhone).single();
-            if (existingClient) {
-              clientId = existingClient.id;
-            }
+            if (existingClient) clientId = existingClient.id;
           }
-          
           if (!clientId) {
             const { data: newClient } = await supabase.from("clients").insert({
               name: data.guestName,
               phone: data.guestPhone || "",
-              email: data.guestEmail || "",
-              gst_number: data.guestGst || ""
+              email: data.guestEmail || ""
             }).select().single();
             clientId = newClient?.id;
           }
-
           await supabase.from("invoices").insert({
-            invoice_number: data.invoiceNumber || "DRAFT",
+            invoice_number: data.invoiceNumber,
             client_id: clientId,
             total_amount: calculations.total,
             document_data: data
@@ -122,36 +207,27 @@ export default function InvoiceGenerator() {
         }
       } catch (dbError) {
         console.error("Failed to save to database:", dbError);
-        // Continue downloading PDF even if saving fails
       }
-      
+
       const html2canvasModule = await import("html2canvas-pro");
       const html2canvas = html2canvasModule.default || html2canvasModule;
       
       const jsPDFModule = await import("jspdf");
       const jsPDF = jsPDFModule.jsPDF;
 
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+      const canvas = await html2canvas(element, { 
+        scale: 2, 
+        useCORS: true,
+        logging: false 
+      });
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
       
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
-      let heightLeft = pdfHeight;
-      let position = 0;
-      
-      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-      heightLeft -= pdf.internal.pageSize.getHeight();
-      
-      while (heightLeft > 0) {
-        position = heightLeft - pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pdf.internal.pageSize.getHeight();
-      }
-      
-      pdf.save(`Invoice_${data.invoiceNumber || "Triloki"}.pdf`);
+      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Invoice_${data.invoiceNumber.replace(/[^a-zA-Z0-9-]/g, "_")}_${data.guestName.replace(/\s+/g, "_")}.pdf`);
     } catch (error: any) {
       console.error("PDF generation failed:", error);
       alert(`Failed to generate PDF: ${error.message || error}`);
@@ -161,423 +237,449 @@ export default function InvoiceGenerator() {
   };
 
   const handleShareWhatsApp = () => {
-    if (!data.guestPhone) {
-      alert("Please enter a guest phone number to share via WhatsApp.");
-      return;
-    }
-    const message = `Dear ${data.guestName},\n\nPlease find attached your invoice from Triloki Group.\nInvoice No: ${data.invoiceNumber || "DRAFT"}\nTotal Amount: ₹${calculations.total}\n\nThank you for choosing us!`;
-    const encodedMessage = encodeURIComponent(message);
-    const phone = data.guestPhone.replace(/\D/g, ""); // Clean non-numeric characters
-    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+    const text = `*TAX INVOICE - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName},\n\nPlease find your invoice details:\n• Invoice No: ${data.invoiceNumber}\n• Date: ${data.bookingDate}\n• Total Amount: ₹${calculations.total.toLocaleString("en-IN")}\n• Advance Received: ₹${calculations.paid.toLocaleString("en-IN")}\n• Balance Due: ₹${calculations.pending.toLocaleString("en-IN")}\n\nBank: Bandhan Bank | A/C: 10180000573933 | IFSC: BDBL0001536 | UPI: traveluttarakhand@hdfcbank\n\nThank you for choosing Travel to Uttarakhand!`;
+    const encoded = encodeURIComponent(text);
+    const phone = data.guestPhone ? data.guestPhone.replace(/[^0-9]/g, "") : "";
+    window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
   };
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full">
-      {/* Left Column: Form */}
-      <div className="w-full lg:w-[40%] bg-[#ffffff] rounded-lg shadow-sm border border-[#f3f4f6] flex flex-col shrink-0">
-        <div className="p-6 border-b border-[#f3f4f6]">
-          <h2 className="text-xl font-bold text-[#111827]">Invoice Details</h2>
-        </div>
-        <div className="p-6 space-y-8">
-          
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-[#374151] mb-1">Company Settings</label>
-              <select 
-                className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 text-sm text-[#111827]"
-                value={data.companySettings}
-                onChange={e => setData({...data, companySettings: e.target.value})}
-              >
-                <option value="Triloki Group">Triloki Group</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-[#111827] uppercase tracking-wider">Invoice Information</h3>
-            <div>
-              <label className="block text-sm font-medium text-[#374151] mb-1">Invoice Number</label>
-              <input 
-                type="text" 
-                className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                value={data.invoiceNumber}
-                onChange={e => setData({...data, invoiceNumber: e.target.value})}
-              />
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Guest Name</label>
-                <input 
-                  type="text" placeholder="Enter guest/customer name"
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                  value={data.guestName}
-                  onChange={e => setData({...data, guestName: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Guest Phone</label>
-                <input 
-                  type="text" placeholder="+91 XXXXX XXXXX"
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                  value={data.guestPhone}
-                  onChange={e => setData({...data, guestPhone: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Guest Email</label>
-                <input 
-                  type="email" placeholder="guest@email.com"
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                  value={data.guestEmail}
-                  onChange={e => setData({...data, guestEmail: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Guest GST Number (optional)</label>
-                <input 
-                  type="text" placeholder="15-character GSTIN"
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                  value={data.guestGst}
-                  onChange={e => setData({...data, guestGst: e.target.value})}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-[#374151] mb-2">Date Type</label>
-              <div className="flex gap-2">
-                <button 
-                  onClick={() => setData({...data, dateType: 'Travel Date'})}
-                  className={`px-4 py-2 text-sm font-medium rounded-md border ${data.dateType === 'Travel Date' ? 'bg-orange-500 text-[#ffffff] border-orange-500' : 'bg-white text-[#374151] border-[#d1d5db] hover:bg-gray-50'}`}
-                >
-                  Travel Date
-                </button>
-                <button 
-                  onClick={() => setData({...data, dateType: 'Check-in / Check-out'})}
-                  className={`px-4 py-2 text-sm font-medium rounded-md border ${data.dateType === 'Check-in / Check-out' ? 'bg-orange-500 text-[#ffffff] border-orange-500' : 'bg-white text-[#374151] border-[#d1d5db] hover:bg-gray-50'}`}
-                >
-                  Check-in / Check-out
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">{data.dateType}</label>
-                <input 
-                  type="date" 
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827]"
-                  value={data.travelDate}
-                  onChange={e => setData({...data, travelDate: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Booking Date (optional)</label>
-                <input 
-                  type="date" 
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827]"
-                  value={data.bookingDate}
-                  onChange={e => setData({...data, bookingDate: e.target.value})}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-[#111827] uppercase tracking-wider">Package Details</h3>
-              <button 
-                onClick={addPackage}
-                className="flex items-center gap-1 px-3 py-1.5 bg-[#f97316] text-[#ffffff] text-xs font-medium rounded-md hover:bg-orange-600 transition-colors"
-              >
-                <Plus size={14} /> Add Package
-              </button>
-            </div>
-            
-            <div className="space-y-3">
-              {data.packages.length === 0 && (
-                <p className="text-sm text-[#6b7280] text-center py-4 border border-dashed rounded-md border-[#d1d5db]">No packages added.</p>
-              )}
-              {data.packages.map((pkg, i) => (
-                <div key={i} className="flex flex-wrap gap-2 items-end p-3 bg-[#f8fafc] border border-[#e5e7eb] rounded-lg relative">
-                  <div className="flex-1 min-w-[150px]">
-                    <label className="block text-xs font-medium text-[#6b7280] mb-1">Package Detail</label>
-                    <input 
-                      type="text" placeholder="e.g., 3N/4D Goa Package"
-                      className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                      value={pkg.detail}
-                      onChange={e => handlePackageChange(i, 'detail', e.target.value)}
-                    />
-                  </div>
-                  <div className="w-16">
-                    <label className="block text-xs font-medium text-[#6b7280] mb-1">Person</label>
-                    <input 
-                      type="number" min="1"
-                      className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827]"
-                      value={pkg.person}
-                      onChange={e => handlePackageChange(i, 'person', e.target.value)}
-                    />
-                  </div>
-                  <div className="w-24">
-                    <label className="block text-xs font-medium text-[#6b7280] mb-1">Rate (₹)</label>
-                    <input 
-                      type="number" min="0"
-                      className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827]"
-                      value={pkg.rate || ''}
-                      onChange={e => handlePackageChange(i, 'rate', e.target.value)}
-                    />
-                  </div>
-                  <div className="w-28 flex gap-2 items-center">
-                    <div className="flex-1">
-                      <label className="block text-xs font-medium text-[#6b7280] mb-1">Amount (₹)</label>
-                      <input 
-                        type="number" disabled
-                        className="w-full px-3 py-2 bg-[#f3f4f6] border border-[#e5e7eb] rounded-md text-sm font-medium text-[#374151]"
-                        value={pkg.amount}
-                      />
-                    </div>
-                    <button 
-                      onClick={() => removePackage(i)}
-                      className="p-2 mt-5 text-[#ef4444] hover:bg-red-50 rounded-md transition-colors shrink-0"
-                    >
-                      <Trash2 size={18} />
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-[#111827] uppercase tracking-wider">Tax & Discount</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Tax / GST (%)</label>
-                <input 
-                  type="number" placeholder="e.g., 18" min="0"
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                  value={data.taxPercent}
-                  onChange={e => setData({...data, taxPercent: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-[#374151] mb-1">Overall Discount (₹)</label>
-                <input 
-                  type="number" placeholder="Enter discount amount" min="0"
-                  className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                  value={data.discount}
-                  onChange={e => setData({...data, discount: e.target.value})}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-[#111827] uppercase tracking-wider">Payment Details</h3>
-            <div>
-              <label className="block text-sm font-medium text-[#374151] mb-1">Amount Paid (₹)</label>
-              <input 
-                type="number" placeholder="Enter advance/paid amount" min="0"
-                className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-[#111827] placeholder:text-gray-400"
-                value={data.amountPaid}
-                onChange={e => setData({...data, amountPaid: e.target.value})}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-[#111827] uppercase tracking-wider">Additional Information</h3>
-            <div>
-              <label className="block text-sm font-medium text-[#374151] mb-1">Notes & Banking Details</label>
-              <textarea 
-                rows={10}
-                className="w-full px-3 py-2 bg-[#ffffff] border border-[#d1d5db] rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm font-mono text-[#111827] placeholder:text-gray-400"
-                value={data.notes}
-                onChange={e => setData({...data, notes: e.target.value})}
-              />
-            </div>
-          </div>
-          
-        </div>
+  // Modular Page Renderer - Perfectly proportioned to fit exactly inside 1122px with zero cutoff
+  const renderInvoiceContent = (prefix: string) => (
+    <div 
+      id={`${prefix}-invoice`} 
+      className="w-[794px] h-[1122px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      style={{ boxSizing: "border-box" }}
+    >
+      {/* Background Watermark */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      {/* Right Column: Live Preview Container */}
-      <div className="w-full lg:w-[60%] flex flex-col gap-4">
+      <div className="relative z-10 flex flex-col justify-between h-full">
         
-        {/* Controls Toolbar */}
-        <div className="flex justify-between items-center bg-[#ffffff] p-4 rounded-lg shadow-sm border border-[#f3f4f6]">
-          <h2 className="font-semibold text-[#374151]">Live Preview</h2>
-          <div className="flex gap-3">
-            <button 
-              onClick={handleShareWhatsApp} 
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-[#ffffff] rounded-md font-medium text-sm hover:bg-green-600 transition-colors shadow-sm cursor-pointer"
-            >
-              <MessageCircle size={16} /> 
-              WhatsApp
-            </button>
-            <button 
-              onClick={handleDownload} 
-              disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-[#f97316] text-[#ffffff] rounded-md font-medium text-sm hover:bg-orange-600 transition-colors shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />} 
-              {isDownloading ? "Generating PDF..." : "Download PDF"}
-            </button>
+        {/* TOP SECTION */}
+        <div className="space-y-3">
+          {/* Header Branding */}
+          <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
+            <img src="/logo.png" alt="Logo" className="h-14 w-auto object-contain mb-1" />
+            <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+            <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
+              TAX INVOICE
+            </h1>
+            <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
+              BILL OF SUPPLY & SERVICE INVOICE
+            </p>
+            <div className="text-[10px] text-gray-500 mt-1 flex flex-wrap justify-center gap-2">
+              <span>Contact: <strong className="text-gray-700">+91 84452 14371</strong></span>
+              <span>·</span>
+              <span>Email: <strong className="text-gray-700">info@traveltouttarakhand.com</strong></span>
+              <span>·</span>
+              <span>Website: <strong className="text-gray-700">www.traveltouttarakhand.com</strong></span>
+            </div>
           </div>
-        </div>
-        
-        {/* Step B: Scrollable Area */}
-        <div className="overflow-x-auto bg-slate-200 p-8 rounded-lg w-full flex-1">
-          {/* Step C: Centering Wrapper */}
-          <div className="flex justify-center min-w-max">
-            {/* Step D: The A4 Paper */}
-            <div id="pdf-content" className="w-[210mm] min-h-[297mm] bg-[#ffffff] shadow-xl shrink-0 flex flex-col">
-              
-              {/* Invoice Header (Step E: No absolute positioning) */}
-              <div className="bg-[#f97316] p-6 flex justify-between items-center text-[#ffffff] w-full block">
-                <div>
-                  <h1 className="text-3xl font-bold tracking-wider mb-1">Triloki Group</h1>
-                  <p className="text-[#ffedd5] text-sm">Managed by Triloki Hospitality</p>
-                </div>
-                <div className="w-24 h-24 bg-[#ffffff] rounded-xl flex items-center justify-center shadow-md overflow-hidden border-2 border-[#ffffff]/50">
-                  <img src="/logo.png" alt="Triloki Logo" className="w-full h-full object-contain p-1" />
-                </div>
+
+          {/* Metadata Line */}
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3.5 text-center text-[11px] font-semibold text-gray-800 flex justify-between items-center">
+            <span>Invoice No: <strong className="text-[#0369a1] font-mono">{data.invoiceNumber}</strong></span>
+            <span>Invoice Date: <strong className="text-gray-900">{data.bookingDate}</strong></span>
+            <span>{data.dateType}: <strong className="text-gray-900">{data.travelDate}</strong></span>
+          </div>
+
+          {/* Dual Billed To / Billed By Cards */}
+          <div className="grid grid-cols-2 gap-3 text-xs">
+            <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 space-y-0.5">
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Billed To (Client Particulars)</span>
+              <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.guestName}</h3>
+              {data.guestPhone && <p className="text-gray-700 text-[10px]">Phone: <strong className="text-gray-900">{data.guestPhone}</strong></p>}
+              {data.guestEmail && <p className="text-gray-700 text-[10px]">Email: {data.guestEmail}</p>}
+              {data.guestGst && <p className="text-gray-700 text-[10px]">GSTIN: <strong className="font-mono text-gray-900">{data.guestGst}</strong></p>}
+            </div>
+
+            <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 space-y-0.5">
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Billed By (Service Provider)</span>
+              <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.companySettings}</h3>
+              <p className="text-gray-700 text-[10px]">Registered Office: Haridwar / Dehradun, Uttarakhand</p>
+              <p className="text-gray-700 text-[10px]">GSTIN: <strong className="font-mono text-gray-900">05AAACT1234A1Z5</strong></p>
+              <p className="text-gray-700 text-[10px]">Helpline: +91 84452 14371</p>
+            </div>
+          </div>
+
+          {/* Services & Packages Breakdown Table */}
+          <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
+            <table className="w-full text-left">
+              <thead className="bg-[#0369a1] text-white text-[10.5px] font-bold uppercase tracking-wider">
+                <tr>
+                  <th className="px-2.5 py-1.5 w-[7%] text-center">#</th>
+                  <th className="px-3 py-1.5 w-[55%]">Description of Tour Services & Packages</th>
+                  <th className="px-2.5 py-1.5 w-[12%] text-center">Pax / Qty</th>
+                  <th className="px-2.5 py-1.5 w-[13%] text-right">Rate (₹)</th>
+                  <th className="px-3 py-1.5 w-[13%] text-right">Amount (₹)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 text-[11px]">
+                {data.packages.map((pkg, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+                    <td className="px-2.5 py-1.5 text-center text-gray-500 font-medium align-top">{idx + 1}</td>
+                    <td className="px-3 py-1.5 text-gray-900 leading-snug font-medium align-top">{pkg.detail || "Custom Tour Package"}</td>
+                    <td className="px-2.5 py-1.5 text-center text-gray-700 align-top">{pkg.person}</td>
+                    <td className="px-2.5 py-1.5 text-right text-gray-800 align-top font-mono">₹{Number(pkg.rate || 0).toLocaleString("en-IN")}</td>
+                    <td className="px-3 py-1.5 text-right font-bold text-gray-900 align-top font-mono">₹{Number(pkg.amount || 0).toLocaleString("en-IN")}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Financial Summary Box */}
+          <div className="grid grid-cols-[1fr_270px] gap-3 items-start text-xs">
+            {/* Left: Total in Words & Payment Badges */}
+            <div className="space-y-2">
+              <div className="bg-sky-50/70 border border-sky-200 rounded-lg p-2">
+                <span className="text-[9px] uppercase font-bold text-sky-800 tracking-wider block">Total Amount in Words:</span>
+                <p className="font-serif font-bold text-[#0369a1] text-[11px] italic mt-0.5 leading-snug">{calculations.totalWords}</p>
               </div>
 
-              <div className="p-6 flex-1 flex flex-col">
-                {/* Invoice Number & Date */}
-                <div className="flex justify-between items-end mb-4">
-                  <div>
-                    <div className="text-[#f97316] font-bold text-2xl tracking-wide">
-                      Invoice No: {data.invoiceNumber || "—"}
-                    </div>
-                  </div>
-                  <div className="text-right text-xs text-[#6b7280] space-y-1">
-                    <div>Booking Date: <span className="text-[#1f2937] font-medium">{data.bookingDate || "—"}</span></div>
-                    <div>GSTIN: <span className="text-[#1f2937] font-medium">05CTIPS4731F1ZM</span></div>
-                  </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2">
+                  <span className="text-[9px] uppercase font-bold text-emerald-800 tracking-wider block">Advance Received</span>
+                  <p className="text-xs font-bold text-emerald-700 font-mono mt-0.5">₹{calculations.paid.toLocaleString("en-IN")}</p>
                 </div>
-
-                {/* Guest Details Grid */}
-                <div className="border border-[#60a5fa] rounded-lg p-4 mb-5 bg-[#ffffff]">
-                  <div className="grid grid-cols-2 gap-y-4 gap-x-4 text-sm">
-                    <div>
-                      <div className="text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-1">Guest Name</div>
-                      <div className="font-semibold text-[#1f2937] text-base">{data.guestName || "—"}</div>
-                    </div>
-                    <div>
-                      <div className="text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-1">{data.dateType}</div>
-                      <div className="font-semibold text-[#1f2937] text-base">{data.travelDate || "—"}</div>
-                    </div>
-                    
-                    <div>
-                      <div className="text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-1">Phone Number</div>
-                      <div className="font-medium text-[#1f2937]">{data.guestPhone || "—"}</div>
-                    </div>
-                    <div>
-                      <div className="text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-1">Email Address</div>
-                      <div className="font-medium text-[#1f2937]">{data.guestEmail || "—"}</div>
-                    </div>
-                    
-                    {data.guestGst && (
-                      <div className="col-span-2">
-                        <div className="text-[#9ca3af] text-xs font-semibold tracking-wider uppercase mb-1">Guest GST Number</div>
-                        <div className="font-medium text-[#1f2937]">{data.guestGst}</div>
-                      </div>
-                    )}
-                  </div>
+                <div className="bg-rose-50 border border-rose-200 rounded-lg p-2">
+                  <span className="text-[9px] uppercase font-bold text-rose-800 tracking-wider block">Balance Pending</span>
+                  <p className="text-xs font-bold text-rose-700 font-mono mt-0.5">₹{calculations.pending.toLocaleString("en-IN")}</p>
                 </div>
+              </div>
+            </div>
 
-                {/* Packages Table */}
-                <div className="border border-[#60a5fa] rounded-t-lg overflow-hidden mb-0 bg-[#ffffff]">
-                  <table className="w-full text-left text-sm">
-                    <thead className="bg-[#f97316] text-[#ffffff]">
-                      <tr>
-                        <th className="py-2.5 px-4 font-semibold text-xs tracking-wider">PACKAGE DETAIL</th>
-                        <th className="py-2.5 px-4 font-semibold text-xs tracking-wider text-center w-20">PERSON</th>
-                        <th className="py-2.5 px-4 font-semibold text-xs tracking-wider text-right w-24">RATE</th>
-                        <th className="py-2.5 px-4 font-semibold text-xs tracking-wider text-right w-28">AMOUNT</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#e5e7eb]">
-                      {data.packages.length === 0 ? (
-                        <tr>
-                          <td colSpan={4} className="py-8 text-center text-[#9ca3af]">No packages added yet</td>
-                        </tr>
-                      ) : (
-                        data.packages.map((pkg, i) => (
-                          <tr key={i}>
-                            <td className="py-3 px-4 text-[#1f2937]">{pkg.detail}</td>
-                            <td className="py-3 px-4 text-center text-[#1f2937]">{pkg.person}</td>
-                            <td className="py-3 px-4 text-right text-[#1f2937]">₹{pkg.rate}</td>
-                            <td className="py-3 px-4 text-right text-[#1f2937] font-medium">₹{pkg.amount}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Totals Box */}
-                <div className="border-x border-b border-[#60a5fa] rounded-b-lg p-4 mb-5 bg-[#ffffff]">
-                  <div className="w-full flex justify-between items-center py-1.5 border-b border-[#f3f4f6]">
-                    <span className="text-sm font-semibold text-[#4b5563]">SUB TOTAL:</span>
-                    <span className="font-semibold text-[#111827]">₹{calculations.subTotal}</span>
-                  </div>
+            {/* Right: Calculations Table */}
+            <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50/50">
+              <table className="w-full text-xs">
+                <tbody className="divide-y divide-gray-200 text-[11px]">
+                  <tr>
+                    <td className="px-2.5 py-1 text-gray-600 font-medium">Subtotal:</td>
+                    <td className="px-2.5 py-1 text-right font-mono font-semibold text-gray-900">₹{calculations.subTotal.toLocaleString("en-IN")}</td>
+                  </tr>
                   {Number(data.discount) > 0 && (
-                    <div className="w-full flex justify-between items-center py-2 border-b border-[#f3f4f6] text-[#16a34a]">
-                      <span className="text-sm font-semibold">DISCOUNT:</span>
-                      <span className="font-semibold">-₹{data.discount}</span>
-                    </div>
+                    <tr>
+                      <td className="px-2.5 py-1 text-emerald-700 font-medium">Discount:</td>
+                      <td className="px-2.5 py-1 text-right font-mono font-semibold text-emerald-700">-₹{calculations.discount.toLocaleString("en-IN")}</td>
+                    </tr>
                   )}
                   {Number(data.taxPercent) > 0 && (
-                    <div className="w-full flex justify-between items-center py-1.5 border-b border-[#f3f4f6]">
-                      <span className="text-sm font-semibold text-[#4b5563]">TAX / GST ({data.taxPercent}%):</span>
-                      <span className="font-semibold text-[#111827]">₹{Math.round(Math.max(0, calculations.subTotal - Number(data.discount)) * (Number(data.taxPercent) / 100))}</span>
-                    </div>
+                    <tr>
+                      <td className="px-2.5 py-1 text-gray-600 font-medium">GST ({data.taxPercent}%):</td>
+                      <td className="px-2.5 py-1 text-right font-mono font-semibold text-gray-900">₹{calculations.taxAmount.toLocaleString("en-IN")}</td>
+                    </tr>
                   )}
-                  <div className="w-full flex justify-between items-center py-2 border-b border-[#f3f4f6]">
-                    <span className="text-base font-bold text-[#1f2937]">TOTAL:</span>
-                    <span className="text-lg font-bold text-[#111827]">₹{calculations.total}</span>
-                  </div>
-                  <div className="py-2 border-b border-[#fed7aa]">
-                    <span className="text-xs font-semibold text-[#9ca3af] tracking-wider">TOTAL (IN WORDS):</span>
-                    <div className="text-sm text-[#1f2937] italic mt-0.5">{calculations.totalWords}</div>
-                  </div>
-                  {Number(data.amountPaid) > 0 && (
-                    <div className="w-full flex justify-between items-center py-2 border-b border-[#f3f4f6] text-[#16a34a]">
-                      <span className="text-sm font-semibold">AMOUNT PAID:</span>
-                      <span className="font-semibold">₹{calculations.paid}</span>
-                    </div>
-                  )}
-                  <div className="w-full flex justify-between items-center pt-2 mt-1">
-                    <span className="text-lg font-bold text-[#ea580c]">PENDING:</span>
-                    <span className="text-xl font-bold text-[#ea580c]">₹{calculations.pending}</span>
-                  </div>
-                </div>
+                  <tr className="bg-[#0369a1] text-white">
+                    <td className="px-2.5 py-1.5 font-bold uppercase tracking-wider text-[11px]">Grand Total:</td>
+                    <td className="px-2.5 py-1.5 text-right font-bold text-xs font-mono">₹{calculations.total.toLocaleString("en-IN")}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-                {/* Support Info */}
-                <div className="border border-[#fed7aa] rounded-lg p-3 mb-5 bg-[#fff7ed]/30 flex flex-col items-center justify-center text-sm">
-                  <div className="text-[#ea580c] font-bold mb-2">Triloki Group - Customer Support</div>
-                  <div className="flex flex-wrap gap-x-6 gap-y-2 justify-center text-[#4b5563] text-xs">
-                    <div className="flex items-center gap-1.5"><span className="text-[#60a5fa]">🌐</span> www.trilokigroup.in</div>
-                    <div className="flex items-center gap-1.5"><span className="text-[#c084fc]">✉️</span> hospitality.triloki@gmail.com</div>
-                    <div className="flex items-center gap-1.5"><span className="text-[#f472b6]">📞</span> +91 84452 14371 | +91 91933 36211</div>
-                  </div>
-                </div>
+          {/* Bank Particulars & Terms Box */}
+          <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-2 text-[10px] text-gray-700 space-y-0.5 leading-snug">
+            <p className="font-bold text-gray-900 uppercase tracking-wider text-[9.5px]">Bank Remittance & Settlement Terms:</p>
+            <p>• <strong>Bandhan Bank</strong> | Current Account: <strong className="font-mono text-gray-900">10180000573933</strong> | IFSC: <strong className="font-mono text-gray-900">BDBL0001536</strong> | UPI: <strong className="font-mono text-[#0369a1]">traveluttarakhand@hdfcbank</strong></p>
+            <p>• 100% full settlement required before start of travel. Invoices are computer-generated.</p>
+          </div>
+        </div>
 
-                {/* Notes */}
-                <div className="bg-[#f8fafc] rounded-lg p-4 text-[11px] text-[#4b5563] whitespace-pre-line leading-normal">
-                  <div className="font-semibold text-[#9ca3af] tracking-wider mb-2 uppercase text-xs">Notes & Banking Details</div>
-                  {data.notes}
-                </div>
-
+        {/* BOTTOM SECTION: Signatory & Page Footer */}
+        <div className="space-y-2 pt-1 border-t border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
+              <div>
+                <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
+                <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
+                <p className="text-[9.5px] text-gray-600 font-medium">Tarun Kaushik · +91 84452 14371</p>
               </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
+              <p className="text-[8.5px] uppercase tracking-wider text-gray-400 mt-0.5">Authorized Signatory</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
+            <span>Travel to Uttarakhand · +91 84452 14371</span>
+            <span>Tax Invoice · Page 1 of 1</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-5 w-full h-[calc(100vh-5rem)]">
+      
+      {/* Left Column: Form Controls */}
+      {!isFormCollapsed && (
+        <div className="w-full lg:w-[38%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
+          
+          {/* Header with Title & Reset Button */}
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-gray-900 leading-tight">Tax Invoice Studio</h1>
+                <p className="text-xs text-gray-500">Devbhoomi Edition • 100% Editable</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setData(DEFAULT_INVOICE_DATA)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
+              title="Reset to default invoice data"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              Reset
+            </button>
+          </div>
+
+          <div className="space-y-4 text-xs">
+            {/* 1. Invoice Particulars */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Invoice Particulars</span>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Invoice No.</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-[#0369a1]" value={data.invoiceNumber} onChange={e => setData({ ...data, invoiceNumber: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Invoice Date</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.bookingDate} onChange={e => setData({ ...data, bookingDate: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Travel Dates</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.travelDate} onChange={e => setData({ ...data, travelDate: e.target.value })} />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Client Details */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Billed To (Guest Particulars)</span>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Client / Guest Name</label>
+                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.guestName} onChange={e => setData({ ...data, guestName: e.target.value })} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Phone Number</label>
+                  <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.guestPhone} onChange={e => setData({ ...data, guestPhone: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Email</label>
+                  <input type="email" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.guestEmail} onChange={e => setData({ ...data, guestEmail: e.target.value })} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Client GSTIN (Optional)</label>
+                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono" value={data.guestGst} onChange={e => setData({ ...data, guestGst: e.target.value })} />
+              </div>
+            </div>
+
+            {/* 3. Package & Services Items */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Package Items ({data.packages.length})</span>
+                <button onClick={addPackage} className="flex items-center gap-1 px-2.5 py-1 bg-sky-600 text-white text-[11px] font-semibold rounded-lg hover:bg-sky-700 transition-colors cursor-pointer">
+                  <Plus size={12} /> Add Item
+                </button>
+              </div>
+              <div className="space-y-2">
+                {data.packages.map((pkg, idx) => (
+                  <div key={idx} className="p-2.5 bg-white border border-gray-200 rounded-lg space-y-2 relative">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-[#0369a1] text-[11px]">Item {idx + 1}</span>
+                      <button onClick={() => removePackage(idx)} className="text-gray-400 hover:text-rose-600 transition cursor-pointer">
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Description of Service</label>
+                      <textarea rows={2} className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs leading-snug" value={pkg.detail} onChange={e => handlePackageChange(idx, 'detail', e.target.value)} />
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      <div>
+                        <label className="block text-[10px] text-gray-500 mb-0.5">Qty / Pax</label>
+                        <input type="number" className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs" value={pkg.person} onChange={e => handlePackageChange(idx, 'person', Number(e.target.value))} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-gray-500 mb-0.5">Rate (₹)</label>
+                        <input type="number" className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs font-mono font-semibold" value={pkg.rate} onChange={e => handlePackageChange(idx, 'rate', Number(e.target.value))} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-gray-500 mb-0.5">Amount (₹)</label>
+                        <div className="w-full px-2 py-1 bg-gray-100 border border-gray-200 rounded text-xs font-mono font-bold text-gray-800">₹{pkg.amount.toLocaleString("en-IN")}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* 4. Tax, Discount, Advance */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Tax & Advance Settlement</span>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Discount (₹)</label>
+                  <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono" value={data.discount} onChange={e => setData({ ...data, discount: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">GST %</label>
+                  <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono" value={data.taxPercent} onChange={e => setData({ ...data, taxPercent: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Advance Paid (₹)</label>
+                  <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-emerald-600" value={data.amountPaid} onChange={e => setData({ ...data, amountPaid: e.target.value })} />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Right Column: Live Centered Preview */}
+      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "w-full lg:w-[62%]"}`}>
+        
+        {/* Sleek Toolbar */}
+        <div className="bg-white px-4 py-2.5 rounded-2xl shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          
+          {/* Left: Collapse & Zoom controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsFormCollapsed(!isFormCollapsed)}
+              className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs transition cursor-pointer"
+              title={isFormCollapsed ? "Show Edit Form" : "Expand Full Preview"}
+            >
+              {isFormCollapsed ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            </button>
+
+            <div className="h-4 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+
+            {/* Zoom Controls */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg text-xs">
+              <button
+                onClick={handleZoomOut}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-white rounded transition cursor-pointer"
+                title="Zoom Out (-)"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="px-2 font-mono font-bold text-gray-700 text-[11px] min-w-[42px] text-center">
+                {Math.round(currentScale * 100)}%
+              </span>
+              <button
+                onClick={handleZoomIn}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-white rounded transition cursor-pointer"
+                title="Zoom In (+)"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Quick Fit Mode Buttons */}
+            <button
+              onClick={() => handleSetFitMode("width")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                fitMode === "width" && manualZoom === null
+                  ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+              title="Zoom to Fit Width (Enlarged & Easy to Read)"
+            >
+              Fit Width
+            </button>
+
+            <button
+              onClick={() => handleSetFitMode("screen")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                fitMode === "screen" && manualZoom === null
+                  ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+              title="Fit Full Page on Screen"
+            >
+              Fit Page
+            </button>
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShareWhatsApp}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp</span>
+            </button>
+
+            <button
+              onClick={handleDownload}
+              disabled={isDownloading}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
+            >
+              {isDownloading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download PDF</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Centered Preview Viewport */}
+        <div 
+          ref={previewContainerRef}
+          className="w-full flex-1 overflow-auto bg-slate-200/90 p-4 rounded-2xl flex flex-col items-center justify-start custom-scrollbar relative"
+        >
+          <div
+            style={{
+              width: `${Math.round(794 * currentScale)}px`,
+              minHeight: `${Math.round(1122 * currentScale)}px`,
+              transition: "width 0.15s ease-out, min-height 0.15s ease-out"
+            }}
+            className="relative shrink-0 flex flex-col items-center shadow-lg"
+          >
+            <div
+              style={{
+                transform: `scale(${currentScale})`,
+                transformOrigin: "top left",
+                width: "794px",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transition: "transform 0.15s ease-out"
+              }}
+            >
+              {renderInvoiceContent("view")}
             </div>
           </div>
         </div>
+
       </div>
+
+      {/* Hidden Print Container for High-Res PDF Export */}
+      <div className="fixed -left-[99999px] top-0 pointer-events-none opacity-100 z-[-100]">
+        {renderInvoiceContent("print")}
+      </div>
+
     </div>
   );
 }

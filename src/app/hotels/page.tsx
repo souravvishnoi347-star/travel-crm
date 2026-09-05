@@ -1,37 +1,115 @@
 "use client";
 
-import { useState } from "react";
-import { Download, Loader2, MessageCircle } from "lucide-react";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
+import { 
+  Download, 
+  Loader2, 
+  MessageCircle, 
+  Building2, 
+  Calendar, 
+  User, 
+  MapPin, 
+  Phone, 
+  FileText, 
+  CheckCircle2, 
+  RotateCcw,
+  Maximize2,
+  Minimize2,
+  ZoomIn,
+  ZoomOut
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-export default function HotelVouchers() {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [data, setData] = useState({
-    date: "17 May'2026",
-    exoNo: "YT: YATRA 2026",
-    fileNo: "02",
-    hotelName: "Sarovar Portico",
-    hotelAddress: "Katra , Adjoining Shrine Board Office, Jammu Road, Katra, Jammu & Kashmir- 182301",
-    contactNo: "+91 7889941026",
-    guestName: "MR. ALLADI BALRAJ X 02 PAX",
-    roomType: "01. TRIPLE BED ROOM",
-    noOfAdults: "03 Adults",
-    noOfRooms: "01 Triple Rooms",
-    checkIn: "17 May 2026 {13:00 Hrs}",
-    checkOut: "19 May 2026 {11:00 Hrs}",
-    noOfNights: "02",
-    inclusions: "02 Night accommodation on twin & triple sharing basis.\nBreakfast, Lunch & Dinner at hotel {Veg. Food}.\nInclusive of all currently applicable taxes.",
-    confirmationNo: "38106",
-    specialRequest: "Please provide Two Triple bed Room on triple sharing basis for (Two Night)"
-  });
+const DEFAULT_HOTEL_DATA = {
+  date: "17 May'2026",
+  exoNo: "YT: YATRA 2026",
+  fileNo: "02",
+  hotelName: "Sarovar Portico",
+  hotelAddress: "Katra , Adjoining Shrine Board Office, Jammu Road, Katra, Jammu & Kashmir- 182301",
+  contactNo: "+91 7889941026",
+  guestName: "MR. ALLADI BALRAJ X 02 PAX",
+  roomType: "01. TRIPLE BED ROOM",
+  noOfAdults: "03 Adults",
+  noOfRooms: "01 Triple Rooms",
+  checkIn: "17 May 2026 {13:00 Hrs}",
+  checkOut: "19 May 2026 {11:00 Hrs}",
+  noOfNights: "02",
+  inclusions: "02 Night accommodation on twin & triple sharing basis.\nBreakfast, Lunch & Dinner at hotel {Veg. Food}.\nInclusive of all currently applicable taxes.",
+  confirmationNo: "38106",
+  specialRequest: "Please provide Two Triple bed Room on triple sharing basis for (Two Night)"
+};
 
+export default function HotelVouchers() {
+  const [data, setData] = useState(DEFAULT_HOTEL_DATA);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [isFormCollapsed, setIsFormCollapsed] = useState(false);
+  const [autoScale, setAutoScale] = useState<number>(0.55);
+  const [manualZoom, setManualZoom] = useState<number | null>(null);
+  const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-fit screen and fit-width scaling
+  useEffect(() => {
+    const updateScale = () => {
+      if (!previewContainerRef.current) return;
+      const el = previewContainerRef.current;
+      const padX = 40;
+      const padY = 40;
+      const availW = Math.max(300, el.clientWidth - padX);
+      const availH = Math.max(300, el.clientHeight - padY);
+
+      const scaleW = availW / 794;
+      const scaleH = availH / 1122;
+
+      if (fitMode === "width") {
+        setAutoScale(Math.max(0.4, Math.min(1.3, Number(scaleW.toFixed(3)))));
+      } else {
+        const fitScale = Math.min(scaleW, scaleH);
+        setAutoScale(Math.max(0.35, Math.min(0.95, Number(fitScale.toFixed(3)))));
+      }
+    };
+
+    updateScale();
+    const timer = setTimeout(updateScale, 150);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && previewContainerRef.current) {
+      ro = new ResizeObserver(() => updateScale());
+      ro.observe(previewContainerRef.current);
+    }
+
+    window.addEventListener("resize", updateScale);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateScale);
+      if (ro) ro.disconnect();
+    };
+  }, [isFormCollapsed, fitMode]);
+
+  const currentScale = manualZoom !== null ? manualZoom : autoScale;
+
+  const handleZoomIn = () => {
+    const next = Math.min(1.5, Number((currentScale + 0.1).toFixed(2)));
+    setManualZoom(next);
+  };
+
+  const handleZoomOut = () => {
+    const next = Math.max(0.35, Number((currentScale - 0.1).toFixed(2)));
+    setManualZoom(next);
+  };
+
+  const handleSetFitMode = (mode: "screen" | "width") => {
+    setFitMode(mode);
+    setManualZoom(null);
+  };
+
+  // High-Resolution PDF Download
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
-      const element = document.getElementById("pdf-content");
+      const element = document.getElementById("print-hotel-voucher");
       if (!element) {
-        alert("Could not find the content to download.");
+        alert("Could not find the print container.");
         setIsDownloading(false);
         return;
       }
@@ -55,7 +133,11 @@ export default function HotelVouchers() {
       const jsPDFModule = await import("jspdf");
       const jsPDF = jsPDFModule.jsPDF;
 
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+      const canvas = await html2canvas(element, { 
+        scale: 2, 
+        useCORS: true,
+        logging: false 
+      });
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
       
       const pdf = new jsPDF("p", "mm", "a4");
@@ -85,354 +167,420 @@ export default function HotelVouchers() {
   };
 
   const handleShareWhatsApp = () => {
-    // In a real app we'd need a guest phone input field for vouchers, but we can just open it blank or use contactNo.
-    // The hotel voucher has `contactNo` (which is hotel's number), but no guest phone. We will just open a blank chat.
-    const message = `Dear ${data.guestName.split('X')[0].trim()},\n\nPlease find attached your Hotel Voucher for ${data.hotelName}.\nCheck In: ${data.checkIn}\nCheck Out: ${data.checkOut}\n\nThank you for choosing Triloki Group!`;
+    const message = `*HOTEL SERVICE VOUCHER - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName.split('X')[0].trim()},\n\nPlease find your hotel voucher for *${data.hotelName}*.\n• Check In: ${data.checkIn}\n• Check Out: ${data.checkOut}\n• Room: ${data.roomType} (${data.noOfRooms})\n• Hotel Tel: ${data.contactNo}\n• Confirmation No: ${data.confirmationNo}\n\nThank you for choosing Travel to Uttarakhand!`;
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
   };
 
+  // Modular Page Renderer - Perfectly balanced for 1122px height with zero cutoff
+  const renderVoucherContent = (prefix: string) => (
+    <div 
+      id={`${prefix}-hotel-voucher`} 
+      className="w-[794px] h-[1122px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      style={{ boxSizing: "border-box" }}
+    >
+      {/* Background Watermark */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
+      </div>
+
+      <div className="relative z-10 flex flex-col justify-between h-full">
+        
+        {/* TOP CONTENT SECTION */}
+        <div className="space-y-3">
+          
+          {/* Header Branding */}
+          <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1" />
+            <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+            <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
+              HOTEL SERVICE VOUCHER
+            </h1>
+            <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
+              ACCOMMODATION CONFIRMATION
+            </p>
+            <p className="text-[10.5px] text-gray-500 italic mt-0.5">
+              Devbhoomi Luxury Hospitality · Travel to Uttarakhand
+            </p>
+          </div>
+
+          {/* Metadata Line */}
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3.5 text-center text-[11px] font-semibold text-gray-800 flex justify-between items-center">
+            <span>Date: <strong className="text-[#0369a1]">{data.date}</strong></span>
+            <span>E.X.O. No: <strong className="text-gray-900">{data.exoNo}</strong></span>
+            <span>File No: <strong className="text-gray-900">{data.fileNo}</strong></span>
+          </div>
+
+          {/* Hotel & Front Office To Box */}
+          <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 flex justify-between items-start text-xs">
+            <div>
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Addressed To</span>
+              <p className="text-[11px] font-semibold text-gray-600">The Front Office / Reservations Manager</p>
+              <h3 className="text-sm font-serif font-bold text-[#0369a1] mt-0.5">{data.hotelName}</h3>
+              <p className="text-gray-600 max-w-md text-[10.5px] leading-snug mt-0.5">{data.hotelAddress}</p>
+            </div>
+            <div className="text-right">
+              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Hotel Helpline</span>
+              <p className="font-bold text-gray-900 text-xs mt-0.5">{data.contactNo}</p>
+              <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9.5px] font-semibold mt-1">Confirmed Booking</span>
+            </div>
+          </div>
+
+          {/* Booking Details Table */}
+          <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
+            <div className="bg-[#0369a1] text-white px-3 py-1.5 font-bold uppercase tracking-wider text-[11px] flex justify-between items-center">
+              <span>Booking Particulars</span>
+              <span className="text-[10px] font-normal opacity-90">Confirmation #{data.confirmationNo}</span>
+            </div>
+            <table className="w-full text-left text-[11px]">
+              <tbody className="divide-y divide-gray-200">
+                <tr className="bg-white">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 w-1/3 border-r border-gray-200">Guest / Group Name:</td>
+                  <td className="px-3 py-1.5 font-bold text-[#0369a1]">{data.guestName}</td>
+                </tr>
+                <tr className="bg-gray-50/60">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Room Category:</td>
+                  <td className="px-3 py-1.5 font-semibold text-gray-900">{data.roomType}</td>
+                </tr>
+                <tr className="bg-white">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Adults & Rooms:</td>
+                  <td className="px-3 py-1.5 text-gray-800">{data.noOfAdults} · {data.noOfRooms}</td>
+                </tr>
+                <tr className="bg-gray-50/60">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Check-In / Out:</td>
+                  <td className="px-3 py-1.5 font-semibold text-gray-900">{data.checkIn} to {data.checkOut} ({data.noOfNights} Nights)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Favouring & Special Requests Banner */}
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg p-2 text-xs space-y-0.5">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#0369a1] uppercase tracking-wider text-[10px]">FAVOURING:</span>
+              <span className="font-bold text-gray-900 text-[11px]">{data.guestName}</span>
+              <span className="text-gray-400">|</span>
+              <span className="font-semibold text-sky-900 text-[11px]">{data.roomType}</span>
+            </div>
+            {data.specialRequest && (
+              <p className="text-gray-700 text-[10.5px] italic pt-0.5 border-t border-sky-200/60">
+                <strong className="text-gray-900 not-italic">Special Request:</strong> {data.specialRequest}
+              </p>
+            )}
+          </div>
+
+          {/* Package Cost Inclusions */}
+          <div className="space-y-1">
+            <h4 className="font-serif font-bold text-[#0369a1] text-xs uppercase tracking-wider">
+              Package Cost Includes:
+            </h4>
+            <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-2.5 text-xs space-y-1">
+              {data.inclusions.split('\n').filter(Boolean).map((inc, i) => (
+                <div key={i} className="flex items-start gap-1.5 text-[10.5px] text-gray-800 leading-tight">
+                  <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                  <span>{inc}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Policies Table */}
+          <table className="w-full text-left text-[10.5px] border border-gray-200 rounded-lg overflow-hidden">
+            <tbody className="divide-y divide-gray-200">
+              <tr>
+                <td className="px-2.5 py-1 font-bold text-gray-700 w-1/4 bg-gray-50">Confirmation No.</td>
+                <td className="px-2.5 py-1 font-bold text-[#0369a1] w-1/4">{data.confirmationNo}</td>
+                <td className="px-2.5 py-1 font-bold text-gray-700 w-1/4 bg-gray-50">Meal Plan</td>
+                <td className="px-2.5 py-1 text-gray-800 w-1/4 font-semibold">As Specified Above</td>
+              </tr>
+              <tr>
+                <td className="px-2.5 py-1 font-bold text-gray-700 bg-gray-50">Voucher Notice</td>
+                <td colSpan={3} className="px-2.5 py-1 text-gray-600 text-[9.5px] leading-tight">
+                  Guest must present this original voucher along with valid government photo ID upon arrival at the hotel front desk.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+        {/* BOTTOM SECTION: Signatory & Page Footer */}
+        <div className="space-y-2 pt-1 border-t border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
+              <div>
+                <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
+                <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
+                <p className="text-[9.5px] text-gray-600 font-medium">Tarun Kaushik · +91 84452 14371</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
+              <p className="text-[8.5px] uppercase tracking-wider text-gray-400 mt-0.5">Authorized Hospitality Voucher</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
+            <span>Travel to Uttarakhand · +91 84452 14371</span>
+            <span>Hotel Service Voucher · Page 1 of 1</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+
   return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full h-full min-h-[calc(100vh-6rem)]">
-      {/* Left Column: Form */}
-      <div className="w-full lg:w-[40%] bg-white rounded-lg shadow-sm border border-gray-100 p-6 overflow-y-auto shrink-0 max-h-[calc(100vh-2rem)] custom-scrollbar">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Hotel Voucher Details</h2>
-        
-        <div className="space-y-6">
-          {/* 1. Voucher Meta */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">1. Voucher Meta</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.date} onChange={e => setData({...data, date: e.target.value})} />
+    <div className="flex flex-col lg:flex-row gap-5 w-full h-[calc(100vh-5rem)]">
+      
+      {/* Left Column: Form Controls */}
+      {!isFormCollapsed && (
+        <div className="w-full lg:w-[38%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
+                <Building2 className="w-5 h-5" />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">E.X.O. No</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.exoNo} onChange={e => setData({...data, exoNo: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">File No</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.fileNo} onChange={e => setData({...data, fileNo: e.target.value})} />
+                <h1 className="text-lg font-bold text-gray-900 leading-tight">Hotel Voucher Studio</h1>
+                <p className="text-xs text-gray-500">Devbhoomi Edition • 100% Editable</p>
               </div>
             </div>
-          </div>
-
-          {/* 2. Hotel Details */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">2. Hotel Details</h3>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">"To" (Front office/Hotel Name)</label>
-              <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.hotelName} onChange={e => setData({...data, hotelName: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-              <textarea rows={2} className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.hotelAddress} onChange={e => setData({...data, hotelAddress: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contact No</label>
-              <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.contactNo} onChange={e => setData({...data, contactNo: e.target.value})} />
-            </div>
-          </div>
-
-          {/* 3. Booking Details */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">3. Booking Details</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Guest Name (Favouring)</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.guestName} onChange={e => setData({...data, guestName: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.roomType} onChange={e => setData({...data, roomType: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">No. of Adults</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.noOfAdults} onChange={e => setData({...data, noOfAdults: e.target.value})} />
-              </div>
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">No. of Rooms</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.noOfRooms} onChange={e => setData({...data, noOfRooms: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Check-In Date & Time</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.checkIn} onChange={e => setData({...data, checkIn: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Check-Out Date & Time</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.checkOut} onChange={e => setData({...data, checkOut: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">No. of Nights</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.noOfNights} onChange={e => setData({...data, noOfNights: e.target.value})} />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Special Request / Note</label>
-              <textarea rows={2} className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.specialRequest} onChange={e => setData({...data, specialRequest: e.target.value})} />
-            </div>
-          </div>
-
-          {/* 4. Inclusions & Policies */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">4. Inclusions & Policies</h3>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Confirmation No</label>
-              <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.confirmationNo} onChange={e => setData({...data, confirmationNo: e.target.value})} />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Package Cost Includes</label>
-              <textarea rows={4} className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.inclusions} onChange={e => setData({...data, inclusions: e.target.value})} />
-            </div>
-          </div>
-
-        </div>
-      </div>
-
-      {/* Right Column: Preview Wrapper */}
-      <div className="w-full lg:w-[60%] flex flex-col gap-4 max-h-[calc(100vh-2rem)]">
-        
-        {/* Controls Toolbar */}
-        <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-100 shrink-0">
-          <h2 className="font-semibold text-gray-700">Live Preview</h2>
-          <div className="flex gap-3">
-            <button 
-              onClick={handleShareWhatsApp} 
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md font-medium text-sm hover:bg-green-600 transition-colors shadow-sm cursor-pointer"
+            <button
+              onClick={() => setData(DEFAULT_HOTEL_DATA)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
+              title="Reset to default voucher data"
             >
-              <MessageCircle size={16} /> 
-              WhatsApp
+              <RotateCcw className="w-3.5 h-3.5" />
+              Reset
             </button>
-            <button 
-              onClick={handleDownload} 
+          </div>
+
+          <div className="space-y-4 text-xs">
+            {/* 1. Header Info */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Voucher Reference</span>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Date</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.date} onChange={e => setData({ ...data, date: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">E.X.O. No.</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.exoNo} onChange={e => setData({ ...data, exoNo: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">File No.</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.fileNo} onChange={e => setData({ ...data, fileNo: e.target.value })} />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Hotel Details */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Hotel Details</span>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Name</label>
+                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.hotelName} onChange={e => setData({ ...data, hotelName: e.target.value })} />
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Address</label>
+                <textarea rows={2} className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.hotelAddress} onChange={e => setData({ ...data, hotelAddress: e.target.value })} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Phone</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.contactNo} onChange={e => setData({ ...data, contactNo: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Confirmation No.</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.confirmationNo} onChange={e => setData({ ...data, confirmationNo: e.target.value })} />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Guest & Stay Details */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Guest & Stay Particulars</span>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Guest Name & Pax</label>
+                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-gray-900" value={data.guestName} onChange={e => setData({ ...data, guestName: e.target.value })} />
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Room Type</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.roomType} onChange={e => setData({ ...data, roomType: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Adults</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.noOfAdults} onChange={e => setData({ ...data, noOfAdults: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Rooms Count</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.noOfRooms} onChange={e => setData({ ...data, noOfRooms: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Check In</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.checkIn} onChange={e => setData({ ...data, checkIn: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Check Out</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.checkOut} onChange={e => setData({ ...data, checkOut: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">No. of Nights</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.noOfNights} onChange={e => setData({ ...data, noOfNights: e.target.value })} />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Special Requests</label>
+                <textarea rows={2} className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.specialRequest} onChange={e => setData({ ...data, specialRequest: e.target.value })} />
+              </div>
+            </div>
+
+            {/* 4. Inclusions */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Package Inclusions (One per line)</span>
+              <textarea rows={3} className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs leading-relaxed" value={data.inclusions} onChange={e => setData({ ...data, inclusions: e.target.value })} />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Right Column: Live Centered Preview */}
+      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "w-full lg:w-[62%]"}`}>
+        
+        {/* Sleek Toolbar */}
+        <div className="bg-white px-4 py-2.5 rounded-2xl shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          
+          {/* Left: Collapse & Zoom controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsFormCollapsed(!isFormCollapsed)}
+              className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs transition cursor-pointer"
+              title={isFormCollapsed ? "Show Edit Form" : "Expand Full Preview"}
+            >
+              {isFormCollapsed ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            </button>
+
+            <div className="h-4 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+
+            {/* Zoom Controls */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg text-xs">
+              <button
+                onClick={handleZoomOut}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-white rounded transition cursor-pointer"
+                title="Zoom Out (-)"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="px-2 font-mono font-bold text-gray-700 text-[11px] min-w-[42px] text-center">
+                {Math.round(currentScale * 100)}%
+              </span>
+              <button
+                onClick={handleZoomIn}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-white rounded transition cursor-pointer"
+                title="Zoom In (+)"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {/* Quick Fit Mode Buttons */}
+            <button
+              onClick={() => handleSetFitMode("width")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                fitMode === "width" && manualZoom === null
+                  ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+              title="Zoom to Fit Width (Enlarged & Easy to Read)"
+            >
+              Fit Width
+            </button>
+
+            <button
+              onClick={() => handleSetFitMode("screen")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                fitMode === "screen" && manualZoom === null
+                  ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+              title="Fit Full Page on Screen"
+            >
+              Fit Page
+            </button>
+          </div>
+
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShareWhatsApp}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp</span>
+            </button>
+
+            <button
+              onClick={handleDownload}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md font-medium text-sm hover:bg-orange-600 transition-colors shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
             >
-              {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />} 
-              {isDownloading ? "Generating PDF..." : "Download PDF"}
+              {isDownloading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download PDF</span>
+                </>
+              )}
             </button>
           </div>
         </div>
-        
-        {/* Step B: Scrollable Area */}
-        <div className="overflow-x-auto overflow-y-auto bg-slate-200 p-8 flex-1 rounded-lg custom-scrollbar">
-          {/* Step C: Centering Wrapper */}
-          <div className="flex justify-center min-w-max">
-            {/* Step D: The A4 Paper */}
-            <div id="pdf-content" className="w-[210mm] min-h-[297mm] bg-white shadow-xl shrink-0 p-8 flex flex-col text-sm text-gray-900" style={{ fontFamily: "Arial, sans-serif" }}>
-              
-              {/* Header */}
-              <div className="flex flex-col items-center mb-6 border-b-4 border-[#E65C00] pb-6">
-                <img src="/logo.png" alt="Logo" className="w-20 h-20 object-contain mb-3" />
-                <h1 className="text-2xl font-bold text-[#003366] tracking-wide mb-2 uppercase">TRILOKI TOURS & TRAVELS™</h1>
-                <div className="text-xs text-center text-gray-700 leading-snug">
-                  <div>Contact No: <span className="font-semibold">8445214371</span></div>
-                  <div>E-mail: <a href="mailto:hospitality.triloki@gmail.com" className="text-blue-600 underline">hospitality.triloki@gmail.com</a></div>
-                  <div>Website: <a href="http://www.trilokigroup.in" className="text-blue-600 underline">www.trilokigroup.in</a></div>
-                </div>
-              </div>
 
-              {/* Title & Meta */}
-              <div className="text-center mb-6">
-                <h2 className="text-2xl font-bold text-[#E65C00] mb-2">Hotel Service Voucher</h2>
-                <div className="text-xs text-gray-600 font-medium">
-                  Date: {data.date} | E.X.O. No. {data.exoNo} | FILE NO: {data.fileNo}
-                </div>
-              </div>
-
-              {/* To Section */}
-              <div className="mb-4">
-                <div className="font-bold text-[#003366] text-base mb-1">To,</div>
-                <div className="text-gray-700 mb-2">The Front Office.</div>
-                <div className="font-bold text-black">{data.hotelName}</div>
-                <div className="text-black leading-tight text-[13px]">{data.hotelAddress}</div>
-              </div>
-
-              {/* Booking Details Table */}
-              <table className="w-full border-collapse border border-[#003366] mb-6 text-[13px]">
-                <thead>
-                  <tr>
-                    <th colSpan={2} className="bg-[#003366] text-white py-2 px-3 text-left uppercase tracking-wider font-bold">BOOKING DETAILS</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td className="border border-[#003366] py-2 px-3 font-bold text-[#003366] w-1/3">No. Of Adults:</td>
-                    <td className="border border-[#003366] py-2 px-3 text-black">{data.noOfAdults}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-[#003366] py-2 px-3 font-bold text-[#003366]">No. Of Rooms:</td>
-                    <td className="border border-[#003366] py-2 px-3 text-black">{data.noOfRooms}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-[#003366] py-2 px-3 font-bold text-[#003366]">Check In:</td>
-                    <td className="border border-[#003366] py-2 px-3 text-black">{data.checkIn}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-[#003366] py-2 px-3 font-bold text-[#003366]">Check Out:</td>
-                    <td className="border border-[#003366] py-2 px-3 text-black">{data.checkOut}</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-[#003366] py-2 px-3 font-bold text-[#003366]">No. Of Nights:</td>
-                    <td className="border border-[#003366] py-2 px-3 text-black">{data.noOfNights}</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              {/* Orange Hotel Box */}
-              <div className="bg-[#E65C00] text-white p-4 text-center mb-6 border border-black shadow-sm">
-                <div className="font-bold text-lg mb-1 uppercase">HOTEL {data.hotelName.toUpperCase()}</div>
-                <div className="text-xs leading-tight opacity-95 uppercase">
-                  {data.hotelAddress}
-                </div>
-                <div className="text-sm font-bold mt-1">
-                  Tel: {data.contactNo}
-                </div>
-              </div>
-
-              {/* Favouring Details */}
-              <div className="border-t-2 border-b-2 border-[#003366] py-1 mb-3">
-                <div className="font-bold">
-                  <span className="text-[#003366]">FAVOURING: </span>
-                  <span className="text-[#E65C00] uppercase">{data.guestName} | {data.roomType} |</span>
-                </div>
-              </div>
-              <div className="text-[13px] text-gray-800 mb-6">
-                {data.specialRequest}
-              </div>
-
-              {/* Package Cost Includes */}
-              <div className="mb-6">
-                <div className="font-bold text-[#003366] mb-2 text-[14px]">Package Cost Includes:</div>
-                <ul className="list-disc pl-8 text-[13px] text-black space-y-0.5">
-                  {data.inclusions.split('\\n').map((inc, i) => (
-                    <li key={i}>{inc}</li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Policies Table */}
-              <table className="w-full border-collapse border border-black text-[11px] mb-8 leading-tight">
-                <tbody>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black w-[22%]">Confirmation No.</td>
-                    <td className="border border-black py-2 px-3 font-bold text-black w-[28%]">{data.confirmationNo}</td>
-                    <td className="border border-black py-2 px-3 font-bold text-black w-[22%]">Billing Instructions</td>
-                    <td className="border border-black py-2 px-3 font-bold text-black w-[28%] uppercase">RR TO TA EXTRA DIRECT</td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">General Inclusions</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      24-hour unlimited Wi-Fi in room and public area.<br/>
-                      Complimentary Breakfast will be served in "Ameyaa" Restaurant<br/>
-                      (Timing 07:30 AM to 10:30 AM), if included in the package.<br/>
-                      Complimentary 02 packaged drinking water bottles.<br/>
-                      Free access to swimming pool (As per the hotel timings and<br/>
-                      swimming costumes are necessary).<br/>
-                      In room Tea / Coffee making facility available in room.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Standard check-in / Check-out time</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      Hotel check-in time is 1400 HRS and check-out time is 1200 HRS.<br/>
-                      An early check-in or late check-out would be subject to availability<br/>
-                      and charged accordingly. Any early departure would be liable to<br/>
-                      pay room night charges for the entire duration of stay.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Cancellation Policy</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      If you wish to cancel your room reservation, you will need to inform<br/>
-                      the hotel prior to 72 hrs. of arrival. Bookings that are cancelled<br/>
-                      within 72 hrs. of the arrival date will incur one (1) night<br/>
-                      accommodation as a cancellation penalty. In case of No-Show Full<br/>
-                      stay retention charges will be applicable.<br/>
-                      In case of group reservation, which is 7 rooms and above,<br/>
-                      cancellation period without any charges will be 10 days prior to the<br/>
-                      arrival. If reservation is cancelled within 10 days of arrival retention<br/>
-                      for full duration of stay will be charged.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Photo ID Policy</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      As per government directives, it is mandatory for all guests to<br/>
-                      show their original valid Photo ID at the time of Check-in, which can<br/>
-                      be in the form of Passport, Driving License, Adhaar card or Voter ID<br/>
-                      Card. Failing which the hotel reserves the right of refusal. As per<br/>
-                      Punjab Government, PAN card would not be considered as a valid<br/>
-                      ID proof as address is not mentioned on it.<br/>
-                      Note: For foreign nationalist passport and valid visa is mandatory.<br/>
-                      On failing to provide the required documents hotel will not be able<br/>
-                      to provide check in to the guest.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Child Policy</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      Child aged 5 years and below is complimentary sharing bed with<br/>
-                      the parents.<br/>
-                      Child aged between 6 to 12 years will be complimentary sharing<br/>
-                      bed with parents and will be charged half of price for buffet<br/>
-                      breakfast.<br/>
-                      Child aged 12 years and above will be considered as an adult and<br/>
-                      need to have an extra bed @ 1500 + taxes (INR) as applicable with<br/>
-                      breakfast included.<br/><br/>
-                      Note: Extra bed can only be placed in deluxe and executive rooms,<br/>
-                      each room can contain 01 extra bed.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Smoking / Alcohol</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      This property is fully non-alcoholic.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Tax structure</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      Till date 12% GST is applicable on room bills and 18% on<br/>
-                      food and beverages.<br/>
-                      Any additional/new taxes or charges levied by the<br/>
-                      government; local bodies will be applicable accordingly.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3 font-bold text-black text-center">Outside food</td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      No outside food is allowed in hotel.
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="border border-black py-2 px-3"></td>
-                    <td colSpan={3} className="border border-black py-2 px-3 font-bold text-black">
-                      Kindly send us the deposit or transfer receipt for our<br/>
-                      account reference
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan={4} className="border border-black py-2 px-3 font-bold text-black">
-                      kindly provide GSTIN if required on bill before check-out , in case of failure GST modification<br/>
-                      can be done within 30 days of Guest Check-out as per the Government norms
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              {/* Footer */}
-              <div className="mt-auto border-t-[3px] border-[#E65C00] pt-4 pb-2">
-                <div className="text-[13px] text-gray-700">
-                  <span className="font-bold text-[#003366]">Billing Instruction:</span> Bill us for the mentioned services. Extras to be collected directly.
-                </div>
-              </div>
-
+        {/* Centered Preview Viewport */}
+        <div 
+          ref={previewContainerRef}
+          className="w-full flex-1 overflow-auto bg-slate-200/90 p-4 rounded-2xl flex flex-col items-center justify-start custom-scrollbar relative"
+        >
+          <div
+            style={{
+              width: `${Math.round(794 * currentScale)}px`,
+              minHeight: `${Math.round(1122 * currentScale)}px`,
+              transition: "width 0.15s ease-out, min-height 0.15s ease-out"
+            }}
+            className="relative shrink-0 flex flex-col items-center shadow-lg"
+          >
+            <div
+              style={{
+                transform: `scale(${currentScale})`,
+                transformOrigin: "top left",
+                width: "794px",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transition: "transform 0.15s ease-out"
+              }}
+            >
+              {renderVoucherContent("view")}
             </div>
           </div>
         </div>
+
       </div>
+
+      {/* Hidden Print Container for High-Res PDF Export */}
+      <div className="fixed -left-[99999px] top-0 pointer-events-none opacity-100 z-[-100]">
+        {renderVoucherContent("print")}
+      </div>
+
     </div>
   );
 }

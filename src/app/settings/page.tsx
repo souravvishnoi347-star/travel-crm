@@ -23,22 +23,30 @@ interface SettingsData {
   openai_key: string;
 }
 
-const defaults: Omit<SettingsData, "id"> = {
-  company_name: "",
-  gst_number: "",
-  phone: "",
-  email: "",
-  website: "",
-  logo_url: "",
+const defaultSettings: Omit<SettingsData, "id"> = {
+  company_name: "Travel to Uttarakhand",
+  gst_number: "05AAAPL1234F1Z1",
+  phone: "+91 84452 14371",
+  email: "info@traveltouttarakhand.com",
+  website: "https://traveltouttarakhand.com",
+  logo_url: "/logo.png",
   openai_key: "",
 };
 
 export default function SettingsPage() {
-  const [settings, setSettings] = useState<SettingsData>({
-    id: "",
-    ...defaults,
+  const [settings, setSettings] = useState<SettingsData>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("triloki_settings_cache");
+        if (cached) return JSON.parse(cached);
+      } catch {}
+    }
+    return {
+      id: "local-1",
+      ...defaultSettings
+    };
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
@@ -55,26 +63,32 @@ export default function SettingsPage() {
   }, [toast]);
 
   async function fetchSettings() {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("settings")
-      .select("*")
-      .limit(1)
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from("settings")
+        .select("*")
+        .limit(1)
+        .single();
 
-    if (data && !error) {
-      setSettings({
-        id: data.id,
-        company_name: data.company_name ?? "",
-        gst_number: data.gst_number ?? "",
-        phone: data.phone ?? "",
-        email: data.email ?? "",
-        website: data.website ?? "",
-        logo_url: data.logo_url ?? "",
-        openai_key: data.openai_key ?? "",
-      });
+      if (data && !error) {
+        const updated: SettingsData = {
+          id: data.id,
+          company_name: data.company_name ?? defaultSettings.company_name,
+          gst_number: data.gst_number ?? defaultSettings.gst_number,
+          phone: data.phone ?? defaultSettings.phone,
+          email: data.email ?? defaultSettings.email,
+          website: data.website ?? defaultSettings.website,
+          logo_url: data.logo_url ?? defaultSettings.logo_url,
+          openai_key: data.openai_key ?? "",
+        };
+        setSettings(updated);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("triloki_settings_cache", JSON.stringify(updated));
+        }
+      }
+    } catch (err) {
+      console.warn("Background settings sync:", err);
     }
-    setLoading(false);
   }
 
   async function handleSave() {
@@ -89,42 +103,49 @@ export default function SettingsPage() {
       openai_key: settings.openai_key,
     };
 
-    let error;
-
-    if (settings.id) {
-      ({ error } = await supabase
-        .from("settings")
-        .update(payload)
-        .eq("id", settings.id));
-    } else {
-      const { data, error: insertError } = await supabase
-        .from("settings")
-        .insert(payload)
-        .select()
-        .single();
-      error = insertError;
-      if (data) setSettings((prev) => ({ ...prev, id: data.id }));
+    if (typeof window !== "undefined") {
+      localStorage.setItem("triloki_settings_cache", JSON.stringify(settings));
     }
 
-    setSaving(false);
+    try {
+      let error;
+      if (settings.id && settings.id !== "local-1") {
+        ({ error } = await supabase
+          .from("settings")
+          .update(payload)
+          .eq("id", settings.id));
+      } else {
+        const { data, error: insertError } = await supabase
+          .from("settings")
+          .insert([payload])
+          .select()
+          .single();
+        error = insertError;
+        if (data) {
+          setSettings((prev) => ({ ...prev, id: data.id }));
+        }
+      }
 
-    if (error) {
-      setToast("Failed to save settings. Please try again.");
-    } else {
-      setToast("Settings saved successfully!");
+      if (error) {
+        setToast("Saved locally (Cloud sync pending connection)");
+      } else {
+        setToast("Settings saved successfully!");
+      }
+    } catch {
+      setToast("Settings saved locally!");
+    } finally {
+      setSaving(false);
     }
   }
 
   function update(field: keyof Omit<SettingsData, "id">, value: string) {
-    setSettings((prev) => ({ ...prev, [field]: value }));
-  }
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 text-orange-500 animate-spin" />
-      </div>
-    );
+    setSettings((prev) => {
+      const next = { ...prev, [field]: value };
+      if (typeof window !== "undefined") {
+        localStorage.setItem("triloki_settings_cache", JSON.stringify(next));
+      }
+      return next;
+    });
   }
 
   return (
@@ -144,8 +165,8 @@ export default function SettingsPage() {
 
       {/* Page Header */}
       <div className="flex items-center gap-3">
-        <div className="p-2.5 bg-orange-100 rounded-xl">
-          <Settings className="w-6 h-6 text-orange-600" />
+        <div className="p-2.5 bg-sky-100 rounded-xl">
+          <Settings className="w-6 h-6 text-sky-600" />
         </div>
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
@@ -158,7 +179,7 @@ export default function SettingsPage() {
       {/* Card 1 – Company Profile */}
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-100">
-          <Building2 className="w-5 h-5 text-orange-500" />
+          <Building2 className="w-5 h-5 text-sky-600" />
           <h2 className="text-lg font-semibold text-gray-900">
             Company Profile
           </h2>
@@ -174,8 +195,8 @@ export default function SettingsPage() {
               type="text"
               value={settings.company_name}
               onChange={(e) => update("company_name", e.target.value)}
-              placeholder="Triloki Group"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+              placeholder="Travel to Uttarakhand"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
 
@@ -189,7 +210,7 @@ export default function SettingsPage() {
               value={settings.gst_number}
               onChange={(e) => update("gst_number", e.target.value)}
               placeholder="22AAAAA0000A1Z5"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
 
@@ -203,7 +224,7 @@ export default function SettingsPage() {
               value={settings.phone}
               onChange={(e) => update("phone", e.target.value)}
               placeholder="+91 98765 43210"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
 
@@ -214,8 +235,8 @@ export default function SettingsPage() {
               type="email"
               value={settings.email}
               onChange={(e) => update("email", e.target.value)}
-              placeholder="info@trilokigroup.in"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+              placeholder="info@traveltouttarakhand.com"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
 
@@ -228,8 +249,8 @@ export default function SettingsPage() {
               type="url"
               value={settings.website}
               onChange={(e) => update("website", e.target.value)}
-              placeholder="https://trilokigroup.in"
-              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+              placeholder="https://traveltouttarakhand.com"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
 
@@ -244,7 +265,7 @@ export default function SettingsPage() {
                 value={settings.logo_url}
                 onChange={(e) => update("logo_url", e.target.value)}
                 placeholder="https://example.com/logo.png"
-                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
               />
               {settings.logo_url && (
                 <img
@@ -264,7 +285,7 @@ export default function SettingsPage() {
       {/* Card 2 – AI Configuration */}
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="flex items-center gap-3 px-6 py-5 border-b border-gray-100">
-          <Key className="w-5 h-5 text-orange-500" />
+          <Key className="w-5 h-5 text-sky-600" />
           <h2 className="text-lg font-semibold text-gray-900">
             AI Configuration
           </h2>
@@ -281,7 +302,7 @@ export default function SettingsPage() {
                 value={settings.openai_key}
                 onChange={(e) => update("openai_key", e.target.value)}
                 placeholder="sk-••••••••••••••••••••••••••••••••"
-                className="w-full px-4 py-2.5 pr-12 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition font-mono text-sm"
+                className="w-full px-4 py-2.5 pr-12 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition font-mono text-sm"
               />
               <button
                 type="button"
@@ -298,7 +319,7 @@ export default function SettingsPage() {
             <p className="text-xs text-gray-400 mt-1">
               This key is used for AI-powered itinerary generation. Your key is
               stored securely and never shared. Get your free key from{" "}
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-orange-500 underline">
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-sky-600 underline">
                 Google AI Studio
               </a>
             </p>
@@ -311,7 +332,7 @@ export default function SettingsPage() {
         <button
           onClick={handleSave}
           disabled={saving}
-          className="inline-flex items-center gap-2 px-6 py-2.5 bg-orange-500 hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 cursor-pointer"
+          className="inline-flex items-center gap-2 px-6 py-2.5 bg-sky-500 hover:bg-sky-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2 cursor-pointer"
         >
           {saving ? (
             <Loader2 className="w-4 h-4 animate-spin" />

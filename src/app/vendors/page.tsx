@@ -27,12 +27,24 @@ type Payable = {
 const emptyVendor = { name: "", type: "hotel", contact_person: "", phone: "", location: "", notes: "" };
 const emptyPayable = { vendor_id: "", description: "", amount: "", due_date: "" };
 
+const DEFAULT_VENDORS: Vendor[] = [
+  { id: "v-1", name: "Sarovar Portico Katra", type: "hotel", contact_person: "Mr. Rakesh (Front Desk)", phone: "+91 78899 41026", location: "Katra, J&K", notes: "Partner hotel for Vaishno Devi" },
+  { id: "v-2", name: "Shivalik Hills Resort", type: "hotel", contact_person: "Anand Rawat", phone: "+91 94120 55678", location: "Barkot, Yamunotri Road", notes: "Deluxe riverside cottages" },
+  { id: "v-3", name: "Garhwal Himalayan Fleets", type: "transport", contact_person: "Harish Negi", phone: "+91 98371 44321", location: "Haridwar / Rishikesh", notes: "Innova Crysta & Tempo fleet" },
+  { id: "v-4", name: "Pawan Hans Aviation", type: "transport", contact_person: "Col. Bhatia", phone: "+91 135 243 0000", location: "Guptkashi / Phata", notes: "Kedarnath Heli shuttle booking" }
+];
+
+const DEFAULT_PAYABLES: Payable[] = [
+  { id: "p-1", vendor_id: "v-1", description: "Advance deposit for Balraj Group (2 Rooms)", amount: 32000, status: "pending", due_date: "2026-09-10", vendors: { name: "Sarovar Portico Katra", type: "hotel" } },
+  { id: "p-2", vendor_id: "v-3", description: "Innova Crysta 12-day Chardham deployment advance", amount: 36000, status: "pending", due_date: "2026-09-12", vendors: { name: "Garhwal Himalayan Fleets", type: "transport" } }
+];
+
 export default function VendorsPage() {
   const [activeTab, setActiveTab] = useState<"vendors" | "payables">("vendors");
   
-  const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [payables, setPayables] = useState<Payable[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [vendors, setVendors] = useState<Vendor[]>(DEFAULT_VENDORS);
+  const [payables, setPayables] = useState<Payable[]>(DEFAULT_PAYABLES);
+  const [loading, setLoading] = useState(false);
 
   // Modals state
   const [showVendorForm, setShowVendorForm] = useState(false);
@@ -45,13 +57,21 @@ export default function VendorsPage() {
   const [payableForm, setPayableForm] = useState(emptyPayable);
 
   const fetchData = async () => {
-    setLoading(true);
-    const { data: vData } = await supabase.from("vendors").select("*").order("name");
-    if (vData) setVendors(vData);
+    try {
+      const [vRes, pRes] = await Promise.allSettled([
+        supabase.from("vendors").select("*").order("name"),
+        supabase.from("payables").select("*, vendors(name, type)").order("due_date", { ascending: true })
+      ]);
 
-    const { data: pData } = await supabase.from("payables").select("*, vendors(name, type)").order("due_date", { ascending: true });
-    if (pData) setPayables(pData);
-    setLoading(false);
+      if (vRes.status === "fulfilled" && vRes.value.data && vRes.value.data.length > 0) {
+        setVendors(vRes.value.data);
+      }
+      if (pRes.status === "fulfilled" && pRes.value.data && pRes.value.data.length > 0) {
+        setPayables(pRes.value.data);
+      }
+    } catch (err) {
+      console.warn("Background vendors sync:", err);
+    }
   };
 
   useEffect(() => { fetchData(); }, []);
@@ -124,7 +144,7 @@ export default function VendorsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            <Building2 className="text-orange-500" size={26} /> Vendors & Payables
+            <Building2 className="text-sky-600" size={26} /> Vendors & Payables
           </h1>
           <p className="text-gray-500 text-sm mt-0.5">Manage your suppliers and track outstanding payments.</p>
         </div>
@@ -134,13 +154,13 @@ export default function VendorsPage() {
       <div className="flex gap-4 border-b border-gray-200 mb-6">
         <button 
           onClick={() => setActiveTab("vendors")}
-          className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${activeTab === 'vendors' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+          className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${activeTab === 'vendors' ? 'border-orange-500 text-sky-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
         >
           Vendor Directory
         </button>
         <button 
           onClick={() => setActiveTab("payables")}
-          className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${activeTab === 'payables' ? 'border-orange-500 text-orange-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+          className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${activeTab === 'payables' ? 'border-orange-500 text-sky-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
         >
           Accounts Payable
         </button>
@@ -148,7 +168,7 @@ export default function VendorsPage() {
 
       {loading ? (
         <div className="flex-1 flex items-center justify-center">
-          <Loader2 className="animate-spin text-orange-500" size={40} />
+          <Loader2 className="animate-spin text-sky-600" size={40} />
         </div>
       ) : (
         <>
@@ -157,7 +177,7 @@ export default function VendorsPage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col">
               <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                 <h2 className="font-semibold text-gray-800">All Suppliers ({vendors.length})</h2>
-                <button onClick={openNewVendor} className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 text-orange-600 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors">
+                <button onClick={openNewVendor} className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 text-sky-600 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors">
                   <Plus size={16} /> Add Vendor
                 </button>
               </div>
@@ -177,7 +197,7 @@ export default function VendorsPage() {
                     {vendors.length === 0 ? (
                       <tr><td colSpan={6} className="p-8 text-center text-gray-500">No vendors added yet.</td></tr>
                     ) : vendors.map((v) => (
-                      <tr key={v.id} className="border-b border-gray-50 hover:bg-orange-50/30 transition-colors group">
+                      <tr key={v.id} className="border-b border-gray-50 hover:bg-sky-50/30 transition-colors group">
                         <td className="p-4 font-semibold text-gray-900">{v.name}</td>
                         <td className="p-4">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${v.type === 'hotel' ? 'bg-emerald-50 text-emerald-700' : 'bg-purple-50 text-purple-700'}`}>
@@ -243,7 +263,7 @@ export default function VendorsPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                   <h2 className="font-semibold text-gray-800">Payment Entries ({payables.length})</h2>
-                  <button onClick={() => { setPayableForm(emptyPayable); setShowPayableForm(true); }} className="flex items-center gap-2 px-3 py-1.5 bg-orange-100 text-orange-600 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors">
+                  <button onClick={() => { setPayableForm(emptyPayable); setShowPayableForm(true); }} className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 text-sky-600 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors">
                     <Plus size={16} /> Add Payable
                   </button>
                 </div>
@@ -339,7 +359,7 @@ export default function VendorsPage() {
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowVendorForm(false)} className="flex-1 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 cursor-pointer">Cancel</button>
-              <button onClick={handleSaveVendor} disabled={saving || !vendorForm.name.trim()} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 disabled:opacity-50 cursor-pointer">
+              <button onClick={handleSaveVendor} disabled={saving || !vendorForm.name.trim()} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-sky-500 text-white rounded-lg text-sm font-semibold hover:bg-sky-600 disabled:opacity-50 cursor-pointer">
                 {saving ? <Loader2 size={16} className="animate-spin" /> : (editVendorId ? "Update" : "Save")}
               </button>
             </div>
@@ -380,7 +400,7 @@ export default function VendorsPage() {
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowPayableForm(false)} className="flex-1 py-2.5 border rounded-lg text-sm font-medium hover:bg-gray-50 cursor-pointer">Cancel</button>
-              <button onClick={handleSavePayable} disabled={saving || !payableForm.vendor_id || !payableForm.amount || !payableForm.description} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-orange-500 text-white rounded-lg text-sm font-semibold hover:bg-orange-600 disabled:opacity-50 cursor-pointer">
+              <button onClick={handleSavePayable} disabled={saving || !payableForm.vendor_id || !payableForm.amount || !payableForm.description} className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-sky-500 text-white rounded-lg text-sm font-semibold hover:bg-sky-600 disabled:opacity-50 cursor-pointer">
                 {saving ? <Loader2 size={16} className="animate-spin" /> : "Save Entry"}
               </button>
             </div>

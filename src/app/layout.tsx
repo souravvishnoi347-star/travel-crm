@@ -6,8 +6,8 @@ import { Sidebar } from "@/components/Sidebar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Triloki Group - Invoice Generator",
-  description: "Professional Invoice Solutions for Triloki Group",
+  title: "Travel to Uttarakhand - Tourism CRM & Operations",
+  description: "Official CRM, Itinerary Builder, Vouchers & Invoice Studio for Travel to Uttarakhand",
 };
 
 export default function RootLayout({

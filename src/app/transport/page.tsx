@@ -1,30 +1,120 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Trash2, Download, Loader2, MessageCircle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { 
+  Plus, 
+  Trash2, 
+  Download, 
+  Loader2, 
+  MessageCircle, 
+  Car, 
+  Calendar, 
+  User, 
+  MapPin, 
+  Phone, 
+  RotateCcw,
+  Maximize2,
+  Minimize2,
+  ZoomIn,
+  ZoomOut
+} from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
+const DEFAULT_TRANSPORT_DATA = {
+  date: "17 May'2026",
+  exoNo: "YT: YATRA 2026",
+  fileNo: "02",
+  guestName: "Mr. Alladi Balraj Group",
+  managerMobile: "+91 90187 25486",
+  noOfAdults: "03 Adults",
+  vehicleType: "01 A/C Swift Dzire Car",
+  arrivalDate: "17 May'2026 ~ at Jammu Airport",
+  departureDate: "19 May'2026 ~ at Jammu Airport",
+  favouringGuest: "MR. ALLADI BALRAJ",
+  favouringPax: "02",
+  favouringVehicle: "01 A/C CAR",
+  itinerary: [
+    { 
+      date: "17 May'2026", 
+      details: "Pick up + half day local sightseeing {Sub to arrival timing} & hotel dropping", 
+      hotel: "Hotel Sarovar Portico, Katra" 
+    },
+    { 
+      date: "18 May'2026", 
+      details: "Katra helipad ~ vaishno devi helipad transfer (both ways)", 
+      hotel: "Self Accommodation / Katra" 
+    },
+    { 
+      date: "19 May'2026", 
+      details: "Morning check-out, scenic drive & Jammu Airport dropping", 
+      hotel: "Tour Concludes" 
+    },
+  ]
+};
+
 export default function TransportVouchers() {
+  const [data, setData] = useState(DEFAULT_TRANSPORT_DATA);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [data, setData] = useState({
-    date: "17 May'2024",
-    exoNo: "YT: YATRA 2026",
-    fileNo: "02",
-    guestName: "Mr. Alladi Balraj Group",
-    managerMobile: "9018725486",
-    noOfAdults: "03 Adults",
-    vehicleType: "01 A/C Swift Dezire Car",
-    arrivalDate: "17 May'2026 ~ at Jammu Airport |",
-    departureDate: "19 May'2026 ~ at Jammu Airport |",
-    favouringGuest: "MR. AIIADI BALRAJ",
-    favouringPax: "02",
-    favouringVehicle: "01 A/C CAR",
-    itinerary: [
-      { date: "17 May'2026", details: "Pick up + half day local sightseeing {Sub to arrival timing} & hotel dropping", hotel: "Hotel Sarovar Portico, Katra" },
-      { date: "18 May'2026", details: "Katra helipad ~ vaishno devi helipad transfer", hotel: "Self Accommodation" },
-      { date: "19 May'2026", details: "Jammu Airport Drop", hotel: "---------------------------------" },
-    ]
-  });
+  const [isFormCollapsed, setIsFormCollapsed] = useState(false);
+  const [autoScale, setAutoScale] = useState<number>(0.55);
+  const [manualZoom, setManualZoom] = useState<number | null>(null);
+  const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-fit screen and fit-width scaling
+  useEffect(() => {
+    const updateScale = () => {
+      if (!previewContainerRef.current) return;
+      const el = previewContainerRef.current;
+      const padX = 40;
+      const padY = 40;
+      const availW = Math.max(300, el.clientWidth - padX);
+      const availH = Math.max(300, el.clientHeight - padY);
+
+      const scaleW = availW / 794;
+      const scaleH = availH / 1122;
+
+      if (fitMode === "width") {
+        setAutoScale(Math.max(0.4, Math.min(1.3, Number(scaleW.toFixed(3)))));
+      } else {
+        const fitScale = Math.min(scaleW, scaleH);
+        setAutoScale(Math.max(0.35, Math.min(0.95, Number(fitScale.toFixed(3)))));
+      }
+    };
+
+    updateScale();
+    const timer = setTimeout(updateScale, 150);
+
+    let ro: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined" && previewContainerRef.current) {
+      ro = new ResizeObserver(() => updateScale());
+      ro.observe(previewContainerRef.current);
+    }
+
+    window.addEventListener("resize", updateScale);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("resize", updateScale);
+      if (ro) ro.disconnect();
+    };
+  }, [isFormCollapsed, fitMode]);
+
+  const currentScale = manualZoom !== null ? manualZoom : autoScale;
+
+  const handleZoomIn = () => {
+    const next = Math.min(1.5, Number((currentScale + 0.1).toFixed(2)));
+    setManualZoom(next);
+  };
+
+  const handleZoomOut = () => {
+    const next = Math.max(0.35, Number((currentScale - 0.1).toFixed(2)));
+    setManualZoom(next);
+  };
+
+  const handleSetFitMode = (mode: "screen" | "width") => {
+    setFitMode(mode);
+    setManualZoom(null);
+  };
 
   const handleItineraryChange = (index: number, field: string, value: string) => {
     const newItinerary = [...data.itinerary];
@@ -46,12 +136,13 @@ export default function TransportVouchers() {
     });
   };
 
+  // High-Resolution PDF Download
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
-      const element = document.getElementById("pdf-content");
+      const element = document.getElementById("print-transport-voucher");
       if (!element) {
-        alert("Could not find the content to download.");
+        alert("Could not find the print container.");
         setIsDownloading(false);
         return;
       }
@@ -75,7 +166,11 @@ export default function TransportVouchers() {
       const jsPDFModule = await import("jspdf");
       const jsPDF = jsPDFModule.jsPDF;
 
-      const canvas = await html2canvas(element, { scale: 2, useCORS: true });
+      const canvas = await html2canvas(element, { 
+        scale: 2, 
+        useCORS: true,
+        logging: false 
+      });
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
       
       const pdf = new jsPDF("p", "mm", "a4");
@@ -105,307 +200,403 @@ export default function TransportVouchers() {
   };
 
   const handleShareWhatsApp = () => {
-    if (!data.managerMobile) {
-      alert("Please enter the Manager Mobile No. to share via WhatsApp.");
-      return;
-    }
-    const message = `Dear ${data.guestName.split('X')[0].trim()},\n\nPlease find attached your Transport Voucher & Itinerary.\nVehicle: ${data.vehicleType}\nArrival: ${data.arrivalDate}\nDeparture: ${data.departureDate}\n\nThank you for choosing Triloki Group!`;
+    const message = `*TRANSPORT SERVICE VOUCHER - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName},\n\nPlease find your transport booking voucher.\n• Vehicle: ${data.vehicleType}\n• Fleet Manager Mobile: ${data.managerMobile}\n• Arrival: ${data.arrivalDate}\n• Departure: ${data.departureDate}\n\nThank you for choosing Travel to Uttarakhand!`;
     const encodedMessage = encodeURIComponent(message);
-    const phone = data.managerMobile.replace(/\D/g, ""); 
-    window.open(`https://wa.me/${phone}?text=${encodedMessage}`, "_blank");
+    window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
   };
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-6 w-full h-full min-h-[calc(100vh-6rem)]">
-      {/* Left Column: Form */}
-      <div className="w-full lg:w-[40%] bg-white rounded-lg shadow-sm border border-gray-100 p-6 overflow-y-auto shrink-0 max-h-[calc(100vh-2rem)] custom-scrollbar">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Transport Voucher Details</h2>
+  // Modular Page Renderer - Perfectly balanced for 1122px height with zero cutoff
+  const renderVoucherContent = (prefix: string) => (
+    <div 
+      id={`${prefix}-transport-voucher`} 
+      className="w-[794px] h-[1122px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      style={{ boxSizing: "border-box" }}
+    >
+      {/* Background Watermark */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
+      </div>
+
+      <div className="relative z-10 flex flex-col justify-between h-full">
         
-        <div className="space-y-6">
-          {/* 1. Voucher Meta */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">1. Voucher Meta</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.date} onChange={e => setData({...data, date: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">E.X.O. No</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.exoNo} onChange={e => setData({...data, exoNo: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">File No</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.fileNo} onChange={e => setData({...data, fileNo: e.target.value})} />
-              </div>
-            </div>
-          </div>
-
-          {/* 2. Client Info */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">2. Client Info</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Guest/Group Name</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.guestName} onChange={e => setData({...data, guestName: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Transport Mgr Mobile No.</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.managerMobile} onChange={e => setData({...data, managerMobile: e.target.value})} />
-              </div>
-            </div>
-          </div>
-
-          {/* 3. Transport Details */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">3. Transport Details</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">No. Of Adults</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.noOfAdults} onChange={e => setData({...data, noOfAdults: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Type Of Vehicle</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.vehicleType} onChange={e => setData({...data, vehicleType: e.target.value})} />
-              </div>
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Arrival Date & Location</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.arrivalDate} onChange={e => setData({...data, arrivalDate: e.target.value})} />
-              </div>
-              <div className="col-span-1 sm:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Departure Date & Location</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.departureDate} onChange={e => setData({...data, departureDate: e.target.value})} />
-              </div>
-            </div>
-          </div>
+        {/* TOP CONTENT SECTION */}
+        <div className="space-y-3">
           
-          {/* Favouring Info */}
-          <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider border-b pb-2">Favouring Details (Orange Bar)</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Guest</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.favouringGuest} onChange={e => setData({...data, favouringGuest: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Pax</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.favouringPax} onChange={e => setData({...data, favouringPax: e.target.value})} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Vehicle</label>
-                <input type="text" className="w-full px-3 py-2 bg-slate-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={data.favouringVehicle} onChange={e => setData({...data, favouringVehicle: e.target.value})} />
-              </div>
+          {/* Header Branding */}
+          <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1" />
+            <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+            <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
+              TRANSPORT SERVICE VOUCHER
+            </h1>
+            <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
+              VEHICLE & TRANSFER CONFIRMATION
+            </p>
+            <p className="text-[10.5px] text-gray-500 italic mt-0.5">
+              Devbhoomi Pilgrimage Fleet · Travel to Uttarakhand
+            </p>
+          </div>
+
+          {/* Metadata Line */}
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3.5 text-center text-[11px] font-semibold text-gray-800 flex justify-between items-center">
+            <span>Date: <strong className="text-[#0369a1]">{data.date}</strong></span>
+            <span>E.X.O. No: <strong className="text-gray-900">{data.exoNo}</strong></span>
+            <span>File No: <strong className="text-gray-900">{data.fileNo}</strong></span>
+          </div>
+
+          {/* Transfer & Vehicle Details Table */}
+          <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
+            <div className="bg-[#0369a1] text-white px-3 py-1.5 font-bold uppercase tracking-wider text-[11px] flex justify-between items-center">
+              <span>Transfer & Vehicle Particulars</span>
+              <span className="text-[10px] font-normal opacity-90">{data.vehicleType}</span>
+            </div>
+            <table className="w-full text-left text-[11px]">
+              <tbody className="divide-y divide-gray-200">
+                <tr className="bg-white">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 w-1/4 border-r border-gray-200">Guest Name:</td>
+                  <td className="px-3 py-1.5 font-bold text-[#0369a1] w-1/4 border-r border-gray-200">{data.guestName}</td>
+                  <td className="px-3 py-1.5 font-bold text-gray-700 w-1/4 border-r border-gray-200">Passengers:</td>
+                  <td className="px-3 py-1.5 text-gray-900 w-1/4 font-semibold">{data.noOfAdults}</td>
+                </tr>
+                <tr className="bg-gray-50/60">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Assigned Vehicle:</td>
+                  <td className="px-3 py-1.5 font-bold text-gray-900 border-r border-gray-200">{data.vehicleType}</td>
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Fleet Helpline:</td>
+                  <td className="px-3 py-1.5 font-bold text-[#0369a1] font-mono">{data.managerMobile}</td>
+                </tr>
+                <tr className="bg-white">
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Arrival Transfer:</td>
+                  <td className="px-3 py-1.5 text-gray-800 border-r border-gray-200">{data.arrivalDate}</td>
+                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Departure Transfer:</td>
+                  <td className="px-3 py-1.5 text-gray-800">{data.departureDate}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          {/* Favouring Banner */}
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg p-2 text-xs flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#0369a1] uppercase tracking-wider text-[10px]">FAVOURING:</span>
+              <span className="font-bold text-gray-900 text-[11px]">{data.favouringGuest}</span>
+              <span className="text-gray-400">|</span>
+              <span className="font-semibold text-sky-900 text-[11px]">{data.favouringPax} Pax</span>
+            </div>
+            <span className="text-[11px] font-semibold text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">{data.favouringVehicle}</span>
+          </div>
+
+          {/* Day-by-Day Schedule Table */}
+          <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
+            <div className="bg-[#0369a1] text-white px-3 py-1.5 font-bold uppercase tracking-wider text-[11px]">
+              Day-by-Day Transport Schedule
+            </div>
+            <table className="w-full text-left text-[10.5px]">
+              <thead className="bg-gray-100 text-gray-700 font-bold border-b border-gray-200">
+                <tr>
+                  <th className="px-2.5 py-1.5 w-[22%]">Date & Day</th>
+                  <th className="px-3 py-1.5 w-[50%]">Transfers & Sightseeing Route</th>
+                  <th className="px-2.5 py-1.5 w-[28%]">Night Stay / Dropping</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {data.itinerary.map((item, idx) => (
+                  <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
+                    <td className="px-2.5 py-1.5 font-bold text-[#0369a1] align-top">{item.date || `Day ${idx + 1}`}</td>
+                    <td className="px-3 py-1.5 text-gray-800 leading-tight align-top">{item.details}</td>
+                    <td className="px-2.5 py-1.5 text-gray-700 font-medium align-top">{item.hotel}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Transport Guidelines */}
+          <div className="space-y-1">
+            <h4 className="font-serif font-bold text-[#0369a1] text-xs uppercase tracking-wider">
+              Transport Guidelines & Operational Inclusions:
+            </h4>
+            <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-2.5 text-[10px] text-gray-700 space-y-1 leading-snug">
+              <p>• All toll taxes, interstate permits, parking fees, and driver night allowances are included in the package.</p>
+              <p>• Vehicle air conditioning operates on plain highway stretches and remains switched off during steep uphill ghat climbs for engine safety.</p>
+              <p>• Night driving in high-altitude mountain sectors is strictly restricted after 8:00 PM per government administration road safety guidelines.</p>
             </div>
           </div>
 
-          {/* 4. Dynamic Itinerary */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between border-b pb-2">
-              <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">4. Dynamic Itinerary</h3>
-              <button onClick={addDay} className="flex items-center gap-1 px-3 py-1.5 bg-orange-500 text-white text-xs font-medium rounded-md hover:bg-orange-600 transition-colors">
-                <Plus size={14} /> Add Day
+        </div>
+
+        {/* BOTTOM SECTION: Signatory & Page Footer */}
+        <div className="space-y-2 pt-1 border-t border-gray-200">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2.5">
+              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
+              <div>
+                <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
+                <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
+                <p className="text-[9.5px] text-gray-600 font-medium">Tarun Kaushik · +91 84452 14371</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
+              <p className="text-[8.5px] uppercase tracking-wider text-gray-400 mt-0.5">Authorized Fleet Dispatch</p>
+            </div>
+          </div>
+
+          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
+            <span>Travel to Uttarakhand · +91 84452 14371</span>
+            <span>Transport Service Voucher · Page 1 of 1</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="flex flex-col lg:flex-row gap-5 w-full h-[calc(100vh-5rem)]">
+      
+      {/* Left Column: Form Controls */}
+      {!isFormCollapsed && (
+        <div className="w-full lg:w-[38%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
+                <Car className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold text-gray-900 leading-tight">Transport Studio</h1>
+                <p className="text-xs text-gray-500">Devbhoomi Edition • 100% Editable</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setData(DEFAULT_TRANSPORT_DATA)}
+              className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
+              title="Reset to default voucher data"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              Reset
+            </button>
+          </div>
+
+          <div className="space-y-4 text-xs">
+            {/* 1. Voucher Particulars */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Voucher Reference</span>
+              <div className="grid grid-cols-3 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Date</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.date} onChange={e => setData({ ...data, date: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">E.X.O. No.</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.exoNo} onChange={e => setData({ ...data, exoNo: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">File No.</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.fileNo} onChange={e => setData({ ...data, fileNo: e.target.value })} />
+                </div>
+              </div>
+            </div>
+
+            {/* 2. Guest & Vehicle */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Guest & Vehicle Details</span>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Guest / Group Name</label>
+                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.guestName} onChange={e => setData({ ...data, guestName: e.target.value })} />
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Vehicle Type</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.vehicleType} onChange={e => setData({ ...data, vehicleType: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Fleet Manager Phone</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono" value={data.managerMobile} onChange={e => setData({ ...data, managerMobile: e.target.value })} />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Arrival Transfer</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.arrivalDate} onChange={e => setData({ ...data, arrivalDate: e.target.value })} />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Departure Transfer</label>
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.departureDate} onChange={e => setData({ ...data, departureDate: e.target.value })} />
+                </div>
+              </div>
+            </div>
+
+            {/* 3. Schedule Table CRUD */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Transport Schedule ({data.itinerary.length} Legs)</span>
+                <button onClick={addDay} className="flex items-center gap-1 px-2.5 py-1 bg-sky-600 text-white text-[11px] font-semibold rounded-lg hover:bg-sky-700 transition-colors cursor-pointer">
+                  <Plus size={12} /> Add Day
+                </button>
+              </div>
+              <div className="space-y-2">
+                {data.itinerary.map((item, idx) => (
+                  <div key={idx} className="p-2.5 bg-white border border-gray-200 rounded-lg space-y-2 relative">
+                    <div className="flex justify-between items-center">
+                      <span className="font-bold text-[#0369a1] text-[11px]">Leg / Day {idx + 1}</span>
+                      <button onClick={() => removeDay(idx)} className="text-gray-400 hover:text-rose-600 transition cursor-pointer">
+                        <Trash2 size={13} />
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[10px] text-gray-500 mb-0.5">Date</label>
+                        <input type="text" className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs" value={item.date} onChange={e => handleItineraryChange(idx, 'date', e.target.value)} />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-gray-500 mb-0.5">Night Stay / Drop</label>
+                        <input type="text" className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs font-semibold" value={item.hotel} onChange={e => handleItineraryChange(idx, 'hotel', e.target.value)} />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Route & Sightseeing Details</label>
+                      <textarea rows={2} className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs leading-tight" value={item.details} onChange={e => handleItineraryChange(idx, 'details', e.target.value)} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Right Column: Live Centered Preview */}
+      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "w-full lg:w-[62%]"}`}>
+        
+        {/* Sleek Toolbar */}
+        <div className="bg-white px-4 py-2.5 rounded-2xl shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+          
+          {/* Left: Collapse & Zoom controls */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsFormCollapsed(!isFormCollapsed)}
+              className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs transition cursor-pointer"
+              title={isFormCollapsed ? "Show Edit Form" : "Expand Full Preview"}
+            >
+              {isFormCollapsed ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+            </button>
+
+            <div className="h-4 w-px bg-gray-200 mx-1 hidden sm:block"></div>
+
+            {/* Zoom Controls */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-lg text-xs">
+              <button
+                onClick={handleZoomOut}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-white rounded transition cursor-pointer"
+                title="Zoom Out (-)"
+              >
+                <ZoomOut className="w-3.5 h-3.5" />
+              </button>
+              <span className="px-2 font-mono font-bold text-gray-700 text-[11px] min-w-[42px] text-center">
+                {Math.round(currentScale * 100)}%
+              </span>
+              <button
+                onClick={handleZoomIn}
+                className="p-1 text-gray-600 hover:text-gray-900 hover:bg-white rounded transition cursor-pointer"
+                title="Zoom In (+)"
+              >
+                <ZoomIn className="w-3.5 h-3.5" />
               </button>
             </div>
-            
-            <div className="space-y-3">
-              {data.itinerary.map((item, i) => (
-                <div key={i} className="flex flex-col gap-2 p-3 bg-slate-50 border border-gray-200 rounded-lg relative">
-                  <div className="flex justify-between items-center mb-1">
-                    <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">Day {i + 1}</label>
-                    <button onClick={() => removeDay(i)} className="text-red-500 hover:bg-red-50 p-1 rounded-md transition-colors">
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                  <div className="grid grid-cols-1 gap-3">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Date</label>
-                      <input type="text" placeholder="e.g., 17 May'2026" className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={item.date} onChange={e => handleItineraryChange(i, 'date', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Transfers & Sightseeing</label>
-                      <textarea rows={2} className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={item.details} onChange={e => handleItineraryChange(i, 'details', e.target.value)} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-500 mb-1">Hotels</label>
-                      <input type="text" placeholder="e.g., Hotel Sarovar Portico, Katra" className="w-full px-3 py-2 bg-white border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm text-gray-900" value={item.hotel} onChange={e => handleItineraryChange(i, 'hotel', e.target.value)} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+
+            {/* Quick Fit Mode Buttons */}
+            <button
+              onClick={() => handleSetFitMode("width")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                fitMode === "width" && manualZoom === null
+                  ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+              title="Zoom to Fit Width (Enlarged & Easy to Read)"
+            >
+              Fit Width
+            </button>
+
+            <button
+              onClick={() => handleSetFitMode("screen")}
+              className={`px-2.5 py-1 rounded-lg text-xs font-semibold border transition cursor-pointer ${
+                fitMode === "screen" && manualZoom === null
+                  ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+              title="Fit Full Page on Screen"
+            >
+              Fit Page
+            </button>
           </div>
 
-        </div>
-      </div>
-
-      {/* Right Column: Preview Wrapper */}
-      <div className="w-full lg:w-[60%] flex flex-col gap-4 max-h-[calc(100vh-2rem)]">
-        
-        {/* Controls Toolbar */}
-        <div className="flex justify-between items-center bg-white p-4 rounded-lg shadow-sm border border-gray-100 shrink-0">
-          <h2 className="font-semibold text-gray-700">Live Preview</h2>
-          <div className="flex gap-3">
-            <button 
-              onClick={handleShareWhatsApp} 
-              className="flex items-center gap-2 px-4 py-2 bg-green-500 text-white rounded-md font-medium text-sm hover:bg-green-600 transition-colors shadow-sm cursor-pointer"
+          {/* Right: Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handleShareWhatsApp}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
             >
-              <MessageCircle size={16} /> 
-              WhatsApp
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp</span>
             </button>
-            <button 
-              onClick={handleDownload} 
+
+            <button
+              onClick={handleDownload}
               disabled={isDownloading}
-              className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-md font-medium text-sm hover:bg-orange-600 transition-colors shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
             >
-              {isDownloading ? <Loader2 size={16} className="animate-spin" /> : <Download size={16} />} 
-              {isDownloading ? "Generating PDF..." : "Download PDF"}
+              {isDownloading ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Exporting...</span>
+                </>
+              ) : (
+                <>
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download PDF</span>
+                </>
+              )}
             </button>
           </div>
         </div>
-        
-        {/* Step B: Scrollable Area */}
-        <div className="overflow-x-auto overflow-y-auto bg-slate-200 p-8 flex-1 rounded-lg custom-scrollbar">
-          {/* Step C: Centering Wrapper */}
-          <div className="flex justify-center min-w-max">
-            
-            {/* Multi-page PDF Container */}
-            <div id="pdf-content" className="flex flex-col bg-slate-200 shadow-2xl">
-              
-              {/* Step D: PAGE 1 (Transport Voucher) */}
-              <div className="w-[210mm] min-h-[297mm] bg-white shrink-0 p-8 flex flex-col text-sm text-gray-900" style={{ fontFamily: "Arial, sans-serif" }}>
-                
-                {/* Header */}
-                <div className="flex flex-col items-center mb-4">
-                  <img src="/logo.png" alt="Logo" className="w-20 h-20 object-contain mb-3" />
-                  <div className="text-xs text-center text-gray-700 leading-snug mb-3">
-                    <div>Contact No: <span className="font-semibold">8445214371</span></div>
-                    <div>E-mail: <a href="mailto:hospitality.triloki@gmail.com" className="text-blue-600 underline">hospitality.triloki@gmail.com</a></div>
-                    <div>Website: <a href="http://www.trilokigroup.in" className="text-[#E65C00] font-bold">www.trilokigroup.in</a></div>
-                  </div>
-                  <h1 className="text-3xl font-bold text-[#E65C00] tracking-wide uppercase mb-1">TRANSPORT VOUCHER</h1>
-                </div>
 
-                {/* Title & Meta Line */}
-                <div className="border-t-4 border-[#003366] pt-1 pb-1 border-b-2 mb-4 text-center">
-                  <div className="text-[13px] text-black font-bold">
-                    Date: {data.date} | E.X.O. No. {data.exoNo} | FILE NO: {data.fileNo}
-                  </div>
-                </div>
-
-                {/* To Section */}
-                <div className="mb-4 text-[13px]">
-                  <div className="font-bold text-black text-base mb-1">To,</div>
-                  <div className="text-black">{data.guestName}</div>
-                  <div className="text-black">Transport Manager Mobile No: <span className="font-bold">{data.managerMobile}</span></div>
-                </div>
-
-                {/* Voucher Details Table */}
-                <table className="w-full border-collapse border border-[#003366] mb-4 text-[13px]">
-                  <thead>
-                    <tr>
-                      <th className="bg-[#003366] text-white py-2 px-3 text-left uppercase font-bold w-[40%]">VOUCHER DETAILS</th>
-                      <th className="bg-[#003366] text-white py-2 px-3 text-left uppercase font-bold w-[60%]">INFORMATION</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="border border-[#003366] py-2 px-3 font-bold text-black">No. Of Adults:</td>
-                      <td className="border border-[#003366] py-2 px-3 text-black">{data.noOfAdults}</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-[#003366] py-2 px-3 font-bold text-black">Type Of Vehicle:</td>
-                      <td className="border border-[#003366] py-2 px-3 text-black">{data.vehicleType}</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-[#003366] py-2 px-3 font-bold text-black">Arrival Date:</td>
-                      <td className="border border-[#003366] py-2 px-3 text-black">{data.arrivalDate}</td>
-                    </tr>
-                    <tr>
-                      <td className="border border-[#003366] py-2 px-3 font-bold text-black">Departure Date:</td>
-                      <td className="border border-[#003366] py-2 px-3 text-black">{data.departureDate}</td>
-                    </tr>
-                  </tbody>
-                </table>
-
-                {/* Favouring Line */}
-                <div className="bg-[#E65C00] text-white py-1.5 px-3 mb-2 border border-black uppercase font-bold text-[13px]">
-                  FAVOURING: {data.favouringGuest} X {data.favouringPax} PAX | {data.favouringVehicle} |
-                </div>
-                
-                <div className="text-[13px] text-black mb-3">
-                  Please provide One A/C Car for the following ground arrangements & services:
-                </div>
-
-                {/* Transfers & Services Table */}
-                <div className="font-bold text-[#003366] uppercase text-base mb-1">TRANSFERS & SERVICES:</div>
-                <table className="w-full border-collapse border border-black mb-6 text-[12px]">
-                  <thead>
-                    <tr>
-                      <th className="bg-[#003366] text-white py-2 px-3 text-center uppercase font-bold w-[20%]">DATES</th>
-                      <th className="bg-[#003366] text-white py-2 px-3 text-center uppercase font-bold w-[45%]">TRANSFERS & SIGHTSEEING</th>
-                      <th className="bg-[#003366] text-white py-2 px-3 text-center uppercase font-bold w-[35%]">HOTELS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.itinerary.map((item, i) => (
-                      <tr key={i}>
-                        <td className="border border-black py-2 px-3 font-bold text-black text-center whitespace-pre-wrap">{item.date.replace(' ', '\n')}</td>
-                        <td className="border border-black py-2 px-3 text-black">{item.details}</td>
-                        <td className="border border-black py-2 px-3 text-black">{item.hotel}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Important Notes */}
-                <div className="text-[13px] text-black leading-relaxed">
-                  <div className="text-[#E65C00] font-bold text-base uppercase mb-1">IMPORTANT NOTES:</div>
-                  <div><span className="font-bold">Inclusive Of:</span> All mention sightseeing & transfers, toll taxes, parking & driver allowances etc.</div>
-                  <div className="mt-1"><span className="font-bold">Please Note:</span> For any emergency you may directly contact to Mr. Tarun: 8445214371 Or Our Transport Manager: Mr. Nitin Mobile No.: <span className="font-bold">9018725486</span></div>
-                  <div className="mt-1"><span className="font-bold">Billing Instruction:</span> Bill us for the mentioned services. Extras to be collected directly.</div>
-                </div>
-
-              </div>
-
-              {/* Step D: PAGE 2 (General Terms & Conditions) */}
-              <div className="w-[210mm] min-h-[297mm] bg-white shrink-0 p-8 flex flex-col text-sm text-gray-900 border-t border-slate-200" style={{ fontFamily: "Arial, sans-serif" }}>
-                
-                {/* Header */}
-                <div className="text-center mb-6">
-                  <h1 className="text-2xl font-bold text-[#003366] tracking-wide mb-1">GENERAL TERMS & CONDITIONS</h1>
-                  <div className="w-full h-1 bg-[#003366]"></div>
-                </div>
-
-                {/* Terms List */}
-                <ul className="list-disc pl-6 text-[13px] text-black space-y-3 flex-1 mb-8">
-                  <li>M/S Triloki Tours & Travels is an individual travel agency, We provide the complete Amarnath Yatra Helicopter Packages.</li>
-                  <li>We are not authorized to sell just helicopter tickets.</li>
-                  <li>If there is any Hike in the fares by the relative authorities then the same has to be bear by the clients. The client cannot deny making the difference in the fare if any.</li>
-                  <li>M/S Triloki Tours & Travels will not be held responsible for any mishap/accident/injury/death/ Natural disaster, rites, curfew, landslide, or terrorism during the course of the tour.</li>
-                  <li>Force Majeure or Acts of God:- During any Package period, unforeseen events can take place, these events may include but may not be limited to the following terrorism, civil unrest, rioting, war, natural disaster, typhoons, floods, landslide, political crisis, curfew.</li>
-                  <li>M/s Triloki Tours & Travels can assist you in booking your Flight Tickets or Can book it for you against your request.</li>
-                  <li>The Amarnath Yatra Package, once booked by the client is totally under cancellation as per the company's policy.</li>
-                  <li>Hotels, Helicopter tickets, and Transport are subject to availability at the time of reservation.</li>
-                  <li>Who has made the booking(who is in conversation with our executive) he/ she is only the authorized person on behalf of the whole group to contact the company and its officials regarding any issue in booking, payment update, any amendment in booking and etc.</li>
-                  <li>By accessing, using, browsing or booking through our Web Site(s) or Directly or Indirectly through Triloki Tours & Travels or its representative(s), you agree that you have read, understood and agree to be bound by these terms and conditions & cancellation policy and you agree to comply with all applicable laws, rules and regulations.</li>
-                  <li>Any dispute relating to or arising out of all or any one of the above-stated terms and conditions shall be subject to the exclusive jurisdiction of Courts at New Delhi, India.</li>
-                </ul>
-
-                <div className="w-full h-[1.5px] bg-[#003366] mb-6"></div>
-
-                {/* Footer Signature */}
-                <div className="flex flex-col items-center mt-auto">
-                  <img src="/logo.png" alt="Logo" className="w-16 h-16 object-contain mb-2" />
-                  <div className="text-base font-bold text-[#003366] tracking-wide uppercase">TRILOKI TOURS & TRAVELS™</div>
-                  <div className="text-xs text-black">Authorized Signatory</div>
-                </div>
-
-              </div>
-
+        {/* Centered Preview Viewport */}
+        <div 
+          ref={previewContainerRef}
+          className="w-full flex-1 overflow-auto bg-slate-200/90 p-4 rounded-2xl flex flex-col items-center justify-start custom-scrollbar relative"
+        >
+          <div
+            style={{
+              width: `${Math.round(794 * currentScale)}px`,
+              minHeight: `${Math.round(1122 * currentScale)}px`,
+              transition: "width 0.15s ease-out, min-height 0.15s ease-out"
+            }}
+            className="relative shrink-0 flex flex-col items-center shadow-lg"
+          >
+            <div
+              style={{
+                transform: `scale(${currentScale})`,
+                transformOrigin: "top left",
+                width: "794px",
+                position: "absolute",
+                top: 0,
+                left: 0,
+                transition: "transform 0.15s ease-out"
+              }}
+            >
+              {renderVoucherContent("view")}
             </div>
           </div>
         </div>
+
       </div>
+
+      {/* Hidden Print Container for High-Res PDF Export */}
+      <div className="fixed -left-[99999px] top-0 pointer-events-none opacity-100 z-[-100]">
+        {renderVoucherContent("print")}
+      </div>
+
     </div>
   );
 }
