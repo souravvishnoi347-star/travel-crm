@@ -934,6 +934,25 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
 
         const imgData = canvas.toDataURL("image/jpeg", 0.98);
         pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+
+        // Add clickable PDF link annotations for all links in the document!
+        try {
+          const linkEls = el.querySelectorAll("a[href], [data-pdf-link]");
+          const containerRect = el.getBoundingClientRect();
+          linkEls.forEach((linkNode) => {
+            const rect = linkNode.getBoundingClientRect();
+            const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
+            if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
+              const x = ((rect.left - containerRect.left) / containerRect.width) * pageWidth;
+              const y = ((rect.top - containerRect.top) / containerRect.height) * pageHeight;
+              const w = (rect.width / containerRect.width) * pageWidth;
+              const h = (rect.height / containerRect.height) * pageHeight;
+              pdf.link(x, y, w, h, { url: targetUrl });
+            }
+          });
+        } catch (linkErr) {
+          console.warn("Could not attach PDF link annotations:", linkErr);
+        }
       }
 
       const filename = `${data.title.replace(/[^a-zA-Z0-9]/g, "_")}_${data.preparedFor.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
@@ -1102,6 +1121,15 @@ ${data.motto}`;
       {/* Page 1 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
+        <a 
+          href="https://traveltouttarakhand.com" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          data-pdf-link="https://traveltouttarakhand.com" 
+          className="font-bold text-[#0369a1] hover:underline"
+        >
+          🌐 www.traveltouttarakhand.com
+        </a>
         <span>Page 1 of 4</span>
       </div>
     </div>
@@ -1153,6 +1181,15 @@ ${data.motto}`;
       {/* Page 2 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
+        <a 
+          href="https://traveltouttarakhand.com" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          data-pdf-link="https://traveltouttarakhand.com" 
+          className="font-bold text-[#0369a1] hover:underline"
+        >
+          🌐 www.traveltouttarakhand.com
+        </a>
         <span>Page 2 of 4</span>
       </div>
     </div>
@@ -1270,6 +1307,15 @@ ${data.motto}`;
       {/* Page 3 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
+        <a 
+          href="https://traveltouttarakhand.com" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          data-pdf-link="https://traveltouttarakhand.com" 
+          className="font-bold text-[#0369a1] hover:underline"
+        >
+          🌐 www.traveltouttarakhand.com
+        </a>
         <span>Page 3 of 4</span>
       </div>
     </div>
@@ -1356,6 +1402,15 @@ ${data.motto}`;
           <h4 className="text-base font-serif font-bold text-[#0369a1]">{data.contactAgency}</h4>
           <p className="text-xs text-gray-800 font-semibold">{data.contactPerson}</p>
           <p className="text-xs text-gray-900 font-bold tracking-wider">{data.contactPhone}</p>
+          <a 
+            href="https://traveltouttarakhand.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://traveltouttarakhand.com" 
+            className="text-xs text-[#0369a1] font-bold tracking-wider hover:underline block mt-0.5"
+          >
+            🌐 www.traveltouttarakhand.com
+          </a>
           <p className="text-xs text-[#0369a1] font-serif font-bold mt-1 tracking-widest">{data.motto}</p>
         </div>
 
@@ -1364,6 +1419,15 @@ ${data.motto}`;
       {/* Page 4 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
+        <a 
+          href="https://traveltouttarakhand.com" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          data-pdf-link="https://traveltouttarakhand.com" 
+          className="font-bold text-[#0369a1] hover:underline"
+        >
+          🌐 www.traveltouttarakhand.com
+        </a>
         <span>Page 4 of 4</span>
       </div>
     </div>

@@ -148,6 +148,26 @@ export default function HotelVouchers() {
       let position = 0;
       
       pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
+
+      // Add clickable PDF link annotations
+      try {
+        const linkEls = element.querySelectorAll("a[href], [data-pdf-link]");
+        const containerRect = element.getBoundingClientRect();
+        linkEls.forEach((linkNode) => {
+          const rect = linkNode.getBoundingClientRect();
+          const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
+          if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
+            const x = ((rect.left - containerRect.left) / containerRect.width) * pdfWidth;
+            const y = ((rect.top - containerRect.top) / containerRect.height) * pdfHeight;
+            const w = (rect.width / containerRect.width) * pdfWidth;
+            const h = (rect.height / containerRect.height) * pdfHeight;
+            pdf.link(x, y, w, h, { url: targetUrl });
+          }
+        });
+      } catch (linkErr) {
+        console.warn("Could not attach PDF link annotations:", linkErr);
+      }
+
       heightLeft -= pdf.internal.pageSize.getHeight();
       
       while (heightLeft > 0) {
@@ -312,7 +332,18 @@ export default function HotelVouchers() {
               <div>
                 <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600 font-medium">Mr. Amit kumar · +91 9719038278</p>
+                <p className="text-[9.5px] text-gray-600 font-medium">
+                  Mr. Amit kumar · +91 9719038278 · 
+                  <a 
+                    href="https://traveltouttarakhand.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    data-pdf-link="https://traveltouttarakhand.com" 
+                    className="text-[#0369a1] font-bold hover:underline ml-1"
+                  >
+                    traveltouttarakhand.com
+                  </a>
+                </p>
               </div>
             </div>
             <div className="text-right">
@@ -323,6 +354,15 @@ export default function HotelVouchers() {
 
           <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
             <span>Travel to Uttarakhand · +91 9719038278</span>
+            <a 
+              href="https://traveltouttarakhand.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              data-pdf-link="https://traveltouttarakhand.com" 
+              className="font-bold text-[#0369a1] hover:underline"
+            >
+              🌐 www.traveltouttarakhand.com
+            </a>
             <span>Hotel Service Voucher · Page 1 of 1</span>
           </div>
         </div>

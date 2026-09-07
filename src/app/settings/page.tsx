@@ -327,6 +327,88 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* Card 3 – Data Management & Backups */}
+      <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+          <div className="flex items-center gap-3">
+            <Building2 className="w-5 h-5 text-emerald-600" />
+            <h2 className="text-lg font-semibold text-gray-900">
+              Data Management & Backups
+            </h2>
+          </div>
+          <span className="text-xs text-gray-500">1-Click Excel / CSV Export</span>
+        </div>
+
+        <div className="p-6">
+          <p className="text-sm text-gray-500 mb-4">
+            Export your entire CRM database for accounting, tax filing, or local offline backup.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  const saved = localStorage.getItem("triloki_leads");
+                  const leads = saved ? JSON.parse(saved) : [];
+                  const headers = ["Lead Name", "Phone", "Destination", "Budget", "Status", "Notes"];
+                  const rows = leads.map((l: any) => [l.name, l.phone, l.destination, l.budget, l.status, l.notes]);
+                  import("@/lib/exportCsv").then(m => m.exportToCsv("All_Leads_Backup", headers, rows));
+                } catch (e) {
+                  alert("Could not export leads: " + e);
+                }
+              }}
+              className="px-4 py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+            >
+              📥 Export All Leads (CSV)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  const saved = localStorage.getItem("triloki_vendors");
+                  const vendors = saved ? JSON.parse(saved) : [];
+                  const headers = ["Vendor Name", "Type", "Contact Person", "Phone", "Location", "Notes"];
+                  const rows = vendors.map((v: any) => [v.name, v.type, v.contact_person, v.phone, v.location, v.notes]);
+                  import("@/lib/exportCsv").then(m => m.exportToCsv("All_Vendors_Backup", headers, rows));
+                } catch (e) {
+                  alert("Could not export vendors: " + e);
+                }
+              }}
+              className="px-4 py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+            >
+              📥 Export All Vendors (CSV)
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  const backup = {
+                    date: new Date().toISOString(),
+                    settings: localStorage.getItem("triloki_settings_cache"),
+                    leads: localStorage.getItem("triloki_leads"),
+                    vendors: localStorage.getItem("triloki_vendors"),
+                    payables: localStorage.getItem("triloki_payables"),
+                    itineraryDraft: localStorage.getItem("triloki_itinerary_draft")
+                  };
+                  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = `Travel_to_Uttarakhand_Full_CRM_Backup_${new Date().toISOString().split("T")[0]}.json`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                } catch (e) {
+                  alert("Could not export JSON backup: " + e);
+                }
+              }}
+              className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 text-purple-800 border border-purple-200 rounded-xl text-xs font-semibold flex items-center gap-2 transition cursor-pointer"
+            >
+              💾 Full CRM Backup (JSON)
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* Save Button */}
       <div className="flex justify-end">
         <button

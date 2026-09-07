@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
-import { Plus, X, Phone, MapPin, IndianRupee, Loader2, Pencil, Trash2, Users } from "lucide-react";
+import { Plus, X, Phone, MapPin, IndianRupee, Loader2, Pencil, Trash2, Users, Download } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { exportToCsv } from "@/lib/exportCsv";
 
 const COLUMNS = [
   { id: "new_inquiry",  label: "New Inquiry",  color: "bg-blue-500",    light: "bg-blue-50",   border: "border-blue-200",  text: "text-blue-700"   },
@@ -53,6 +54,35 @@ export default function LeadPipeline() {
   const [editLead, setEditLead] = useState<Lead | null>(null);
   const [form, setForm] = useState(emptyForm);
 
+  // Initialize from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("triloki_leads_board");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === "object") {
+            setBoard(parsed);
+          }
+        } else {
+          localStorage.setItem("triloki_leads_board", JSON.stringify(DEFAULT_LEADS));
+          localStorage.setItem("triloki_leads", JSON.stringify(Object.values(DEFAULT_LEADS).flat()));
+        }
+      } catch (e) {}
+    }
+    fetchLeads();
+  }, []);
+
+  const saveBoardLocally = (newBoard: BoardState) => {
+    setBoard(newBoard);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("triloki_leads_board", JSON.stringify(newBoard));
+        localStorage.setItem("triloki_leads", JSON.stringify(Object.values(newBoard).flat()));
+      } catch {}
+    }
+  };
+
   const fetchLeads = async () => {
     try {
       const { data } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
@@ -62,14 +92,12 @@ export default function LeadPipeline() {
           const col = lead.status || "new_inquiry";
           if (grouped[col]) grouped[col].push(lead);
         });
-        setBoard(grouped);
+        saveBoardLocally(grouped);
       }
     } catch (err) {
       console.warn("Background leads sync:", err);
     }
   };
-
-  useEffect(() => { fetchLeads(); }, []);
 
   const openNewForm = () => {
     setEditLead(null);
@@ -86,21 +114,69 @@ export default function LeadPipeline() {
   const handleSave = async () => {
     if (!form.name.trim()) return;
     setSaving(true);
-    const payload = { name: form.name, phone: form.phone, destination: form.destination, budget: Number(form.budget) || 0, notes: form.notes, status: form.status };
+    const targetCol = form.status || "new_inquiry";
+
     if (editLead) {
-      await supabase.from("leads").update(payload).eq("id", editLead.id);
+      const updatedLead: Lead = {
+        ...editLead,
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        destination: form.destination.trim(),
+        budget: Number(form.budget) || 0,
+        notes: form.notes.trim(),
+        status: targetCol
+      };
+
+      const newBoard: BoardState = { ...board };
+      // Remove from old col
+      Object.keys(newBoard).forEach(col => {
+        newBoard[col] = newBoard[col].filter(l => l.id !== editLead.id);
+      });
+      // Add to new col
+      newBoard[targetCol] = [updatedLead, ...(newBoard[targetCol] || [])];
+      saveBoardLocally(newBoard);
+
+      try {
+        await supabase.from("leads").update(updatedLead).eq("id", editLead.id);
+      } catch {}
     } else {
-      await supabase.from("leads").insert(payload);
+      const newLead: Lead = {
+        id: `lead-${Date.now()}`,
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        destination: form.destination.trim(),
+        budget: Number(form.budget) || 0,
+        notes: form.notes.trim(),
+        status: targetCol,
+        created_at: new Date().toISOString().split("T")[0]
+      };
+
+      const newBoard: BoardState = {
+        ...board,
+        [targetCol]: [newLead, ...(board[targetCol] || [])]
+      };
+      saveBoardLocally(newBoard);
+
+      try {
+        await supabase.from("leads").insert(newLead);
+      } catch {}
     }
+
     setSaving(false);
     setShowForm(false);
-    fetchLeads();
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this lead?")) return;
-    await supabase.from("leads").delete().eq("id", id);
-    fetchLeads();
+    const newBoard: BoardState = { ...board };
+    Object.keys(newBoard).forEach(col => {
+      newBoard[col] = newBoard[col].filter(l => l.id !== id);
+    });
+    saveBoardLocally(newBoard);
+
+    try {
+      await supabase.from("leads").delete().eq("id", id);
+    } catch {}
   };
 
   const onDragEnd = async (result: DropResult) => {
@@ -110,16 +186,36 @@ export default function LeadPipeline() {
 
     const sourceCol = [...board[source.droppableId]];
     const destCol = source.droppableId === destination.droppableId ? sourceCol : [...board[destination.droppableId]];
-    const [moved] = sourceCol.splice(source.index, 1);
-    destCol.splice(destination.index, 0, moved);
+
+    const [movedLead] = sourceCol.splice(source.index, 1);
+    movedLead.status = destination.droppableId;
+    destCol.splice(destination.index, 0, movedLead);
 
     const newBoard = { ...board, [source.droppableId]: sourceCol, [destination.droppableId]: destCol };
-    setBoard(newBoard);
+    saveBoardLocally(newBoard);
 
     // Update status in DB
     if (source.droppableId !== destination.droppableId) {
-      await supabase.from("leads").update({ status: destination.droppableId }).eq("id", draggableId);
+      try {
+        await supabase.from("leads").update({ status: destination.droppableId }).eq("id", draggableId);
+      } catch {}
     }
+  };
+
+  // CSV Export
+  const handleExportCsv = () => {
+    const allLeads = Object.values(board).flat();
+    const headers = ["Lead Name", "Phone Number", "Destination", "Budget (INR)", "Status", "Notes", "Inquiry Date"];
+    const rows = allLeads.map(l => [
+      l.name,
+      l.phone || "",
+      l.destination || "",
+      l.budget || 0,
+      COLUMNS.find(c => c.id === l.status)?.label || l.status,
+      l.notes || "",
+      l.created_at || ""
+    ]);
+    exportToCsv(`Travel_to_Uttarakhand_Leads_${new Date().toISOString().split("T")[0]}`, headers, rows);
   };
 
   const totalLeads = Object.values(board).flat().length;
@@ -137,12 +233,21 @@ export default function LeadPipeline() {
             {totalLeads} total leads &bull; ₹{confirmedValue.toLocaleString()} confirmed revenue
           </p>
         </div>
-        <button
-          onClick={openNewForm}
-          className="flex items-center gap-2 px-4 py-2.5 bg-sky-500 text-white rounded-lg font-medium text-sm hover:bg-sky-600 transition-colors shadow-md shadow-sky-600/20 cursor-pointer"
-        >
-          <Plus size={16} /> Add New Lead
-        </button>
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={handleExportCsv}
+            className="flex items-center gap-2 px-3.5 py-2 bg-white text-gray-700 border border-gray-200 rounded-lg font-medium text-sm hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer hover:border-gray-300"
+            title="Export all leads to Excel / CSV"
+          >
+            <Download size={16} className="text-emerald-600" /> Export CSV
+          </button>
+          <button
+            onClick={openNewForm}
+            className="flex items-center gap-2 px-4 py-2 bg-sky-500 text-white rounded-lg font-medium text-sm hover:bg-sky-600 transition-colors shadow-md shadow-sky-600/20 cursor-pointer"
+          >
+            <Plus size={16} /> Add New Lead
+          </button>
+        </div>
       </div>
 
       {/* Board */}

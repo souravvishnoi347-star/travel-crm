@@ -227,6 +227,26 @@ export default function InvoicesPage() {
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       
       pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
+
+      // Add clickable PDF link annotations
+      try {
+        const linkEls = element.querySelectorAll("a[href], [data-pdf-link]");
+        const containerRect = element.getBoundingClientRect();
+        linkEls.forEach((linkNode) => {
+          const rect = linkNode.getBoundingClientRect();
+          const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
+          if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
+            const x = ((rect.left - containerRect.left) / containerRect.width) * pdfWidth;
+            const y = ((rect.top - containerRect.top) / containerRect.height) * pdfHeight;
+            const w = (rect.width / containerRect.width) * pdfWidth;
+            const h = (rect.height / containerRect.height) * pdfHeight;
+            pdf.link(x, y, w, h, { url: targetUrl });
+          }
+        });
+      } catch (linkErr) {
+        console.warn("Could not attach PDF link annotations:", linkErr);
+      }
+
       pdf.save(`Invoice_${data.invoiceNumber.replace(/[^a-zA-Z0-9-]/g, "_")}_${data.guestName.replace(/\s+/g, "_")}.pdf`);
     } catch (error: any) {
       console.error("PDF generation failed:", error);
@@ -274,7 +294,7 @@ export default function InvoicesPage() {
               <span>·</span>
               <span>Email: <strong className="text-gray-700">info@traveltouttarakhand.com</strong></span>
               <span>·</span>
-              <span>Website: <strong className="text-gray-700">www.traveltouttarakhand.com</strong></span>
+              <span>Website: <a href="https://traveltouttarakhand.com" target="_blank" rel="noopener noreferrer" data-pdf-link="https://traveltouttarakhand.com" className="text-[#0369a1] font-bold hover:underline">www.traveltouttarakhand.com</a></span>
             </div>
           </div>
 
@@ -396,7 +416,18 @@ export default function InvoicesPage() {
               <div>
                 <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600 font-medium">Mr. Amit kumar · +91 9719038278</p>
+                <p className="text-[9.5px] text-gray-600 font-medium">
+                  Mr. Amit kumar · +91 9719038278 · 
+                  <a 
+                    href="https://traveltouttarakhand.com" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    data-pdf-link="https://traveltouttarakhand.com" 
+                    className="text-[#0369a1] font-bold hover:underline ml-1"
+                  >
+                    traveltouttarakhand.com
+                  </a>
+                </p>
               </div>
             </div>
             <div className="text-right">
@@ -407,6 +438,15 @@ export default function InvoicesPage() {
 
           <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
             <span>Travel to Uttarakhand · +91 9719038278</span>
+            <a 
+              href="https://traveltouttarakhand.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              data-pdf-link="https://traveltouttarakhand.com" 
+              className="font-bold text-[#0369a1] hover:underline"
+            >
+              🌐 www.traveltouttarakhand.com
+            </a>
             <span>Tax Invoice · Page 1 of 1</span>
           </div>
         </div>

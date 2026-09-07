@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Building2, Car, IndianRupee, MapPin, Phone, User, CheckCircle2, Circle, Pencil, Trash2, X, Loader2 } from "lucide-react";
+import { Plus, Building2, Car, IndianRupee, MapPin, Phone, User, CheckCircle2, Circle, Pencil, Trash2, X, Loader2, Download } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { exportToCsv } from "@/lib/exportCsv";
 
 type Vendor = {
   id: string;
@@ -253,6 +254,32 @@ export default function VendorsPage() {
     }
   };
 
+  const handleExportVendorsCsv = () => {
+    const headers = ["Vendor Name", "Service Type", "Contact Person", "Phone", "Location", "Notes"];
+    const rows = vendors.map(v => [
+      v.name,
+      v.type === "hotel" ? "Hotel Partner" : "Transport Partner",
+      v.contact_person || "",
+      v.phone || "",
+      v.location || "",
+      v.notes || ""
+    ]);
+    exportToCsv(`Travel_to_Uttarakhand_Vendors_${new Date().toISOString().split("T")[0]}`, headers, rows);
+  };
+
+  const handleExportPayablesCsv = () => {
+    const headers = ["Vendor Name", "Category", "Description", "Amount (INR)", "Status", "Due Date"];
+    const rows = payables.map(p => [
+      p.vendors?.name || "Unknown Vendor",
+      p.vendors?.type || "",
+      p.description,
+      p.amount,
+      p.status === "paid" ? "Paid" : "Outstanding / Pending",
+      p.due_date || ""
+    ]);
+    exportToCsv(`Travel_to_Uttarakhand_Payables_${new Date().toISOString().split("T")[0]}`, headers, rows);
+  };
+
   const totalPending = payables.filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount), 0);
   const totalPaid = payables.filter(p => p.status === 'paid').reduce((sum, p) => sum + Number(p.amount), 0);
 
@@ -295,9 +322,14 @@ export default function VendorsPage() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col">
               <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                 <h2 className="font-semibold text-gray-800">All Suppliers ({vendors.length})</h2>
-                <button onClick={openNewVendor} className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 text-sky-600 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors">
-                  <Plus size={16} /> Add Vendor
-                </button>
+                <div className="flex items-center gap-2">
+                  <button onClick={handleExportVendorsCsv} className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer">
+                    <Download size={14} className="text-emerald-600" /> Export CSV
+                  </button>
+                  <button onClick={openNewVendor} className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 text-sky-600 rounded-lg text-sm font-medium hover:bg-sky-200 transition-colors cursor-pointer">
+                    <Plus size={16} /> Add Vendor
+                  </button>
+                </div>
               </div>
               <div className="overflow-x-auto flex-1">
                 <table className="w-full text-left border-collapse min-w-max">
@@ -381,9 +413,14 @@ export default function VendorsPage() {
               <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex-1 flex flex-col">
                 <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                   <h2 className="font-semibold text-gray-800">Payment Entries ({payables.length})</h2>
-                  <button onClick={() => { setPayableForm(emptyPayable); setShowPayableForm(true); }} className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 text-sky-600 rounded-lg text-sm font-medium hover:bg-orange-200 transition-colors">
-                    <Plus size={16} /> Add Payable
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={handleExportPayablesCsv} className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition-colors shadow-2xs cursor-pointer">
+                      <Download size={14} className="text-emerald-600" /> Export CSV
+                    </button>
+                    <button onClick={() => { setPayableForm(emptyPayable); setShowPayableForm(true); }} className="flex items-center gap-2 px-3 py-1.5 bg-sky-100 text-sky-600 rounded-lg text-sm font-medium hover:bg-sky-200 transition-colors cursor-pointer">
+                      <Plus size={16} /> Add Payable
+                    </button>
+                  </div>
                 </div>
                 <div className="overflow-x-auto flex-1">
                   <table className="w-full text-left border-collapse min-w-max">
