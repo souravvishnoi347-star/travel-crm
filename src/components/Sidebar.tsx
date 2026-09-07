@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Hotel, Car, Menu, X, Plane, Map, Users, Store, Settings } from "lucide-react";
+import { LayoutDashboard, FileText, Hotel, Car, Menu, X, Plane, Map, Users, Store, Settings, LogOut } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -19,6 +20,7 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, logout } = useAuth();
 
   return (
     <>
@@ -100,16 +102,27 @@ export function Sidebar() {
           })}
         </div>
 
-        <div className="p-4 border-t border-gray-100 bg-slate-50/70">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-700 font-bold text-xs shadow-2xs">
-              TU
+        <div className="p-3.5 border-t border-gray-100 bg-slate-50/80 flex items-center justify-between">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-700 font-bold text-xs shadow-2xs shrink-0">
+              {user?.name ? user.name.charAt(0) : "A"}
             </div>
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-gray-900">Admin Desk</span>
-              <span className="text-[11px] text-gray-500">desk@traveltouttarakhand.com</span>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xs font-bold text-gray-900 truncate">
+                {user?.name || "Mr. Amit kumar"}
+              </span>
+              <span className="text-[10px] text-gray-500 truncate">
+                {user?.email || "admin@traveltouttarakhand.com"}
+              </span>
             </div>
           </div>
+          <button
+            onClick={logout}
+            title="Sign Out of CRM"
+            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer shrink-0"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
         </div>
       </div>
     </>

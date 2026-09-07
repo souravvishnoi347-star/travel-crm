@@ -10,7 +10,12 @@ import {
   EyeOff,
   Building2,
   Key,
+  Lock,
+  ShieldCheck,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface SettingsData {
   id: string;
@@ -50,6 +55,44 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [showKey, setShowKey] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+
+  // Security & Password Change States
+  const { changePassword } = useAuth();
+  const [currentPass, setCurrentPass] = useState("");
+  const [newPass, setNewPass] = useState("");
+  const [confirmPass, setConfirmPass] = useState("");
+  const [passError, setPassError] = useState<string | null>(null);
+  const [passSuccess, setPassSuccess] = useState<string | null>(null);
+  const [passLoading, setPassLoading] = useState(false);
+
+  const handleUpdatePassword = (e: React.FormEvent) => {
+    e.preventDefault();
+    setPassError(null);
+    setPassSuccess(null);
+
+    if (newPass !== confirmPass) {
+      setPassError("New Password and Confirm Password do not match.");
+      return;
+    }
+    if (newPass.length < 6) {
+      setPassError("New Password must be at least 6 characters long.");
+      return;
+    }
+
+    setPassLoading(true);
+    setTimeout(() => {
+      const res = changePassword(currentPass, newPass);
+      if (res.success) {
+        setPassSuccess("Password successfully updated! Your new password is now active.");
+        setCurrentPass("");
+        setNewPass("");
+        setConfirmPass("");
+      } else {
+        setPassError(res.error || "Failed to update password.");
+      }
+      setPassLoading(false);
+    }, 400);
+  };
 
   useEffect(() => {
     fetchSettings();
@@ -405,6 +448,108 @@ export default function SettingsPage() {
             >
               💾 Full CRM Backup (JSON)
             </button>
+          </div>
+        </div>
+
+        {/* Card 4 – CRM Access, Security & Password Management */}
+        <div className="bg-white rounded-2xl shadow-xs border border-gray-100 p-6 space-y-5">
+          <div className="flex items-center gap-3 pb-4 border-b border-gray-100">
+            <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+              <Lock className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-gray-900">CRM Login Security & Password</h2>
+              <p className="text-xs text-gray-500">Manage administrator login credentials and change password</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            {/* Left: Credentials Info & Recovery PIN */}
+            <div className="space-y-3 bg-gray-50/70 p-4 rounded-xl border border-gray-200/80 text-xs">
+              <span className="font-bold text-gray-700 uppercase tracking-wider text-[10.5px] block">
+                Authorized Login Particulars
+              </span>
+              <div className="space-y-1.5 text-gray-600">
+                <p>• <strong>Primary Admin ID:</strong> <span className="font-mono text-gray-900">admin@traveltouttarakhand.com</span></p>
+                <p>• <strong>Alternate Admin ID:</strong> <span className="font-mono text-gray-900">souravvishnoi347@gmail.com</span></p>
+                <p>• <strong>Default Password:</strong> <span className="font-mono text-gray-900">Devbhoomi@2026</span></p>
+                <p>• <strong>Master Recovery PIN:</strong> <span className="font-mono text-amber-700 font-bold">971903</span> (Linked to +91 9719038278)</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-sky-50 border border-sky-100 text-[11px] text-sky-800 flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-sky-600 shrink-0 mt-0.5" />
+                <span>If you forget your password on the login screen, click <strong>&quot;Forgot Password?&quot;</strong> and verify with your registered email and Master PIN <strong>971903</strong>.</span>
+              </div>
+            </div>
+
+            {/* Right: Change Password Form */}
+            <form onSubmit={handleUpdatePassword} className="space-y-3 text-xs">
+              <span className="font-bold text-gray-700 uppercase tracking-wider text-[10.5px] block">
+                Update Administrator Password
+              </span>
+
+              {passError && (
+                <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{passError}</span>
+                </div>
+              )}
+
+              {passSuccess && (
+                <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 shrink-0" />
+                  <span>{passSuccess}</span>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">Current Password</label>
+                <input
+                  type="password"
+                  required
+                  value={currentPass}
+                  onChange={(e) => setCurrentPass(e.target.value)}
+                  placeholder="Enter current password"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">New Password</label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={newPass}
+                  onChange={(e) => setNewPass(e.target.value)}
+                  placeholder="Minimum 6 characters"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-gray-600 font-medium mb-1">Confirm New Password</label>
+                <input
+                  type="password"
+                  required
+                  minLength={6}
+                  value={confirmPass}
+                  onChange={(e) => setConfirmPass(e.target.value)}
+                  placeholder="Re-type new password"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={passLoading}
+                className="px-4 py-2 bg-[#0369a1] hover:bg-[#0284c7] text-white rounded-lg font-semibold transition flex items-center gap-2 cursor-pointer disabled:opacity-60"
+              >
+                {passLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Lock className="w-3.5 h-3.5" />}
+                Update Password
+              </button>
+            </form>
+
           </div>
         </div>
       </div>
