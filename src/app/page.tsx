@@ -65,6 +65,19 @@ export default function Dashboard() {
   const [stats, setStats] = useState<DashboardStats>(STATIC_INITIAL_STATS);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const savedPayables = localStorage.getItem("triloki_payables");
+        if (savedPayables) {
+          const parsed = JSON.parse(savedPayables);
+          if (Array.isArray(parsed)) {
+            const pendingTotal = parsed.filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount), 0);
+            setStats(prev => ({ ...prev, pendingPayables: pendingTotal }));
+          }
+        }
+      } catch (e) {}
+    }
+
     async function fetchDashboardData() {
       try {
         const [leadsRes, payablesRes, itinsRes] = await Promise.allSettled([

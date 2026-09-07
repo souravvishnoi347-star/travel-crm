@@ -31,9 +31,19 @@ import {
   ZoomIn,
   ZoomOut,
   Maximize2,
-  Minimize2
+  Minimize2,
+  Upload,
+  Image as ImageIcon,
+  ArrowUp,
+  ArrowDown
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+
+export interface ItineraryPhoto {
+  id: string;
+  url: string;
+  caption: string;
+}
 
 export interface DayPlan {
   id: number;
@@ -90,6 +100,11 @@ export interface ItineraryData {
   contactPerson: string;
   contactPhone: string;
   motto: string;
+
+  // Visual Photos & Gallery
+  photos?: ItineraryPhoto[];
+  showPhotosPage1?: boolean;
+  showPhotosPage3?: boolean;
 }
 
 // Exact preset matching "chardham yatra from mathura 2026 (1).pdf"
@@ -296,13 +311,71 @@ const CHARDHAM_PRESET: ItineraryData = {
   contactAgency: "Travel to Uttarakhand",
   contactPerson: "Mr. Amit kumar",
   contactPhone: "+91 9719038278",
-  motto: "ॐ नमः शिवाय"
+  motto: "ॐ नमः शिवाय",
+
+  photos: [
+    {
+      id: "ph-1",
+      url: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+      caption: "Shri Kedarnath Dham & Snow Peaks"
+    },
+    {
+      id: "ph-2",
+      url: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80",
+      caption: "VIP Kedarnath Helicopter Shuttle"
+    },
+    {
+      id: "ph-3",
+      url: "https://images.unsplash.com/photo-1609766857329-a1789c09935f?auto=format&fit=crop&w=800&q=80",
+      caption: "Holy Shri Badrinath Ji Temple"
+    }
+  ],
+  showPhotosPage1: true,
+  showPhotosPage3: true
 };
+
+const CURATED_PHOTO_PRESETS = [
+  {
+    id: "preset-kedarnath",
+    url: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80",
+    caption: "Shri Kedarnath Dham & Snow Peaks"
+  },
+  {
+    id: "preset-heli",
+    url: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80",
+    caption: "VIP Kedarnath Helicopter Shuttle"
+  },
+  {
+    id: "preset-badrinath",
+    url: "https://images.unsplash.com/photo-1609766857329-a1789c09935f?auto=format&fit=crop&w=800&q=80",
+    caption: "Holy Shri Badrinath Ji Temple"
+  },
+  {
+    id: "preset-aarti",
+    url: "https://images.unsplash.com/photo-1596766141386-f13ce38bb172?auto=format&fit=crop&w=800&q=80",
+    caption: "Har Ki Pauri Holy Ganga Aarti"
+  },
+  {
+    id: "preset-highway",
+    url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=800&q=80",
+    caption: "Scenic Himalayan Mountain Vista"
+  },
+  {
+    id: "preset-rishikesh",
+    url: "https://images.unsplash.com/photo-1600100397608-f010f443906a?auto=format&fit=crop&w=800&q=80",
+    caption: "Rishikesh Divine Ganga Ghat"
+  }
+];
 
 export default function ItineraryBuilder() {
   const [data, setData] = useState<ItineraryData>(CHARDHAM_PRESET);
-  const [activeTab, setActiveTab] = useState<"overview" | "days" | "pricing" | "inclusions" | "contact">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "days" | "pricing" | "photos" | "inclusions" | "contact">("overview");
   
+  // Custom Photo Input state
+  const [photoUrlInput, setPhotoUrlInput] = useState("");
+  const [photoCaptionInput, setPhotoCaptionInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   // Preview Controls
   const [activePreviewPage, setActivePreviewPage] = useState<number | "all">(1);
   const [autoScale, setAutoScale] = useState<number>(0.55);
@@ -734,6 +807,95 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
   const addExclusion = () => setData({ ...data, exclusions: [...data.exclusions, "New exclusion item"] });
   const removeExclusion = (index: number) => setData({ ...data, exclusions: data.exclusions.filter((_, i) => i !== index) });
 
+  // Photo handlers
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const newPhotos: ItineraryPhoto[] = [];
+    let processedCount = 0;
+
+    Array.from(files).forEach((file, index) => {
+      if (!file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        if (base64) {
+          newPhotos.push({
+            id: `photo-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 4)}`,
+            url: base64,
+            caption: file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ")
+          });
+        }
+        processedCount++;
+        if (processedCount === files.length) {
+          setData(prev => ({
+            ...prev,
+            photos: [...(prev.photos || []), ...newPhotos]
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = "";
+  };
+
+  const handleAddPhotoByUrl = () => {
+    if (!photoUrlInput.trim()) return;
+    const newPhoto: ItineraryPhoto = {
+      id: `photo-${Date.now()}`,
+      url: photoUrlInput.trim(),
+      caption: photoCaptionInput.trim() || "Spiritual Sightseeing Highlight"
+    };
+    setData(prev => ({
+      ...prev,
+      photos: [...(prev.photos || []), newPhoto]
+    }));
+    setPhotoUrlInput("");
+    setPhotoCaptionInput("");
+  };
+
+  const handleAddPresetPhoto = (preset: typeof CURATED_PHOTO_PRESETS[0]) => {
+    const newPhoto: ItineraryPhoto = {
+      id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      url: preset.url,
+      caption: preset.caption
+    };
+    setData(prev => ({
+      ...prev,
+      photos: [...(prev.photos || []), newPhoto]
+    }));
+  };
+
+  const handleUpdatePhotoCaption = (id: string, caption: string) => {
+    setData(prev => ({
+      ...prev,
+      photos: (prev.photos || []).map(p => p.id === id ? { ...p, caption } : p)
+    }));
+  };
+
+  const handleRemovePhoto = (id: string) => {
+    setData(prev => ({
+      ...prev,
+      photos: (prev.photos || []).filter(p => p.id !== id)
+    }));
+  };
+
+  const handleMovePhoto = (index: number, direction: "up" | "down") => {
+    const current = [...(data.photos || [])];
+    if (direction === "up" && index > 0) {
+      const temp = current[index];
+      current[index] = current[index - 1];
+      current[index - 1] = temp;
+    } else if (direction === "down" && index < current.length - 1) {
+      const temp = current[index];
+      current[index] = current[index + 1];
+      current[index + 1] = temp;
+    }
+    setData(prev => ({ ...prev, photos: current }));
+  };
+
   // PDF Multi-Page Generation (captures from print containers)
   const handleDownloadPDF = async () => {
     try {
@@ -849,6 +1011,34 @@ ${data.motto}`;
           {data.dhamsSubtitle}
         </p>
       </div>
+
+      {/* Visual Photo Strip Showcase */}
+      {data.showPhotosPage1 !== false && data.photos && data.photos.length > 0 && (
+        <div className="relative z-10 my-3">
+          <div className={`grid gap-2.5 ${
+            data.photos.length === 1 ? 'grid-cols-1' : 
+            data.photos.length === 2 ? 'grid-cols-2' : 
+            'grid-cols-3'
+          }`}>
+            {data.photos.slice(0, 3).map((photo, pIdx) => (
+              <div key={photo.id || pIdx} className="relative rounded-lg overflow-hidden border border-[#0369a1]/30 shadow-xs bg-gray-100 h-28 flex flex-col justify-end">
+                <img 
+                  src={photo.url} 
+                  alt={photo.caption || `Highlight ${pIdx + 1}`} 
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                {photo.caption && (
+                  <div className="relative z-10 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-2 py-1 pt-4 text-center">
+                    <p className="text-[10px] font-semibold text-white tracking-wide truncate">
+                      {photo.caption}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Summary Details Table */}
       <div className="relative z-10 my-4 border-t border-b border-gray-200 py-3 text-xs space-y-2">
@@ -1044,6 +1234,36 @@ ${data.motto}`;
             {data.pricingNote}
           </p>
         </div>
+
+        {/* Page 3 Destinations Gallery */}
+        {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
+          <div className="pt-2 border-t border-gray-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <h4 className="text-sm font-serif font-bold text-[#0369a1]">
+                Sacred Yatra Destinations & Sightseeing
+              </h4>
+              <span className="text-[10px] text-gray-500 font-medium">Spiritual Landmarks</span>
+            </div>
+            <div className={`grid gap-2.5 ${data.photos.length === 1 ? 'grid-cols-1' : data.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              {(data.photos.length > 3 ? data.photos.slice(1, 4) : data.photos).map((photo, pIdx) => (
+                <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-gray-200 shadow-xs bg-gray-50 flex flex-col">
+                  <div className="h-24 relative overflow-hidden bg-gray-100">
+                    <img 
+                      src={photo.url} 
+                      alt={photo.caption || `Landmark ${pIdx + 1}`} 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  {photo.caption && (
+                    <div className="p-1 bg-white border-t border-gray-100 text-center">
+                      <p className="text-[10px] font-semibold text-gray-800 truncate px-1">{photo.caption}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
       </div>
 
@@ -1287,16 +1507,22 @@ ${data.motto}`;
               3. Pricing ({data.pricingTiers.length})
             </button>
             <button
+              onClick={() => setActiveTab("photos")}
+              className={`px-3 py-2 rounded-lg transition cursor-pointer shrink-0 ${activeTab === "photos" ? "bg-sky-50 text-sky-600 font-bold" : "hover:text-gray-900"}`}
+            >
+              4. Photos ({(data.photos || []).length})
+            </button>
+            <button
               onClick={() => setActiveTab("inclusions")}
               className={`px-3 py-2 rounded-lg transition cursor-pointer shrink-0 ${activeTab === "inclusions" ? "bg-sky-50 text-sky-600 font-bold" : "hover:text-gray-900"}`}
             >
-              4. Inclusions
+              5. Inclusions
             </button>
             <button
               onClick={() => setActiveTab("contact")}
               className={`px-3 py-2 rounded-lg transition cursor-pointer shrink-0 ${activeTab === "contact" ? "bg-sky-50 text-sky-600 font-bold" : "hover:text-gray-900"}`}
             >
-              5. Policies
+              6. Policies
             </button>
           </div>
 
@@ -1634,7 +1860,192 @@ ${data.motto}`;
             </div>
           )}
 
-          {/* TAB 4: INCLUSIONS & EXCLUSIONS */}
+          {/* TAB 4: PICTURES & VISUAL SHOWCASE */}
+          {activeTab === "photos" && (
+            <div className="space-y-4 text-xs">
+              
+              {/* Display Options & Toggles */}
+              <div className="p-3 bg-sky-50/70 border border-sky-200 rounded-xl space-y-2">
+                <span className="font-bold text-sky-900 block text-[11px] uppercase tracking-wider">
+                  Brochure Display Toggles
+                </span>
+                <div className="space-y-1.5">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.showPhotosPage1 !== false}
+                      onChange={e => setData({ ...data, showPhotosPage1: e.target.checked })}
+                      className="rounded text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-gray-700 font-medium">Show Photo Strip on Page 1 (Cover / Journey Glance)</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.showPhotosPage3 !== false}
+                      onChange={e => setData({ ...data, showPhotosPage3: e.target.checked })}
+                      className="rounded text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-gray-700 font-medium">Show Photo Gallery on Page 3 (Destinations Highlights)</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Upload Custom Photos Section */}
+              <div className="p-4 bg-white border-2 border-dashed border-sky-300 rounded-xl text-center hover:bg-sky-50/30 transition">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handlePhotoUpload}
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  id="itinerary-photo-upload"
+                />
+                <label htmlFor="itinerary-photo-upload" className="cursor-pointer flex flex-col items-center gap-2">
+                  <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="font-bold text-gray-800 text-xs">Upload Client / Custom Photos</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">Click to browse from Computer / Phone (JPG, PNG, WebP)</p>
+                  </div>
+                  <span className="px-3 py-1 bg-sky-600 text-white rounded-lg font-semibold text-[11px] mt-1 shadow-xs hover:bg-sky-700 transition">
+                    Select Images
+                  </span>
+                </label>
+              </div>
+
+              {/* Add by URL */}
+              <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
+                <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider">
+                  Or Add Picture by Direct Web URL
+                </span>
+                <div className="space-y-2">
+                  <input
+                    type="url"
+                    placeholder="Paste image URL (https://...)"
+                    value={photoUrlInput}
+                    onChange={e => setPhotoUrlInput(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Photo caption (e.g. Kedarnath Mandir)"
+                      value={photoCaptionInput}
+                      onChange={e => setPhotoCaptionInput(e.target.value)}
+                      className="flex-1 px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
+                    />
+                    <button
+                      onClick={handleAddPhotoByUrl}
+                      disabled={!photoUrlInput.trim()}
+                      className="px-3 py-1.5 bg-sky-600 text-white rounded font-semibold text-xs disabled:opacity-50 hover:bg-sky-700 transition cursor-pointer"
+                    >
+                      Add Photo
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Pre-curated Presets */}
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-gray-700 text-[11px] uppercase tracking-wider">
+                    Quick-Add Sacred Uttarakhand Presets
+                  </span>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {CURATED_PHOTO_PRESETS.map((preset) => (
+                    <button
+                      key={preset.id}
+                      onClick={() => handleAddPresetPhoto(preset)}
+                      className="flex items-center gap-2 p-1.5 bg-gray-50 border border-gray-200 hover:border-sky-300 hover:bg-sky-50 rounded-lg text-left transition cursor-pointer group"
+                    >
+                      <img src={preset.url} alt={preset.caption} className="w-9 h-9 rounded object-cover shrink-0" />
+                      <div className="overflow-hidden">
+                        <p className="text-[10px] font-bold text-gray-800 truncate group-hover:text-sky-700">{preset.caption}</p>
+                        <p className="text-[9px] text-gray-500">+ Click to Add</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Active Photos List */}
+              <div className="space-y-2 pt-2 border-t border-gray-200">
+                <div className="flex items-center justify-between">
+                  <span className="font-bold text-gray-800 text-xs">
+                    Current Brochure Photos ({(data.photos || []).length})
+                  </span>
+                  {(data.photos || []).length > 0 && (
+                    <button
+                      onClick={() => setData({ ...data, photos: [] })}
+                      className="text-[10px] text-rose-500 hover:underline cursor-pointer"
+                    >
+                      Remove All
+                    </button>
+                  )}
+                </div>
+
+                {(data.photos || []).length === 0 ? (
+                  <p className="text-gray-400 italic text-center py-4 bg-gray-50 rounded-lg">
+                    No pictures added yet. Upload client pictures or click presets above!
+                  </p>
+                ) : (
+                  <div className="space-y-2">
+                    {(data.photos || []).map((photo, pIdx) => (
+                      <div key={photo.id || pIdx} className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-3">
+                        <div className="w-14 h-12 rounded-lg overflow-hidden bg-gray-200 shrink-0 relative border border-gray-200">
+                          <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" />
+                        </div>
+                        <div className="flex-1 space-y-1">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase">Photo #{pIdx + 1}</span>
+                            <div className="flex items-center gap-1">
+                              <button
+                                onClick={() => handleMovePhoto(pIdx, "up")}
+                                disabled={pIdx === 0}
+                                className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 cursor-pointer"
+                                title="Move Up"
+                              >
+                                <ArrowUp className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleMovePhoto(pIdx, "down")}
+                                disabled={pIdx === (data.photos || []).length - 1}
+                                className="p-1 text-gray-400 hover:text-gray-700 disabled:opacity-30 cursor-pointer"
+                                title="Move Down"
+                              >
+                                <ArrowDown className="w-3.5 h-3.5" />
+                              </button>
+                              <button
+                                onClick={() => handleRemovePhoto(photo.id)}
+                                className="p-1 text-rose-400 hover:text-rose-600 cursor-pointer ml-1"
+                                title="Delete Photo"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </div>
+                          <input
+                            type="text"
+                            value={photo.caption}
+                            onChange={e => handleUpdatePhotoCaption(photo.id, e.target.value)}
+                            placeholder="Enter photo caption..."
+                            className="w-full px-2 py-0.5 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
+
+          {/* TAB 5: INCLUSIONS & EXCLUSIONS */}
           {activeTab === "inclusions" && (
             <div className="space-y-5 text-xs">
               {/* Inclusions */}

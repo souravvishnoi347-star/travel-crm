@@ -56,6 +56,36 @@ export default function VendorsPage() {
 
   const [payableForm, setPayableForm] = useState(emptyPayable);
 
+  // Initialize from localStorage first, then sync with Supabase
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const savedVendors = localStorage.getItem("triloki_vendors");
+        if (savedVendors) {
+          const parsed = JSON.parse(savedVendors);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setVendors(parsed);
+          }
+        } else {
+          localStorage.setItem("triloki_vendors", JSON.stringify(DEFAULT_VENDORS));
+        }
+
+        const savedPayables = localStorage.getItem("triloki_payables");
+        if (savedPayables) {
+          const parsed = JSON.parse(savedPayables);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setPayables(parsed);
+          }
+        } else {
+          localStorage.setItem("triloki_payables", JSON.stringify(DEFAULT_PAYABLES));
+        }
+      } catch (e) {
+        console.warn("Could not load vendors/payables from localStorage:", e);
+      }
+    }
+    fetchData();
+  }, []);
+
   const fetchData = async () => {
     try {
       const [vRes, pRes] = await Promise.allSettled([
@@ -65,29 +95,61 @@ export default function VendorsPage() {
 
       if (vRes.status === "fulfilled" && vRes.value.data && vRes.value.data.length > 0) {
         setVendors(vRes.value.data);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("triloki_vendors", JSON.stringify(vRes.value.data));
+        }
       }
       if (pRes.status === "fulfilled" && pRes.value.data && pRes.value.data.length > 0) {
         setPayables(pRes.value.data);
+        if (typeof window !== "undefined") {
+          localStorage.setItem("triloki_payables", JSON.stringify(pRes.value.data));
+        }
       }
     } catch (err) {
       console.warn("Background vendors sync:", err);
     }
   };
 
-  useEffect(() => { fetchData(); }, []);
-
   // Vendor actions
   const handleSaveVendor = async () => {
     if (!vendorForm.name.trim()) return;
     setSaving(true);
+
+    let updatedVendors: Vendor[] = [];
     if (editVendorId) {
-      await supabase.from("vendors").update(vendorForm).eq("id", editVendorId);
+      updatedVendors = vendors.map(v => v.id === editVendorId ? { ...v, ...vendorForm } : v);
     } else {
-      await supabase.from("vendors").insert(vendorForm);
+      const newVendor: Vendor = {
+        id: `v-${Date.now()}`,
+        name: vendorForm.name.trim(),
+        type: vendorForm.type || "hotel",
+        contact_person: vendorForm.contact_person || "",
+        phone: vendorForm.phone || "",
+        location: vendorForm.location || "",
+        notes: vendorForm.notes || ""
+      };
+      updatedVendors = [newVendor, ...vendors];
     }
+
+    // Instant local state & localStorage update
+    setVendors(updatedVendors);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("triloki_vendors", JSON.stringify(updatedVendors));
+    }
+
     setSaving(false);
     setShowVendorForm(false);
-    fetchData();
+
+    // Background Supabase sync
+    try {
+      if (editVendorId) {
+        await supabase.from("vendors").update(vendorForm).eq("id", editVendorId);
+      } else {
+        await supabase.from("vendors").insert(vendorForm);
+      }
+    } catch (err) {
+      console.warn("Supabase vendor sync failed, saved locally:", err);
+    }
   };
 
   const openNewVendor = () => {
@@ -104,35 +166,91 @@ export default function VendorsPage() {
 
   const handleDeleteVendor = async (id: string) => {
     if (!confirm("Delete this vendor? This will also delete their payables.")) return;
-    await supabase.from("vendors").delete().eq("id", id);
-    fetchData();
+    const updatedVendors = vendors.filter(v => v.id !== id);
+    const updatedPayables = payables.filter(p => p.vendor_id !== id);
+
+    setVendors(updatedVendors);
+    setPayables(updatedPayables);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("triloki_vendors", JSON.stringify(updatedVendors));
+      localStorage.setItem("triloki_payables", JSON.stringify(updatedPayables));
+    }
+
+    try {
+      await supabase.from("vendors").delete().eq("id", id);
+    } catch (err) {
+      console.warn("Supabase vendor delete failed:", err);
+    }
   };
 
   // Payable actions
   const handleSavePayable = async () => {
     if (!payableForm.vendor_id || !payableForm.amount || !payableForm.description) return;
     setSaving(true);
-    await supabase.from("payables").insert({
+
+    const matchedVendor = vendors.find(v => v.id === payableForm.vendor_id);
+    const newPayable: Payable = {
+      id: `p-${Date.now()}`,
       vendor_id: payableForm.vendor_id,
-      description: payableForm.description,
+      description: payableForm.description.trim(),
       amount: Number(payableForm.amount),
-      due_date: payableForm.due_date || null
-    });
+      status: "pending",
+      due_date: payableForm.due_date || new Date().toISOString().split("T")[0],
+      vendors: matchedVendor ? { name: matchedVendor.name, type: matchedVendor.type } : undefined
+    };
+
+    const updatedPayables = [newPayable, ...payables];
+    setPayables(updatedPayables);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("triloki_payables", JSON.stringify(updatedPayables));
+    }
+
     setSaving(false);
     setShowPayableForm(false);
-    fetchData();
+
+    try {
+      await supabase.from("payables").insert({
+        vendor_id: payableForm.vendor_id,
+        description: payableForm.description,
+        amount: Number(payableForm.amount),
+        due_date: payableForm.due_date || null
+      });
+    } catch (err) {
+      console.warn("Supabase payable sync failed, saved locally:", err);
+    }
   };
 
   const handleMarkPaid = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === "paid" ? "pending" : "paid";
-    await supabase.from("payables").update({ status: newStatus }).eq("id", id);
-    fetchData();
+    const updatedPayables = payables.map(p => p.id === id ? { ...p, status: newStatus } : p);
+
+    // Instant local state & localStorage update
+    setPayables(updatedPayables);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("triloki_payables", JSON.stringify(updatedPayables));
+    }
+
+    try {
+      await supabase.from("payables").update({ status: newStatus }).eq("id", id);
+    } catch (err) {
+      console.warn("Supabase mark paid sync failed, updated locally:", err);
+    }
   };
 
   const handleDeletePayable = async (id: string) => {
     if (!confirm("Delete this payable entry?")) return;
-    await supabase.from("payables").delete().eq("id", id);
-    fetchData();
+    const updatedPayables = payables.filter(p => p.id !== id);
+
+    setPayables(updatedPayables);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("triloki_payables", JSON.stringify(updatedPayables));
+    }
+
+    try {
+      await supabase.from("payables").delete().eq("id", id);
+    } catch (err) {
+      console.warn("Supabase payable delete failed:", err);
+    }
   };
 
   const totalPending = payables.filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount), 0);
