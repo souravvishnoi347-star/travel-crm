@@ -292,9 +292,9 @@ export default function InvoicesPage() {
             <div className="text-[10px] text-gray-500 mt-1 flex flex-wrap justify-center gap-2">
               <span>Contact: <strong className="text-gray-700">+91 9719038278</strong></span>
               <span>·</span>
-              <span>Email: <strong className="text-gray-700">info@traveltouttarakhand.com</strong></span>
+              <span>Email: <strong className="text-gray-700">info@traveltouttrakhand.com</strong></span>
               <span>·</span>
-              <span>Website: <a href="https://traveltouttarakhand.com" target="_blank" rel="noopener noreferrer" data-pdf-link="https://traveltouttarakhand.com" className="text-[#0369a1] font-bold hover:underline">www.traveltouttarakhand.com</a></span>
+              <span>Website: <a href="https://traveltouttrakhand.com" target="_blank" rel="noopener noreferrer" data-pdf-link="https://traveltouttrakhand.com" className="text-[#0369a1] font-bold hover:underline">www.traveltouttrakhand.com</a></span>
             </div>
           </div>
 
@@ -419,13 +419,13 @@ export default function InvoicesPage() {
                 <p className="text-[9.5px] text-gray-600 font-medium">
                   Mr. Amit kumar · +91 9719038278 · 
                   <a 
-                    href="https://traveltouttarakhand.com" 
+                    href="https://traveltouttrakhand.com" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    data-pdf-link="https://traveltouttarakhand.com" 
+                    data-pdf-link="https://traveltouttrakhand.com" 
                     className="text-[#0369a1] font-bold hover:underline ml-1"
                   >
-                    traveltouttarakhand.com
+                    traveltouttrakhand.com
                   </a>
                 </p>
               </div>
@@ -439,13 +439,13 @@ export default function InvoicesPage() {
           <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
             <span>Travel to Uttarakhand · +91 9719038278</span>
             <a 
-              href="https://traveltouttarakhand.com" 
+              href="https://traveltouttrakhand.com" 
               target="_blank" 
               rel="noopener noreferrer" 
-              data-pdf-link="https://traveltouttarakhand.com" 
+              data-pdf-link="https://traveltouttrakhand.com" 
               className="font-bold text-[#0369a1] hover:underline"
             >
-              🌐 www.traveltouttarakhand.com
+              🌐 www.traveltouttrakhand.com
             </a>
             <span>Tax Invoice · Page 1 of 1</span>
           </div>

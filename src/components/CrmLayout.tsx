@@ -37,12 +37,12 @@ export function CrmLayout({ children }: { children: React.ReactNode }) {
           <GlobalSearch />
           <div className="flex items-center gap-3 text-xs">
             <a 
-              href="https://traveltouttarakhand.com" 
+              href="https://traveltouttrakhand.com" 
               target="_blank" 
               rel="noopener noreferrer"
               className="hidden md:flex items-center gap-1.5 text-sky-700 font-semibold bg-sky-50 px-2.5 py-1 rounded-lg hover:bg-sky-100 transition"
             >
-              🌐 traveltouttarakhand.com
+              🌐 traveltouttrakhand.com
             </a>
             <span className="hidden sm:inline text-gray-300">|</span>
             <div className="flex items-center gap-2">

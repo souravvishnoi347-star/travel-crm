@@ -32,8 +32,8 @@ const defaultSettings: Omit<SettingsData, "id"> = {
   company_name: "Travel to Uttarakhand",
   gst_number: "05AAAPL1234F1Z1",
   phone: "+91 9719038278",
-  email: "info@traveltouttarakhand.com",
-  website: "https://traveltouttarakhand.com",
+  email: "info@traveltouttrakhand.com",
+  website: "https://traveltouttrakhand.com",
   logo_url: "/logo.png",
   openai_key: "",
 };
@@ -278,7 +278,7 @@ export default function SettingsPage() {
               type="email"
               value={settings.email}
               onChange={(e) => update("email", e.target.value)}
-              placeholder="info@traveltouttarakhand.com"
+              placeholder="info@traveltouttrakhand.com"
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
@@ -292,7 +292,7 @@ export default function SettingsPage() {
               type="url"
               value={settings.website}
               onChange={(e) => update("website", e.target.value)}
-              placeholder="https://traveltouttarakhand.com"
+              placeholder="https://traveltouttrakhand.com"
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>
@@ -471,7 +471,7 @@ export default function SettingsPage() {
                 Authorized Login Particulars
               </span>
               <div className="space-y-1.5 text-gray-600">
-                <p>• <strong>Primary Admin ID:</strong> <span className="font-mono text-gray-900">admin@traveltouttarakhand.com</span></p>
+                <p>• <strong>Primary Admin ID:</strong> <span className="font-mono text-gray-900">admin@traveltouttrakhand.com</span></p>
                 <p>• <strong>Alternate Admin ID:</strong> <span className="font-mono text-gray-900">souravvishnoi347@gmail.com</span></p>
                 <p>• <strong>Default Password:</strong> <span className="font-mono text-gray-900">Devbhoomi@2026</span></p>
                 <p>• <strong>Master Recovery PIN:</strong> <span className="font-mono text-amber-700 font-bold">971903</span> (Linked to +91 9719038278)</p>

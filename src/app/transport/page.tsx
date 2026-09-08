@@ -355,13 +355,13 @@ export default function TransportVouchers() {
                 <p className="text-[9.5px] text-gray-600 font-medium">
                   Mr. Amit kumar · +91 9719038278 · 
                   <a 
-                    href="https://traveltouttarakhand.com" 
+                    href="https://traveltouttrakhand.com" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    data-pdf-link="https://traveltouttarakhand.com" 
+                    data-pdf-link="https://traveltouttrakhand.com" 
                     className="text-[#0369a1] font-bold hover:underline ml-1"
                   >
-                    traveltouttarakhand.com
+                    traveltouttrakhand.com
                   </a>
                 </p>
               </div>
@@ -375,13 +375,13 @@ export default function TransportVouchers() {
           <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
             <span>Travel to Uttarakhand · +91 9719038278</span>
             <a 
-              href="https://traveltouttarakhand.com" 
+              href="https://traveltouttrakhand.com" 
               target="_blank" 
               rel="noopener noreferrer" 
-              data-pdf-link="https://traveltouttarakhand.com" 
+              data-pdf-link="https://traveltouttrakhand.com" 
               className="font-bold text-[#0369a1] hover:underline"
             >
-              🌐 www.traveltouttarakhand.com
+              🌐 www.traveltouttrakhand.com
             </a>
             <span>Transport Service Voucher · Page 1 of 1</span>
           </div>

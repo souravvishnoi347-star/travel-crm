@@ -112,7 +112,7 @@ export function Sidebar() {
                 {user?.name || "Mr. Amit kumar"}
               </span>
               <span className="text-[10px] text-gray-500 truncate">
-                {user?.email || "admin@traveltouttarakhand.com"}
+                {user?.email || "admin@traveltouttrakhand.com"}
               </span>
             </div>
           </div>

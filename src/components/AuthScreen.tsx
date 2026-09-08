@@ -23,7 +23,7 @@ export function AuthScreen() {
   const [mode, setMode] = useState<"login" | "forgot">("login");
   
   // Login Form States
-  const [loginId, setLoginId] = useState("admin@traveltouttarakhand.com");
+  const [loginId, setLoginId] = useState("admin@traveltouttrakhand.com");
   const [loginPassword, setLoginPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -31,7 +31,7 @@ export function AuthScreen() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   // Forgot Password States
-  const [forgotEmail, setForgotEmail] = useState("admin@traveltouttarakhand.com");
+  const [forgotEmail, setForgotEmail] = useState("admin@traveltouttrakhand.com");
   const [recoveryPin, setRecoveryPin] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -55,7 +55,7 @@ export function AuthScreen() {
   };
 
   const handleQuickFill = () => {
-    setLoginId("admin@traveltouttarakhand.com");
+    setLoginId("admin@traveltouttrakhand.com");
     setLoginPassword("Devbhoomi@2026");
     setLoginError(null);
   };
@@ -157,7 +157,7 @@ export function AuthScreen() {
                       required
                       value={loginId}
                       onChange={(e) => setLoginId(e.target.value)}
-                      placeholder="admin@traveltouttarakhand.com"
+                      placeholder="admin@traveltouttrakhand.com"
                       className="w-full pl-9 pr-3.5 py-2.5 bg-gray-50/80 border border-gray-200 rounded-xl text-xs text-gray-900 placeholder:text-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition"
                     />
                   </div>
@@ -175,7 +175,7 @@ export function AuthScreen() {
                         setMode("forgot");
                         setForgotError(null);
                         setForgotSuccess(null);
-                        setForgotEmail(loginId || "admin@traveltouttarakhand.com");
+                        setForgotEmail(loginId || "admin@traveltouttrakhand.com");
                       }}
                       className="text-[11px] font-semibold text-sky-600 hover:text-sky-700 hover:underline cursor-pointer"
                     >
@@ -253,7 +253,7 @@ export function AuthScreen() {
                       </button>
                     </div>
                     <p className="text-[10.5px] text-gray-600">
-                      ID: <strong className="font-mono text-gray-900">admin@traveltouttarakhand.com</strong>
+                      ID: <strong className="font-mono text-gray-900">admin@traveltouttrakhand.com</strong>
                     </p>
                     <p className="text-[10.5px] text-gray-600">
                       Pass: <strong className="font-mono text-gray-900">Devbhoomi@2026</strong>
@@ -313,7 +313,7 @@ export function AuthScreen() {
                     required
                     value={forgotEmail}
                     onChange={(e) => setForgotEmail(e.target.value)}
-                    placeholder="admin@traveltouttarakhand.com"
+                    placeholder="admin@traveltouttrakhand.com"
                     className="w-full px-3.5 py-2 bg-gray-50/80 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                 </div>

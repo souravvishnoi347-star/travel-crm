@@ -35,9 +35,20 @@ import {
   Upload,
   Image as ImageIcon,
   ArrowUp,
-  ArrowDown
+  ArrowDown,
+  Wand2,
+  Tag,
+  Filter,
+  RefreshCw
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { 
+  getStoredDhamGallery, 
+  saveStoredDhamGallery, 
+  pickDhamPhotosForItinerary, 
+  DhamGalleryPhoto, 
+  DHAM_CATEGORIES 
+} from "@/lib/dhamGallery";
 
 export interface ItineraryPhoto {
   id: string;
@@ -376,6 +387,15 @@ export default function ItineraryBuilder() {
   const [photoCaptionInput, setPhotoCaptionInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Dham Photo Gallery & AI Smart Selection state
+  const [dhamGallery, setDhamGallery] = useState<DhamGalleryPhoto[]>([]);
+  const [selectedDhamCategory, setSelectedDhamCategory] = useState<string>("all");
+  const [newDhamUploadTag, setNewDhamUploadTag] = useState<DhamGalleryPhoto["dham"]>("kedarnath");
+  const [newDhamUploadUrl, setNewDhamUploadUrl] = useState("");
+  const [newDhamUploadCaption, setNewDhamUploadCaption] = useState("");
+  const [aiPhotoNotification, setAiPhotoNotification] = useState<string | null>(null);
+  const dhamFileInputRef = useRef<HTMLInputElement>(null);
+
   // Preview Controls
   const [activePreviewPage, setActivePreviewPage] = useState<number | "all">(1);
   const [autoScale, setAutoScale] = useState<number>(0.55);
@@ -482,6 +502,7 @@ export default function ItineraryBuilder() {
       }
     }
     fetchKey();
+    setDhamGallery(getStoredDhamGallery());
   }, []);
 
   // Quick Prompt Chips
@@ -666,6 +687,10 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
         overnightStay: d.overnightStay || "Hotel"
       }));
 
+      // Auto-pick matching photos from the Dham Photo Gallery for the generated itinerary
+      const activeGallery = dhamGallery.length > 0 ? dhamGallery : getStoredDhamGallery();
+      const matchedPhotos = pickDhamPhotosForItinerary(parsed, activeGallery);
+
       setData(prev => ({
         ...prev,
         title: parsed.title || prev.title,
@@ -684,6 +709,7 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
         glanceStartEnd: parsed.glanceStartEnd || prev.glanceStartEnd,
         glancePackages: parsed.glancePackages || prev.glancePackages,
         days: newDays.length > 0 ? newDays : prev.days,
+        photos: matchedPhotos.length > 0 ? matchedPhotos : prev.photos,
         pricingSubtitle: parsed.pricingSubtitle || prev.pricingSubtitle,
         pricingTiers: Array.isArray(parsed.pricingTiers) && parsed.pricingTiers.length > 0 ? parsed.pricingTiers : prev.pricingTiers,
         pricingNote: parsed.pricingNote || prev.pricingNote,
@@ -692,6 +718,10 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
         goodToKnow: Array.isArray(parsed.goodToKnow) && parsed.goodToKnow.length > 0 ? parsed.goodToKnow : prev.goodToKnow,
         bookingPayment: Array.isArray(parsed.bookingPayment) && parsed.bookingPayment.length > 0 ? parsed.bookingPayment : prev.bookingPayment
       }));
+
+      if (matchedPhotos.length > 0) {
+        setAiPhotoNotification(`✨ AI Auto-Matched ${matchedPhotos.length} Dham photos from Gallery for this tour.`);
+      }
 
       setActiveTab("overview");
     } catch (err: any) {
@@ -894,6 +924,105 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
       current[index + 1] = temp;
     }
     setData(prev => ({ ...prev, photos: current }));
+  };
+
+  // Dham Photo Gallery Handlers
+  const handleAutoMatchPhotos = () => {
+    const activeGallery = dhamGallery.length > 0 ? dhamGallery : getStoredDhamGallery();
+    const matched = pickDhamPhotosForItinerary(data, activeGallery);
+    if (matched.length > 0) {
+      setData(prev => ({ ...prev, photos: matched }));
+      setAiPhotoNotification(`✨ AI auto-matched ${matched.length} Dham photos for your itinerary.`);
+      setTimeout(() => setAiPhotoNotification(null), 4500);
+    }
+  };
+
+  const handleTogglePhotoInBrochure = (photo: DhamGalleryPhoto) => {
+    const current = data.photos || [];
+    const exists = current.some(p => p.url === photo.url);
+    if (exists) {
+      setData(prev => ({
+        ...prev,
+        photos: (prev.photos || []).filter(p => p.url !== photo.url)
+      }));
+    } else {
+      const newPhoto: ItineraryPhoto = {
+        id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        url: photo.url,
+        caption: photo.caption
+      };
+      setData(prev => ({
+        ...prev,
+        photos: [...(prev.photos || []), newPhoto]
+      }));
+    }
+  };
+
+  const handleAddDhamPhotoFromUrl = () => {
+    if (!newDhamUploadUrl.trim()) return;
+    const cat = DHAM_CATEGORIES.find(c => c.key === newDhamUploadTag);
+    const newPhoto: DhamGalleryPhoto = {
+      id: `custom-dham-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      url: newDhamUploadUrl.trim(),
+      caption: newDhamUploadCaption.trim() || `${cat?.label || "Holy"} Highlight`,
+      dham: newDhamUploadTag,
+      dhamLabel: cat?.label || "Uttarakhand Dham",
+      isCustom: true,
+      createdAt: new Date().toISOString()
+    };
+    const updated = [newPhoto, ...dhamGallery];
+    setDhamGallery(updated);
+    saveStoredDhamGallery(updated);
+    setNewDhamUploadUrl("");
+    setNewDhamUploadCaption("");
+    setAiPhotoNotification(`✓ Added new photo to ${newPhoto.dhamLabel} library!`);
+    setTimeout(() => setAiPhotoNotification(null), 3500);
+  };
+
+  const handleDhamFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const cat = DHAM_CATEGORIES.find(c => c.key === newDhamUploadTag);
+    const addedPhotos: DhamGalleryPhoto[] = [];
+    let count = 0;
+
+    Array.from(files).forEach((file, index) => {
+      if (!file.type.startsWith("image/")) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const base64 = event.target?.result as string;
+        if (base64) {
+          addedPhotos.push({
+            id: `custom-dham-${Date.now()}-${index}-${Math.random().toString(36).substr(2, 4)}`,
+            url: base64,
+            caption: newDhamUploadCaption.trim() || file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "),
+            dham: newDhamUploadTag,
+            dhamLabel: cat?.label || "Uttarakhand Dham",
+            isCustom: true,
+            createdAt: new Date().toISOString()
+          });
+        }
+        count++;
+        if (count === files.length) {
+          const updated = [...addedPhotos, ...dhamGallery];
+          setDhamGallery(updated);
+          saveStoredDhamGallery(updated);
+          setNewDhamUploadCaption("");
+          setAiPhotoNotification(`✓ Uploaded ${addedPhotos.length} photo(s) to ${cat?.label} library!`);
+          setTimeout(() => setAiPhotoNotification(null), 3500);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    e.target.value = "";
+  };
+
+  const handleDeleteDhamPhoto = (id: string) => {
+    const updated = dhamGallery.filter(p => p.id !== id);
+    setDhamGallery(updated);
+    saveStoredDhamGallery(updated);
   };
 
   // PDF Multi-Page Generation (captures from print containers)
@@ -1122,13 +1251,13 @@ ${data.motto}`;
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
-          href="https://traveltouttarakhand.com" 
+          href="https://traveltouttrakhand.com" 
           target="_blank" 
           rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttarakhand.com" 
+          data-pdf-link="https://traveltouttrakhand.com" 
           className="font-bold text-[#0369a1] hover:underline"
         >
-          🌐 www.traveltouttarakhand.com
+          🌐 www.traveltouttrakhand.com
         </a>
         <span>Page 1 of 4</span>
       </div>
@@ -1182,13 +1311,13 @@ ${data.motto}`;
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
-          href="https://traveltouttarakhand.com" 
+          href="https://traveltouttrakhand.com" 
           target="_blank" 
           rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttarakhand.com" 
+          data-pdf-link="https://traveltouttrakhand.com" 
           className="font-bold text-[#0369a1] hover:underline"
         >
-          🌐 www.traveltouttarakhand.com
+          🌐 www.traveltouttrakhand.com
         </a>
         <span>Page 2 of 4</span>
       </div>
@@ -1308,13 +1437,13 @@ ${data.motto}`;
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
-          href="https://traveltouttarakhand.com" 
+          href="https://traveltouttrakhand.com" 
           target="_blank" 
           rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttarakhand.com" 
+          data-pdf-link="https://traveltouttrakhand.com" 
           className="font-bold text-[#0369a1] hover:underline"
         >
-          🌐 www.traveltouttarakhand.com
+          🌐 www.traveltouttrakhand.com
         </a>
         <span>Page 3 of 4</span>
       </div>
@@ -1403,13 +1532,13 @@ ${data.motto}`;
           <p className="text-xs text-gray-800 font-semibold">{data.contactPerson}</p>
           <p className="text-xs text-gray-900 font-bold tracking-wider">{data.contactPhone}</p>
           <a 
-            href="https://traveltouttarakhand.com" 
+            href="https://traveltouttrakhand.com" 
             target="_blank" 
             rel="noopener noreferrer" 
-            data-pdf-link="https://traveltouttarakhand.com" 
+            data-pdf-link="https://traveltouttrakhand.com" 
             className="text-xs text-[#0369a1] font-bold tracking-wider hover:underline block mt-0.5"
           >
-            🌐 www.traveltouttarakhand.com
+            🌐 www.traveltouttrakhand.com
           </a>
           <p className="text-xs text-[#0369a1] font-serif font-bold mt-1 tracking-widest">{data.motto}</p>
         </div>
@@ -1420,13 +1549,13 @@ ${data.motto}`;
       <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
-          href="https://traveltouttarakhand.com" 
+          href="https://traveltouttrakhand.com" 
           target="_blank" 
           rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttarakhand.com" 
+          data-pdf-link="https://traveltouttrakhand.com" 
           className="font-bold text-[#0369a1] hover:underline"
         >
-          🌐 www.traveltouttarakhand.com
+          🌐 www.traveltouttrakhand.com
         </a>
         <span>Page 4 of 4</span>
       </div>
@@ -1541,6 +1670,20 @@ ${data.motto}`;
                 )}
               </button>
 
+              <div className="flex items-center justify-between text-[10.5px] text-purple-800 bg-purple-100/60 px-2.5 py-1.5 rounded-lg">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <Wand2 className="w-3.5 h-3.5 text-purple-600" />
+                  AI automatically auto-picks Dham photos from your Gallery
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("photos")}
+                  className="font-bold underline hover:text-purple-950 cursor-pointer"
+                >
+                  Gallery ({dhamGallery.length})
+                </button>
+              </div>
+
               {aiError && (
                 <div className="p-2.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-700 text-xs flex items-start gap-2">
                   <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
@@ -1574,7 +1717,7 @@ ${data.motto}`;
               onClick={() => setActiveTab("photos")}
               className={`px-3 py-2 rounded-lg transition cursor-pointer shrink-0 ${activeTab === "photos" ? "bg-sky-50 text-sky-600 font-bold" : "hover:text-gray-900"}`}
             >
-              4. Photos ({(data.photos || []).length})
+              4. Photos & Dham Gallery ({(data.photos || []).length})
             </button>
             <button
               onClick={() => setActiveTab("inclusions")}
@@ -1955,84 +2098,232 @@ ${data.motto}`;
                 </div>
               </div>
 
-              {/* Upload Custom Photos Section */}
-              <div className="p-4 bg-white border-2 border-dashed border-sky-300 rounded-xl text-center hover:bg-sky-50/30 transition">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={handlePhotoUpload}
-                  multiple
-                  accept="image/*"
-                  className="hidden"
-                  id="itinerary-photo-upload"
-                />
-                <label htmlFor="itinerary-photo-upload" className="cursor-pointer flex flex-col items-center gap-2">
-                  <div className="w-10 h-10 rounded-full bg-sky-100 text-sky-600 flex items-center justify-center">
-                    <Upload className="w-5 h-5" />
+              {/* BLOCK: DHAM PHOTO GALLERY & AI ASSET POOL */}
+              <div className="bg-gradient-to-br from-amber-50/50 via-sky-50/40 to-white border-2 border-sky-200 rounded-2xl p-4 space-y-3.5 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-sky-100">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-sky-600 text-white flex items-center justify-center font-bold shadow-xs shrink-0">
+                      <Wand2 className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-xs flex items-center gap-1.5">
+                        Dham Photo Gallery & AI Asset Pool
+                        <span className="text-[10px] font-semibold bg-sky-100 text-sky-800 px-2 py-0.5 rounded-full">
+                          {dhamGallery.length} Photos
+                        </span>
+                      </h3>
+                      <p className="text-[10.5px] text-gray-500">
+                        Organize holy Dham pictures. AI automatically matches and picks pictures for your itinerary.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="font-bold text-gray-800 text-xs">Upload Client / Custom Photos</p>
-                    <p className="text-[11px] text-gray-500 mt-0.5">Click to browse from Computer / Phone (JPG, PNG, WebP)</p>
-                  </div>
-                  <span className="px-3 py-1 bg-sky-600 text-white rounded-lg font-semibold text-[11px] mt-1 shadow-xs hover:bg-sky-700 transition">
-                    Select Images
-                  </span>
-                </label>
-              </div>
 
-              {/* Add by URL */}
-              <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2">
-                <span className="font-bold text-gray-700 block text-[11px] uppercase tracking-wider">
-                  Or Add Picture by Direct Web URL
-                </span>
-                <div className="space-y-2">
-                  <input
-                    type="url"
-                    placeholder="Paste image URL (https://...)"
-                    value={photoUrlInput}
-                    onChange={e => setPhotoUrlInput(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
-                  />
-                  <div className="flex gap-2">
+                  {/* AI Auto-Match Button */}
+                  <button
+                    type="button"
+                    onClick={handleAutoMatchPhotos}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700 text-white font-bold rounded-xl text-xs shadow-xs transition cursor-pointer shrink-0"
+                    title="Scan current itinerary & auto-pick matching Dham photos"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+                    <span>⚡ AI Auto-Match Photos</span>
+                  </button>
+                </div>
+
+                {/* Notification toast */}
+                {aiPhotoNotification && (
+                  <div className="p-2.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-xs flex items-center gap-2 animate-in fade-in">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                    <span className="font-medium">{aiPhotoNotification}</span>
+                  </div>
+                )}
+
+                {/* Upload to Dham Gallery Section */}
+                <div className="bg-white p-3 rounded-xl border border-gray-200 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-gray-700 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                      <Upload className="w-3.5 h-3.5 text-sky-600" />
+                      Add Picture to Dham Gallery Library
+                    </span>
+                    <span className="text-[10px] text-gray-400">Auto-saved for AI</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Select Dham / Location</label>
+                      <select
+                        value={newDhamUploadTag}
+                        onChange={(e) => setNewDhamUploadTag(e.target.value as any)}
+                        className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                      >
+                        <option value="kedarnath">Shri Kedarnath Dham</option>
+                        <option value="badrinath">Shri Badrinath Ji Dham</option>
+                        <option value="gangotri">Shri Gangotri Dham</option>
+                        <option value="yamunotri">Shri Yamunotri Dham</option>
+                        <option value="helicopter">Kedarnath Helicopter Sector</option>
+                        <option value="haridwar_rishikesh">Haridwar & Rishikesh</option>
+                        <option value="chopta_tungnath">Chopta & Tungnath Mahadev</option>
+                        <option value="himalayas">Scenic Himalayas & Confluences</option>
+                        <option value="custom">Custom / Other Location</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Photo Caption (Title)</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Kedarnath Mandir Darshan & Snow"
+                        value={newDhamUploadCaption}
+                        onChange={(e) => setNewDhamUploadCaption(e.target.value)}
+                        className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Upload Inputs: File or URL */}
+                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
                     <input
-                      type="text"
-                      placeholder="Photo caption (e.g. Kedarnath Mandir)"
-                      value={photoCaptionInput}
-                      onChange={e => setPhotoCaptionInput(e.target.value)}
-                      className="flex-1 px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
+                      type="file"
+                      ref={dhamFileInputRef}
+                      onChange={handleDhamFileUpload}
+                      multiple
+                      accept="image/*"
+                      className="hidden"
+                      id="dham-gallery-file-upload"
                     />
-                    <button
-                      onClick={handleAddPhotoByUrl}
-                      disabled={!photoUrlInput.trim()}
-                      className="px-3 py-1.5 bg-sky-600 text-white rounded font-semibold text-xs disabled:opacity-50 hover:bg-sky-700 transition cursor-pointer"
+                    <label
+                      htmlFor="dham-gallery-file-upload"
+                      className="flex-1 py-1.5 px-3 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg font-semibold text-xs text-center cursor-pointer transition flex items-center justify-center gap-1.5"
                     >
-                      Add Photo
-                    </button>
+                      <Upload className="w-3.5 h-3.5" />
+                      Browse Images from Device
+                    </label>
+
+                    <div className="flex-1 flex gap-1.5">
+                      <input
+                        type="url"
+                        placeholder="Or paste web image URL..."
+                        value={newDhamUploadUrl}
+                        onChange={(e) => setNewDhamUploadUrl(e.target.value)}
+                        className="flex-1 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddDhamPhotoFromUrl}
+                        disabled={!newDhamUploadUrl.trim()}
+                        className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-semibold text-xs disabled:opacity-50 transition cursor-pointer"
+                      >
+                        Save
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Pre-curated Presets */}
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="font-bold text-gray-700 text-[11px] uppercase tracking-wider">
-                    Quick-Add Sacred Uttarakhand Presets
+                {/* Category Filter Pills */}
+                <div className="space-y-1.5">
+                  <span className="font-bold text-gray-700 text-[11px] uppercase tracking-wider block">
+                    Filter Gallery by Holy Dham
                   </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {DHAM_CATEGORIES.map(cat => {
+                      const count = cat.key === "all"
+                        ? dhamGallery.length
+                        : cat.key === "custom"
+                        ? dhamGallery.filter(p => p.isCustom).length
+                        : dhamGallery.filter(p => p.dham === cat.key).length;
+                      const isSelected = selectedDhamCategory === cat.key;
+                      return (
+                        <button
+                          key={cat.key}
+                          type="button"
+                          onClick={() => setSelectedDhamCategory(cat.key)}
+                          className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold transition cursor-pointer flex items-center gap-1 ${
+                            isSelected
+                              ? "bg-sky-600 text-white shadow-2xs"
+                              : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                          }`}
+                        >
+                          <span>{cat.label}</span>
+                          <span className={`text-[9.5px] px-1.5 py-0.2 rounded-full ${
+                            isSelected ? "bg-sky-700 text-white" : "bg-gray-100 text-gray-500"
+                          }`}>
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {CURATED_PHOTO_PRESETS.map((preset) => (
-                    <button
-                      key={preset.id}
-                      onClick={() => handleAddPresetPhoto(preset)}
-                      className="flex items-center gap-2 p-1.5 bg-gray-50 border border-gray-200 hover:border-sky-300 hover:bg-sky-50 rounded-lg text-left transition cursor-pointer group"
-                    >
-                      <img src={preset.url} alt={preset.caption} className="w-9 h-9 rounded object-cover shrink-0" />
-                      <div className="overflow-hidden">
-                        <p className="text-[10px] font-bold text-gray-800 truncate group-hover:text-sky-700">{preset.caption}</p>
-                        <p className="text-[9px] text-gray-500">+ Click to Add</p>
-                      </div>
-                    </button>
-                  ))}
+
+                {/* Photos Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-[360px] overflow-y-auto pr-1 custom-scrollbar">
+                  {dhamGallery
+                    .filter(p => {
+                      if (selectedDhamCategory === "all") return true;
+                      if (selectedDhamCategory === "custom") return p.isCustom;
+                      return p.dham === selectedDhamCategory;
+                    })
+                    .map(photo => {
+                      const isCurrentlyInBrochure = (data.photos || []).some(p => p.url === photo.url);
+                      return (
+                        <div
+                          key={photo.id}
+                          className={`p-2 bg-white border rounded-xl flex flex-col justify-between gap-2 transition ${
+                            isCurrentlyInBrochure ? "border-emerald-400 ring-1 ring-emerald-300 bg-emerald-50/20" : "border-gray-200 hover:border-sky-300"
+                          }`}
+                        >
+                          <div className="relative aspect-video w-full rounded-lg overflow-hidden bg-gray-100">
+                            <img
+                              src={photo.url}
+                              alt={photo.caption}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                            />
+                            <span className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/60 backdrop-blur-xs text-white text-[9px] font-semibold rounded uppercase tracking-wider">
+                              {photo.dhamLabel}
+                            </span>
+                            {photo.isCustom && (
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteDhamPhoto(photo.id)}
+                                title="Delete custom photo from library"
+                                className="absolute top-1 right-1 p-1 bg-white/80 hover:bg-red-500 hover:text-white text-gray-600 rounded transition cursor-pointer"
+                              >
+                                <Trash2 className="w-3 h-3" />
+                              </button>
+                            )}
+                          </div>
+
+                          <div className="min-w-0">
+                            <p className="font-semibold text-gray-800 text-[11px] leading-tight line-clamp-2">
+                              {photo.caption}
+                            </p>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePhotoInBrochure(photo)}
+                            className={`w-full py-1.5 px-2 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer ${
+                              isCurrentlyInBrochure
+                                ? "bg-emerald-100 hover:bg-emerald-200 text-emerald-800"
+                                : "bg-sky-50 hover:bg-sky-600 hover:text-white text-sky-700 border border-sky-200"
+                            }`}
+                          >
+                            {isCurrentlyInBrochure ? (
+                              <>
+                                <Check className="w-3.5 h-3.5" />
+                                <span>In Brochure (Remove)</span>
+                              </>
+                            ) : (
+                              <>
+                                <Plus className="w-3.5 h-3.5" />
+                                <span>Add to Itinerary</span>
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      );
+                    })}
                 </div>
               </div>
 

@@ -21,9 +21,11 @@ interface AuthContextType {
 }
 
 const DEFAULT_USERS = [
-  { id: "admin-1", email: "admin@traveltouttarakhand.com", name: "Mr. Amit kumar", role: "Super Admin", phone: "+91 9719038278" },
+  { id: "admin-1", email: "admin@traveltouttrakhand.com", name: "Mr. Amit kumar", role: "Super Admin", phone: "+91 9719038278" },
+  { id: "admin-1-alias", email: "admin@traveltouttarakhand.com", name: "Mr. Amit kumar", role: "Super Admin", phone: "+91 9719038278" },
   { id: "admin-2", email: "souravvishnoi347@gmail.com", name: "Sourav Vishnoi", role: "Administrator", phone: "+91 9719038278" },
-  { id: "admin-3", email: "info@traveltouttarakhand.com", name: "Travel to Uttarakhand Desk", role: "Desk Admin", phone: "+91 9719038278" },
+  { id: "admin-3", email: "info@traveltouttrakhand.com", name: "Travel to Uttarakhand Desk", role: "Desk Admin", phone: "+91 9719038278" },
+  { id: "admin-3-alias", email: "info@traveltouttarakhand.com", name: "Travel to Uttarakhand Desk", role: "Desk Admin", phone: "+91 9719038278" },
   { id: "admin-4", email: "admin", name: "Mr. Amit kumar", role: "Super Admin", phone: "+91 9719038278" },
 ];
 
@@ -82,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 
     if (!matchedUser && !cleanId.includes("@")) {
-      return { success: false, error: "Invalid Login ID. Use admin@traveltouttarakhand.com or registered email." };
+      return { success: false, error: "Invalid Login ID. Use admin@traveltouttrakhand.com or registered email." };
     }
 
     if (cleanPass !== activePass) {
@@ -132,7 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     const isRecognizedEmail = DEFAULT_USERS.some(u => u.email.toLowerCase() === cleanEmail) || cleanEmail.includes("@");
     if (!isRecognizedEmail) {
-      return { success: false, error: "Unrecognized email. Please use admin@traveltouttarakhand.com or souravvishnoi347@gmail.com" };
+      return { success: false, error: "Unrecognized email. Please use admin@traveltouttrakhand.com or souravvishnoi347@gmail.com" };
     }
 
     if (!MASTER_RECOVERY_PINS.includes(cleanPin)) {
