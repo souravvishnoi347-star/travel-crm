@@ -426,7 +426,7 @@ export default function HotelVouchersPage() {
     updateData({ ...data, stays: updatedStays });
   };
 
-  // High-Resolution Multi-Page PDF Download
+  // High-Resolution 1-Page PDF Download (Clean A4 without splitting)
   const handleDownloadPdf = async () => {
     try {
       setIsDownloading(true);
@@ -472,10 +472,31 @@ export default function HotelVouchersPage() {
       let position = 0;
       
       pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
+
+      // Add clickable PDF link annotations
+      try {
+        const linkEls = element.querySelectorAll("a[href], [data-pdf-link]");
+        const containerRect = element.getBoundingClientRect();
+        linkEls.forEach((linkNode) => {
+          const rect = linkNode.getBoundingClientRect();
+          const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
+          if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
+            const x = ((rect.left - containerRect.left) / containerRect.width) * pdfWidth;
+            const y = ((rect.top - containerRect.top) / containerRect.height) * pdfHeight;
+            const w = (rect.width / containerRect.width) * pdfWidth;
+            const h = (rect.height / containerRect.height) * pdfHeight;
+            pdf.link(x, y, w, h, { url: targetUrl });
+          }
+        });
+      } catch (linkErr) {
+        console.warn("Could not attach PDF link annotations:", linkErr);
+      }
+
       heightLeft -= pageHeight;
       
-      while (heightLeft > 0) {
-        position -= pageHeight;
+      // If content strictly exceeds 1 A4 page (e.g. 8+ stays), add subsequent pages cleanly
+      while (heightLeft > 5) {
+        position = heightLeft - pdfHeight;
         pdf.addPage();
         pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
         heightLeft -= pageHeight;
@@ -522,232 +543,194 @@ export default function HotelVouchersPage() {
     window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
   };
 
-  // Render the voucher document
+  // Render the voucher document - Exactly 1 A4 Page (1122px height) with Zero Cutoff
   const renderVoucherContent = (prefix: string) => (
     <div 
       id={`${prefix}-multi-hotel-voucher`} 
-      className="w-[794px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] h-[1122px] min-h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[520px] h-[520px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
+      <div className="relative z-10 flex flex-col justify-between h-full">
         
-        {/* HEADER SECTION */}
-        <div className="space-y-2.5">
+        {/* TOP SECTION: Header, Meta, Guest & Stays */}
+        <div className="space-y-3">
+          {/* Brand Header */}
           <div className="flex flex-col items-center text-center pb-2 border-b border-gray-200">
-            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1" />
-            <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
-            <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#0369a1] tracking-tight uppercase mt-0.5">
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-12 w-auto object-contain mb-0.5" />
+            <p className="text-[10.5px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+            <h1 className="text-2xl font-serif font-black text-[#0369a1] tracking-tight uppercase mt-0.5">
               HOTEL SERVICE VOUCHER
             </h1>
-            <p className="text-xs font-bold tracking-wider text-[#dc2626] uppercase mt-0.5">
+            <p className="text-[11px] font-bold tracking-wider text-[#dc2626] uppercase">
               CONFIRMED STAYS & LODGING SCHEDULE
             </p>
-            <p className="text-[10px] text-gray-500 italic">
+            <p className="text-[9.5px] text-gray-500 italic">
               Devbhoomi Pilgrimage & Holiday Stays · Uttarakhand
             </p>
           </div>
 
           {/* Reference Meta Bar */}
-          <div className="bg-sky-50/80 border border-sky-200 rounded-lg py-1.5 px-3.5 text-xs text-gray-800 flex justify-between items-center font-medium">
+          <div className="bg-sky-50/80 border border-sky-200 rounded-lg py-1 px-3.5 text-xs text-gray-800 flex justify-between items-center font-medium">
             <span>Voucher No: <strong className="text-[#0369a1] font-bold">{data.voucherNo || "N/A"}</strong></span>
             <span>Booking ID: <strong className="text-gray-900 font-bold">{data.bookingId || "N/A"}</strong></span>
             <span>Issue Date: <strong className="text-gray-900 font-bold">{data.dateOfIssue || "N/A"}</strong></span>
           </div>
 
           {/* Guest & Trip Details Banner */}
-          <div className="border border-gray-200 rounded-lg p-3 bg-gray-50/80 grid grid-cols-2 gap-3 text-xs">
+          <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/80 grid grid-cols-2 gap-3 text-xs">
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#0369a1]" />
-                <span className="text-gray-500 font-medium">Lead Guest Name:</span>
+                <User className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
+                <span className="text-gray-500 font-medium">Lead Guest:</span>
                 <span className="font-bold text-gray-900">{data.guestName || "Valued Traveler"}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-[#0369a1]" />
-                <span className="text-gray-500 font-medium">Phone / WhatsApp:</span>
+                <Phone className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
+                <span className="text-gray-500 font-medium">Phone:</span>
                 <span className="font-semibold text-gray-800">{data.guestPhone || "Provided on record"}</span>
               </div>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#0369a1]" />
-                <span className="text-gray-500 font-medium">Tour Duration:</span>
+                <Calendar className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
+                <span className="text-gray-500 font-medium">Duration:</span>
                 <span className="font-bold text-[#0369a1]">{data.tripDuration || "Full Tour"}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Bed className="w-3.5 h-3.5 text-[#0369a1]" />
+                <Bed className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
                 <span className="text-gray-500 font-medium">Occupancy:</span>
                 <span className="font-semibold text-gray-800">{data.totalPax || "N/A"} · {data.totalRooms || "N/A"}</span>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* SUMMARY SCHEDULE TABLE */}
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5" />
-              <span>Complete Stay Itinerary ({data.stays.length} Locations / Stays)</span>
-            </h3>
-            <span className="text-[10px] text-gray-500 font-semibold">100% Pre-Booked & Confirmed</span>
-          </div>
+          {/* COMPLETE STAY SCHEDULE TABLE */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+                <Building2 className="w-3.5 h-3.5" />
+                <span>Confirmed Stay Itinerary ({data.stays.length} Destinations / Properties)</span>
+              </h3>
+              <span className="text-[9.5px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                100% Confirmed
+              </span>
+            </div>
 
-          <div className="rounded-lg overflow-hidden border border-gray-200">
-            <table className="w-full text-left text-[10.5px]">
-              <thead className="bg-[#0369a1] text-white text-[10px] uppercase font-bold tracking-wider">
-                <tr>
-                  <th className="py-1.5 px-2.5 w-[14%]">Stay / Night</th>
-                  <th className="py-1.5 px-2.5 w-[16%]">Destination</th>
-                  <th className="py-1.5 px-2.5 w-[28%]">Hotel / Hostel / Camp</th>
-                  <th className="py-1.5 px-2.5 w-[24%]">Room Category & Meals</th>
-                  <th className="py-1.5 px-2.5 w-[18%]">Booking Ref / Phone</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {data.stays.map((stay, idx) => (
-                  <tr key={stay.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
-                    <td className="py-1.5 px-2.5 font-bold text-gray-900 align-top">
-                      <div>{stay.nightsLabel}</div>
-                      <div className="text-[9px] text-gray-500 font-normal">{stay.nights} Night{stay.nights > 1 ? "s" : ""}</div>
-                    </td>
-                    <td className="py-1.5 px-2.5 font-bold text-[#0369a1] align-top">
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-3 h-3 text-[#0369a1] shrink-0" />
-                        <span>{stay.city || "—"}</span>
-                      </div>
-                    </td>
-                    <td className="py-1.5 px-2.5 align-top">
-                      <div className="font-bold text-gray-900 leading-snug">{stay.hotelName || "Hotel / Camp"}</div>
-                      {stay.hotelAddress && (
-                        <div className="text-[9.5px] text-gray-500 truncate max-w-[190px]">{stay.hotelAddress}</div>
-                      )}
-                    </td>
-                    <td className="py-1.5 px-2.5 align-top">
-                      <div className="font-semibold text-gray-800">{stay.roomType || "Standard Room"}</div>
-                      <div className="text-[9.5px] text-emerald-700 font-medium">
-                        {stay.mealPlan ? `Plan: ${stay.mealPlan}` : "Meals as confirmed"}
-                      </div>
-                    </td>
-                    <td className="py-1.5 px-2.5 align-top">
-                      <div className="font-mono font-bold text-gray-900 text-[10px]">{stay.confirmationNo || "CONFIRMED"}</div>
-                      <div className="text-[9.5px] text-gray-600">{stay.contactNo || "—"}</div>
-                    </td>
+            <div className="rounded-lg overflow-hidden border border-gray-200">
+              <table className="w-full text-left text-[10px]">
+                <thead className="bg-[#0369a1] text-white text-[9.5px] uppercase font-bold tracking-wider">
+                  <tr>
+                    <th className="py-1.5 px-2.5 w-[14%]">Nights</th>
+                    <th className="py-1.5 px-2.5 w-[16%]">Destination</th>
+                    <th className="py-1.5 px-2.5 w-[32%]">Confirmed Hotel & Location</th>
+                    <th className="py-1.5 px-2.5 w-[22%]">Room & Meal Plan</th>
+                    <th className="py-1.5 px-2.5 w-[16%]">Booking Ref</th>
                   </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {data.stays.map((stay, idx) => (
+                    <tr key={stay.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
+                      <td className="py-1.5 px-2.5 font-bold text-gray-900 align-top">
+                        <div className="leading-tight">{stay.nightsLabel}</div>
+                        <div className="text-[9px] text-gray-500 font-normal">
+                          {stay.nights} Nt{stay.nights > 1 ? "s" : ""}
+                        </div>
+                      </td>
+                      <td className="py-1.5 px-2.5 font-bold text-[#0369a1] align-top">
+                        <div className="flex items-center gap-1 leading-tight">
+                          <MapPin className="w-3 h-3 text-[#0369a1] shrink-0" />
+                          <span>{stay.city || "—"}</span>
+                        </div>
+                      </td>
+                      <td className="py-1.5 px-2.5 align-top">
+                        <div className="font-bold text-gray-900 leading-snug">{stay.hotelName || "Hotel / Camp"}</div>
+                        {stay.hotelAddress && (
+                          <div className="text-[9px] text-gray-500 truncate max-w-[210px] leading-tight">
+                            📍 {stay.hotelAddress}
+                          </div>
+                        )}
+                        {stay.contactNo && (
+                          <div className="text-[9px] text-gray-600 font-medium mt-0.5">
+                            📞 {stay.contactNo}
+                          </div>
+                        )}
+                        {stay.specialRequest && (
+                          <div className="text-[8.5px] text-amber-800 bg-amber-50/70 border border-amber-200/70 px-1 py-0.5 rounded mt-0.5 inline-block">
+                            Note: {stay.specialRequest}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-1.5 px-2.5 align-top">
+                        <div className="font-semibold text-gray-800 leading-tight">
+                          {stay.roomType || "Standard Room"} {stay.noOfRooms ? `(${stay.noOfRooms})` : ""}
+                        </div>
+                        <div className="text-[9px] text-emerald-700 font-bold mt-0.5">
+                          {stay.mealPlan ? stay.mealPlan : "MAP Plan"}
+                        </div>
+                        {(stay.checkIn || stay.checkOut) && (
+                          <div className="text-[8.5px] text-gray-500 mt-0.5">
+                            In: {stay.checkIn || "12 PM"} | Out: {stay.checkOut || "10 AM"}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-1.5 px-2.5 align-top">
+                        <div className="font-mono font-bold text-gray-900 text-[10px] bg-gray-100 px-1.5 py-0.5 rounded inline-block">
+                          {stay.confirmationNo || "CONFIRMED"}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* INCLUSIONS & POLICIES */}
+          <div className="grid grid-cols-2 gap-3 text-[9.5px]">
+            <div className="space-y-1">
+              <h4 className="font-bold text-[#0369a1] uppercase text-[9.5px] tracking-wider">
+                Package Stay Inclusions:
+              </h4>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-snug text-gray-700">
+                {data.inclusions.split("\n").filter(Boolean).map((inc, i) => (
+                  <div key={i} className="flex items-start gap-1">
+                    <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                    <span>{inc.replace(/^•\s*/, "")}</span>
+                  </div>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* DETAILED STAY PROPERTY BREAKDOWN CARDS */}
-        <div className="space-y-2">
-          <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
-            <FileText className="w-3.5 h-3.5" />
-            <span>Property Particulars & Check-In Details</span>
-          </h3>
-
-          <div className="grid grid-cols-2 gap-2.5">
-            {data.stays.map((stay, idx) => (
-              <div 
-                key={stay.id || idx} 
-                className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 text-[10.5px] space-y-1 relative"
-              >
-                <div className="flex justify-between items-start border-b border-gray-200/80 pb-1">
-                  <div>
-                    <span className="text-[9px] font-bold text-sky-700 uppercase tracking-wider bg-sky-100/70 px-1.5 py-0.5 rounded">
-                      {stay.nightsLabel} · {stay.city}
-                    </span>
-                    <h4 className="font-bold text-gray-900 text-xs mt-1 leading-tight">{stay.hotelName}</h4>
-                  </div>
-                  <span className="text-[9.5px] font-mono font-semibold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
-                    {stay.confirmationNo || "Confirmed"}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-1 text-[10px] pt-0.5">
-                  <div>
-                    <span className="text-gray-400 block text-[9px]">Check-In:</span>
-                    <span className="font-semibold text-gray-800">{stay.checkIn || "12:00 PM"}</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-400 block text-[9px]">Check-Out:</span>
-                    <span className="font-semibold text-gray-800">{stay.checkOut || "10:00 AM"}</span>
-                  </div>
-                </div>
-
-                <div className="text-[10px] text-gray-700 pt-0.5 border-t border-gray-200/60 flex justify-between">
-                  <span>Room: <strong>{stay.roomType}</strong> ({stay.noOfRooms})</span>
-                  <span className="text-emerald-700 font-semibold">{stay.mealPlan}</span>
-                </div>
-
-                {stay.hotelAddress && (
-                  <p className="text-[9.5px] text-gray-500 leading-tight truncate">
-                    📍 {stay.hotelAddress}
-                  </p>
-                )}
-
-                {stay.contactNo && (
-                  <p className="text-[9.5px] text-gray-600 font-medium">
-                    📞 Reception / Caretaker: <strong className="text-gray-900">{stay.contactNo}</strong>
-                  </p>
-                )}
-
-                {stay.specialRequest && (
-                  <p className="text-[9.5px] text-amber-800 bg-amber-50/60 p-1 rounded border border-amber-200/60 italic leading-tight">
-                    <strong>Note:</strong> {stay.specialRequest}
-                  </p>
-                )}
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* INCLUSIONS & POLICIES */}
-        <div className="grid grid-cols-2 gap-3 text-[10px] pt-1 border-t border-gray-200">
-          <div className="space-y-1">
-            <h4 className="font-bold text-[#0369a1] uppercase text-[10px] tracking-wider">
-              Package Stay Inclusions:
-            </h4>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-relaxed text-gray-700">
-              {data.inclusions.split("\n").filter(Boolean).map((inc, i) => (
-                <div key={i} className="flex items-start gap-1">
-                  <span className="text-emerald-600 font-bold shrink-0">✓</span>
-                  <span>{inc.replace(/^•\s*/, "")}</span>
-                </div>
-              ))}
             </div>
-          </div>
 
-          <div className="space-y-1">
-            <h4 className="font-bold text-[#dc2626] uppercase text-[10px] tracking-wider">
-              Important Stay Guidelines:
-            </h4>
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-relaxed text-gray-700">
-              {data.specialInstructions.split("\n").filter(Boolean).map((ins, i) => (
-                <div key={i} className="flex items-start gap-1">
-                  <span className="text-amber-600 font-bold shrink-0">ℹ</span>
-                  <span>{ins.replace(/^•\s*/, "")}</span>
-                </div>
-              ))}
+            <div className="space-y-1">
+              <h4 className="font-bold text-[#dc2626] uppercase text-[9.5px] tracking-wider">
+                Important Stay Guidelines:
+              </h4>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-snug text-gray-700">
+                {data.specialInstructions.split("\n").filter(Boolean).map((ins, i) => (
+                  <div key={i} className="flex items-start gap-1">
+                    <span className="text-amber-600 font-bold shrink-0">ℹ</span>
+                    <span>{ins.replace(/^•\s*/, "")}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
 
-        {/* FOOTER & SIGNATORY */}
-        <div className="pt-2 border-t border-gray-200 space-y-1.5">
+        {/* BOTTOM SECTION: Signatory & Page Footer */}
+        <div className="space-y-1.5 pt-2 border-t border-gray-200">
           <div className="flex justify-between items-center text-xs">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
+              <img src="/logo.png" alt="logo" className="h-7 w-auto object-contain" />
               <div>
-                <p className="text-[8.5px] uppercase tracking-widest text-gray-400 font-bold">Authorized Agency</p>
+                <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Authorized Tour Operator</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600">
+                <p className="text-[9px] text-gray-600 font-medium">
                   {data.emergencyContact} · 
                   <a 
                     href="https://traveltouttrakhand.com" 
@@ -763,7 +746,7 @@ export default function HotelVouchersPage() {
             </div>
             <div className="text-right">
               <p className="text-[10px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
-              <div className="mt-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-300 rounded text-[9.5px] font-bold text-emerald-800 inline-block">
+              <div className="mt-0.5 px-2 py-0.5 bg-emerald-50 border border-emerald-300 rounded text-[9px] font-bold text-emerald-800 inline-block">
                 OFFICIAL SERVICE VOUCHER
               </div>
             </div>
@@ -780,7 +763,7 @@ export default function HotelVouchersPage() {
             >
               🌐 www.traveltouttrakhand.com
             </a>
-            <span>Official Hotel Voucher</span>
+            <span>Hotel Service Voucher · Page 1 of 1</span>
           </div>
         </div>
 
