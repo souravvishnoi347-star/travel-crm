@@ -612,6 +612,32 @@ export default function TransportVouchers() {
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Total Passengers (Pax)</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-sky-800" 
+                    placeholder="e.g. 04 Adults / 06 Pax" 
+                    value={data.noOfAdults} 
+                    onChange={e => updateData({ 
+                      ...data, 
+                      noOfAdults: e.target.value, 
+                      favouringPax: e.target.value.replace(/[^0-9]/g, "") || e.target.value 
+                    })} 
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Favouring Banner Pax Count</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                    placeholder="e.g. 04" 
+                    value={data.favouringPax} 
+                    onChange={e => updateData({ ...data, favouringPax: e.target.value })} 
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Arrival Transfer</label>
                   <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.arrivalDate} onChange={e => updateData({ ...data, arrivalDate: e.target.value })} />
                 </div>

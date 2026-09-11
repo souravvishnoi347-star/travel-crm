@@ -120,176 +120,166 @@ export interface ItineraryData {
   showPhotosPage3?: boolean;
 }
 
-// Exact preset matching "chardham yatra from mathura 2026 (1).pdf"
+// Exact preset matching standard 10 Days / 09 Nights Chardham Yatra (Haridwar / Dehradun)
 const CHARDHAM_PRESET: ItineraryData = {
   title: "CHARDHAM YATRA",
   subTitle: "UTTARAKHAND",
-  spiritualHeadline: "12 Days · 11 Nights Spiritual Journey",
-  dhamsSubtitle: "Yamunotri · Gangotri · Kedarnath (by Helicopter) · Badrinath",
-  preparedFor: "Mr. Ghanshyam",
-  travelDates: "10 – 21 September 2026",
-  duration: "12 Days / 11 Nights",
-  startingPoint: "Mathura, Uttar Pradesh",
-  routeCovered: "Haridwar – Barkot – Yamunotri – Uttarkashi – Gangotri – Guptkashi/Phata – Kedarnath (Heli) – Badrinath – Joshimath – Rudraprayag – Devprayag – Rishikesh – Haridwar",
-  overviewSummary: "A complete Chardham Yatra covering all four sacred shrines of Uttarakhand — Yamunotri, Gangotri, Kedarnath and Badrinath — starting and ending at Mathura. The Kedarnath leg is covered by helicopter for a comfortable, time-efficient darshan, with well-planned overnight halts along the route.",
+  spiritualHeadline: "10 Days · 09 Nights Spiritual Journey",
+  dhamsSubtitle: "Yamunotri · Gangotri · Kedarnath · Badrinath",
+  preparedFor: "Valued Guest",
+  travelDates: "10 – 19 May 2026",
+  duration: "10 Days / 09 Nights",
+  startingPoint: "Haridwar / Dehradun, Uttarakhand",
+  routeCovered: "Haridwar – Barkot – Yamunotri – Uttarkashi – Gangotri – Guptkashi – Kedarnath – Badrinath – Rudraprayag – Rishikesh – Haridwar",
+  overviewSummary: "A sacred 10 Days / 09 Nights Chardham Yatra covering all four holiest shrines of Uttarakhand — Yamunotri, Gangotri, Kedarnath and Badrinath — starting and concluding at Haridwar / Dehradun. Designed with well-paced travel, comfortable overnight stays, and complete ground support for a peaceful pilgrimage.",
   
-  glanceDuration: "12 Days / 11 Nights",
+  glanceDuration: "10 Days / 09 Nights",
   glanceDhams: "Yamunotri · Gangotri · Kedarnath · Badrinath",
-  glanceSector: "By Helicopter (Guptkashi / Phata ⇄ Kedarnath)",
-  glanceStartEnd: "Mathura, Uttar Pradesh (both ways)",
+  glanceSector: "Haridwar ⇄ Complete Chardham Circuit",
+  glanceStartEnd: "Haridwar / Dehradun (both ways)",
   glancePackages: "Standard · Deluxe · Luxury",
 
   days: [
     {
       id: 1,
       dayNumber: 1,
-      dateStr: "10 Sep 2026 (Thu)",
-      route: "Mathura → Haridwar → Barkot",
+      dateStr: "Day 1 (10 May)",
+      route: "Haridwar / Dehradun → Barkot",
       activities: [
-        "Depart Mathura early morning towards Haridwar.",
-        "Holy dip (snan) at Har Ki Pauri, Haridwar.",
-        "Continue drive to Barkot via scenic foothill roads."
+        "Morning pickup from Haridwar Railway Station / Dehradun Airport.",
+        "Scenic drive through the foothills of the Garhwal Himalayas via Mussoorie / Kempty Falls.",
+        "Arrive at Barkot in the evening; check in to hotel, relax and prepare for Yamunotri trek."
       ],
       overnightStay: "Barkot"
     },
     {
       id: 2,
       dayNumber: 2,
-      dateStr: "11 Sep 2026 (Fri)",
-      route: "Barkot → Yamunotri → Barkot",
+      dateStr: "Day 2 (11 May)",
+      route: "Barkot → Yamunotri Dham Darshan → Barkot",
       activities: [
-        "Early morning departure for Yamunotri Dham.",
-        "Darshan of Maa Yamuna at the Yamunotri temple (trek/pony/palki as per personal arrangement).",
-        "Return to Barkot by evening for overnight stay."
+        "Early morning drive to Janki Chatti, the base point for the Yamunotri trek.",
+        "Trek 6 km to Yamunotri Dham (trek / pony / palki as per individual preference).",
+        "Holy dip in Surya Kund, cook rice prasad in Divya Shila, and have sacred Darshan of Maa Yamuna.",
+        "Trek back to Janki Chatti and drive back to Barkot for overnight stay."
       ],
       overnightStay: "Barkot"
     },
     {
       id: 3,
       dayNumber: 3,
-      dateStr: "12 Sep 2026 (Sat)",
+      dateStr: "Day 3 (12 May)",
       route: "Barkot → Uttarkashi",
       activities: [
-        "Post breakfast, drive to Uttarkashi.",
-        "Evening free for local sightseeing / Vishwanath Temple visit."
+        "Post breakfast, drive towards Uttarkashi along the scenic Bhagirathi river valley.",
+        "En route, pass through the historical Dharasu bend.",
+        "On arrival in Uttarkashi, visit the ancient Kashi Vishwanath Temple and Shakti Temple.",
+        "Evening at leisure by the Bhagirathi river."
       ],
       overnightStay: "Uttarkashi"
     },
     {
       id: 4,
       dayNumber: 4,
-      dateStr: "13 Sep 2026 (Sun)",
-      route: "Uttarkashi → Gangotri → Uttarkashi",
+      dateStr: "Day 4 (13 May)",
+      route: "Uttarkashi → Gangotri Dham Darshan → Uttarkashi",
       activities: [
-        "Early morning drive to Gangotri Dham.",
-        "Darshan at the Gangotri temple, origin of the sacred river Ganga.",
-        "Return to Uttarkashi for overnight stay."
+        "Early morning departure for Gangotri Dham through the picturesque Harsil Valley.",
+        "Take a holy dip in the Bhagirathi River at Gangotri.",
+        "Perform Pooja and seek divine blessings of Maa Ganga at the Gangotri Temple.",
+        "Return drive through apple orchards of Harsil to Uttarkashi for night stay."
       ],
       overnightStay: "Uttarkashi"
     },
     {
       id: 5,
       dayNumber: 5,
-      dateStr: "14 Sep 2026 (Mon)",
-      route: "Uttarkashi → Guptkashi / Phata",
+      dateStr: "Day 5 (14 May)",
+      route: "Uttarkashi → Guptkashi / Sitapur",
       activities: [
-        "Drive from Uttarkashi to Guptkashi / Phata, the base point for the Kedarnath helicopter sector.",
-        "Evening at leisure; briefing for next day's heli darshan."
+        "After breakfast, drive to Guptkashi / Sitapur via Chamba and Srinagar Garhwal.",
+        "Enjoy spectacular views of the Mandakini River valley as you approach the Kedarnath base sector.",
+        "Check in at hotel/resort in Guptkashi or Sitapur; evening briefing for Kedarnath Yatra."
       ],
-      overnightStay: "Guptkashi / Phata"
+      overnightStay: "Guptkashi / Sitapur"
     },
     {
       id: 6,
       dayNumber: 6,
-      dateStr: "15 Sep 2026 (Tue)",
-      route: "Kedarnath Darshan by Helicopter",
+      dateStr: "Day 6 (15 May)",
+      route: "Guptkashi / Sitapur → Kedarnath Dham Darshan",
       activities: [
-        "Helicopter transfer from Guptkashi/Phata to Kedarnath.",
-        "Darshan of Baba Kedarnath at the sacred Jyotirlinga temple.",
-        "Same-day return by helicopter to Guptkashi/Phata (Kedarnath overnight stay optional, on request)."
+        "Early morning transfer to Sonprayag / Gaurikund (or helipad for helicopter shuttle).",
+        "Ascend to Shri Kedarnath Dham via trek/pony/helicopter.",
+        "Perform evening Aarti and sacred Darshan of the 11th Jyotirlinga of Lord Shiva.",
+        "Night stay at Kedarnath (Base camp / Sitapur as per package selection)."
       ],
-      overnightStay: "Guptkashi / Phata"
+      overnightStay: "Kedarnath / Sitapur"
     },
     {
       id: 7,
       dayNumber: 7,
-      dateStr: "16 Sep 2026 (Wed)",
-      route: "Guptkashi/Phata → Badrinath → Joshimath",
+      dateStr: "Day 7 (16 May)",
+      route: "Kedarnath / Sitapur → Badrinath Dham",
       activities: [
-        "Drive to Badrinath Dham via Chopta and Rudraprayag.",
-        "Darshan of Lord Badrinarayan at the Badrinath temple.",
-        "Proceed to Joshimath for overnight stay."
+        "Morning Darshan at Kedarnath Temple; descend back to Gaurikund / Sonprayag.",
+        "Rejoin vehicle and commence scenic drive to Shri Badrinath Dham via Chopta and Joshimath.",
+        "Reach Badrinath Dham by late afternoon/evening; check in at hotel.",
+        "Evening Darshan and attend the divine evening Aarti at Badrinath Temple."
       ],
-      overnightStay: "Joshimath"
+      overnightStay: "Badrinath"
     },
     {
       id: 8,
       dayNumber: 8,
-      dateStr: "17 Sep 2026 (Thu)",
-      route: "Joshimath → Rudraprayag",
+      dateStr: "Day 8 (17 May)",
+      route: "Badrinath Dham Darshan & Mana Village → Pipalkoti / Joshimath",
       activities: [
-        "Drive down from Joshimath to Rudraprayag.",
-        "Visit the sacred Rudraprayag Sangam, confluence of the Alaknanda and Mandakini rivers."
+        "Early morning holy bath in Tapt Kund followed by Maha Abhishek / Darshan of Lord Badri Vishal.",
+        "Visit Mana Village (India's first village), Bhim Pul, Vyas Gufa and Saraswati River Udgam.",
+        "Afternoon drive down to Pipalkoti / Joshimath enjoying mountain vistas.",
+        "Overnight stay at hotel in Pipalkoti / Joshimath."
       ],
-      overnightStay: "Rudraprayag"
+      overnightStay: "Pipalkoti / Joshimath"
     },
     {
       id: 9,
       dayNumber: 9,
-      dateStr: "18 Sep 2026 (Fri)",
-      route: "Rudraprayag → Devprayag",
+      dateStr: "Day 9 (18 May)",
+      route: "Pipalkoti → Rudraprayag → Rishikesh / Haridwar",
       activities: [
-        "Drive to Devprayag, the holy confluence of the Alaknanda and Bhagirathi rivers — the point from where the Ganga formally begins.",
-        "Visit the Raghunath Temple and the sacred sangam ghat."
+        "Post breakfast, drive towards Rishikesh along the Alaknanda and Ganga valleys.",
+        "Witness sacred river confluences (Panch Prayag): Karnaprayag, Nandaprayag, Rudraprayag and Devprayag.",
+        "Arrive in Rishikesh / Haridwar; attend the world-renowned Ganga Aarti at Parmarth Niketan or Har Ki Pauri."
       ],
-      overnightStay: "Devprayag"
+      overnightStay: "Rishikesh / Haridwar"
     },
     {
       id: 10,
       dayNumber: 10,
-      dateStr: "19 Sep 2026 (Sat)",
-      route: "Devprayag → Rishikesh",
+      dateStr: "Day 10 (19 May)",
+      route: "Rishikesh / Haridwar → Local Sightseeing & Departure Drop",
       activities: [
-        "Drive to Rishikesh, the yoga capital on the banks of the Ganga.",
-        "Visit Laxman Jhula, Ram Jhula and Triveni Ghat; attend the evening Ganga Aarti."
+        "Morning temple visits and visit Ram Jhula, Laxman Jhula or Triveni Ghat.",
+        "Time for souvenir shopping (Rudraksha, holy Gangajal, herbal products).",
+        "Timely transfer to Haridwar Railway Station or Dehradun Jolly Grant Airport for onward journey.",
+        "Tour concludes with divine memories of Devbhoomi Chardham Yatra."
       ],
-      overnightStay: "Rishikesh"
-    },
-    {
-      id: 11,
-      dayNumber: 11,
-      dateStr: "20 Sep 2026 (Sun)",
-      route: "Rishikesh → Haridwar",
-      activities: [
-        "Drive to Haridwar for a relaxed evening by the Ganga.",
-        "Attend the evening Ganga Aarti at Har Ki Pauri."
-      ],
-      overnightStay: "Haridwar"
-    },
-    {
-      id: 12,
-      dayNumber: 12,
-      dateStr: "21 Sep 2026 (Mon)",
-      route: "Haridwar → Mathura",
-      activities: [
-        "Early morning departure from Haridwar, direct drive to Mathura.",
-        "Trip concludes on arrival at Mathura."
-      ],
-      overnightStay: "Trip Ends at Mathura"
+      overnightStay: "Tour Concludes (Drop Off)"
     }
   ],
 
-  pricingSubtitle: "Choose the package that best fits your comfort and budget. All packages cover the same 12-day itinerary and include Kedarnath helicopter tickets.",
+  pricingSubtitle: "Choose the package that best fits your comfort and budget. All packages cover the same 10-day itinerary with dedicated mountain transport and experienced pilgrimage staff.",
   pricingTiers: [
-    { package: "Standard", price: "₹ 35,500", hotelCategory: "Budget Hotels", meals: "As per plan", specialFeature: "Included" },
-    { package: "Deluxe", price: "₹ 45,500", hotelCategory: "Good Hotels", meals: "Included", specialFeature: "Included" },
-    { package: "Luxury", price: "₹ 62,500", hotelCategory: "Luxury Hotels", meals: "Included", specialFeature: "Included" }
+    { package: "Standard", price: "₹ 28,500", hotelCategory: "Budget Clean Hotels", meals: "As per plan", specialFeature: "Included" },
+    { package: "Deluxe", price: "₹ 38,500", hotelCategory: "3-Star Deluxe Hotels", meals: "Included (MAP)", specialFeature: "Included" },
+    { package: "Luxury", price: "₹ 54,500", hotelCategory: "Luxury Resorts & Hotels", meals: "All Meals Included", specialFeature: "Included" }
   ],
   pricingNote: "Note: 5% GST applicable extra on all packages, as per government norms. Rates are per person on twin/triple sharing basis.",
 
   inclusions: [
-    "AC vehicle (Innova Crysta / Tempo Traveller as per group size) for the entire yatra",
-    "Accommodation for 11 nights as per selected package category",
+    "AC vehicle (Innova Crysta / Tempo Traveller as per group size) for the entire 10-day yatra",
+    "Accommodation for 09 nights as per selected package category",
     "Meal plan as per package selected",
     "Kedarnath helicopter tickets, both ways (Guptkashi/Phata ⇄ Kedarnath)",
     "All toll tax, parking charges and driver allowance",
@@ -1743,7 +1733,7 @@ ${data.motto}`;
             <button
               onClick={() => setData(CHARDHAM_PRESET)}
               className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
-              title="Reload authentic 12-day Chardham Yatra preset from PDF"
+              title="Reload standard 10-day Chardham Yatra preset"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Reset
