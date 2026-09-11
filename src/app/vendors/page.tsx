@@ -28,23 +28,14 @@ type Payable = {
 const emptyVendor = { name: "", type: "hotel", contact_person: "", phone: "", location: "", notes: "" };
 const emptyPayable = { vendor_id: "", description: "", amount: "", due_date: "" };
 
-const DEFAULT_VENDORS: Vendor[] = [
-  { id: "v-1", name: "Sarovar Portico Katra", type: "hotel", contact_person: "Mr. Rakesh (Front Desk)", phone: "+91 78899 41026", location: "Katra, J&K", notes: "Partner hotel for Vaishno Devi" },
-  { id: "v-2", name: "Shivalik Hills Resort", type: "hotel", contact_person: "Anand Rawat", phone: "+91 94120 55678", location: "Barkot, Yamunotri Road", notes: "Deluxe riverside cottages" },
-  { id: "v-3", name: "Garhwal Himalayan Fleets", type: "transport", contact_person: "Harish Negi", phone: "+91 98371 44321", location: "Haridwar / Rishikesh", notes: "Innova Crysta & Tempo fleet" },
-  { id: "v-4", name: "Pawan Hans Aviation", type: "transport", contact_person: "Col. Bhatia", phone: "+91 135 243 0000", location: "Guptkashi / Phata", notes: "Kedarnath Heli shuttle booking" }
-];
-
-const DEFAULT_PAYABLES: Payable[] = [
-  { id: "p-1", vendor_id: "v-1", description: "Advance deposit for Balraj Group (2 Rooms)", amount: 32000, status: "pending", due_date: "2026-09-10", vendors: { name: "Sarovar Portico Katra", type: "hotel" } },
-  { id: "p-2", vendor_id: "v-3", description: "Innova Crysta 12-day Chardham deployment advance", amount: 36000, status: "pending", due_date: "2026-09-12", vendors: { name: "Garhwal Himalayan Fleets", type: "transport" } }
-];
+const DEFAULT_VENDORS: Vendor[] = [];
+const DEFAULT_PAYABLES: Payable[] = [];
 
 export default function VendorsPage() {
   const [activeTab, setActiveTab] = useState<"vendors" | "payables">("vendors");
   
-  const [vendors, setVendors] = useState<Vendor[]>(DEFAULT_VENDORS);
-  const [payables, setPayables] = useState<Payable[]>(DEFAULT_PAYABLES);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [payables, setPayables] = useState<Payable[]>([]);
   const [loading, setLoading] = useState(false);
 
   // Modals state
@@ -64,21 +55,33 @@ export default function VendorsPage() {
         const savedVendors = localStorage.getItem("triloki_vendors");
         if (savedVendors) {
           const parsed = JSON.parse(savedVendors);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setVendors(parsed);
+          if (Array.isArray(parsed)) {
+            const isMock = parsed.length > 0 && parsed.every((v: any) => v.id && v.id.startsWith("v-"));
+            if (isMock) {
+              setVendors([]);
+              localStorage.setItem("triloki_vendors", JSON.stringify([]));
+            } else {
+              setVendors(parsed);
+            }
           }
         } else {
-          localStorage.setItem("triloki_vendors", JSON.stringify(DEFAULT_VENDORS));
+          localStorage.setItem("triloki_vendors", JSON.stringify([]));
         }
 
         const savedPayables = localStorage.getItem("triloki_payables");
         if (savedPayables) {
           const parsed = JSON.parse(savedPayables);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setPayables(parsed);
+          if (Array.isArray(parsed)) {
+            const isMock = parsed.length > 0 && parsed.every((p: any) => p.id && p.id.startsWith("p-"));
+            if (isMock) {
+              setPayables([]);
+              localStorage.setItem("triloki_payables", JSON.stringify([]));
+            } else {
+              setPayables(parsed);
+            }
           }
         } else {
-          localStorage.setItem("triloki_payables", JSON.stringify(DEFAULT_PAYABLES));
+          localStorage.setItem("triloki_payables", JSON.stringify([]));
         }
       } catch (e) {
         console.warn("Could not load vendors/payables from localStorage:", e);

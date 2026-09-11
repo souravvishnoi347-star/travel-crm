@@ -30,6 +30,7 @@ interface SearchResult {
 
 const QUICK_NAV: SearchResult[] = [
   { id: "nav-itin", category: "navigation", title: "Itinerary Studio", subtitle: "AI-Powered Chardham & Uttarakhand Brochure", href: "/itinerary-builder", badge: "Studio", badgeColor: "bg-sky-100 text-sky-700" },
+  { id: "nav-gallery", category: "navigation", title: "Dham Photo Library & Media", subtitle: "High-resolution photography repository for tour brochures", href: "/gallery", badge: "Gallery", badgeColor: "bg-cyan-100 text-cyan-700" },
   { id: "nav-hotel", category: "navigation", title: "Hotel Service Voucher", subtitle: "A4 Accommodation Confirmation Voucher", href: "/hotels", badge: "Voucher", badgeColor: "bg-amber-100 text-amber-700" },
   { id: "nav-trans", category: "navigation", title: "Transport Service Voucher", subtitle: "Vehicle & Day-wise Transfer Voucher", href: "/transport", badge: "Voucher", badgeColor: "bg-purple-100 text-purple-700" },
   { id: "nav-inv", category: "navigation", title: "Tax Invoice Studio", subtitle: "Bill of Supply & Service Tax Invoice", href: "/invoices", badge: "Invoice", badgeColor: "bg-emerald-100 text-emerald-700" },

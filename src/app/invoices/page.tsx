@@ -42,32 +42,26 @@ function numberToWords(num: number): string {
 
 const DEFAULT_INVOICE_DATA = {
   companySettings: "Travel to Uttarakhand",
-  invoiceNumber: "INV-2026-0089",
-  guestName: "Mr. Ghanshyam",
-  guestPhone: "+91 84452 14371",
-  guestEmail: "ghanshyam.travels@gmail.com",
-  guestGst: "09AAAPL1234F1Z1",
+  invoiceNumber: "INV-2026-0001",
+  guestName: "",
+  guestPhone: "",
+  guestEmail: "",
+  guestGst: "",
   dateType: "Travel Date",
-  travelDate: "10 – 21 Sep 2026",
-  bookingDate: "05 Sep 2026",
+  travelDate: "",
+  bookingDate: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
   packages: [
     { 
-      detail: "12 Days Chardham Yatra Deluxe Package (Yamunotri, Gangotri, Kedarnath Heli, Badrinath with Innova Crysta & 3-Star Hotels)", 
-      person: 2, 
-      rate: 45500, 
-      amount: 91000 
-    },
-    { 
-      detail: "Kedarnath Helicopter Sector Tickets (Guptkashi / Phata ⇄ Kedarnath) Return Tickets", 
-      person: 2, 
-      rate: 9500, 
-      amount: 19000 
+      detail: "Tour Package Booking / Chardham Yatra Service", 
+      person: 1, 
+      rate: 0, 
+      amount: 0 
     }
   ],
   taxPercent: "5",
   discount: "0",
-  amountPaid: "50000",
-  notes: `Bank Details for Remittance:\n• Beneficiary: Travel to Uttarakhand\n• Bank Name: Bandhan Bank\n• Account No: 10180000573933\n• IFSC Code: BDBL0001536\n• UPI ID: traveluttarakhand@hdfcbank\n\nTerms & Payment Conditions:\n• 100% advance payment required prior to trip commencement.\n• Rates include all applicable toll taxes, parking fees, and driver allowances.\n• Cancellation and rescheduling are governed by civil aviation and partner hotel policies.`
+  amountPaid: "0",
+  notes: `Bank Details for Remittance:\n• Beneficiary: Travel to Uttarakhand\n• Bank Name: Bandhan Bank\n• Account No: 10180000573933\n• IFSC Code: BDBL0001536\n• UPI ID: traveluttarakhand@hdfcbank\n\nTerms & Payment Conditions:\n• Advance payment required prior to trip commencement.\n• Rates include all applicable toll taxes, parking fees, and driver allowances.\n• Cancellation and rescheduling are governed by civil aviation and partner hotel policies.`
 };
 
 export default function InvoicesPage() {

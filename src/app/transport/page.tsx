@@ -21,32 +21,67 @@ import {
 import { supabase } from "@/lib/supabase";
 
 const DEFAULT_TRANSPORT_DATA = {
-  date: "17 May'2026",
-  exoNo: "YT: YATRA 2026",
-  fileNo: "02",
-  guestName: "Mr. Alladi Balraj Group",
-  managerMobile: "+91 90187 25486",
-  noOfAdults: "03 Adults",
-  vehicleType: "01 A/C Swift Dzire Car",
-  arrivalDate: "17 May'2026 ~ at Jammu Airport",
-  departureDate: "19 May'2026 ~ at Jammu Airport",
-  favouringGuest: "MR. ALLADI BALRAJ",
-  favouringPax: "02",
-  favouringVehicle: "01 A/C CAR",
+  date: "15 May 2026",
+  exoNo: "UK-TR-2026",
+  fileNo: "01",
+  guestName: "Valued Guest & Family",
+  managerMobile: "+91 97190 38278",
+  noOfAdults: "04 Adults",
+  vehicleType: "01 Innova Crysta A/C",
+  arrivalDate: "15 May 2026 ~ Haridwar / Dehradun",
+  departureDate: "24 May 2026 ~ Haridwar / Dehradun",
+  favouringGuest: "Valued Guest",
+  favouringPax: "04",
+  favouringVehicle: "01 Innova Crysta A/C",
   itinerary: [
     { 
-      date: "17 May'2026", 
-      details: "Pick up + half day local sightseeing {Sub to arrival timing} & hotel dropping", 
-      hotel: "Hotel Sarovar Portico, Katra" 
+      date: "Day 1", 
+      details: "Haridwar / Dehradun pickup, scenic drive to Barkot & hotel check-in", 
+      hotel: "Hotel / Camp, Barkot" 
     },
     { 
-      date: "18 May'2026", 
-      details: "Katra helipad ~ vaishno devi helipad transfer (both ways)", 
-      hotel: "Self Accommodation / Katra" 
+      date: "Day 2", 
+      details: "Barkot to Yamunotri Dham trek & darshan, evening return transfer", 
+      hotel: "Hotel / Camp, Barkot" 
     },
     { 
-      date: "19 May'2026", 
-      details: "Morning check-out, scenic drive & Jammu Airport dropping", 
+      date: "Day 3", 
+      details: "Drive to Uttarkashi, Kashi Vishwanath temple darshan", 
+      hotel: "Hotel / Resort, Uttarkashi" 
+    },
+    { 
+      date: "Day 4", 
+      details: "Gangotri Dham darshan, Harsil Valley scenic drive & return", 
+      hotel: "Hotel / Resort, Uttarkashi" 
+    },
+    { 
+      date: "Day 5", 
+      details: "Scenic transfer from Uttarkashi to Guptkashi / Sitapur", 
+      hotel: "Hotel / Resort, Guptkashi" 
+    },
+    { 
+      date: "Day 6", 
+      details: "Transfer to Sonprayag / Helipad for holy Kedarnath Dham darshan", 
+      hotel: "Kedarnath Base / Sitapur" 
+    },
+    { 
+      date: "Day 7", 
+      details: "Morning darshan, return transfer & scenic drive to Badrinath Dham", 
+      hotel: "Hotel, Badrinath" 
+    },
+    { 
+      date: "Day 8", 
+      details: "Badrinath Dham darshan, Mana village, Vyas Gufa & drive to Pipalkoti", 
+      hotel: "Hotel, Pipalkoti" 
+    },
+    { 
+      date: "Day 9", 
+      details: "Drive from Pipalkoti to Rishikesh, evening Ganga Aarti at Triveni Ghat", 
+      hotel: "Hotel / Resort, Rishikesh" 
+    },
+    { 
+      date: "Day 10", 
+      details: "Morning check-out, Rishikesh local sightseeing & airport/station drop", 
       hotel: "Tour Concludes" 
     },
   ]

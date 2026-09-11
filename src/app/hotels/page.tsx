@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import { 
+  Plus, 
+  Trash2, 
   Download, 
   Loader2, 
   MessageCircle, 
@@ -13,40 +15,301 @@ import {
   FileText, 
   CheckCircle2, 
   RotateCcw,
-  Maximize2,
-  Minimize2,
-  ZoomIn,
-  ZoomOut
+  Maximize2, 
+  Minimize2, 
+  ZoomIn, 
+  ZoomOut,
+  Copy,
+  ArrowUp,
+  ArrowDown,
+  Sparkles,
+  Bed,
+  Utensils,
+  Clock,
+  ShieldCheck,
+  Check
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
-const DEFAULT_HOTEL_DATA = {
-  date: "17 May'2026",
-  exoNo: "YT: YATRA 2026",
-  fileNo: "02",
-  hotelName: "Sarovar Portico",
-  hotelAddress: "Katra , Adjoining Shrine Board Office, Jammu Road, Katra, Jammu & Kashmir- 182301",
-  contactNo: "+91 7889941026",
-  guestName: "MR. ALLADI BALRAJ X 02 PAX",
-  roomType: "01. TRIPLE BED ROOM",
-  noOfAdults: "03 Adults",
-  noOfRooms: "01 Triple Rooms",
-  checkIn: "17 May 2026 {13:00 Hrs}",
-  checkOut: "19 May 2026 {11:00 Hrs}",
-  noOfNights: "02",
-  inclusions: "02 Night accommodation on twin & triple sharing basis.\nBreakfast, Lunch & Dinner at hotel {Veg. Food}.\nInclusive of all currently applicable taxes.",
-  confirmationNo: "38106",
-  specialRequest: "Please provide Two Triple bed Room on triple sharing basis for (Two Night)"
+export interface HotelStay {
+  id: string;
+  nightsLabel: string; // e.g. "Night 1 (15 May)" or "Day 1-2"
+  city: string;
+  hotelName: string;
+  hotelAddress: string;
+  contactNo: string;
+  checkIn: string;
+  checkOut: string;
+  nights: number;
+  roomType: string;
+  noOfRooms: string;
+  mealPlan: string; // "EP" | "CP" | "MAP" | "AP"
+  confirmationNo: string;
+  specialRequest?: string;
+}
+
+export interface HotelVoucherData {
+  voucherNo: string;
+  bookingId: string;
+  dateOfIssue: string;
+  guestName: string;
+  guestPhone: string;
+  guestEmail: string;
+  totalPax: string;
+  totalRooms: string;
+  tripDuration: string;
+  specialInstructions: string;
+  inclusions: string;
+  emergencyContact: string;
+  stays: HotelStay[];
+}
+
+const PRESET_CHARDHAM_10D: HotelVoucherData = {
+  voucherNo: "TV-2026-CH01",
+  bookingId: "BKG-CD-8842",
+  dateOfIssue: "10 May 2026",
+  guestName: "Guest & Family",
+  guestPhone: "+91 ",
+  guestEmail: "",
+  totalPax: "04 Adults",
+  totalRooms: "02 Double Rooms",
+  tripDuration: "10 Days / 09 Nights Chardham Tour",
+  emergencyContact: "Mr. Amit kumar · +91 9719038278 (24x7 Helpline)",
+  specialInstructions: "• Please present this original voucher with government photo ID at each hotel check-in.\n• Standard check-in time is 12:00 PM and check-out is 10:00 AM.\n• Early check-in is strictly subject to room availability upon arrival.\n• Pure vegetarian meals served across all destinations.",
+  inclusions: "• Accommodation on twin sharing basis as per selected categories.\n• Meal Plan: MAP (Daily Bed Tea, Buffet Breakfast & Dinner).\n• All applicable luxury, GST and hotel service taxes included.\n• 24x7 on-call ground tour assistance.",
+  stays: [
+    {
+      id: "stay-1",
+      nightsLabel: "Night 1",
+      city: "Haridwar",
+      hotelName: "Hotel Ganga Regency / Similar",
+      hotelAddress: "Haridwar Bypass, Near Railway Station",
+      contactNo: "+91 98765 43210",
+      checkIn: "15 May 2026 (12:00 PM)",
+      checkOut: "16 May 2026 (10:00 AM)",
+      nights: 1,
+      roomType: "Deluxe AC Room",
+      noOfRooms: "02 Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-HW-101",
+      specialRequest: "Ground or 1st floor rooms preferred"
+    },
+    {
+      id: "stay-2",
+      nightsLabel: "Night 2 & 3",
+      city: "Barkot / Yamunotri",
+      hotelName: "Camp & Resort Shivalik Heights",
+      hotelAddress: "Kharadi, Yamunotri Highway",
+      contactNo: "+91 94120 55678",
+      checkIn: "16 May 2026 (01:00 PM)",
+      checkOut: "18 May 2026 (08:00 AM)",
+      nights: 2,
+      roomType: "Luxury Cottage",
+      noOfRooms: "02 Cottages",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-BR-204",
+      specialRequest: "Pack early breakfast for Yamunotri trek"
+    },
+    {
+      id: "stay-3",
+      nightsLabel: "Night 4 & 5",
+      city: "Uttarkashi / Gangotri",
+      hotelName: "Hotel Bhagirathi View",
+      hotelAddress: "Netala, Gangotri Road, Uttarkashi",
+      contactNo: "+91 97190 11223",
+      checkIn: "18 May 2026 (02:00 PM)",
+      checkOut: "20 May 2026 (07:00 AM)",
+      nights: 2,
+      roomType: "River View Executive Room",
+      noOfRooms: "02 Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-UK-305",
+      specialRequest: ""
+    },
+    {
+      id: "stay-4",
+      nightsLabel: "Night 6 & 7",
+      city: "Guptkashi / Sitapur",
+      hotelName: "Kedar River Retreat",
+      hotelAddress: "Sitapur, Near Kedarnath Helipad / Phata",
+      contactNo: "+91 98371 44556",
+      checkIn: "20 May 2026 (03:00 PM)",
+      checkOut: "22 May 2026 (06:00 AM)",
+      nights: 2,
+      roomType: "Super Deluxe Room",
+      noOfRooms: "02 Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-GK-408",
+      specialRequest: "Early morning cab transfer to helipad"
+    },
+    {
+      id: "stay-5",
+      nightsLabel: "Night 8",
+      city: "Badrinath / Pipalkoti",
+      hotelName: "Hotel Badri Kedar Haven",
+      hotelAddress: "Main Temple Road, Badrinath Dham",
+      contactNo: "+91 94111 88990",
+      checkIn: "22 May 2026 (02:00 PM)",
+      checkOut: "23 May 2026 (09:00 AM)",
+      nights: 1,
+      roomType: "Heated Premium Deluxe",
+      noOfRooms: "02 Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-BD-509",
+      specialRequest: "Room heaters arranged"
+    },
+    {
+      id: "stay-6",
+      nightsLabel: "Night 9",
+      city: "Rishikesh",
+      hotelName: "Divine Ganga Cottage",
+      hotelAddress: "Tapovan, Luxman Jhula Road, Rishikesh",
+      contactNo: "+91 135 243 1234",
+      checkIn: "23 May 2026 (01:00 PM)",
+      checkOut: "24 May 2026 (11:00 AM)",
+      nights: 1,
+      roomType: "Ganga View Deluxe",
+      noOfRooms: "02 Rooms",
+      mealPlan: "CP (Breakfast Only)",
+      confirmationNo: "CONF-RK-601",
+      specialRequest: "Late evening Ganga Aarti timing guidance"
+    }
+  ]
 };
 
-export default function HotelVouchers() {
-  const [data, setData] = useState(DEFAULT_HOTEL_DATA);
+const PRESET_DODHAM_5D: HotelVoucherData = {
+  voucherNo: "TV-2026-DD01",
+  bookingId: "BKG-DD-5021",
+  dateOfIssue: "10 May 2026",
+  guestName: "Guest & Family",
+  guestPhone: "+91 ",
+  guestEmail: "",
+  totalPax: "02 Adults",
+  totalRooms: "01 Double Room",
+  tripDuration: "05 Days / 04 Nights Do Dham Tour (Kedarnath & Badrinath)",
+  emergencyContact: "Mr. Amit kumar · +91 9719038278 (24x7 Helpline)",
+  specialInstructions: "• Please carry valid original government ID.\n• Kedarnath base camp check-in requires biometric yatra pass.\n• Mountain weather can be chilly; warm woolens recommended.",
+  inclusions: "• Accommodation in clean deluxe hotels and hill camps.\n• Meal Plan: MAP (Daily Breakfast & Dinner).\n• All local taxes included.",
+  stays: [
+    {
+      id: "stay-1",
+      nightsLabel: "Night 1",
+      city: "Haridwar / Rishikesh",
+      hotelName: "Hotel Ganga Heritage",
+      hotelAddress: "Haridwar, Uttarakhand",
+      contactNo: "+91 98765 12345",
+      checkIn: "15 May 2026 (12:00 PM)",
+      checkOut: "16 May 2026 (07:00 AM)",
+      nights: 1,
+      roomType: "Deluxe AC Room",
+      noOfRooms: "01 Room",
+      mealPlan: "MAP",
+      confirmationNo: "CONF-HW-51",
+      specialRequest: ""
+    },
+    {
+      id: "stay-2",
+      nightsLabel: "Night 2 & 3",
+      city: "Guptkashi / Sitapur",
+      hotelName: "Kedar Valley Camp & Resort",
+      hotelAddress: "Sitapur, Near Kedarnath Road",
+      contactNo: "+91 98371 99887",
+      checkIn: "16 May 2026 (02:00 PM)",
+      checkOut: "18 May 2026 (07:00 AM)",
+      nights: 2,
+      roomType: "Deluxe Room",
+      noOfRooms: "01 Room",
+      mealPlan: "MAP",
+      confirmationNo: "CONF-GK-52",
+      specialRequest: ""
+    },
+    {
+      id: "stay-3",
+      nightsLabel: "Night 4",
+      city: "Pipalkoti / Joshimath",
+      hotelName: "Hotel Alaknanda View",
+      hotelAddress: "Pipalkoti, Badrinath Highway",
+      contactNo: "+91 94120 44332",
+      checkIn: "18 May 2026 (03:00 PM)",
+      checkOut: "19 May 2026 (08:00 AM)",
+      nights: 1,
+      roomType: "Super Deluxe Room",
+      noOfRooms: "01 Room",
+      mealPlan: "MAP",
+      confirmationNo: "CONF-PK-53",
+      specialRequest: ""
+    }
+  ]
+};
+
+const BLANK_VOUCHER: HotelVoucherData = {
+  voucherNo: "TV-2026-001",
+  bookingId: "BKG-2026-",
+  dateOfIssue: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+  guestName: "",
+  guestPhone: "",
+  guestEmail: "",
+  totalPax: "",
+  totalRooms: "",
+  tripDuration: "",
+  emergencyContact: "Mr. Amit kumar · +91 9719038278 (24x7 Helpline)",
+  specialInstructions: "• Please present this original voucher with government photo ID at each hotel check-in.\n• Standard check-in time is 12:00 PM and check-out is 10:00 AM.\n• Early check-in is strictly subject to room availability upon arrival.",
+  inclusions: "• Hotel accommodation as per confirmed room categories.\n• Meals as per specified meal plans (EP/CP/MAP/AP).\n• All applicable hotel and GST taxes included.",
+  stays: [
+    {
+      id: "stay-1",
+      nightsLabel: "Night 1",
+      city: "",
+      hotelName: "",
+      hotelAddress: "",
+      contactNo: "",
+      checkIn: "",
+      checkOut: "",
+      nights: 1,
+      roomType: "",
+      noOfRooms: "01 Room",
+      mealPlan: "MAP",
+      confirmationNo: "",
+      specialRequest: ""
+    }
+  ]
+};
+
+export default function HotelVouchersPage() {
+  const [data, setData] = useState<HotelVoucherData>(PRESET_CHARDHAM_10D);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isFormCollapsed, setIsFormCollapsed] = useState(false);
   const [autoScale, setAutoScale] = useState<number>(0.55);
   const [manualZoom, setManualZoom] = useState<number | null>(null);
   const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
   const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  // Load saved voucher from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("triloki_multi_hotel_voucher");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.stays) && parsed.stays.length > 0) {
+            setData(parsed);
+          }
+        }
+      } catch (err) {
+        console.warn("Could not load stored hotel voucher:", err);
+      }
+    }
+  }, []);
+
+  // Save changes to localStorage
+  const updateData = (newData: HotelVoucherData) => {
+    setData(newData);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("triloki_multi_hotel_voucher", JSON.stringify(newData));
+      } catch (e) {}
+    }
+  };
 
   // Auto-fit screen and fit-width scaling
   useEffect(() => {
@@ -84,7 +347,7 @@ export default function HotelVouchers() {
       window.removeEventListener("resize", updateScale);
       if (ro) ro.disconnect();
     };
-  }, [isFormCollapsed, fitMode]);
+  }, [isFormCollapsed, fitMode, data.stays.length]);
 
   const currentScale = manualZoom !== null ? manualZoom : autoScale;
 
@@ -103,28 +366,88 @@ export default function HotelVouchers() {
     setManualZoom(null);
   };
 
-  // High-Resolution PDF Download
-  const handleDownload = async () => {
+  // Stay List Management
+  const addStay = () => {
+    const nextNight = data.stays.length + 1;
+    const newStay: HotelStay = {
+      id: `stay-${Date.now()}`,
+      nightsLabel: `Night ${nextNight}`,
+      city: "",
+      hotelName: "",
+      hotelAddress: "",
+      contactNo: "",
+      checkIn: "",
+      checkOut: "",
+      nights: 1,
+      roomType: "Deluxe Room",
+      noOfRooms: "01 Room",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "",
+      specialRequest: ""
+    };
+    updateData({ ...data, stays: [...data.stays, newStay] });
+  };
+
+  const updateStay = (index: number, updated: Partial<HotelStay>) => {
+    const updatedStays = [...data.stays];
+    updatedStays[index] = { ...updatedStays[index], ...updated };
+    updateData({ ...data, stays: updatedStays });
+  };
+
+  const removeStay = (index: number) => {
+    if (data.stays.length <= 1) {
+      alert("A voucher must have at least one hotel/hostel stay.");
+      return;
+    }
+    const updatedStays = data.stays.filter((_, i) => i !== index);
+    updateData({ ...data, stays: updatedStays });
+  };
+
+  const duplicateStay = (index: number) => {
+    const source = data.stays[index];
+    const cloned: HotelStay = {
+      ...source,
+      id: `stay-${Date.now()}`,
+      nightsLabel: `Night ${index + 2}`
+    };
+    const updatedStays = [...data.stays];
+    updatedStays.splice(index + 1, 0, cloned);
+    updateData({ ...data, stays: updatedStays });
+  };
+
+  const moveStay = (index: number, direction: "up" | "down") => {
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === data.stays.length - 1) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const updatedStays = [...data.stays];
+    const temp = updatedStays[index];
+    updatedStays[index] = updatedStays[targetIndex];
+    updatedStays[targetIndex] = temp;
+    updateData({ ...data, stays: updatedStays });
+  };
+
+  // High-Resolution Multi-Page PDF Download
+  const handleDownloadPdf = async () => {
     try {
       setIsDownloading(true);
-      const element = document.getElementById("print-hotel-voucher");
+      const element = document.getElementById("print-multi-hotel-voucher");
       if (!element) {
-        alert("Could not find the print container.");
+        alert("Could not find the print voucher container.");
         setIsDownloading(false);
         return;
       }
 
-      // Save to Supabase Cloud
+      // Record in Supabase if online
       try {
         if (data.guestName) {
           await supabase.from("vouchers").insert({
-            voucher_type: "hotel",
+            voucher_type: "hotel_tour",
             guest_name: data.guestName,
             document_data: data
           });
         }
       } catch (dbError) {
-        console.error("Failed to save to database:", dbError);
+        console.warn("Cloud backup notice:", dbError);
       }
 
       const html2canvasModule = await import("html2canvas-pro");
@@ -135,49 +458,31 @@ export default function HotelVouchers() {
 
       const canvas = await html2canvas(element, { 
         scale: 2, 
-        useCORS: true,
+        useCORS: true, 
         logging: false 
       });
+
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
-      
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pageHeight = pdf.internal.pageSize.getHeight();
       
       let heightLeft = pdfHeight;
       let position = 0;
       
       pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-
-      // Add clickable PDF link annotations
-      try {
-        const linkEls = element.querySelectorAll("a[href], [data-pdf-link]");
-        const containerRect = element.getBoundingClientRect();
-        linkEls.forEach((linkNode) => {
-          const rect = linkNode.getBoundingClientRect();
-          const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
-          if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
-            const x = ((rect.left - containerRect.left) / containerRect.width) * pdfWidth;
-            const y = ((rect.top - containerRect.top) / containerRect.height) * pdfHeight;
-            const w = (rect.width / containerRect.width) * pdfWidth;
-            const h = (rect.height / containerRect.height) * pdfHeight;
-            pdf.link(x, y, w, h, { url: targetUrl });
-          }
-        });
-      } catch (linkErr) {
-        console.warn("Could not attach PDF link annotations:", linkErr);
-      }
-
-      heightLeft -= pdf.internal.pageSize.getHeight();
+      heightLeft -= pageHeight;
       
       while (heightLeft > 0) {
-        position = heightLeft - pdfHeight;
+        position -= pageHeight;
         pdf.addPage();
         pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pdf.internal.pageSize.getHeight();
+        heightLeft -= pageHeight;
       }
       
-      pdf.save(`Hotel_Voucher_${data.hotelName.replace(/\s+/g, "_")}.pdf`);
+      const safeName = data.guestName ? data.guestName.replace(/[^a-zA-Z0-9]/g, "_") : "Tour";
+      pdf.save(`Hotel_Stay_Voucher_${safeName}_${data.voucherNo || "Doc"}.pdf`);
     } catch (error: any) {
       console.error("PDF generation failed:", error);
       alert(`Failed to generate PDF: ${error.message || error}`);
@@ -186,154 +491,264 @@ export default function HotelVouchers() {
     }
   };
 
+  // WhatsApp formatted share message
   const handleShareWhatsApp = () => {
-    const message = `*HOTEL SERVICE VOUCHER - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName.split('X')[0].trim()},\n\nPlease find your hotel voucher for *${data.hotelName}*.\n• Check In: ${data.checkIn}\n• Check Out: ${data.checkOut}\n• Room: ${data.roomType} (${data.noOfRooms})\n• Hotel Tel: ${data.contactNo}\n• Confirmation No: ${data.confirmationNo}\n\nThank you for choosing Travel to Uttarakhand!`;
+    let message = `*🏨 HOTEL & STAY SERVICE VOUCHER*\n`;
+    message += `*Travel to Uttarakhand - Devbhoomi Hospitality*\n`;
+    message += `━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `📋 *Voucher No:* ${data.voucherNo || "N/A"}\n`;
+    message += `👤 *Guest Name:* ${data.guestName || "Guest"}\n`;
+    message += `👥 *Total Pax:* ${data.totalPax || "N/A"} (${data.totalRooms || "N/A"})\n`;
+    message += `🗓 *Duration:* ${data.tripDuration || "Tour Stay"}\n\n`;
+    message += `*CONFIRMED HOTEL / HOSTEL STAYS:*\n`;
+
+    data.stays.forEach((stay, idx) => {
+      message += `\n📍 *${stay.nightsLabel || `Stop ${idx + 1}`}: ${stay.city || "Destination"}*\n`;
+      message += `• *Hotel:* ${stay.hotelName || "Hotel / Resort"}\n`;
+      if (stay.checkIn) message += `• *Check-in:* ${stay.checkIn}\n`;
+      if (stay.checkOut) message += `• *Check-out:* ${stay.checkOut} (${stay.nights}N)\n`;
+      if (stay.roomType) message += `• *Room:* ${stay.roomType} (${stay.noOfRooms})\n`;
+      if (stay.mealPlan) message += `• *Meal Plan:* ${stay.mealPlan}\n`;
+      if (stay.confirmationNo) message += `• *Booking Ref:* ${stay.confirmationNo}\n`;
+      if (stay.contactNo) message += `• *Hotel Contact:* ${stay.contactNo}\n`;
+    });
+
+    message += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
+    message += `📞 *24x7 Operations Helpline:* ${data.emergencyContact}\n`;
+    message += `🌐 *Website:* https://traveltouttrakhand.com\n\n`;
+    message += `Wishing you a spiritually enriching and pleasant pilgrimage! 🙏`;
+
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
   };
 
-  // Modular Page Renderer - Perfectly balanced for 1122px height with zero cutoff
+  // Render the voucher document
   const renderVoucherContent = (prefix: string) => (
     <div 
-      id={`${prefix}-hotel-voucher`} 
-      className="w-[794px] h-[1122px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      id={`${prefix}-multi-hotel-voucher`} 
+      className="w-[794px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[520px] h-[520px] object-contain" />
       </div>
 
-      <div className="relative z-10 flex flex-col justify-between h-full">
+      <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
         
-        {/* TOP CONTENT SECTION */}
-        <div className="space-y-3">
-          
-          {/* Header Branding */}
-          <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
+        {/* HEADER SECTION */}
+        <div className="space-y-2.5">
+          <div className="flex flex-col items-center text-center pb-2 border-b border-gray-200">
             <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1" />
             <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
-            <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
-              HOTEL SERVICE VOUCHER
+            <h1 className="text-2xl font-serif font-black text-[#0369a1] tracking-tight uppercase mt-0.5">
+              TOUR ACCOMMODATION & HOTEL SERVICE VOUCHER
             </h1>
-            <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
-              ACCOMMODATION CONFIRMATION
+            <p className="text-xs font-bold tracking-wider text-[#dc2626] uppercase mt-0.5">
+              CONFIRMED STAYS & LODGING SCHEDULE
             </p>
-            <p className="text-[10.5px] text-gray-500 italic mt-0.5">
-              Devbhoomi Luxury Hospitality · Travel to Uttarakhand
+            <p className="text-[10px] text-gray-500 italic">
+              Devbhoomi Pilgrimage & Holiday Stays · Uttarakhand
             </p>
           </div>
 
-          {/* Metadata Line */}
-          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3.5 text-center text-[11px] font-semibold text-gray-800 flex justify-between items-center">
-            <span>Date: <strong className="text-[#0369a1]">{data.date}</strong></span>
-            <span>E.X.O. No: <strong className="text-gray-900">{data.exoNo}</strong></span>
-            <span>File No: <strong className="text-gray-900">{data.fileNo}</strong></span>
+          {/* Reference Meta Bar */}
+          <div className="bg-sky-50/80 border border-sky-200 rounded-lg py-1.5 px-3.5 text-xs text-gray-800 flex justify-between items-center font-medium">
+            <span>Voucher No: <strong className="text-[#0369a1] font-bold">{data.voucherNo || "N/A"}</strong></span>
+            <span>Booking ID: <strong className="text-gray-900 font-bold">{data.bookingId || "N/A"}</strong></span>
+            <span>Issue Date: <strong className="text-gray-900 font-bold">{data.dateOfIssue || "N/A"}</strong></span>
           </div>
 
-          {/* Hotel & Front Office To Box */}
-          <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 flex justify-between items-start text-xs">
-            <div>
-              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Addressed To</span>
-              <p className="text-[11px] font-semibold text-gray-600">The Front Office / Reservations Manager</p>
-              <h3 className="text-sm font-serif font-bold text-[#0369a1] mt-0.5">{data.hotelName}</h3>
-              <p className="text-gray-600 max-w-md text-[10.5px] leading-snug mt-0.5">{data.hotelAddress}</p>
+          {/* Guest & Trip Details Banner */}
+          <div className="border border-gray-200 rounded-lg p-3 bg-gray-50/80 grid grid-cols-2 gap-3 text-xs">
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5">
+                <User className="w-3.5 h-3.5 text-[#0369a1]" />
+                <span className="text-gray-500 font-medium">Lead Guest Name:</span>
+                <span className="font-bold text-gray-900">{data.guestName || "Valued Traveler"}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-[#0369a1]" />
+                <span className="text-gray-500 font-medium">Phone / WhatsApp:</span>
+                <span className="font-semibold text-gray-800">{data.guestPhone || "Provided on record"}</span>
+              </div>
             </div>
-            <div className="text-right">
-              <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Hotel Helpline</span>
-              <p className="font-bold text-gray-900 text-xs mt-0.5">{data.contactNo}</p>
-              <span className="inline-block px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9.5px] font-semibold mt-1">Confirmed Booking</span>
+            <div className="space-y-1">
+              <div className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5 text-[#0369a1]" />
+                <span className="text-gray-500 font-medium">Tour Duration:</span>
+                <span className="font-bold text-[#0369a1]">{data.tripDuration || "Full Tour"}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Bed className="w-3.5 h-3.5 text-[#0369a1]" />
+                <span className="text-gray-500 font-medium">Occupancy:</span>
+                <span className="font-semibold text-gray-800">{data.totalPax || "N/A"} · {data.totalRooms || "N/A"}</span>
+              </div>
             </div>
           </div>
+        </div>
 
-          {/* Booking Details Table */}
-          <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
-            <div className="bg-[#0369a1] text-white px-3 py-1.5 font-bold uppercase tracking-wider text-[11px] flex justify-between items-center">
-              <span>Booking Particulars</span>
-              <span className="text-[10px] font-normal opacity-90">Confirmation #{data.confirmationNo}</span>
-            </div>
-            <table className="w-full text-left text-[11px]">
+        {/* SUMMARY SCHEDULE TABLE */}
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+              <Building2 className="w-3.5 h-3.5" />
+              <span>Complete Stay Itinerary ({data.stays.length} Locations / Stays)</span>
+            </h3>
+            <span className="text-[10px] text-gray-500 font-semibold">100% Pre-Booked & Confirmed</span>
+          </div>
+
+          <div className="rounded-lg overflow-hidden border border-gray-200">
+            <table className="w-full text-left text-[10.5px]">
+              <thead className="bg-[#0369a1] text-white text-[10px] uppercase font-bold tracking-wider">
+                <tr>
+                  <th className="py-1.5 px-2.5 w-[14%]">Stay / Night</th>
+                  <th className="py-1.5 px-2.5 w-[16%]">Destination</th>
+                  <th className="py-1.5 px-2.5 w-[28%]">Hotel / Hostel / Camp</th>
+                  <th className="py-1.5 px-2.5 w-[24%]">Room Category & Meals</th>
+                  <th className="py-1.5 px-2.5 w-[18%]">Booking Ref / Phone</th>
+                </tr>
+              </thead>
               <tbody className="divide-y divide-gray-200">
-                <tr className="bg-white">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 w-1/3 border-r border-gray-200">Guest / Group Name:</td>
-                  <td className="px-3 py-1.5 font-bold text-[#0369a1]">{data.guestName}</td>
-                </tr>
-                <tr className="bg-gray-50/60">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Room Category:</td>
-                  <td className="px-3 py-1.5 font-semibold text-gray-900">{data.roomType}</td>
-                </tr>
-                <tr className="bg-white">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Adults & Rooms:</td>
-                  <td className="px-3 py-1.5 text-gray-800">{data.noOfAdults} · {data.noOfRooms}</td>
-                </tr>
-                <tr className="bg-gray-50/60">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Check-In / Out:</td>
-                  <td className="px-3 py-1.5 font-semibold text-gray-900">{data.checkIn} to {data.checkOut} ({data.noOfNights} Nights)</td>
-                </tr>
+                {data.stays.map((stay, idx) => (
+                  <tr key={stay.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
+                    <td className="py-1.5 px-2.5 font-bold text-gray-900 align-top">
+                      <div>{stay.nightsLabel}</div>
+                      <div className="text-[9px] text-gray-500 font-normal">{stay.nights} Night{stay.nights > 1 ? "s" : ""}</div>
+                    </td>
+                    <td className="py-1.5 px-2.5 font-bold text-[#0369a1] align-top">
+                      <div className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-[#0369a1] shrink-0" />
+                        <span>{stay.city || "—"}</span>
+                      </div>
+                    </td>
+                    <td className="py-1.5 px-2.5 align-top">
+                      <div className="font-bold text-gray-900 leading-snug">{stay.hotelName || "Hotel / Camp"}</div>
+                      {stay.hotelAddress && (
+                        <div className="text-[9.5px] text-gray-500 truncate max-w-[190px]">{stay.hotelAddress}</div>
+                      )}
+                    </td>
+                    <td className="py-1.5 px-2.5 align-top">
+                      <div className="font-semibold text-gray-800">{stay.roomType || "Standard Room"}</div>
+                      <div className="text-[9.5px] text-emerald-700 font-medium">
+                        {stay.mealPlan ? `Plan: ${stay.mealPlan}` : "Meals as confirmed"}
+                      </div>
+                    </td>
+                    <td className="py-1.5 px-2.5 align-top">
+                      <div className="font-mono font-bold text-gray-900 text-[10px]">{stay.confirmationNo || "CONFIRMED"}</div>
+                      <div className="text-[9.5px] text-gray-600">{stay.contactNo || "—"}</div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
+        </div>
 
-          {/* Favouring & Special Requests Banner */}
-          <div className="bg-sky-50/70 border border-sky-200 rounded-lg p-2 text-xs space-y-0.5">
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#0369a1] uppercase tracking-wider text-[10px]">FAVOURING:</span>
-              <span className="font-bold text-gray-900 text-[11px]">{data.guestName}</span>
-              <span className="text-gray-400">|</span>
-              <span className="font-semibold text-sky-900 text-[11px]">{data.roomType}</span>
-            </div>
-            {data.specialRequest && (
-              <p className="text-gray-700 text-[10.5px] italic pt-0.5 border-t border-sky-200/60">
-                <strong className="text-gray-900 not-italic">Special Request:</strong> {data.specialRequest}
-              </p>
-            )}
+        {/* DETAILED STAY PROPERTY BREAKDOWN CARDS */}
+        <div className="space-y-2">
+          <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+            <FileText className="w-3.5 h-3.5" />
+            <span>Property Particulars & Check-In Details</span>
+          </h3>
+
+          <div className="grid grid-cols-2 gap-2.5">
+            {data.stays.map((stay, idx) => (
+              <div 
+                key={stay.id || idx} 
+                className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 text-[10.5px] space-y-1 relative"
+              >
+                <div className="flex justify-between items-start border-b border-gray-200/80 pb-1">
+                  <div>
+                    <span className="text-[9px] font-bold text-sky-700 uppercase tracking-wider bg-sky-100/70 px-1.5 py-0.5 rounded">
+                      {stay.nightsLabel} · {stay.city}
+                    </span>
+                    <h4 className="font-bold text-gray-900 text-xs mt-1 leading-tight">{stay.hotelName}</h4>
+                  </div>
+                  <span className="text-[9.5px] font-mono font-semibold bg-emerald-50 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200">
+                    {stay.confirmationNo || "Confirmed"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-1 text-[10px] pt-0.5">
+                  <div>
+                    <span className="text-gray-400 block text-[9px]">Check-In:</span>
+                    <span className="font-semibold text-gray-800">{stay.checkIn || "12:00 PM"}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-400 block text-[9px]">Check-Out:</span>
+                    <span className="font-semibold text-gray-800">{stay.checkOut || "10:00 AM"}</span>
+                  </div>
+                </div>
+
+                <div className="text-[10px] text-gray-700 pt-0.5 border-t border-gray-200/60 flex justify-between">
+                  <span>Room: <strong>{stay.roomType}</strong> ({stay.noOfRooms})</span>
+                  <span className="text-emerald-700 font-semibold">{stay.mealPlan}</span>
+                </div>
+
+                {stay.hotelAddress && (
+                  <p className="text-[9.5px] text-gray-500 leading-tight truncate">
+                    📍 {stay.hotelAddress}
+                  </p>
+                )}
+
+                {stay.contactNo && (
+                  <p className="text-[9.5px] text-gray-600 font-medium">
+                    📞 Reception / Caretaker: <strong className="text-gray-900">{stay.contactNo}</strong>
+                  </p>
+                )}
+
+                {stay.specialRequest && (
+                  <p className="text-[9.5px] text-amber-800 bg-amber-50/60 p-1 rounded border border-amber-200/60 italic leading-tight">
+                    <strong>Note:</strong> {stay.specialRequest}
+                  </p>
+                )}
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* Package Cost Inclusions */}
+        {/* INCLUSIONS & POLICIES */}
+        <div className="grid grid-cols-2 gap-3 text-[10px] pt-1 border-t border-gray-200">
           <div className="space-y-1">
-            <h4 className="font-serif font-bold text-[#0369a1] text-xs uppercase tracking-wider">
-              Package Cost Includes:
+            <h4 className="font-bold text-[#0369a1] uppercase text-[10px] tracking-wider">
+              Package Stay Inclusions:
             </h4>
-            <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-2.5 text-xs space-y-1">
-              {data.inclusions.split('\n').filter(Boolean).map((inc, i) => (
-                <div key={i} className="flex items-start gap-1.5 text-[10.5px] text-gray-800 leading-tight">
-                  <span className="text-emerald-700 font-bold shrink-0">✓</span>
-                  <span>{inc}</span>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-relaxed text-gray-700">
+              {data.inclusions.split("\n").filter(Boolean).map((inc, i) => (
+                <div key={i} className="flex items-start gap-1">
+                  <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                  <span>{inc.replace(/^•\s*/, "")}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Policies Table */}
-          <table className="w-full text-left text-[10.5px] border border-gray-200 rounded-lg overflow-hidden">
-            <tbody className="divide-y divide-gray-200">
-              <tr>
-                <td className="px-2.5 py-1 font-bold text-gray-700 w-1/4 bg-gray-50">Confirmation No.</td>
-                <td className="px-2.5 py-1 font-bold text-[#0369a1] w-1/4">{data.confirmationNo}</td>
-                <td className="px-2.5 py-1 font-bold text-gray-700 w-1/4 bg-gray-50">Meal Plan</td>
-                <td className="px-2.5 py-1 text-gray-800 w-1/4 font-semibold">As Specified Above</td>
-              </tr>
-              <tr>
-                <td className="px-2.5 py-1 font-bold text-gray-700 bg-gray-50">Voucher Notice</td>
-                <td colSpan={3} className="px-2.5 py-1 text-gray-600 text-[9.5px] leading-tight">
-                  Guest must present this original voucher along with valid government photo ID upon arrival at the hotel front desk.
-                </td>
-              </tr>
-            </tbody>
-          </table>
-
+          <div className="space-y-1">
+            <h4 className="font-bold text-[#dc2626] uppercase text-[10px] tracking-wider">
+              Important Stay Guidelines:
+            </h4>
+            <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-relaxed text-gray-700">
+              {data.specialInstructions.split("\n").filter(Boolean).map((ins, i) => (
+                <div key={i} className="flex items-start gap-1">
+                  <span className="text-amber-600 font-bold shrink-0">ℹ</span>
+                  <span>{ins.replace(/^•\s*/, "")}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* BOTTOM SECTION: Signatory & Page Footer */}
-        <div className="space-y-2 pt-1 border-t border-gray-200">
-          <div className="flex justify-between items-center">
+        {/* FOOTER & SIGNATORY */}
+        <div className="pt-2 border-t border-gray-200 space-y-1.5">
+          <div className="flex justify-between items-center text-xs">
             <div className="flex items-center gap-2.5">
               <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
               <div>
-                <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
+                <p className="text-[8.5px] uppercase tracking-widest text-gray-400 font-bold">Authorized Agency</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600 font-medium">
-                  Mr. Amit kumar · +91 9719038278 · 
+                <p className="text-[9.5px] text-gray-600">
+                  {data.emergencyContact} · 
                   <a 
                     href="https://traveltouttrakhand.com" 
                     target="_blank" 
@@ -348,12 +763,14 @@ export default function HotelVouchers() {
             </div>
             <div className="text-right">
               <p className="text-[10px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
-              <p className="text-[8.5px] uppercase tracking-wider text-gray-400 mt-0.5">Authorized Hospitality Voucher</p>
+              <div className="mt-1 px-2.5 py-0.5 bg-emerald-50 border border-emerald-300 rounded text-[9.5px] font-bold text-emerald-800 inline-block">
+                OFFICIAL SERVICE VOUCHER
+              </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
-            <span>Travel to Uttarakhand · +91 9719038278</span>
+          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9px] text-gray-500">
+            <span>Travel to Uttarakhand · Regd. Tour Operator & Destination Management</span>
             <a 
               href="https://traveltouttrakhand.com" 
               target="_blank" 
@@ -363,7 +780,7 @@ export default function HotelVouchers() {
             >
               🌐 www.traveltouttrakhand.com
             </a>
-            <span>Hotel Service Voucher · Page 1 of 1</span>
+            <span>Official Hotel Voucher</span>
           </div>
         </div>
 
@@ -374,124 +791,399 @@ export default function HotelVouchers() {
   return (
     <div className="flex flex-col lg:flex-row gap-5 w-full h-[calc(100vh-5rem)]">
       
-      {/* Left Column: Form Controls */}
+      {/* Left Column: Multi-Stay Form Controls */}
       {!isFormCollapsed && (
-        <div className="w-full lg:w-[38%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
-          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
-                <Building2 className="w-5 h-5" />
+        <div className="w-full lg:w-[42%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
+          
+          {/* Header & Quick Preset Bar */}
+          <div className="pb-3 border-b border-gray-100 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-sky-100 text-[#0369a1] flex items-center justify-center font-bold">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <div>
+                  <h1 className="text-lg font-bold text-gray-900 leading-tight">Hotel Voucher Studio</h1>
+                  <p className="text-xs text-gray-500">Multi-Hotel Tour Accommodation (5–10+ Days)</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900 leading-tight">Hotel Voucher Studio</h1>
-                <p className="text-xs text-gray-500">Devbhoomi Edition • 100% Editable</p>
-              </div>
+              <button
+                onClick={() => updateData(BLANK_VOUCHER)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-red-600 bg-gray-50 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
+                title="Clear all fields and start fresh"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                Clear
+              </button>
             </div>
-            <button
-              onClick={() => setData(DEFAULT_HOTEL_DATA)}
-              className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
-              title="Reset to default voucher data"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset
-            </button>
+
+            {/* Quick Presets */}
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Quick Load:</span>
+              <button
+                onClick={() => updateData(PRESET_CHARDHAM_10D)}
+                className="px-2 py-1 bg-sky-50 text-[#0369a1] hover:bg-sky-100 border border-sky-200 rounded text-xs font-semibold transition"
+              >
+                10-Day Chardham (6 Stays)
+              </button>
+              <button
+                onClick={() => updateData(PRESET_DODHAM_5D)}
+                className="px-2 py-1 bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 rounded text-xs font-semibold transition"
+              >
+                5-Day Do Dham (3 Stays)
+              </button>
+            </div>
           </div>
 
           <div className="space-y-4 text-xs">
-            {/* 1. Header Info */}
+            
+            {/* 1. Voucher Meta Details */}
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Voucher Reference</span>
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">1. Voucher & Booking Details</span>
               <div className="grid grid-cols-3 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Date</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.date} onChange={e => setData({ ...data, date: e.target.value })} />
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Voucher No.</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" 
+                    value={data.voucherNo} 
+                    onChange={e => updateData({ ...data, voucherNo: e.target.value })} 
+                  />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">E.X.O. No.</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.exoNo} onChange={e => setData({ ...data, exoNo: e.target.value })} />
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Booking ID</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" 
+                    value={data.bookingId} 
+                    onChange={e => updateData({ ...data, bookingId: e.target.value })} 
+                  />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">File No.</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.fileNo} onChange={e => setData({ ...data, fileNo: e.target.value })} />
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Issue Date</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                    value={data.dateOfIssue} 
+                    onChange={e => updateData({ ...data, dateOfIssue: e.target.value })} 
+                  />
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Tour Name / Duration</label>
+                <input 
+                  type="text" 
+                  className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" 
+                  placeholder="e.g. 10 Days / 09 Nights Chardham Deluxe Tour" 
+                  value={data.tripDuration} 
+                  onChange={e => updateData({ ...data, tripDuration: e.target.value })} 
+                />
               </div>
             </div>
 
-            {/* 2. Hotel Details */}
+            {/* 2. Lead Guest Details */}
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Hotel Details</span>
-              <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Name</label>
-                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.hotelName} onChange={e => setData({ ...data, hotelName: e.target.value })} />
-              </div>
-              <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Address</label>
-                <textarea rows={2} className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.hotelAddress} onChange={e => setData({ ...data, hotelAddress: e.target.value })} />
-              </div>
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">2. Guest & Pax Information</span>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Phone</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.contactNo} onChange={e => setData({ ...data, contactNo: e.target.value })} />
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Lead Guest Name</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-gray-900" 
+                    placeholder="e.g. Mr. Rajesh Sharma" 
+                    value={data.guestName} 
+                    onChange={e => updateData({ ...data, guestName: e.target.value })} 
+                  />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Confirmation No.</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.confirmationNo} onChange={e => setData({ ...data, confirmationNo: e.target.value })} />
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Phone / WhatsApp</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                    placeholder="+91 98765 43210" 
+                    value={data.guestPhone} 
+                    onChange={e => updateData({ ...data, guestPhone: e.target.value })} 
+                  />
                 </div>
               </div>
-            </div>
 
-            {/* 3. Guest & Stay Details */}
-            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Guest & Stay Particulars</span>
-              <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">Guest Name & Pax</label>
-                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-gray-900" value={data.guestName} onChange={e => setData({ ...data, guestName: e.target.value })} />
-              </div>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Room Type</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.roomType} onChange={e => setData({ ...data, roomType: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Adults</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.noOfAdults} onChange={e => setData({ ...data, noOfAdults: e.target.value })} />
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Total Pax</label>
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                    placeholder="e.g. 04 Adults, 01 Child" 
+                    value={data.totalPax} 
+                    onChange={e => updateData({ ...data, totalPax: e.target.value })} 
+                  />
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Rooms Count</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.noOfRooms} onChange={e => setData({ ...data, noOfRooms: e.target.value })} />
+                  <input 
+                    type="text" 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                    placeholder="e.g. 02 Double Rooms" 
+                    value={data.totalRooms} 
+                    onChange={e => updateData({ ...data, totalRooms: e.target.value })} 
+                  />
                 </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Check In</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.checkIn} onChange={e => setData({ ...data, checkIn: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Check Out</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.checkOut} onChange={e => setData({ ...data, checkOut: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">No. of Nights</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.noOfNights} onChange={e => setData({ ...data, noOfNights: e.target.value })} />
-                </div>
-              </div>
-              <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">Special Requests</label>
-                <textarea rows={2} className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.specialRequest} onChange={e => setData({ ...data, specialRequest: e.target.value })} />
               </div>
             </div>
 
-            {/* 4. Inclusions */}
-            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Package Inclusions (One per line)</span>
-              <textarea rows={3} className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs leading-relaxed" value={data.inclusions} onChange={e => setData({ ...data, inclusions: e.target.value })} />
+            {/* 3. MULTI-HOTEL / HOSTEL STAYS LIST */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-[#0369a1] uppercase tracking-wider block">
+                  3. Confirmed Stays ({data.stays.length} Hotels / Hostels)
+                </span>
+                <button
+                  type="button"
+                  onClick={addStay}
+                  className="flex items-center gap-1 px-2.5 py-1 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>Add Stay</span>
+                </button>
+              </div>
+
+              {data.stays.map((stay, idx) => (
+                <div key={stay.id || idx} className="bg-gray-50 p-3.5 rounded-xl border border-gray-200 space-y-2.5 relative">
+                  
+                  {/* Top Bar for this stay */}
+                  <div className="flex items-center justify-between border-b border-gray-200/80 pb-2">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-[#0369a1] text-white text-[10px] font-bold flex items-center justify-center">
+                        {idx + 1}
+                      </span>
+                      <input 
+                        type="text" 
+                        className="px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1] w-32" 
+                        placeholder="Night 1" 
+                        value={stay.nightsLabel} 
+                        onChange={e => updateStay(idx, { nightsLabel: e.target.value })} 
+                      />
+                      <input 
+                        type="text" 
+                        className="px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold text-gray-800 w-36" 
+                        placeholder="City (e.g. Barkot)" 
+                        value={stay.city} 
+                        onChange={e => updateStay(idx, { city: e.target.value })} 
+                      />
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => moveStay(idx, "up")}
+                        disabled={idx === 0}
+                        className="p-1 hover:bg-gray-200 text-gray-500 rounded disabled:opacity-30 cursor-pointer"
+                        title="Move Up"
+                      >
+                        <ArrowUp className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveStay(idx, "down")}
+                        disabled={idx === data.stays.length - 1}
+                        className="p-1 hover:bg-gray-200 text-gray-500 rounded disabled:opacity-30 cursor-pointer"
+                        title="Move Down"
+                      >
+                        <ArrowDown className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => duplicateStay(idx)}
+                        className="p-1 hover:bg-gray-200 text-gray-500 rounded cursor-pointer"
+                        title="Duplicate this stay"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeStay(idx)}
+                        className="p-1 hover:bg-red-100 text-red-500 rounded cursor-pointer"
+                        title="Delete stay"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Hotel Name & Address */}
+                  <div>
+                    <label className="block text-[10px] text-gray-500 mb-0.5">Hotel / Hostel / Camp Name</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-gray-900" 
+                      placeholder="e.g. Hotel Shivalik Heights" 
+                      value={stay.hotelName} 
+                      onChange={e => updateStay(idx, { hotelName: e.target.value })} 
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Address / Landmark</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                      placeholder="e.g. Main Highway, Barkot, Uttarakhand" 
+                      value={stay.hotelAddress} 
+                      onChange={e => updateStay(idx, { hotelAddress: e.target.value })} 
+                    />
+                  </div>
+
+                  {/* Check in / Check out / Nights */}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Check-In Date/Time</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                        placeholder="16 May (12 PM)" 
+                        value={stay.checkIn} 
+                        onChange={e => updateStay(idx, { checkIn: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Check-Out Date/Time</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                        placeholder="18 May (10 AM)" 
+                        value={stay.checkOut} 
+                        onChange={e => updateStay(idx, { checkOut: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Nights Count</label>
+                      <input 
+                        type="number" 
+                        min={1} 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" 
+                        value={stay.nights} 
+                        onChange={e => updateStay(idx, { nights: Number(e.target.value) || 1 })} 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Room Category, Meal Plan, Rooms Count */}
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Room Category</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                        placeholder="Deluxe Room" 
+                        value={stay.roomType} 
+                        onChange={e => updateStay(idx, { roomType: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Rooms Count</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                        placeholder="02 Rooms" 
+                        value={stay.noOfRooms} 
+                        onChange={e => updateStay(idx, { noOfRooms: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Meal Plan</label>
+                      <select
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold text-emerald-700"
+                        value={stay.mealPlan}
+                        onChange={e => updateStay(idx, { mealPlan: e.target.value })}
+                      >
+                        <option value="MAP (Breakfast + Dinner)">MAP (Breakfast + Dinner)</option>
+                        <option value="CP (Bed & Breakfast)">CP (Bed & Breakfast)</option>
+                        <option value="AP (All Meals)">AP (All Meals)</option>
+                        <option value="EP (Room Only)">EP (Room Only)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Booking Confirmation & Phone */}
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Booking / Confirmation #</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-[#0369a1]" 
+                        placeholder="CONF-1234" 
+                        value={stay.confirmationNo} 
+                        onChange={e => updateStay(idx, { confirmationNo: e.target.value })} 
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Phone / Reception</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                        placeholder="+91 94120 XXXXX" 
+                        value={stay.contactNo} 
+                        onChange={e => updateStay(idx, { contactNo: e.target.value })} 
+                      />
+                    </div>
+                  </div>
+
+                  {/* Special Requests / Notes */}
+                  <div>
+                    <label className="block text-[10px] text-gray-500 mb-0.5">Special Requests / Room Preferences</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                      placeholder="e.g. Ground floor for senior citizen / river facing" 
+                      value={stay.specialRequest || ""} 
+                      onChange={e => updateStay(idx, { specialRequest: e.target.value })} 
+                    />
+                  </div>
+
+                </div>
+              ))}
             </div>
+
+            {/* 4. Inclusions & Policies */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">4. Inclusions & Stay Policies</span>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Inclusions (one per line)</label>
+                <textarea 
+                  rows={3} 
+                  className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs leading-relaxed" 
+                  value={data.inclusions} 
+                  onChange={e => updateData({ ...data, inclusions: e.target.value })} 
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Important Guidelines (one per line)</label>
+                <textarea 
+                  rows={3} 
+                  className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs leading-relaxed" 
+                  value={data.specialInstructions} 
+                  onChange={e => updateData({ ...data, specialInstructions: e.target.value })} 
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">24x7 Emergency Contact</label>
+                <input 
+                  type="text" 
+                  className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" 
+                  value={data.emergencyContact} 
+                  onChange={e => updateData({ ...data, emergencyContact: e.target.value })} 
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       )}
 
       {/* Right Column: Live Centered Preview */}
-      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "w-full lg:w-[62%]"}`}>
+      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "w-full lg:w-[58%]"}`}>
         
         {/* Sleek Toolbar */}
         <div className="bg-white px-4 py-2.5 rounded-2xl shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
@@ -537,7 +1229,7 @@ export default function HotelVouchers() {
                   ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
                   : "border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
-              title="Zoom to Fit Width (Enlarged & Easy to Read)"
+              title="Zoom to Fit Width"
             >
               Fit Width
             </button>
@@ -549,7 +1241,7 @@ export default function HotelVouchers() {
                   ? "bg-sky-50 text-sky-700 border-sky-300 font-bold"
                   : "border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}
-              title="Fit Full Page on Screen"
+              title="Fit Page on Screen"
             >
               Fit Page
             </button>
@@ -560,13 +1252,14 @@ export default function HotelVouchers() {
             <button
               onClick={handleShareWhatsApp}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
+              title="Share confirmed hotels via WhatsApp"
             >
               <MessageCircle className="w-3.5 h-3.5" />
               <span>WhatsApp</span>
             </button>
 
             <button
-              onClick={handleDownload}
+              onClick={handleDownloadPdf}
               disabled={isDownloading}
               className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold shadow-xs transition active:scale-95 disabled:opacity-50 cursor-pointer"
             >
@@ -616,7 +1309,7 @@ export default function HotelVouchers() {
 
       </div>
 
-      {/* Hidden Print Container for High-Res PDF Export */}
+      {/* Hidden Print Container for Multi-Page PDF Export */}
       <div className="fixed -left-[99999px] top-0 pointer-events-none opacity-100 z-[-100]">
         {renderVoucherContent("print")}
       </div>

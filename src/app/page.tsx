@@ -12,7 +12,7 @@ import {
   Store, 
   Activity, 
   Plus, 
-  CheckCircle2,
+  CheckCircle2, 
   Clock,
   ArrowRight
 } from "lucide-react";
@@ -45,52 +45,91 @@ const STAGE_LABELS: Record<string, string> = {
   lost: "Lost"
 };
 
-const STATIC_INITIAL_STATS: DashboardStats = {
-  activeLeads: 6,
-  confirmedTours: 5,
-  totalVouchers: 8,
-  totalItineraries: 12,
-  pendingPayables: 68000,
+const CLEAN_INITIAL_STATS: DashboardStats = {
+  activeLeads: 0,
+  confirmedTours: 0,
+  totalVouchers: 0,
+  totalItineraries: 0,
+  pendingPayables: 0,
   leadsByStage: [
-    { name: "New Inquiries", count: 4, fill: "#0284c7" },
-    { name: "Quoted Sent", count: 3, fill: "#d97706" },
-    { name: "Follow Up", count: 2, fill: "#9333ea" },
-    { name: "Confirmed Yatra", count: 5, fill: "#16a34a" },
-    { name: "Cancelled", count: 1, fill: "#dc2626" },
+    { name: "New Inquiries", count: 0, fill: "#0284c7" },
+    { name: "Quoted Sent", count: 0, fill: "#d97706" },
+    { name: "Follow Up", count: 0, fill: "#9333ea" },
+    { name: "Confirmed Yatra", count: 0, fill: "#16a34a" },
+    { name: "Cancelled", count: 0, fill: "#dc2626" },
   ],
   recentActivity: []
 };
 
 export default function Dashboard() {
-  const [stats, setStats] = useState<DashboardStats>(STATIC_INITIAL_STATS);
+  const [stats, setStats] = useState<DashboardStats>(CLEAN_INITIAL_STATS);
 
   useEffect(() => {
+    // 1. Initial Load from Local Storage (zero lag, offline first)
     if (typeof window !== "undefined") {
       try {
-        const savedPayables = localStorage.getItem("triloki_payables");
-        if (savedPayables) {
-          const parsed = JSON.parse(savedPayables);
-          if (Array.isArray(parsed)) {
-            const pendingTotal = parsed.filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount), 0);
-            setStats(prev => ({ ...prev, pendingPayables: pendingTotal }));
+        let activeLeads = 0;
+        let confirmedTours = 0;
+        let recentLeads: any[] = [];
+        let stageCounts: Record<string, number> = { new_inquiry: 0, quoted: 0, follow_up: 0, confirmed: 0, lost: 0 };
+
+        const storedLeads = localStorage.getItem("triloki_leads");
+        if (storedLeads) {
+          const parsed = JSON.parse(storedLeads);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            activeLeads = parsed.filter((l: any) => l.status !== "lost").length;
+            confirmedTours = parsed.filter((l: any) => l.status === "confirmed").length;
+            recentLeads = parsed.slice(0, 5);
+            parsed.forEach((l: any) => {
+              const st = l.status || "new_inquiry";
+              if (stageCounts[st] !== undefined) stageCounts[st]++;
+            });
           }
         }
+
+        let pendingPayables = 0;
+        const storedPayables = localStorage.getItem("triloki_payables");
+        if (storedPayables) {
+          const parsed = JSON.parse(storedPayables);
+          if (Array.isArray(parsed)) {
+            pendingPayables = parsed.filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount || 0), 0);
+          }
+        }
+
+        const chartData = Object.keys(stageCounts).map(key => ({
+          name: STAGE_LABELS[key],
+          count: stageCounts[key],
+          fill: STAGE_COLORS[key]
+        }));
+
+        setStats({
+          activeLeads,
+          confirmedTours,
+          totalVouchers: 0,
+          totalItineraries: 0,
+          pendingPayables,
+          leadsByStage: chartData,
+          recentActivity: recentLeads
+        });
       } catch (e) {}
     }
 
+    // 2. Sync with Supabase Cloud
     async function fetchDashboardData() {
       try {
-        const [leadsRes, payablesRes, itinsRes] = await Promise.allSettled([
+        const [leadsRes, payablesRes, itinsRes, vouchersRes] = await Promise.allSettled([
           supabase.from("leads").select("*").order("created_at", { ascending: false }),
           supabase.from("payables").select("amount, status"),
-          supabase.from("itineraries").select("*", { count: "exact", head: true })
+          supabase.from("itineraries").select("*", { count: "exact", head: true }),
+          supabase.from("vouchers").select("*", { count: "exact", head: true })
         ]);
 
         const leads = leadsRes.status === "fulfilled" && leadsRes.value.data ? leadsRes.value.data : null;
         const payables = payablesRes.status === "fulfilled" && payablesRes.value.data ? payablesRes.value.data : null;
-        const itineraryCount = itinsRes.status === "fulfilled" ? itinsRes.value.count : null;
+        const itineraryCount = itinsRes.status === "fulfilled" && itinsRes.value.count !== null ? itinsRes.value.count : 0;
+        const voucherCount = vouchersRes.status === "fulfilled" && vouchersRes.value.count !== null ? vouchersRes.value.count : 0;
 
-        if (leads && leads.length > 0) {
+        if (leads && Array.isArray(leads)) {
           const activeLeads = leads.filter(l => l.status !== "lost").length;
           const confirmedTours = leads.filter(l => l.status === "confirmed").length;
           
@@ -106,20 +145,20 @@ export default function Dashboard() {
             fill: STAGE_COLORS[key]
           }));
 
-          const pendingPayables = (payables || []).filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount), 0);
+          const pendingPayables = (payables || []).filter(p => p.status === 'pending').reduce((sum, p) => sum + Number(p.amount || 0), 0);
 
           setStats({
-            activeLeads: activeLeads || leads.length,
-            confirmedTours: confirmedTours > 0 ? confirmedTours : 5,
-            totalVouchers: 8,
-            totalItineraries: itineraryCount || 12,
-            pendingPayables: pendingPayables > 0 ? pendingPayables : 68000,
+            activeLeads,
+            confirmedTours,
+            totalVouchers: voucherCount,
+            totalItineraries: itineraryCount,
+            pendingPayables,
             leadsByStage: chartData,
             recentActivity: leads.slice(0, 5)
           });
         }
       } catch (error) {
-        console.warn("Silent background stats sync error:", error);
+        console.warn("Background stats sync:", error);
       }
     }
 
@@ -226,9 +265,9 @@ export default function Dashboard() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
-            { label: "Itinerary Studio", desc: "4-Page PDF Brochures", icon: Map, color: "text-blue-600", bg: "bg-blue-50", href: "/itinerary-builder" },
+            { label: "Itinerary Studio", desc: "PDF Proposals & Quotes", icon: Map, color: "text-blue-600", bg: "bg-blue-50", href: "/itinerary-builder" },
             { label: "Tax Invoices", desc: "Bill of Supply & GST", icon: FileText, color: "text-sky-600", bg: "bg-sky-50", href: "/invoices" },
-            { label: "Hotel Vouchers", desc: "Accommodation Bookings", icon: Hotel, color: "text-cyan-600", bg: "bg-cyan-50", href: "/hotels" },
+            { label: "Hotel Vouchers", desc: "Multi-Stay Accommodation", icon: Hotel, color: "text-cyan-600", bg: "bg-cyan-50", href: "/hotels" },
             { label: "Transport Vouchers", desc: "Vehicle & Fleet Allocation", icon: Car, color: "text-purple-600", bg: "bg-purple-50", href: "/transport" },
             { label: "Lead Pipeline", desc: "Kanban Inquiry Stages", icon: Users, color: "text-amber-600", bg: "bg-amber-50", href: "/leads" },
             { label: "Vendor Directory", desc: "Hotels & Fleet Partners", icon: Store, color: "text-rose-600", bg: "bg-rose-50", href: "/vendors" },
@@ -295,9 +334,15 @@ export default function Dashboard() {
             
             <div className="space-y-3.5">
               {stats.recentActivity.length === 0 ? (
-                <div className="py-8 text-center space-y-1">
+                <div className="py-8 text-center space-y-2">
                   <Clock className="w-6 h-6 text-gray-300 mx-auto" />
-                  <p className="text-xs text-gray-500">No recent leads found.</p>
+                  <p className="text-xs text-gray-500 font-medium">No leads recorded yet.</p>
+                  <Link 
+                    href="/leads" 
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0369a1] hover:underline"
+                  >
+                    + Add your first inquiry
+                  </Link>
                 </div>
               ) : (
                 stats.recentActivity.map((lead, i) => (
@@ -305,7 +350,7 @@ export default function Dashboard() {
                     <div>
                       <p className="text-xs font-bold text-gray-900">{lead.name}</p>
                       <p className="text-[10.5px] text-gray-500 mt-0.5">
-                        {lead.destination || 'Chardham Yatra'} {lead.budget ? `· ₹${Number(lead.budget).toLocaleString()}` : ''}
+                        {lead.destination || 'Yatra Package'} {lead.budget ? `· ₹${Number(lead.budget).toLocaleString()}` : ''}
                       </p>
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
@@ -335,4 +380,3 @@ export default function Dashboard() {
     </div>
   );
 }
-

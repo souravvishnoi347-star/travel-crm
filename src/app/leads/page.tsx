@@ -29,25 +29,16 @@ type BoardState = Record<string, Lead[]>;
 
 const emptyForm = { name: "", phone: "", destination: "", budget: "", notes: "", status: "new_inquiry" };
 
-const DEFAULT_LEADS: BoardState = {
-  new_inquiry: [
-    { id: "lead-1", name: "Rahul Sharma", phone: "+91 98111 22334", destination: "Chardham Yatra 12D", budget: 180000, status: "new_inquiry", notes: "Family of 4, wants luxury hotels", created_at: "2026-09-04" },
-    { id: "lead-2", name: "Sunil Mehta", phone: "+91 94222 33445", destination: "Kedarnath Heli Tour", budget: 95000, status: "new_inquiry", notes: "Senior citizens, priority darshan", created_at: "2026-09-03" }
-  ],
-  quoted: [
-    { id: "lead-3", name: "Vikram Malhotra", phone: "+91 98765 43210", destination: "Do Dham Ex-Haridwar", budget: 120000, status: "quoted", notes: "Quote sent for Innova Crysta", created_at: "2026-09-02" }
-  ],
-  follow_up: [
-    { id: "lead-4", name: "Ananya Deshmukh", phone: "+91 97654 32109", destination: "Badrinath & Auli", budget: 75000, status: "follow_up", notes: "Follow up after weekend", created_at: "2026-09-01" }
-  ],
-  confirmed: [
-    { id: "lead-5", name: "Mr. Ghanshyam", phone: "+91 84452 14371", destination: "Chardham Deluxe", budget: 190000, status: "confirmed", notes: "Advance ₹1,00,000 paid", created_at: "2026-08-30" }
-  ],
+const EMPTY_BOARD: BoardState = {
+  new_inquiry: [],
+  quoted: [],
+  follow_up: [],
+  confirmed: [],
   lost: []
 };
 
 export default function LeadPipeline() {
-  const [board, setBoard] = useState<BoardState>(DEFAULT_LEADS);
+  const [board, setBoard] = useState<BoardState>(EMPTY_BOARD);
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -62,11 +53,20 @@ export default function LeadPipeline() {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === "object") {
-            setBoard(parsed);
+            // If it only has legacy dummy lead IDs (lead-1, lead-2 etc), start clean
+            const allLeads = Object.values(parsed).flat() as Lead[];
+            const isMockData = allLeads.length > 0 && allLeads.every(l => l.id.startsWith("lead-"));
+            if (isMockData) {
+              setBoard(EMPTY_BOARD);
+              localStorage.setItem("triloki_leads_board", JSON.stringify(EMPTY_BOARD));
+              localStorage.setItem("triloki_leads", JSON.stringify([]));
+            } else {
+              setBoard(parsed);
+            }
           }
         } else {
-          localStorage.setItem("triloki_leads_board", JSON.stringify(DEFAULT_LEADS));
-          localStorage.setItem("triloki_leads", JSON.stringify(Object.values(DEFAULT_LEADS).flat()));
+          localStorage.setItem("triloki_leads_board", JSON.stringify(EMPTY_BOARD));
+          localStorage.setItem("triloki_leads", JSON.stringify([]));
         }
       } catch (e) {}
     }

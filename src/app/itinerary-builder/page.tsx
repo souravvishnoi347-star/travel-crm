@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
+import Link from "next/link";
 import { 
   Download, 
   Loader2, 
@@ -410,6 +411,7 @@ export default function ItineraryBuilder() {
   const [aiError, setAiError] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [showKeyInput, setShowKeyInput] = useState(false);
+  const [keySavedNotification, setKeySavedNotification] = useState(false);
   
   // Download & Preview state
   const [isDownloading, setIsDownloading] = useState(false);
@@ -470,32 +472,51 @@ export default function ItineraryBuilder() {
     setManualZoom(null);
   };
 
-  // Fetch API key from env variable, cache or Supabase settings
+  // Fetch API key from permanent local storage, env variable, cache or Supabase settings
   useEffect(() => {
-    // 1. Check if configured in Vercel/Environment variable
-    const envKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_KEY;
-    if (envKey && envKey.trim()) {
-      setApiKey(envKey.trim());
-      return;
-    }
-
-    // 2. Immediate read from localStorage cache
+    // 1. Direct read from permanent localStorage key
     if (typeof window !== "undefined") {
       try {
+        const storedKey = localStorage.getItem("triloki_gemini_api_key");
+        if (storedKey && storedKey.trim()) {
+          setApiKey(storedKey.trim());
+          setDhamGallery(getStoredDhamGallery());
+          return;
+        }
+
         const cachedSettings = localStorage.getItem("triloki_settings_cache");
         if (cachedSettings) {
           const parsed = JSON.parse(cachedSettings);
-          if (parsed.openai_key) setApiKey(parsed.openai_key);
+          if (parsed.openai_key && parsed.openai_key.trim()) {
+            setApiKey(parsed.openai_key.trim());
+            localStorage.setItem("triloki_gemini_api_key", parsed.openai_key.trim());
+            setDhamGallery(getStoredDhamGallery());
+            return;
+          }
         }
       } catch {}
     }
 
-    // 3. Fallback check from Supabase settings
+    // 2. Check if configured in Vercel/Environment variable
+    const envKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || process.env.NEXT_PUBLIC_OPENAI_KEY;
+    if (envKey && envKey.trim()) {
+      setApiKey(envKey.trim());
+      if (typeof window !== "undefined") {
+        localStorage.setItem("triloki_gemini_api_key", envKey.trim());
+      }
+      setDhamGallery(getStoredDhamGallery());
+      return;
+    }
+
+    // 3. Fallback check from Supabase cloud settings
     async function fetchKey() {
       try {
         const { data: settings } = await supabase.from("settings").select("openai_key").limit(1).single();
-        if (settings?.openai_key) {
-          setApiKey(settings.openai_key);
+        if (settings?.openai_key && settings.openai_key.trim()) {
+          setApiKey(settings.openai_key.trim());
+          if (typeof window !== "undefined") {
+            localStorage.setItem("triloki_gemini_api_key", settings.openai_key.trim());
+          }
         }
       } catch (err) {
         // silent fallback
@@ -504,6 +525,32 @@ export default function ItineraryBuilder() {
     fetchKey();
     setDhamGallery(getStoredDhamGallery());
   }, []);
+
+  // Save API Key permanently across browser and cloud
+  const handleSaveApiKeyPermanently = async (newKey: string) => {
+    const trimmed = newKey.trim();
+    if (!trimmed) return;
+    setApiKey(trimmed);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("triloki_gemini_api_key", trimmed);
+        const cachedSettings = localStorage.getItem("triloki_settings_cache");
+        const parsed = cachedSettings ? JSON.parse(cachedSettings) : {};
+        localStorage.setItem("triloki_settings_cache", JSON.stringify({ ...parsed, openai_key: trimmed }));
+      } catch (e) {}
+    }
+
+    try {
+      await supabase.from("settings").update({ openai_key: trimmed }).neq("id", "none");
+    } catch (e) {}
+
+    setKeySavedNotification(true);
+    setAiError("");
+    setTimeout(() => {
+      setKeySavedNotification(false);
+      setShowKeyInput(false);
+    }, 2200);
+  };
 
   // Quick Prompt Chips
   const QUICK_PROMPTS = [
@@ -1597,27 +1644,57 @@ ${data.motto}`;
                 <Sparkles className="w-4 h-4 text-purple-600" />
                 AI Itinerary Generator (Gemini)
               </span>
-              <button
-                onClick={() => setShowKeyInput(!showKeyInput)}
-                className="text-[11px] text-purple-700 hover:text-purple-900 font-medium flex items-center gap-1 cursor-pointer"
-              >
-                <Key className="w-3 h-3" />
-                {showKeyInput ? "Hide Key" : "API Key"}
-              </button>
+              <div className="flex items-center gap-1.5">
+                {apiKey ? (
+                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100/90 border border-emerald-200 px-2 py-0.5 rounded-full flex items-center gap-1">
+                    <Check className="w-3 h-3 text-emerald-600" /> Active
+                  </span>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => setShowKeyInput(!showKeyInput)}
+                  className="text-[11px] text-purple-700 hover:text-purple-900 font-bold flex items-center gap-1 cursor-pointer bg-white/70 hover:bg-white px-2 py-0.5 rounded-md border border-purple-200"
+                >
+                  <Key className="w-3 h-3" />
+                  {showKeyInput ? "Hide" : apiKey ? "Edit Key" : "Add Key"}
+                </button>
+              </div>
             </div>
 
             {/* Key input dropdown if missing or opened */}
             {showKeyInput && (
-              <div className="bg-white p-2.5 rounded-xl border border-purple-200 text-xs space-y-1.5">
-                <label className="block text-[10px] font-semibold text-gray-600">Google Gemini API Key</label>
-                <input
-                  type="password"
-                  placeholder="AIzaSy..."
-                  value={apiKey}
-                  onChange={e => setApiKey(e.target.value)}
-                  className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-purple-500 font-mono"
-                />
-                <p className="text-[10px] text-gray-400">Key is cached and stored in your Settings.</p>
+              <div className="bg-white p-3 rounded-xl border border-purple-200 text-xs space-y-2 animate-in fade-in">
+                <div className="flex items-center justify-between">
+                  <label className="block text-[10.5px] font-bold text-gray-700">Google Gemini API Key</label>
+                  {apiKey && (
+                    <span className="text-[9.5px] text-emerald-600 font-bold">✓ Saved on this device</span>
+                  )}
+                </div>
+                <div className="flex gap-1.5">
+                  <input
+                    type="password"
+                    placeholder="AIzaSy..."
+                    value={apiKey}
+                    onChange={e => setApiKey(e.target.value)}
+                    className="flex-1 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-purple-500 font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleSaveApiKeyPermanently(apiKey)}
+                    disabled={!apiKey.trim()}
+                    className="px-3 py-1.5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold transition cursor-pointer shrink-0"
+                  >
+                    Save Key
+                  </button>
+                </div>
+                <p className="text-[10px] text-gray-400">
+                  Key will be saved permanently. You will never have to enter it again!
+                </p>
+                {keySavedNotification && (
+                  <p className="text-[10.5px] text-emerald-700 font-bold bg-emerald-50 p-1.5 rounded border border-emerald-200">
+                    ✓ API Key saved permanently!
+                  </p>
+                )}
               </div>
             )}
 
@@ -2138,85 +2215,24 @@ ${data.motto}`;
                   </div>
                 )}
 
-                {/* Upload to Dham Gallery Section */}
-                <div className="bg-white p-3 rounded-xl border border-gray-200 space-y-2.5">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-gray-700 text-[11px] uppercase tracking-wider flex items-center gap-1.5">
-                      <Upload className="w-3.5 h-3.5 text-sky-600" />
-                      Add Picture to Dham Gallery Library
+                {/* Direct Link to Dedicated Photo Library Tab */}
+                <div className="bg-white p-3.5 rounded-xl border border-sky-200 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <span className="font-bold text-[#0369a1] text-xs flex items-center gap-1.5">
+                      <ImageIcon className="w-4 h-4" /> Dedicated Photo Library & Media Tab
                     </span>
-                    <span className="text-[10px] text-gray-400">Auto-saved for AI</span>
+                    <p className="text-[10.5px] text-gray-500 mt-0.5">
+                      Upload and manage all your Dham, hotel & cab photos in the dedicated Photo Library tab.
+                    </p>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Select Dham / Location</label>
-                      <select
-                        value={newDhamUploadTag}
-                        onChange={(e) => setNewDhamUploadTag(e.target.value as any)}
-                        className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-semibold text-gray-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
-                      >
-                        <option value="kedarnath">Shri Kedarnath Dham</option>
-                        <option value="badrinath">Shri Badrinath Ji Dham</option>
-                        <option value="gangotri">Shri Gangotri Dham</option>
-                        <option value="yamunotri">Shri Yamunotri Dham</option>
-                        <option value="helicopter">Kedarnath Helicopter Sector</option>
-                        <option value="haridwar_rishikesh">Haridwar & Rishikesh</option>
-                        <option value="chopta_tungnath">Chopta & Tungnath Mahadev</option>
-                        <option value="himalayas">Scenic Himalayas & Confluences</option>
-                        <option value="custom">Custom / Other Location</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Photo Caption (Title)</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Kedarnath Mandir Darshan & Snow"
-                        value={newDhamUploadCaption}
-                        onChange={(e) => setNewDhamUploadCaption(e.target.value)}
-                        className="w-full px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Upload Inputs: File or URL */}
-                  <div className="flex flex-col sm:flex-row gap-2 pt-1">
-                    <input
-                      type="file"
-                      ref={dhamFileInputRef}
-                      onChange={handleDhamFileUpload}
-                      multiple
-                      accept="image/*"
-                      className="hidden"
-                      id="dham-gallery-file-upload"
-                    />
-                    <label
-                      htmlFor="dham-gallery-file-upload"
-                      className="flex-1 py-1.5 px-3 bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 rounded-lg font-semibold text-xs text-center cursor-pointer transition flex items-center justify-center gap-1.5"
-                    >
-                      <Upload className="w-3.5 h-3.5" />
-                      Browse Images from Device
-                    </label>
-
-                    <div className="flex-1 flex gap-1.5">
-                      <input
-                        type="url"
-                        placeholder="Or paste web image URL..."
-                        value={newDhamUploadUrl}
-                        onChange={(e) => setNewDhamUploadUrl(e.target.value)}
-                        className="flex-1 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs"
-                      />
-                      <button
-                        type="button"
-                        onClick={handleAddDhamPhotoFromUrl}
-                        disabled={!newDhamUploadUrl.trim()}
-                        className="px-3 py-1.5 bg-sky-600 hover:bg-sky-700 text-white rounded-lg font-semibold text-xs disabled:opacity-50 transition cursor-pointer"
-                      >
-                        Save
-                      </button>
-                    </div>
-                  </div>
+                  <Link
+                    href="/gallery"
+                    target="_blank"
+                    className="px-3.5 py-2 bg-[#0369a1] hover:bg-[#025684] text-white rounded-xl font-bold text-xs shadow-xs transition flex items-center justify-center gap-1.5 shrink-0"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    Open Photo Library ↗
+                  </Link>
                 </div>
 
                 {/* Category Filter Pills */}

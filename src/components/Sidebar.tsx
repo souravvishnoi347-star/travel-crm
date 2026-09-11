@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Hotel, Car, Menu, X, Plane, Map, Users, Store, Settings, LogOut } from "lucide-react";
+import { LayoutDashboard, FileText, Hotel, Car, Menu, X, Plane, Map, Users, Store, Settings, LogOut, Image as ImageIcon } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "Invoice Generator", href: "/invoices", icon: FileText },
   { name: "Itineraries & Quotes", href: "/itinerary-builder", icon: Map },
+  { name: "Dham Photo Library", href: "/gallery", icon: ImageIcon },
   { name: "Hotel Vouchers", href: "/hotels", icon: Hotel },
   { name: "Transport Vouchers", href: "/transport", icon: Car },
   { name: "Lead Pipeline", href: "/leads", icon: Users },

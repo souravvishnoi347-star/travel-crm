@@ -13,7 +13,10 @@ import {
   Lock,
   ShieldCheck,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  Trash2,
+  Database,
+  RotateCcw
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -40,15 +43,21 @@ const defaultSettings: Omit<SettingsData, "id"> = {
 
 export default function SettingsPage() {
   const [settings, setSettings] = useState<SettingsData>(() => {
+    let key = "";
     if (typeof window !== "undefined") {
       try {
+        key = localStorage.getItem("triloki_gemini_api_key") || "";
         const cached = localStorage.getItem("triloki_settings_cache");
-        if (cached) return JSON.parse(cached);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          return { ...parsed, openai_key: parsed.openai_key || key };
+        }
       } catch {}
     }
     return {
       id: "local-1",
-      ...defaultSettings
+      ...defaultSettings,
+      openai_key: key
     };
   });
   const [loading, setLoading] = useState(false);
@@ -92,6 +101,28 @@ export default function SettingsPage() {
       }
       setPassLoading(false);
     }, 400);
+  };
+
+  const [purgeSuccess, setPurgeSuccess] = useState(false);
+
+  const handlePurgeDemoData = () => {
+    if (!confirm("Are you sure you want to clear all mock/demo records from this browser? Real configured settings will remain safe.")) return;
+    try {
+      localStorage.removeItem("triloki_leads_board");
+      localStorage.removeItem("triloki_leads");
+      localStorage.removeItem("triloki_payables");
+      localStorage.removeItem("triloki_vendors");
+      localStorage.removeItem("triloki_hotel_voucher");
+      localStorage.removeItem("triloki_multi_hotel_voucher");
+      localStorage.removeItem("triloki_transport_voucher");
+      setPurgeSuccess(true);
+      setTimeout(() => {
+        setPurgeSuccess(false);
+        window.location.reload();
+      }, 1200);
+    } catch (e) {
+      alert("Error resetting cache: " + e);
+    }
   };
 
   useEffect(() => {
@@ -148,6 +179,9 @@ export default function SettingsPage() {
 
     if (typeof window !== "undefined") {
       localStorage.setItem("triloki_settings_cache", JSON.stringify(settings));
+      if (settings.openai_key) {
+        localStorage.setItem("triloki_gemini_api_key", settings.openai_key.trim());
+      }
     }
 
     try {
@@ -550,6 +584,36 @@ export default function SettingsPage() {
               </button>
             </form>
 
+          </div>
+        </div>
+
+        {/* System Data & Demo Reset */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-red-50 text-red-600 flex items-center justify-center font-bold">
+              <Database className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-gray-900">Demo Data & Cache Management</h2>
+              <p className="text-xs text-gray-500">Purge rough mock items and reset local storage to clean state</p>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="text-xs text-gray-600 max-w-md">
+              <p>Wipe all stored sample leads, test vouchers, and mock payables from this computer. Starts all modules fresh with 0 clutter.</p>
+              {purgeSuccess && (
+                <p className="text-emerald-600 font-bold mt-1">✓ Local demo data wiped! Reloading workspace...</p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={handlePurgeDemoData}
+              className="px-4 py-2 bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shrink-0"
+            >
+              <Trash2 className="w-4 h-4" />
+              Purge Demo Data
+            </button>
           </div>
         </div>
       </div>
