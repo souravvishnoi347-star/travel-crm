@@ -626,10 +626,9 @@ export default function HotelVouchersPage() {
                 <thead className="bg-[#0369a1] text-white text-[9.5px] uppercase font-bold tracking-wider">
                   <tr>
                     <th className="py-1.5 px-2.5 w-[14%]">Nights</th>
-                    <th className="py-1.5 px-2.5 w-[16%]">Destination</th>
-                    <th className="py-1.5 px-2.5 w-[32%]">Confirmed Hotel & Location</th>
-                    <th className="py-1.5 px-2.5 w-[22%]">Room & Meal Plan</th>
-                    <th className="py-1.5 px-2.5 w-[16%]">Booking Ref</th>
+                    <th className="py-1.5 px-2.5 w-[18%]">Destination</th>
+                    <th className="py-1.5 px-2.5 w-[38%]">Confirmed Hotel & Location</th>
+                    <th className="py-1.5 px-2.5 w-[30%]">Room & Meal Plan</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -650,7 +649,7 @@ export default function HotelVouchersPage() {
                       <td className="py-1.5 px-2.5 align-top">
                         <div className="font-bold text-gray-900 leading-snug">{stay.hotelName || "Hotel / Camp"}</div>
                         {stay.hotelAddress && (
-                          <div className="text-[9px] text-gray-500 truncate max-w-[210px] leading-tight">
+                          <div className="text-[9px] text-gray-500 truncate max-w-[260px] leading-tight">
                             📍 {stay.hotelAddress}
                           </div>
                         )}
@@ -677,11 +676,6 @@ export default function HotelVouchersPage() {
                             In: {stay.checkIn || "12 PM"} | Out: {stay.checkOut || "10 AM"}
                           </div>
                         )}
-                      </td>
-                      <td className="py-1.5 px-2.5 align-top">
-                        <div className="font-mono font-bold text-gray-900 text-[10px] bg-gray-100 px-1.5 py-0.5 rounded inline-block">
-                          {stay.confirmationNo || "CONFIRMED"}
-                        </div>
                       </td>
                     </tr>
                   ))}
