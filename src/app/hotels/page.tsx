@@ -526,11 +526,8 @@ export default function HotelVouchersPage() {
     data.stays.forEach((stay, idx) => {
       message += `\n📍 *${stay.nightsLabel || `Stop ${idx + 1}`}: ${stay.city || "Destination"}*\n`;
       message += `• *Hotel:* ${stay.hotelName || "Hotel / Resort"}\n`;
-      if (stay.checkIn) message += `• *Check-in:* ${stay.checkIn}\n`;
-      if (stay.checkOut) message += `• *Check-out:* ${stay.checkOut} (${stay.nights}N)\n`;
       if (stay.roomType) message += `• *Room:* ${stay.roomType} (${stay.noOfRooms})\n`;
       if (stay.mealPlan) message += `• *Meal Plan:* ${stay.mealPlan}\n`;
-      if (stay.confirmationNo) message += `• *Booking Ref:* ${stay.confirmationNo}\n`;
       if (stay.contactNo) message += `• *Hotel Contact:* ${stay.contactNo}\n`;
     });
 
@@ -671,11 +668,6 @@ export default function HotelVouchersPage() {
                         <div className="text-[9px] text-emerald-700 font-bold mt-0.5">
                           {stay.mealPlan ? stay.mealPlan : "MAP Plan"}
                         </div>
-                        {(stay.checkIn || stay.checkOut) && (
-                          <div className="text-[8.5px] text-gray-500 mt-0.5">
-                            In: {stay.checkIn || "12 PM"} | Out: {stay.checkOut || "10 AM"}
-                          </div>
-                        )}
                       </td>
                     </tr>
                   ))}
@@ -1012,30 +1004,10 @@ export default function HotelVouchersPage() {
                     />
                   </div>
 
-                  {/* Check in / Check out / Nights */}
-                  <div className="grid grid-cols-3 gap-2">
+                  {/* Nights Count, Room Category, Rooms Count, Meal Plan */}
+                  <div className="grid grid-cols-4 gap-2">
                     <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Check-In Date/Time</label>
-                      <input 
-                        type="text" 
-                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
-                        placeholder="16 May (12 PM)" 
-                        value={stay.checkIn} 
-                        onChange={e => updateStay(idx, { checkIn: e.target.value })} 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Check-Out Date/Time</label>
-                      <input 
-                        type="text" 
-                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
-                        placeholder="18 May (10 AM)" 
-                        value={stay.checkOut} 
-                        onChange={e => updateStay(idx, { checkOut: e.target.value })} 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Nights Count</label>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Nights</label>
                       <input 
                         type="number" 
                         min={1} 
@@ -1044,10 +1016,6 @@ export default function HotelVouchersPage() {
                         onChange={e => updateStay(idx, { nights: Number(e.target.value) || 1 })} 
                       />
                     </div>
-                  </div>
-
-                  {/* Room Category, Meal Plan, Rooms Count */}
-                  <div className="grid grid-cols-3 gap-2">
                     <div>
                       <label className="block text-[10px] text-gray-500 mb-0.5">Room Category</label>
                       <input 
@@ -1083,28 +1051,16 @@ export default function HotelVouchersPage() {
                     </div>
                   </div>
 
-                  {/* Booking Confirmation & Phone */}
-                  <div className="grid grid-cols-2 gap-2">
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Booking / Confirmation #</label>
-                      <input 
-                        type="text" 
-                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-[#0369a1]" 
-                        placeholder="CONF-1234" 
-                        value={stay.confirmationNo} 
-                        onChange={e => updateStay(idx, { confirmationNo: e.target.value })} 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Phone / Reception</label>
-                      <input 
-                        type="text" 
-                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
-                        placeholder="+91 94120 XXXXX" 
-                        value={stay.contactNo} 
-                        onChange={e => updateStay(idx, { contactNo: e.target.value })} 
-                      />
-                    </div>
+                  {/* Hotel Phone */}
+                  <div>
+                    <label className="block text-[10px] text-gray-500 mb-0.5">Hotel Phone / Reception</label>
+                    <input 
+                      type="text" 
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" 
+                      placeholder="+91 94120 XXXXX" 
+                      value={stay.contactNo} 
+                      onChange={e => updateStay(idx, { contactNo: e.target.value })} 
+                    />
                   </div>
 
                   {/* Special Requests / Notes */}
