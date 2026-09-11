@@ -541,8 +541,8 @@ export default function HotelVouchersPage() {
           <div className="flex flex-col items-center text-center pb-2 border-b border-gray-200">
             <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1" />
             <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
-            <h1 className="text-2xl font-serif font-black text-[#0369a1] tracking-tight uppercase mt-0.5">
-              TOUR ACCOMMODATION & HOTEL SERVICE VOUCHER
+            <h1 className="text-2xl sm:text-3xl font-serif font-black text-[#0369a1] tracking-tight uppercase mt-0.5">
+              HOTEL SERVICE VOUCHER
             </h1>
             <p className="text-xs font-bold tracking-wider text-[#dc2626] uppercase mt-0.5">
               CONFIRMED STAYS & LODGING SCHEDULE
