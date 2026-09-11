@@ -22,14 +22,13 @@ import {
   Copy,
   ArrowUp,
   ArrowDown,
-  Sparkles,
   Bed,
   Utensils,
   Clock,
-  ShieldCheck,
-  Check
+  BedDouble
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { saveDocumentToHub } from "@/lib/documentsHub";
 
 export interface HotelStay {
   id: string;
@@ -450,6 +449,25 @@ export default function HotelVouchersPage() {
         }
       } catch (dbError) {
         console.warn("Cloud backup notice:", dbError);
+      }
+
+      // Record in local Document Hub
+      try {
+        saveDocumentToHub({
+          id: `hotel-${data.voucherNo || Date.now()}`,
+          type: "hotel_voucher",
+          title: `Hotel Voucher - ${data.guestName || "Tour"}`,
+          docNumber: data.voucherNo || "TV-2026",
+          guestName: data.guestName || "Valued Guest",
+          guestPhone: data.guestPhone || "",
+          travelDates: data.tripDates || data.bookingId || "",
+          paxCount: data.totalPax || "",
+          detailsSummary: `${data.stays.length} Hotel/Camp Stay(s): ${data.stays.map(s => s.city || s.hotelName).filter(Boolean).join(", ")}`,
+          studioUrl: "/hotels",
+          rawPayload: data
+        });
+      } catch (hubErr) {
+        console.warn("Local hub save:", hubErr);
       }
 
       const html2canvasModule = await import("html2canvas-pro");

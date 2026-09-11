@@ -3,16 +3,34 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, FileText, Hotel, Car, Menu, X, Plane, Map, Users, Store, Settings, LogOut, Image as ImageIcon } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  FileText, 
+  Hotel, 
+  Car, 
+  Menu, 
+  X, 
+  Plane, 
+  Map, 
+  Users, 
+  Store, 
+  Settings, 
+  LogOut, 
+  Image as ImageIcon,
+  FolderArchive,
+  MessageSquare
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const navigation = [
   { name: "Yatra Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Documents & Vouchers Hub", href: "/documents", icon: FolderArchive },
+  { name: "WhatsApp Live Desk", href: "/whatsapp-desk", icon: MessageSquare },
   { name: "Yatra Invoices & Billing", href: "/invoices", icon: FileText },
   { name: "Chardham Itineraries", href: "/itinerary-builder", icon: Map },
-  { name: "Dham Photo Library", href: "/gallery", icon: ImageIcon },
   { name: "Hotel Service Vouchers", href: "/hotels", icon: Hotel },
   { name: "Transport Vouchers", href: "/transport", icon: Car },
+  { name: "Dham Photo Library", href: "/gallery", icon: ImageIcon },
   { name: "Pilgrimage Leads", href: "/leads", icon: Users },
   { name: "Vendors & Payables", href: "/vendors", icon: Store },
   { name: "CRM & WhatsApp Setup", href: "/settings", icon: Settings },

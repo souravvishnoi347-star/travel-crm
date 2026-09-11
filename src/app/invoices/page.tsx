@@ -22,6 +22,7 @@ import {
   ZoomOut
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { saveDocumentToHub } from "@/lib/documentsHub";
 
 function numberToWords(num: number): string {
   if (num === 0) return "Zero Rupees Only";
@@ -201,6 +202,27 @@ export default function InvoicesPage() {
         }
       } catch (dbError) {
         console.error("Failed to save to database:", dbError);
+      }
+
+      // Record in local Document Hub
+      try {
+        saveDocumentToHub({
+          id: `inv-${data.invoiceNumber || Date.now()}`,
+          type: "invoice",
+          title: `Tax Invoice - ${data.guestName || "Billing"}`,
+          docNumber: data.invoiceNumber,
+          guestName: data.guestName || "Valued Guest",
+          guestPhone: data.guestPhone || "",
+          travelDates: data.travelDate || data.bookingDate,
+          amount: calculations.total,
+          paidAmount: calculations.paid,
+          pendingAmount: calculations.pending,
+          detailsSummary: `Total: ₹${calculations.total.toLocaleString("en-IN")} | Advance: ₹${calculations.paid.toLocaleString("en-IN")} | Due: ₹${calculations.pending.toLocaleString("en-IN")}`,
+          studioUrl: "/invoices",
+          rawPayload: data
+        });
+      } catch (hubErr) {
+        console.warn("Local hub save:", hubErr);
       }
 
       const html2canvasModule = await import("html2canvas-pro");

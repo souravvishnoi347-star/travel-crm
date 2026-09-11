@@ -22,6 +22,7 @@ import {
   Check
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { saveDocumentToHub } from "@/lib/documentsHub";
 
 const DEFAULT_TRANSPORT_DATA = {
   date: "15 May 2026",
@@ -285,6 +286,24 @@ export default function TransportVouchers() {
         }
       } catch (dbError) {
         console.error("Failed to save to database:", dbError);
+      }
+
+      // Record in local Document Hub
+      try {
+        saveDocumentToHub({
+          id: `transport-${data.exoNo || data.fileNo || Date.now()}`,
+          type: "transport_voucher",
+          title: `Transport Voucher - ${data.guestName || "Guest"}`,
+          docNumber: `${data.exoNo || "EXO"}/${data.fileNo || "01"}`,
+          guestName: data.guestName || "Valued Guest",
+          travelDates: `${data.arrivalDate || ""} – ${data.departureDate || ""}`.trim() || data.date,
+          paxCount: data.noOfAdults || "",
+          detailsSummary: `Vehicle: ${data.vehicleType || "Fleet Vehicle"} | Schedule: ${data.itinerary.length} Days`,
+          studioUrl: "/transport",
+          rawPayload: data
+        });
+      } catch (hubErr) {
+        console.warn("Local hub save:", hubErr);
       }
 
       const html2canvasModule = await import("html2canvas-pro");

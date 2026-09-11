@@ -44,6 +44,7 @@ import {
   Car
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { saveDocumentToHub } from "@/lib/documentsHub";
 import { 
   getStoredDhamGallery, 
   saveStoredDhamGallery, 
@@ -1238,6 +1239,25 @@ SCHEMA:
         });
       } catch (e) {
         console.warn("Could not save to supabase cloud:", e);
+      }
+
+      // Record in local Document Hub
+      try {
+        const costNum = parseInt(data.pricingTiers[0]?.price.replace(/[^0-9]/g, "") || "0");
+        saveDocumentToHub({
+          id: `itin-${data.title.replace(/[^a-zA-Z0-9]/g, "")}-${Date.now()}`,
+          type: "itinerary",
+          title: data.title,
+          docNumber: `ITIN-${data.duration.replace(/[^0-9DNdn]/g, "").toUpperCase() || "YATRA"}`,
+          guestName: data.preparedFor || "Honourable Guest",
+          travelDates: `${data.travelDates} (${data.duration})`,
+          amount: costNum,
+          detailsSummary: `Route: ${data.routeCovered} | Highlights: ${data.glanceDhams || data.spiritualHeadline}`,
+          studioUrl: "/itinerary-builder",
+          rawPayload: data
+        });
+      } catch (hubErr) {
+        console.warn("Local hub save:", hubErr);
       }
 
     } catch (err: any) {
