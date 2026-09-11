@@ -218,7 +218,7 @@ export default function InvoicesPage() {
       
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
       pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
 
@@ -261,7 +261,7 @@ export default function InvoicesPage() {
   const renderInvoiceContent = (prefix: string) => (
     <div 
       id={`${prefix}-invoice`} 
-      className="w-[794px] h-[1122px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] h-[1122px] min-h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}

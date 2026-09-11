@@ -1275,51 +1275,51 @@ ${data.motto}`;
   const renderPage1 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-1`}
-      className="w-[794px] min-h-[1122px] h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 p-12 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[530px] h-[530px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
       {/* Header / Logo */}
-      <div className="relative z-10 flex flex-col items-center text-center pt-2">
-        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-16 w-auto object-contain mb-2" />
-        <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+      <div className="relative z-10 flex flex-col items-center text-center pt-1">
+        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1.5" />
+        <p className="text-[10.5px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
         
-        <h1 className="text-4xl font-serif font-black text-[#0369a1] tracking-tight mt-3 uppercase">
+        <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-2 uppercase">
           {data.title}
         </h1>
-        <p className="text-sm font-semibold tracking-widest text-[#dc2626] uppercase mt-1">
+        <p className="text-xs font-semibold tracking-widest text-[#dc2626] uppercase mt-0.5">
           {data.subTitle}
         </p>
-        <p className="text-xs text-gray-600 font-medium italic mt-1">
+        <p className="text-[11px] text-gray-600 font-medium italic mt-0.5">
           {data.spiritualHeadline}
         </p>
-        <p className="text-[11px] text-gray-500 tracking-wide mt-1 font-sans">
+        <p className="text-[10px] text-gray-500 tracking-wide mt-0.5 font-sans">
           {data.dhamsSubtitle}
         </p>
       </div>
 
       {/* Visual Photo Strip Showcase */}
       {data.showPhotosPage1 !== false && data.photos && data.photos.length > 0 && (
-        <div className="relative z-10 my-3">
-          <div className={`grid gap-2.5 ${
+        <div className="relative z-10 my-2">
+          <div className={`grid gap-2 ${
             data.photos.length === 1 ? 'grid-cols-1' : 
             data.photos.length === 2 ? 'grid-cols-2' : 
             'grid-cols-3'
           }`}>
             {data.photos.slice(0, 3).map((photo, pIdx) => (
-              <div key={photo.id || pIdx} className="relative rounded-lg overflow-hidden border border-[#0369a1]/30 shadow-xs bg-gray-100 h-28 flex flex-col justify-end">
+              <div key={photo.id || pIdx} className="relative rounded-lg overflow-hidden border border-[#0369a1]/30 shadow-xs bg-gray-100 h-24 flex flex-col justify-end">
                 <img 
                   src={photo.url} 
                   alt={photo.caption || `Highlight ${pIdx + 1}`} 
                   className="absolute inset-0 w-full h-full object-cover"
                 />
                 {photo.caption && (
-                  <div className="relative z-10 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-2 py-1 pt-4 text-center">
-                    <p className="text-[10px] font-semibold text-white tracking-wide truncate">
+                  <div className="relative z-10 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-2 py-0.5 pt-3 text-center">
+                    <p className="text-[9.5px] font-semibold text-white tracking-wide truncate">
                       {photo.caption}
                     </p>
                   </div>
@@ -1331,66 +1331,66 @@ ${data.motto}`;
       )}
 
       {/* Summary Details Table */}
-      <div className="relative z-10 my-4 border-t border-b border-gray-200 py-3 text-xs space-y-2">
-        <div className="grid grid-cols-[130px_1fr] items-start">
+      <div className="relative z-10 my-2.5 border-t border-b border-gray-200 py-2.5 text-[11px] space-y-1.5">
+        <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Prepared For</span>
           <span className="font-semibold text-gray-900">{data.preparedFor}</span>
         </div>
-        <div className="grid grid-cols-[130px_1fr] items-start">
+        <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Travel Dates</span>
           <span className="font-medium text-gray-800">{data.travelDates}</span>
         </div>
-        <div className="grid grid-cols-[130px_1fr] items-start">
+        <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Duration</span>
           <span className="font-medium text-gray-800">{data.duration}</span>
         </div>
-        <div className="grid grid-cols-[130px_1fr] items-start">
+        <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Starting Point</span>
           <span className="font-medium text-gray-800">{data.startingPoint}</span>
         </div>
-        <div className="grid grid-cols-[130px_1fr] items-start">
+        <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Route Covered</span>
-          <span className="text-[11px] text-gray-700 leading-relaxed">{data.routeCovered}</span>
+          <span className="text-[10.5px] text-gray-700 leading-relaxed">{data.routeCovered}</span>
         </div>
       </div>
 
       {/* Your Journey At A Glance Box */}
-      <div className="relative z-10 space-y-3">
-        <h3 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1]/30 pb-1">
+      <div className="relative z-10 space-y-2">
+        <h3 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1]/30 pb-0.5">
           Your Journey At A Glance
         </h3>
-        <p className="text-xs text-gray-700 leading-relaxed text-justify">
+        <p className="text-[11px] text-gray-700 leading-relaxed text-justify">
           {data.overviewSummary}
         </p>
 
-        <table className="w-full text-left text-xs border border-gray-200 mt-3">
+        <table className="w-full text-left text-[11px] border border-gray-200 mt-2">
           <tbody className="divide-y divide-gray-200">
             <tr className="bg-gray-50/70">
-              <td className="px-3 py-2 font-bold text-gray-700 w-1/3">Duration</td>
-              <td className="px-3 py-2 text-gray-900">{data.glanceDuration}</td>
+              <td className="px-2.5 py-1.5 font-bold text-gray-700 w-1/3">Duration</td>
+              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceDuration}</td>
             </tr>
             <tr>
-              <td className="px-3 py-2 font-bold text-gray-700">Dhams Covered</td>
-              <td className="px-3 py-2 text-gray-900">{data.glanceDhams}</td>
+              <td className="px-2.5 py-1.5 font-bold text-gray-700">Dhams Covered</td>
+              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceDhams}</td>
             </tr>
             <tr className="bg-gray-50/70">
-              <td className="px-3 py-2 font-bold text-gray-700">Kedarnath Sector</td>
-              <td className="px-3 py-2 text-gray-900">{data.glanceSector}</td>
+              <td className="px-2.5 py-1.5 font-bold text-gray-700">Kedarnath Sector</td>
+              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceSector}</td>
             </tr>
             <tr>
-              <td className="px-3 py-2 font-bold text-gray-700">Start / End Point</td>
-              <td className="px-3 py-2 text-gray-900">{data.glanceStartEnd}</td>
+              <td className="px-2.5 py-1.5 font-bold text-gray-700">Start / End Point</td>
+              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceStartEnd}</td>
             </tr>
             <tr className="bg-gray-50/70">
-              <td className="px-3 py-2 font-bold text-gray-700">Packages Available</td>
-              <td className="px-3 py-2 font-bold text-[#0369a1]">{data.glancePackages}</td>
+              <td className="px-2.5 py-1.5 font-bold text-gray-700">Packages Available</td>
+              <td className="px-2.5 py-1.5 font-bold text-[#0369a1]">{data.glancePackages}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* Page 1 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
           href="https://traveltouttrakhand.com" 
@@ -1409,23 +1409,23 @@ ${data.motto}`;
   const renderPage2 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-2`}
-      className="w-[794px] min-h-[1122px] h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 p-12 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[530px] h-[530px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 space-y-3">
-        <h2 className="text-xl font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-3">
-          Detailed Day-Wise Itinerary
+      <div className="relative z-10 space-y-2">
+        <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-2">
+          Detailed Day-Wise Itinerary (Days 1 to 8)
         </h2>
 
-        <div className="space-y-2.5">
+        <div className="space-y-1.5">
           {data.days.slice(0, 8).map(day => (
-            <div key={day.id} className="text-xs space-y-1">
-              <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded text-[11px] font-bold tracking-wide flex items-center gap-2">
+            <div key={day.id} className="text-xs space-y-0.5">
+              <div className="bg-[#0369a1] text-white px-2 py-0.5 rounded text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
                 <span>DAY {day.dayNumber}</span>
                 {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
                   <>
@@ -1434,10 +1434,10 @@ ${data.motto}`;
                   </>
                 )}
                 <span className="opacity-75">·</span>
-                <span>{day.route}</span>
+                <span className="truncate">{day.route}</span>
               </div>
 
-              <ul className="pl-3 space-y-0.5 text-gray-800 text-[11px]">
+              <ul className="pl-2 space-y-0.5 text-gray-800 text-[10px]">
                 {day.activities.map((act, aIdx) => (
                   <li key={aIdx} className="leading-tight">
                     – {act}
@@ -1445,7 +1445,7 @@ ${data.motto}`;
                 ))}
               </ul>
 
-              <p className="pl-3 text-[11px] text-amber-900 italic font-semibold">
+              <p className="pl-2 text-[9.5px] text-amber-900 italic font-semibold">
                 Overnight Stay: {day.overnightStay}
               </p>
             </div>
@@ -1454,7 +1454,7 @@ ${data.motto}`;
       </div>
 
       {/* Page 2 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
           href="https://traveltouttrakhand.com" 
@@ -1473,21 +1473,21 @@ ${data.motto}`;
   const renderPage3 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-3`}
-      className="w-[794px] min-h-[1122px] h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 p-12 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[530px] h-[530px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 space-y-5">
+      <div className="relative z-10 space-y-3">
         
         {/* Remaining Days (Days 9+) */}
-        <div className="space-y-2.5">
+        <div className="space-y-1.5">
           {data.days.slice(8).map(day => (
-            <div key={day.id} className="text-xs space-y-1">
-              <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded text-[11px] font-bold tracking-wide flex items-center gap-2">
+            <div key={day.id} className="text-xs space-y-0.5">
+              <div className="bg-[#0369a1] text-white px-2 py-0.5 rounded text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
                 <span>DAY {day.dayNumber}</span>
                 {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
                   <>
@@ -1496,10 +1496,10 @@ ${data.motto}`;
                   </>
                 )}
                 <span className="opacity-75">·</span>
-                <span>{day.route}</span>
+                <span className="truncate">{day.route}</span>
               </div>
 
-              <ul className="pl-3 space-y-0.5 text-gray-800 text-[11px]">
+              <ul className="pl-2 space-y-0.5 text-gray-800 text-[10px]">
                 {day.activities.map((act, aIdx) => (
                   <li key={aIdx} className="leading-tight">
                     – {act}
@@ -1507,7 +1507,7 @@ ${data.motto}`;
                 ))}
               </ul>
 
-              <p className="pl-3 text-[11px] text-amber-900 italic font-semibold">
+              <p className="pl-2 text-[9.5px] text-amber-900 italic font-semibold">
                 Overnight Stay: {day.overnightStay}
               </p>
             </div>
@@ -1515,55 +1515,55 @@ ${data.motto}`;
         </div>
 
         {/* Package Options & Pricing Table */}
-        <div className="space-y-2.5 pt-2">
-          <h3 className="text-lg font-serif font-bold text-[#0369a1]">
+        <div className="space-y-1.5 pt-1.5">
+          <h3 className="text-base font-serif font-bold text-[#0369a1]">
             Package Options & Pricing
           </h3>
-          <p className="text-xs text-gray-600 leading-relaxed">
+          <p className="text-[11px] text-gray-600 leading-snug">
             {data.pricingSubtitle}
           </p>
 
-          <table className="w-full text-xs border border-gray-200 text-center mt-2">
-            <thead className="bg-[#0369a1] text-white font-bold text-[11px]">
+          <table className="w-full text-xs border border-gray-200 text-center mt-1.5">
+            <thead className="bg-[#0369a1] text-white font-bold text-[10.5px]">
               <tr>
-                <th className="px-3 py-2 text-left">Package</th>
-                <th className="px-3 py-2">Price / Person</th>
-                <th className="px-3 py-2">Hotel Category</th>
-                <th className="px-3 py-2">Meals</th>
-                <th className="px-3 py-2">Special / Heli</th>
+                <th className="px-2.5 py-1.5 text-left">Package</th>
+                <th className="px-2.5 py-1.5">Price / Person</th>
+                <th className="px-2.5 py-1.5">Hotel Category</th>
+                <th className="px-2.5 py-1.5">Meals</th>
+                <th className="px-2.5 py-1.5">Special / Heli</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-gray-200 text-[10.5px]">
               {data.pricingTiers.map((tier, tIdx) => (
                 <tr key={tIdx} className={tIdx % 2 === 0 ? "bg-white" : "bg-gray-50/70"}>
-                  <td className="px-3 py-2 font-bold text-gray-900 text-left">{tier.package}</td>
-                  <td className="px-3 py-2 font-bold text-[#0369a1]">{tier.price}</td>
-                  <td className="px-3 py-2 text-gray-700">{tier.hotelCategory}</td>
-                  <td className="px-3 py-2 text-gray-700">{tier.meals}</td>
-                  <td className="px-3 py-2 text-gray-700">{tier.specialFeature}</td>
+                  <td className="px-2.5 py-1.5 font-bold text-gray-900 text-left">{tier.package}</td>
+                  <td className="px-2.5 py-1.5 font-bold text-[#0369a1]">{tier.price}</td>
+                  <td className="px-2.5 py-1.5 text-gray-700">{tier.hotelCategory}</td>
+                  <td className="px-2.5 py-1.5 text-gray-700">{tier.meals}</td>
+                  <td className="px-2.5 py-1.5 text-gray-700">{tier.specialFeature}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <p className="text-[11px] text-gray-500 italic mt-2">
+          <p className="text-[10px] text-gray-500 italic mt-1">
             {data.pricingNote}
           </p>
         </div>
 
         {/* Page 3 Destinations Gallery */}
         {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
-          <div className="pt-2 border-t border-gray-200 space-y-2">
+          <div className="pt-1.5 border-t border-gray-200 space-y-1.5">
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-serif font-bold text-[#0369a1]">
+              <h4 className="text-xs font-serif font-bold text-[#0369a1]">
                 Sacred Yatra Destinations & Sightseeing
               </h4>
-              <span className="text-[10px] text-gray-500 font-medium">Spiritual Landmarks</span>
+              <span className="text-[9.5px] text-gray-500 font-medium">Spiritual Landmarks</span>
             </div>
-            <div className={`grid gap-2.5 ${data.photos.length === 1 ? 'grid-cols-1' : data.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+            <div className={`grid gap-2 ${data.photos.length === 1 ? 'grid-cols-1' : data.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
               {(data.photos.length > 3 ? data.photos.slice(1, 4) : data.photos).map((photo, pIdx) => (
                 <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-gray-200 shadow-xs bg-gray-50 flex flex-col">
-                  <div className="h-24 relative overflow-hidden bg-gray-100">
+                  <div className="h-20 relative overflow-hidden bg-gray-100">
                     <img 
                       src={photo.url} 
                       alt={photo.caption || `Landmark ${pIdx + 1}`} 
@@ -1571,8 +1571,8 @@ ${data.motto}`;
                     />
                   </div>
                   {photo.caption && (
-                    <div className="p-1 bg-white border-t border-gray-100 text-center">
-                      <p className="text-[10px] font-semibold text-gray-800 truncate px-1">{photo.caption}</p>
+                    <div className="p-0.5 bg-white border-t border-gray-100 text-center">
+                      <p className="text-[9.5px] font-semibold text-gray-800 truncate px-1">{photo.caption}</p>
                     </div>
                   )}
                 </div>
@@ -1584,7 +1584,7 @@ ${data.motto}`;
       </div>
 
       {/* Page 3 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
           href="https://traveltouttrakhand.com" 
@@ -1603,27 +1603,27 @@ ${data.motto}`;
   const renderPage4 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-4`}
-      className="w-[794px] min-h-[1122px] h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 p-12 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[530px] h-[530px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 space-y-4">
+      <div className="relative z-10 space-y-3">
         
-        <h2 className="text-xl font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1">
+        <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1">
           Inclusions & Exclusions
         </h2>
 
         {/* Inclusions & Exclusions 2-Column Grid */}
-        <div className="grid grid-cols-2 gap-6 text-xs">
+        <div className="grid grid-cols-2 gap-5 text-xs">
           
           {/* Inclusions Column */}
-          <div className="space-y-1.5">
-            <h4 className="font-bold text-[#0369a1] text-sm mb-1">Inclusions</h4>
-            <ul className="space-y-1 text-gray-800 text-[11px]">
+          <div className="space-y-1">
+            <h4 className="font-bold text-[#0369a1] text-xs mb-1">Inclusions</h4>
+            <ul className="space-y-1 text-gray-800 text-[10.5px]">
               {data.inclusions.map((inc, i) => (
                 <li key={i} className="flex items-start gap-1.5 leading-snug">
                   <span className="text-emerald-700 font-bold shrink-0">✓</span>
@@ -1634,9 +1634,9 @@ ${data.motto}`;
           </div>
 
           {/* Exclusions Column */}
-          <div className="space-y-1.5">
-            <h4 className="font-bold text-[#0369a1] text-sm mb-1">Exclusions</h4>
-            <ul className="space-y-1 text-gray-800 text-[11px]">
+          <div className="space-y-1">
+            <h4 className="font-bold text-[#0369a1] text-xs mb-1">Exclusions</h4>
+            <ul className="space-y-1 text-gray-800 text-[10.5px]">
               {data.exclusions.map((exc, i) => (
                 <li key={i} className="flex items-start gap-1.5 leading-snug">
                   <span className="text-rose-600 font-bold shrink-0">✕</span>
@@ -1649,9 +1649,9 @@ ${data.motto}`;
         </div>
 
         {/* Good To Know Section */}
-        <div className="space-y-1.5 pt-2 border-t border-gray-200">
-          <h3 className="text-sm font-serif font-bold text-[#0369a1]">Good To Know</h3>
-          <ul className="space-y-1 text-gray-700 text-[10.5px]">
+        <div className="space-y-1 pt-1.5 border-t border-gray-200">
+          <h3 className="text-xs font-serif font-bold text-[#0369a1]">Good To Know</h3>
+          <ul className="space-y-0.5 text-gray-700 text-[10px]">
             {data.goodToKnow.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5 leading-snug">
                 <span className="text-gray-400 shrink-0">•</span>
@@ -1662,9 +1662,9 @@ ${data.motto}`;
         </div>
 
         {/* Booking & Payment Section */}
-        <div className="space-y-1.5 pt-2 border-t border-gray-200">
-          <h3 className="text-sm font-serif font-bold text-[#0369a1]">Booking & Payment</h3>
-          <ul className="space-y-1 text-gray-700 text-[10.5px]">
+        <div className="space-y-1 pt-1.5 border-t border-gray-200">
+          <h3 className="text-xs font-serif font-bold text-[#0369a1]">Booking & Payment</h3>
+          <ul className="space-y-0.5 text-gray-700 text-[10px]">
             {data.bookingPayment.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5 leading-snug">
                 <span className="text-gray-400 shrink-0">•</span>
@@ -1675,28 +1675,28 @@ ${data.motto}`;
         </div>
 
         {/* For Bookings & Queries Center Box */}
-        <div className="flex flex-col items-center justify-center text-center pt-2">
-          <img src="/logo.png" alt="logo" className="h-12 w-auto object-contain mb-1" />
-          <p className="text-[9px] uppercase tracking-widest text-gray-500 font-bold">For Bookings & Queries</p>
-          <h4 className="text-base font-serif font-bold text-[#0369a1]">{data.contactAgency}</h4>
-          <p className="text-xs text-gray-800 font-semibold">{data.contactPerson}</p>
-          <p className="text-xs text-gray-900 font-bold tracking-wider">{data.contactPhone}</p>
+        <div className="flex flex-col items-center justify-center text-center pt-1.5">
+          <img src="/logo.png" alt="logo" className="h-10 w-auto object-contain mb-0.5" />
+          <p className="text-[8.5px] uppercase tracking-widest text-gray-500 font-bold">For Bookings & Queries</p>
+          <h4 className="text-sm font-serif font-bold text-[#0369a1]">{data.contactAgency}</h4>
+          <p className="text-[11px] text-gray-800 font-semibold">{data.contactPerson}</p>
+          <p className="text-[11px] text-gray-900 font-bold tracking-wider">{data.contactPhone}</p>
           <a 
             href="https://traveltouttrakhand.com" 
             target="_blank" 
             rel="noopener noreferrer" 
             data-pdf-link="https://traveltouttrakhand.com" 
-            className="text-xs text-[#0369a1] font-bold tracking-wider hover:underline block mt-0.5"
+            className="text-[11px] text-[#0369a1] font-bold tracking-wider hover:underline block mt-0.5"
           >
             🌐 www.traveltouttrakhand.com
           </a>
-          <p className="text-xs text-[#0369a1] font-serif font-bold mt-1 tracking-widest">{data.motto}</p>
+          <p className="text-[11px] text-[#0369a1] font-serif font-bold mt-0.5 tracking-widest">{data.motto}</p>
         </div>
 
       </div>
 
       {/* Page 4 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-3 flex justify-between items-center text-[10px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <a 
           href="https://traveltouttrakhand.com" 

@@ -302,12 +302,9 @@ export default function TransportVouchers() {
       
       const pdf = new jsPDF("p", "mm", "a4");
       const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+      const pdfHeight = pdf.internal.pageSize.getHeight();
       
-      let heightLeft = pdfHeight;
-      let position = 0;
-      
-      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
+      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, pdfHeight);
 
       // Add clickable PDF link annotations
       try {
@@ -326,15 +323,6 @@ export default function TransportVouchers() {
         });
       } catch (linkErr) {
         console.warn("Could not attach PDF link annotations:", linkErr);
-      }
-
-      heightLeft -= pdf.internal.pageSize.getHeight();
-      
-      while (heightLeft > 0) {
-        position = heightLeft - pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pdf.internal.pageSize.getHeight();
       }
       
       pdf.save(`Transport_Voucher_${data.guestName.replace(/\s+/g, "_")}.pdf`);
@@ -356,36 +344,36 @@ export default function TransportVouchers() {
   const renderVoucherContent = (prefix: string) => (
     <div 
       id={`${prefix}-transport-voucher`} 
-      className="w-[794px] h-[1122px] min-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] h-[1122px] min-h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-7 py-5 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
       <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
+        <img src="/logo.png" alt="watermark" className="w-[480px] h-[480px] object-contain" />
       </div>
 
       <div className="relative z-10 flex flex-col justify-between h-full">
         
         {/* TOP CONTENT SECTION */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           
           {/* Header Branding */}
-          <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
-            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1" />
-            <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
-            <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
+          <div className="flex flex-col items-center text-center pb-1 border-b border-gray-200">
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-12 w-auto object-contain mb-0.5" />
+            <p className="text-[10px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+            <h1 className="text-2xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
               TRANSPORT SERVICE VOUCHER
             </h1>
-            <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
+            <p className="text-[11px] font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
               VEHICLE & TRANSFER CONFIRMATION
             </p>
-            <p className="text-[10.5px] text-gray-500 italic mt-0.5">
+            <p className="text-[10px] text-gray-500 italic mt-0.5">
               Devbhoomi Pilgrimage Fleet · Travel to Uttarakhand
             </p>
           </div>
 
           {/* Metadata Line */}
-          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3.5 text-center text-[11px] font-semibold text-gray-800 flex justify-between items-center">
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3 text-center text-[10.5px] font-semibold text-gray-800 flex justify-between items-center">
             <span>Date: <strong className="text-[#0369a1]">{data.date}</strong></span>
             <span>E.X.O. No: <strong className="text-gray-900">{data.exoNo}</strong></span>
             <span>File No: <strong className="text-gray-900">{data.fileNo}</strong></span>
@@ -393,64 +381,64 @@ export default function TransportVouchers() {
 
           {/* Transfer & Vehicle Details Table */}
           <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
-            <div className="bg-[#0369a1] text-white px-3 py-1.5 font-bold uppercase tracking-wider text-[11px] flex justify-between items-center">
+            <div className="bg-[#0369a1] text-white px-3 py-1 font-bold uppercase tracking-wider text-[10.5px] flex justify-between items-center">
               <span>Transfer & Vehicle Particulars</span>
               <span className="text-[10px] font-normal opacity-90">{data.vehicleType}</span>
             </div>
-            <table className="w-full text-left text-[11px]">
+            <table className="w-full text-left text-[10.5px]">
               <tbody className="divide-y divide-gray-200">
                 <tr className="bg-white">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 w-1/4 border-r border-gray-200">Guest Name:</td>
-                  <td className="px-3 py-1.5 font-bold text-[#0369a1] w-1/4 border-r border-gray-200">{data.guestName}</td>
-                  <td className="px-3 py-1.5 font-bold text-gray-700 w-1/4 border-r border-gray-200">Passengers:</td>
-                  <td className="px-3 py-1.5 text-gray-900 w-1/4 font-semibold">{data.noOfAdults}</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-700 w-1/4 border-r border-gray-200">Guest Name:</td>
+                  <td className="px-2.5 py-1 font-bold text-[#0369a1] w-1/4 border-r border-gray-200">{data.guestName}</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-700 w-1/4 border-r border-gray-200">Passengers:</td>
+                  <td className="px-2.5 py-1 text-gray-900 w-1/4 font-semibold">{data.noOfAdults}</td>
                 </tr>
                 <tr className="bg-gray-50/60">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Assigned Vehicle:</td>
-                  <td className="px-3 py-1.5 font-bold text-gray-900 border-r border-gray-200">{data.vehicleType}</td>
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Fleet Helpline:</td>
-                  <td className="px-3 py-1.5 font-bold text-[#0369a1] font-mono">{data.managerMobile}</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-700 border-r border-gray-200">Assigned Vehicle:</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-900 border-r border-gray-200">{data.vehicleType}</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-700 border-r border-gray-200">Fleet Helpline:</td>
+                  <td className="px-2.5 py-1 font-bold text-[#0369a1] font-mono">{data.managerMobile}</td>
                 </tr>
                 <tr className="bg-white">
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Arrival Transfer:</td>
-                  <td className="px-3 py-1.5 text-gray-800 border-r border-gray-200">{data.arrivalDate}</td>
-                  <td className="px-3 py-1.5 font-bold text-gray-700 border-r border-gray-200">Departure Transfer:</td>
-                  <td className="px-3 py-1.5 text-gray-800">{data.departureDate}</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-700 border-r border-gray-200">Arrival Transfer:</td>
+                  <td className="px-2.5 py-1 text-gray-800 border-r border-gray-200">{data.arrivalDate}</td>
+                  <td className="px-2.5 py-1 font-bold text-gray-700 border-r border-gray-200">Departure Transfer:</td>
+                  <td className="px-2.5 py-1 text-gray-800">{data.departureDate}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
           {/* Favouring Banner */}
-          <div className="bg-sky-50/70 border border-sky-200 rounded-lg p-2 text-xs flex items-center justify-between">
+          <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-2.5 text-xs flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="font-bold text-[#0369a1] uppercase tracking-wider text-[10px]">FAVOURING:</span>
-              <span className="font-bold text-gray-900 text-[11px]">{data.favouringGuest}</span>
+              <span className="font-bold text-[#0369a1] uppercase tracking-wider text-[9.5px]">FAVOURING:</span>
+              <span className="font-bold text-gray-900 text-[10.5px]">{data.favouringGuest}</span>
               <span className="text-gray-400">|</span>
-              <span className="font-semibold text-sky-900 text-[11px]">{data.favouringPax} Pax</span>
+              <span className="font-semibold text-sky-900 text-[10.5px]">{data.favouringPax} Pax</span>
             </div>
-            <span className="text-[11px] font-semibold text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">{data.favouringVehicle}</span>
+            <span className="text-[10px] font-semibold text-gray-700 bg-white px-2 py-0.5 rounded border border-gray-200">{data.favouringVehicle}</span>
           </div>
 
           {/* Day-by-Day Schedule Table */}
           <div className="rounded-lg overflow-hidden border border-gray-200 text-xs">
-            <div className="bg-[#0369a1] text-white px-3 py-1.5 font-bold uppercase tracking-wider text-[11px]">
+            <div className="bg-[#0369a1] text-white px-3 py-1 font-bold uppercase tracking-wider text-[10.5px]">
               Day-by-Day Transport Schedule
             </div>
-            <table className="w-full text-left text-[10.5px]">
+            <table className="w-full text-left text-[10px]">
               <thead className="bg-gray-100 text-gray-700 font-bold border-b border-gray-200">
                 <tr>
-                  <th className="px-2.5 py-1.5 w-[22%]">Date & Day</th>
-                  <th className="px-3 py-1.5 w-[50%]">Transfers & Sightseeing Route</th>
-                  <th className="px-2.5 py-1.5 w-[28%]">Night Stay / Dropping</th>
+                  <th className="px-2.5 py-1 w-[22%]">Date & Day</th>
+                  <th className="px-2.5 py-1 w-[50%]">Transfers & Sightseeing Route</th>
+                  <th className="px-2.5 py-1 w-[28%]">Night Stay / Dropping</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {data.itinerary.map((item, idx) => (
                   <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-50/60"}>
-                    <td className="px-2.5 py-1.5 font-bold text-[#0369a1] align-top">{item.date || `Day ${idx + 1}`}</td>
-                    <td className="px-3 py-1.5 text-gray-800 leading-tight align-top">{item.details}</td>
-                    <td className="px-2.5 py-1.5 text-gray-700 font-medium align-top">{item.hotel}</td>
+                    <td className="px-2.5 py-1 font-bold text-[#0369a1] align-top">{item.date || `Day ${idx + 1}`}</td>
+                    <td className="px-2.5 py-1 text-gray-800 leading-tight align-top">{item.details}</td>
+                    <td className="px-2.5 py-1 text-gray-700 font-medium align-top">{item.hotel}</td>
                   </tr>
                 ))}
               </tbody>
@@ -459,10 +447,10 @@ export default function TransportVouchers() {
 
           {/* Transport Guidelines */}
           <div className="space-y-1">
-            <h4 className="font-serif font-bold text-[#0369a1] text-xs uppercase tracking-wider">
+            <h4 className="font-serif font-bold text-[#0369a1] text-[10.5px] uppercase tracking-wider">
               Transport Guidelines & Operational Inclusions:
             </h4>
-            <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-2.5 text-[10px] text-gray-700 space-y-1 leading-snug">
+            <div className="bg-gray-50/70 border border-gray-200 rounded-lg p-2 text-[9px] text-gray-700 space-y-0.5 leading-snug">
               <p>• All toll taxes, interstate permits, parking fees, and driver night allowances are included in the package.</p>
               <p>• Vehicle air conditioning operates on plain highway stretches and remains switched off during steep uphill ghat climbs for engine safety.</p>
               <p>• Night driving in high-altitude mountain sectors is strictly restricted after 8:00 PM per government administration road safety guidelines.</p>
@@ -472,14 +460,14 @@ export default function TransportVouchers() {
         </div>
 
         {/* BOTTOM SECTION: Signatory & Page Footer */}
-        <div className="space-y-2 pt-1 border-t border-gray-200">
+        <div className="space-y-1.5 pt-1 border-t border-gray-200">
           <div className="flex justify-between items-center">
-            <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
+            <div className="flex items-center gap-2">
+              <img src="/logo.png" alt="logo" className="h-7 w-auto object-contain" />
               <div>
                 <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
-                <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9.5px] text-gray-600 font-medium">
+                <h4 className="text-[11px] font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
+                <p className="text-[9px] text-gray-600 font-medium">
                   Mr. Amit kumar · +91 9719038278 · 
                   <a 
                     href="https://traveltouttrakhand.com" 
@@ -494,12 +482,12 @@ export default function TransportVouchers() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[9px] text-gray-500 font-semibold">Official Seal & Authorized Signatory</p>
-              <p className="text-[9px] text-[#0369a1] font-serif font-bold mt-1">Computer Generated Operational Voucher</p>
+              <p className="text-[8.5px] text-gray-500 font-semibold">Official Seal & Authorized Signatory</p>
+              <p className="text-[8.5px] text-[#0369a1] font-serif font-bold mt-0.5">Computer Generated Operational Voucher</p>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9.5px] text-gray-500">
+          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9px] text-gray-500">
             <span>Travel to Uttarakhand · +91 9719038278</span>
             <a 
               href="https://traveltouttrakhand.com" 
