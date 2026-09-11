@@ -552,18 +552,18 @@ export default function HotelVouchersPage() {
         {/* TOP SECTION: Header, Meta, Guest & Stays */}
         <div className="space-y-2.5">
           {/* Brand & Helpline Header: 2-Column Layout */}
-          <div className="flex items-center justify-between pb-2 border-b-2 border-sky-100">
+          <div className="flex items-center justify-between pb-2 border-b-2 border-sky-100 gap-4">
             {/* Left: Prominent Logo & Company Name */}
-            <div className="flex items-center gap-3.5">
-              <img src="/logo.png" alt="Travel to Uttarakhand" className="h-24 w-auto object-contain" />
-              <div>
-                <h2 className="text-xl font-serif font-black tracking-tight text-[#0369a1] leading-none uppercase">
+            <div className="flex items-center gap-3.5 min-w-0">
+              <img src="/logo.png" alt="Travel to Uttarakhand" className="h-20 w-auto object-contain shrink-0" />
+              <div className="min-w-0">
+                <h2 className="text-[19px] font-serif font-black tracking-tight text-[#0369a1] leading-none uppercase whitespace-nowrap">
                   Travel to Uttarakhand
                 </h2>
-                <p className="text-[11px] font-semibold text-gray-500 tracking-wider mt-0.5">
+                <p className="text-[11px] font-semibold text-gray-500 tracking-wider mt-0.5 whitespace-nowrap">
                   Devbhoomi Pilgrimage & Spiritual Stays
                 </p>
-                <div className="flex items-center gap-2 mt-1">
+                <div className="flex items-center gap-2 mt-1 whitespace-nowrap">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#dc2626] bg-red-50 border border-red-200 px-1.5 py-0.2 rounded">
                     CONFIRMED LODGING
                   </span>
@@ -575,21 +575,21 @@ export default function HotelVouchersPage() {
             </div>
 
             {/* Right: Compact Voucher Title & 24/7 Helpline Badge */}
-            <div className="text-right flex flex-col items-end">
+            <div className="text-right flex flex-col items-end shrink-0 max-w-[270px]">
               <div className="bg-[#0369a1] text-white px-3 py-1 rounded-md shadow-xs">
                 <span className="text-[12px] font-serif font-bold uppercase tracking-widest">
                   HOTEL SERVICE VOUCHER
                 </span>
               </div>
               
-              {/* 24x7 Helpline moved to top right */}
-              <div className="mt-1.5 bg-emerald-50 border border-emerald-300 rounded-lg px-2.5 py-1 text-right">
+              {/* 24x7 Helpline Badge */}
+              <div className="mt-1.5 bg-emerald-50 border border-emerald-300 rounded-lg px-2.5 py-1 text-right w-full">
                 <div className="text-[9.5px] uppercase font-bold text-emerald-800 tracking-wider flex items-center justify-end gap-1">
-                  <Phone className="w-3 h-3 text-emerald-600" />
+                  <Phone className="w-3 h-3 text-emerald-600 shrink-0" />
                   <span>24x7 Operations Helpline</span>
                 </div>
-                <div className="text-[12px] font-black text-emerald-950 tracking-wide">
-                  {data.emergencyContact || "+91 98765 43210"}
+                <div className="text-[11px] font-black text-emerald-950 tracking-tight mt-0.5 leading-tight break-words">
+                  {data.emergencyContact || "+91 9719038278"}
                 </div>
               </div>
             </div>
