@@ -16,7 +16,10 @@ import {
   AlertCircle,
   Trash2,
   Database,
-  RotateCcw
+  RotateCcw,
+  MessageCircle,
+  Sparkles,
+  Send
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -29,6 +32,11 @@ interface SettingsData {
   website: string;
   logo_url: string;
   openai_key: string;
+  // Meta Cloud WhatsApp Business API Configuration
+  meta_phone_number_id?: string;
+  meta_waba_id?: string;
+  meta_access_token?: string;
+  meta_default_motto?: string;
 }
 
 const defaultSettings: Omit<SettingsData, "id"> = {
@@ -39,6 +47,10 @@ const defaultSettings: Omit<SettingsData, "id"> = {
   website: "https://traveltouttrakhand.com",
   logo_url: "/logo.png",
   openai_key: "",
+  meta_phone_number_id: "",
+  meta_waba_id: "",
+  meta_access_token: "",
+  meta_default_motto: "ॐ नमः शिवाय | जय बद्री विशाल",
 };
 
 export default function SettingsPage() {
@@ -50,7 +62,15 @@ export default function SettingsPage() {
         const cached = localStorage.getItem("triloki_settings_cache");
         if (cached) {
           const parsed = JSON.parse(cached);
-          return { ...parsed, openai_key: parsed.openai_key || key };
+          return {
+            ...defaultSettings,
+            ...parsed,
+            openai_key: parsed.openai_key || key,
+            meta_phone_number_id: parsed.meta_phone_number_id || localStorage.getItem("triloki_meta_phone_number_id") || "",
+            meta_waba_id: parsed.meta_waba_id || localStorage.getItem("triloki_meta_waba_id") || "",
+            meta_access_token: parsed.meta_access_token || localStorage.getItem("triloki_meta_access_token") || "",
+            meta_default_motto: parsed.meta_default_motto || "ॐ नमः शिवाय | जय बद्री विशाल"
+          };
         }
       } catch {}
     }
@@ -136,6 +156,11 @@ export default function SettingsPage() {
     }
   }, [toast]);
 
+  const [showMetaToken, setShowMetaToken] = useState(false);
+  const [testPhone, setTestPhone] = useState("+91 9719038278");
+  const [testingWhatsApp, setTestingWhatsApp] = useState(false);
+  const [testResult, setTestResult] = useState<{ success?: boolean; message?: string } | null>(null);
+
   async function fetchSettings() {
     try {
       const { data, error } = await supabase
@@ -154,6 +179,10 @@ export default function SettingsPage() {
           website: data.website ?? defaultSettings.website,
           logo_url: data.logo_url ?? defaultSettings.logo_url,
           openai_key: data.openai_key ?? "",
+          meta_phone_number_id: data.meta_phone_number_id ?? localStorage.getItem("triloki_meta_phone_number_id") ?? "",
+          meta_waba_id: data.meta_waba_id ?? localStorage.getItem("triloki_meta_waba_id") ?? "",
+          meta_access_token: data.meta_access_token ?? localStorage.getItem("triloki_meta_access_token") ?? "",
+          meta_default_motto: data.meta_default_motto ?? "ॐ नमः शिवाय | जय बद्री विशाल"
         };
         setSettings(updated);
         if (typeof window !== "undefined") {
@@ -167,7 +196,7 @@ export default function SettingsPage() {
 
   async function handleSave() {
     setSaving(true);
-    const payload: Record<string, string> = {
+    const payload: Record<string, any> = {
       company_name: settings.company_name,
       gst_number: settings.gst_number,
       phone: settings.phone,
@@ -181,6 +210,18 @@ export default function SettingsPage() {
       localStorage.setItem("triloki_settings_cache", JSON.stringify(settings));
       if (settings.openai_key) {
         localStorage.setItem("triloki_gemini_api_key", settings.openai_key.trim());
+      }
+      if (settings.meta_phone_number_id !== undefined) {
+        localStorage.setItem("triloki_meta_phone_number_id", settings.meta_phone_number_id.trim());
+      }
+      if (settings.meta_waba_id !== undefined) {
+        localStorage.setItem("triloki_meta_waba_id", settings.meta_waba_id.trim());
+      }
+      if (settings.meta_access_token !== undefined) {
+        localStorage.setItem("triloki_meta_access_token", settings.meta_access_token.trim());
+      }
+      if (settings.meta_default_motto !== undefined) {
+        localStorage.setItem("triloki_meta_default_motto", settings.meta_default_motto.trim());
       }
     }
 
@@ -204,7 +245,7 @@ export default function SettingsPage() {
       }
 
       if (error) {
-        setToast("Saved locally (Cloud sync pending connection)");
+        setToast("Settings saved locally! (Cloud sync pending connection)");
       } else {
         setToast("Settings saved successfully!");
       }
@@ -214,6 +255,46 @@ export default function SettingsPage() {
       setSaving(false);
     }
   }
+
+  const handleTestWhatsApp = async () => {
+    if (!settings.meta_phone_number_id || !settings.meta_access_token) {
+      setTestResult({ success: false, message: "Please fill Phone Number ID and Access Token before testing." });
+      return;
+    }
+    setTestingWhatsApp(true);
+    setTestResult(null);
+
+    try {
+      const res = await fetch("/api/whatsapp/send-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: testPhone,
+          customerName: "Devotee Test",
+          yatraName: "Chardham Yatra 2026 (Live Test)",
+          bookingId: "TEST-CD-001",
+          travelDates: "10 May – 19 May 2026",
+          paxCount: "04 Adults",
+          totalAmount: 114000,
+          advancePaid: 35000,
+          balanceDue: 79000,
+          phoneNumberId: settings.meta_phone_number_id,
+          accessToken: settings.meta_access_token
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setTestResult({ success: true, message: "✓ Test message sent successfully via Meta Cloud API!" });
+      } else {
+        setTestResult({ success: false, message: `Error: ${data.error || "Failed to send message"}` });
+      }
+    } catch (err: any) {
+      setTestResult({ success: false, message: `Network error: ${err.message}` });
+    } finally {
+      setTestingWhatsApp(false);
+    }
+  };
 
   function update(field: keyof Omit<SettingsData, "id">, value: string) {
     setSettings((prev) => {
@@ -404,7 +485,135 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      {/* Card 3 – Data Management & Backups */}
+      {/* Card 3 – Meta Cloud WhatsApp Business API Configuration */}
+      <div className="bg-white border border-emerald-100 rounded-2xl shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-emerald-100 bg-gradient-to-r from-emerald-50/50 to-white">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+              <MessageCircle className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                Meta Cloud WhatsApp Business API
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
+                  1,000 Free Messages/Mo Tier
+                </span>
+              </h2>
+              <p className="text-xs text-gray-500">
+                Send official Devbhoomi booking confirmation messages directly to customer WhatsApp
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Phone Number ID */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                Phone Number ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={settings.meta_phone_number_id || ""}
+                onChange={(e) => update("meta_phone_number_id", e.target.value)}
+                placeholder="e.g. 105938291823019"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm"
+              />
+              <p className="text-[11px] text-gray-400">Found in Meta App Dashboard → WhatsApp → API Setup</p>
+            </div>
+
+            {/* WABA ID */}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">
+                WhatsApp Business Account ID (WABA ID)
+              </label>
+              <input
+                type="text"
+                value={settings.meta_waba_id || ""}
+                onChange={(e) => update("meta_waba_id", e.target.value)}
+                placeholder="e.g. 108371928472918"
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm"
+              />
+              <p className="text-[11px] text-gray-400">Your Meta WhatsApp Business Account ID</p>
+            </div>
+          </div>
+
+          {/* Meta Access Token */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              Permanent / System User Access Token <span className="text-red-500">*</span>
+            </label>
+            <div className="relative">
+              <input
+                type={showMetaToken ? "text" : "password"}
+                value={settings.meta_access_token || ""}
+                onChange={(e) => update("meta_access_token", e.target.value)}
+                placeholder="EAABwzL... (Permanent System User Token)"
+                className="w-full px-4 py-2.5 pr-12 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 font-mono text-sm"
+              />
+              <button
+                type="button"
+                onClick={() => setShowMetaToken(!showMetaToken)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
+              >
+                {showMetaToken ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+            <p className="text-xs text-gray-400 mt-1">
+              Obtained from Meta Business Suite → System Users with <code className="text-emerald-700 font-bold">whatsapp_business_messaging</code> permission.
+            </p>
+          </div>
+
+          {/* Default Spiritual Motto */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-gray-700">
+              Header Blessing Motto in Messages
+            </label>
+            <input
+              type="text"
+              value={settings.meta_default_motto || "ॐ नमः शिवाय | जय बद्री विशाल"}
+              onChange={(e) => update("meta_default_motto", e.target.value)}
+              placeholder="ॐ नमः शिवाय | जय बद्री विशाल"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 text-sm font-semibold"
+            />
+          </div>
+
+          {/* Test WhatsApp Connection */}
+          <div className="pt-3 border-t border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-emerald-50/40 p-3.5 rounded-xl border border-emerald-100">
+            <div className="flex-1">
+              <span className="text-xs font-bold text-emerald-900 block">Test WhatsApp Connection:</span>
+              <p className="text-[11px] text-emerald-700">Send a sample Chardham booking confirmation to verify your Meta API credentials</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={testPhone}
+                onChange={(e) => setTestPhone(e.target.value)}
+                placeholder="+91 9719038278"
+                className="w-36 px-2.5 py-1.5 bg-white border border-emerald-200 rounded-lg text-xs font-semibold"
+              />
+              <button
+                type="button"
+                onClick={handleTestWhatsApp}
+                disabled={testingWhatsApp}
+                className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1.5 cursor-pointer disabled:opacity-60 shrink-0"
+              >
+                {testingWhatsApp ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                {testingWhatsApp ? "Sending..." : "Test Send"}
+              </button>
+            </div>
+          </div>
+
+          {testResult && (
+            <div className={`p-3 rounded-xl text-xs font-medium ${testResult.success ? "bg-emerald-50 text-emerald-800 border border-emerald-200" : "bg-red-50 text-red-700 border border-red-200"}`}>
+              {testResult.message}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Card 4 – Data Management & Backups */}
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
           <div className="flex items-center gap-3">

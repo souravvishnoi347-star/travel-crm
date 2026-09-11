@@ -7,15 +7,15 @@ import { LayoutDashboard, FileText, Hotel, Car, Menu, X, Plane, Map, Users, Stor
 import { useAuth } from "@/context/AuthContext";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Invoice Generator", href: "/invoices", icon: FileText },
-  { name: "Itineraries & Quotes", href: "/itinerary-builder", icon: Map },
+  { name: "Yatra Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Yatra Invoices & Billing", href: "/invoices", icon: FileText },
+  { name: "Chardham Itineraries", href: "/itinerary-builder", icon: Map },
   { name: "Dham Photo Library", href: "/gallery", icon: ImageIcon },
-  { name: "Hotel Vouchers", href: "/hotels", icon: Hotel },
+  { name: "Hotel Service Vouchers", href: "/hotels", icon: Hotel },
   { name: "Transport Vouchers", href: "/transport", icon: Car },
-  { name: "Lead Pipeline", href: "/leads", icon: Users },
+  { name: "Pilgrimage Leads", href: "/leads", icon: Users },
   { name: "Vendors & Payables", href: "/vendors", icon: Store },
-  { name: "Settings", href: "/settings", icon: Settings },
+  { name: "CRM & WhatsApp Setup", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
