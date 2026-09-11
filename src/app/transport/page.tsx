@@ -375,21 +375,27 @@ export default function TransportVouchers() {
                 <p className="text-[11px] font-semibold text-gray-500 tracking-wider mt-0.5 whitespace-nowrap">
                   Devbhoomi Pilgrimage & Spiritual Fleet
                 </p>
-                <div className="flex items-center gap-2 mt-1 whitespace-nowrap">
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#dc2626] bg-red-50 border border-red-200 px-1.5 py-0.2 rounded">
+                <div className="flex flex-wrap items-center gap-2 mt-1">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#dc2626] bg-red-50 border border-red-200 px-1.5 py-0.5 rounded shrink-0">
                     CONFIRMED TRANSPORT
                   </span>
-                  <span className="text-[10.5px] font-bold text-gray-600">
+                  <a
+                    href="https://traveltouttrakhand.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-pdf-link="https://traveltouttrakhand.com"
+                    className="text-[11px] font-bold text-[#0369a1] hover:underline flex items-center gap-1 shrink-0"
+                  >
                     🌐 traveltouttrakhand.com
-                  </span>
+                  </a>
                 </div>
               </div>
             </div>
 
             {/* Right: Compact Voucher Title & 24/7 Helpline Badge */}
-            <div className="text-right flex flex-col items-end shrink-0 max-w-[270px]">
+            <div className="text-right flex flex-col items-end shrink-0 w-[235px]">
               <div className="bg-[#0369a1] text-white px-3 py-1 rounded-md shadow-xs">
-                <span className="text-[12px] font-serif font-bold uppercase tracking-widest">
+                <span className="text-[12px] font-serif font-bold uppercase tracking-widest whitespace-nowrap">
                   TRANSPORT SERVICE VOUCHER
                 </span>
               </div>
@@ -398,9 +404,9 @@ export default function TransportVouchers() {
               <div className="mt-1.5 bg-emerald-50 border border-emerald-300 rounded-lg px-2.5 py-1 text-right w-full">
                 <div className="text-[9.5px] uppercase font-bold text-emerald-800 tracking-wider flex items-center justify-end gap-1">
                   <Phone className="w-3 h-3 text-emerald-600 shrink-0" />
-                  <span>24x7 Fleet Helpline</span>
+                  <span className="whitespace-nowrap">24x7 Fleet Helpline</span>
                 </div>
-                <div className="text-[11px] font-black text-emerald-950 tracking-tight mt-0.5 leading-tight break-words">
+                <div className="text-[11px] font-black text-emerald-950 tracking-tight mt-0.5 leading-tight">
                   {data.managerMobile || "+91 9719038278"}
                 </div>
               </div>
