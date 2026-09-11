@@ -50,7 +50,8 @@ export interface HotelStay {
 
 export interface HotelVoucherData {
   voucherNo: string;
-  bookingId: string;
+  tripDates?: string;
+  bookingId?: string;
   dateOfIssue: string;
   guestName: string;
   guestPhone: string;
@@ -66,7 +67,8 @@ export interface HotelVoucherData {
 
 const PRESET_CHARDHAM_10D: HotelVoucherData = {
   voucherNo: "TV-2026-CH01",
-  bookingId: "BKG-CD-8842",
+  tripDates: "12 Sep 2026 to 20 Sep 2026",
+  bookingId: "12 Sep 2026 to 20 Sep 2026",
   dateOfIssue: "10 May 2026",
   guestName: "Guest & Family",
   guestPhone: "+91 ",
@@ -555,18 +557,18 @@ export default function HotelVouchersPage() {
       <div className="relative z-10 flex flex-col justify-between h-full">
         
         {/* TOP SECTION: Header, Meta, Guest & Stays */}
-        <div className="space-y-3">
+        <div className="space-y-2.5">
           {/* Brand Header */}
-          <div className="flex flex-col items-center text-center pb-2 border-b border-gray-200">
-            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-12 w-auto object-contain mb-0.5" />
-            <p className="text-[10.5px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
-            <h1 className="text-2xl font-serif font-black text-[#0369a1] tracking-tight uppercase mt-0.5">
+          <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-16 w-auto object-contain mb-1" />
+            <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+            <h1 className="text-lg font-serif font-black text-[#0369a1] tracking-wider uppercase mt-0.5">
               HOTEL SERVICE VOUCHER
             </h1>
-            <p className="text-[11px] font-bold tracking-wider text-[#dc2626] uppercase">
+            <p className="text-[11px] font-bold tracking-wider text-[#dc2626] uppercase mt-0.5">
               CONFIRMED STAYS & LODGING SCHEDULE
             </p>
-            <p className="text-[9.5px] text-gray-500 italic">
+            <p className="text-[10px] text-gray-500 italic mt-0.5">
               Devbhoomi Pilgrimage & Holiday Stays · Uttarakhand
             </p>
           </div>
@@ -574,7 +576,7 @@ export default function HotelVouchersPage() {
           {/* Reference Meta Bar */}
           <div className="bg-sky-50/80 border border-sky-200 rounded-lg py-1 px-3.5 text-xs text-gray-800 flex justify-between items-center font-medium">
             <span>Voucher No: <strong className="text-[#0369a1] font-bold">{data.voucherNo || "N/A"}</strong></span>
-            <span>Booking ID: <strong className="text-gray-900 font-bold">{data.bookingId || "N/A"}</strong></span>
+            <span>Trip Dates: <strong className="text-gray-900 font-bold">{data.tripDates || data.bookingId || "12 Sep 2026 to 20 Sep 2026"}</strong></span>
             <span>Issue Date: <strong className="text-gray-900 font-bold">{data.dateOfIssue || "N/A"}</strong></span>
           </div>
 
@@ -582,26 +584,26 @@ export default function HotelVouchersPage() {
           <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/80 grid grid-cols-2 gap-3 text-xs">
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
-                <span className="text-gray-500 font-medium">Lead Guest:</span>
-                <span className="font-bold text-gray-900">{data.guestName || "Valued Traveler"}</span>
+                <User className="w-4 h-4 text-[#0369a1] shrink-0" />
+                <span className="text-gray-600 font-medium">Lead Guest:</span>
+                <span className="font-bold text-gray-900 text-xs">{data.guestName || "Valued Traveler"}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
-                <span className="text-gray-500 font-medium">Phone:</span>
-                <span className="font-semibold text-gray-800">{data.guestPhone || "Provided on record"}</span>
+                <Phone className="w-4 h-4 text-[#0369a1] shrink-0" />
+                <span className="text-gray-600 font-medium">Phone:</span>
+                <span className="font-semibold text-gray-800 text-xs">{data.guestPhone || "Provided on record"}</span>
               </div>
             </div>
             <div className="space-y-1">
               <div className="flex items-center gap-1.5">
-                <Calendar className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
-                <span className="text-gray-500 font-medium">Duration:</span>
-                <span className="font-bold text-[#0369a1]">{data.tripDuration || "Full Tour"}</span>
+                <Calendar className="w-4 h-4 text-[#0369a1] shrink-0" />
+                <span className="text-gray-600 font-medium">Duration:</span>
+                <span className="font-bold text-[#0369a1] text-xs">{data.tripDuration || "Full Tour"}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Bed className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
-                <span className="text-gray-500 font-medium">Occupancy:</span>
-                <span className="font-semibold text-gray-800">{data.totalPax || "N/A"} · {data.totalRooms || "N/A"}</span>
+                <Bed className="w-4 h-4 text-[#0369a1] shrink-0" />
+                <span className="text-gray-600 font-medium">Occupancy:</span>
+                <span className="font-semibold text-gray-800 text-xs">{data.totalPax || "N/A"} · {data.totalRooms || "N/A"}</span>
               </div>
             </div>
           </div>
@@ -610,62 +612,62 @@ export default function HotelVouchersPage() {
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <h3 className="font-serif font-bold text-xs uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
-                <Building2 className="w-3.5 h-3.5" />
+                <Building2 className="w-4 h-4" />
                 <span>Confirmed Stay Itinerary ({data.stays.length} Destinations / Properties)</span>
               </h3>
-              <span className="text-[9.5px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+              <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
                 100% Confirmed
               </span>
             </div>
 
             <div className="rounded-lg overflow-hidden border border-gray-200">
-              <table className="w-full text-left text-[10px]">
-                <thead className="bg-[#0369a1] text-white text-[9.5px] uppercase font-bold tracking-wider">
+              <table className="w-full text-left">
+                <thead className="bg-[#0369a1] text-white text-[10.5px] uppercase font-bold tracking-wider">
                   <tr>
-                    <th className="py-1.5 px-2.5 w-[14%]">Nights</th>
-                    <th className="py-1.5 px-2.5 w-[18%]">Destination</th>
-                    <th className="py-1.5 px-2.5 w-[38%]">Confirmed Hotel & Location</th>
-                    <th className="py-1.5 px-2.5 w-[30%]">Room & Meal Plan</th>
+                    <th className="py-2 px-3 w-[15%]">Nights</th>
+                    <th className="py-2 px-3 w-[18%]">Destination</th>
+                    <th className="py-2 px-3 w-[37%]">Confirmed Hotel & Location</th>
+                    <th className="py-2 px-3 w-[30%]">Room & Meal Plan</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="divide-y divide-gray-200 text-xs">
                   {data.stays.map((stay, idx) => (
                     <tr key={stay.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
-                      <td className="py-1.5 px-2.5 font-bold text-gray-900 align-top">
-                        <div className="leading-tight">{stay.nightsLabel}</div>
-                        <div className="text-[9px] text-gray-500 font-normal">
+                      <td className="py-2 px-3 font-bold text-gray-900 align-top">
+                        <div className="text-xs leading-tight">{stay.nightsLabel}</div>
+                        <div className="text-[10px] text-gray-500 font-normal mt-0.5">
                           {stay.nights} Nt{stay.nights > 1 ? "s" : ""}
                         </div>
                       </td>
-                      <td className="py-1.5 px-2.5 font-bold text-[#0369a1] align-top">
-                        <div className="flex items-center gap-1 leading-tight">
-                          <MapPin className="w-3 h-3 text-[#0369a1] shrink-0" />
+                      <td className="py-2 px-3 font-bold text-[#0369a1] align-top">
+                        <div className="flex items-center gap-1 text-xs leading-tight">
+                          <MapPin className="w-3.5 h-3.5 text-[#0369a1] shrink-0" />
                           <span>{stay.city || "—"}</span>
                         </div>
                       </td>
-                      <td className="py-1.5 px-2.5 align-top">
-                        <div className="font-bold text-gray-900 leading-snug">{stay.hotelName || "Hotel / Camp"}</div>
+                      <td className="py-2 px-3 align-top">
+                        <div className="font-bold text-gray-900 text-xs leading-snug">{stay.hotelName || "Hotel / Camp"}</div>
                         {stay.hotelAddress && (
-                          <div className="text-[9px] text-gray-500 truncate max-w-[260px] leading-tight">
+                          <div className="text-[10.5px] text-gray-600 truncate max-w-[270px] leading-tight mt-0.5">
                             📍 {stay.hotelAddress}
                           </div>
                         )}
                         {stay.contactNo && (
-                          <div className="text-[9px] text-gray-600 font-medium mt-0.5">
+                          <div className="text-[10.5px] text-gray-700 font-semibold mt-0.5">
                             📞 {stay.contactNo}
                           </div>
                         )}
                         {stay.specialRequest && (
-                          <div className="text-[8.5px] text-amber-800 bg-amber-50/70 border border-amber-200/70 px-1 py-0.5 rounded mt-0.5 inline-block">
+                          <div className="text-[9.5px] text-amber-900 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded mt-0.5 inline-block font-medium">
                             Note: {stay.specialRequest}
                           </div>
                         )}
                       </td>
-                      <td className="py-1.5 px-2.5 align-top">
-                        <div className="font-semibold text-gray-800 leading-tight">
+                      <td className="py-2 px-3 align-top">
+                        <div className="font-semibold text-gray-900 text-xs leading-tight">
                           {stay.roomType || "Standard Room"} {stay.noOfRooms ? `(${stay.noOfRooms})` : ""}
                         </div>
-                        <div className="text-[9px] text-emerald-700 font-bold mt-0.5">
+                        <div className="text-[10.5px] text-emerald-700 font-bold mt-0.5">
                           {stay.mealPlan ? stay.mealPlan : "MAP Plan"}
                         </div>
                       </td>
@@ -677,12 +679,12 @@ export default function HotelVouchersPage() {
           </div>
 
           {/* INCLUSIONS & POLICIES */}
-          <div className="grid grid-cols-2 gap-3 text-[9.5px]">
+          <div className="grid grid-cols-2 gap-3 text-[10.5px]">
             <div className="space-y-1">
-              <h4 className="font-bold text-[#0369a1] uppercase text-[9.5px] tracking-wider">
+              <h4 className="font-bold text-[#0369a1] uppercase text-[10.5px] tracking-wider">
                 Package Stay Inclusions:
               </h4>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-snug text-gray-700">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2.5 space-y-1 leading-snug text-gray-700">
                 {data.inclusions.split("\n").filter(Boolean).map((inc, i) => (
                   <div key={i} className="flex items-start gap-1">
                     <span className="text-emerald-600 font-bold shrink-0">✓</span>
@@ -693,10 +695,10 @@ export default function HotelVouchersPage() {
             </div>
 
             <div className="space-y-1">
-              <h4 className="font-bold text-[#dc2626] uppercase text-[9.5px] tracking-wider">
+              <h4 className="font-bold text-[#dc2626] uppercase text-[10.5px] tracking-wider">
                 Important Stay Guidelines:
               </h4>
-              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2 space-y-1 leading-snug text-gray-700">
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-2.5 space-y-1 leading-snug text-gray-700">
                 {data.specialInstructions.split("\n").filter(Boolean).map((ins, i) => (
                   <div key={i} className="flex items-start gap-1">
                     <span className="text-amber-600 font-bold shrink-0">ℹ</span>
@@ -712,11 +714,11 @@ export default function HotelVouchersPage() {
         <div className="space-y-1.5 pt-2 border-t border-gray-200">
           <div className="flex justify-between items-center text-xs">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="logo" className="h-7 w-auto object-contain" />
+              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
               <div>
-                <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Authorized Tour Operator</p>
+                <p className="text-[9px] uppercase tracking-widest text-gray-400 font-bold">Authorized Tour Operator</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
-                <p className="text-[9px] text-gray-600 font-medium">
+                <p className="text-[10px] text-gray-600 font-medium">
                   {data.emergencyContact} · 
                   <a 
                     href="https://traveltouttrakhand.com" 
@@ -731,14 +733,14 @@ export default function HotelVouchersPage() {
               </div>
             </div>
             <div className="text-right">
-              <p className="text-[10px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
-              <div className="mt-0.5 px-2 py-0.5 bg-emerald-50 border border-emerald-300 rounded text-[9px] font-bold text-emerald-800 inline-block">
+              <p className="text-[10.5px] text-[#0369a1] font-serif font-bold tracking-widest">ॐ नमः शिवाय</p>
+              <div className="mt-0.5 px-2.5 py-0.5 bg-emerald-50 border border-emerald-300 rounded text-[9.5px] font-bold text-emerald-800 inline-block">
                 OFFICIAL SERVICE VOUCHER
               </div>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[9px] text-gray-500">
+          <div className="border-t border-gray-200 pt-1 flex justify-between items-center text-[10px] text-gray-500">
             <span>Travel to Uttarakhand · Regd. Tour Operator & Destination Management</span>
             <a 
               href="https://traveltouttrakhand.com" 
@@ -820,12 +822,13 @@ export default function HotelVouchersPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Booking ID</label>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">Trip Dates</label>
                   <input 
                     type="text" 
-                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" 
-                    value={data.bookingId} 
-                    onChange={e => updateData({ ...data, bookingId: e.target.value })} 
+                    className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold text-[#0369a1]" 
+                    placeholder="e.g. 12 Sep 2026 to 20 Sep 2026"
+                    value={data.tripDates ?? data.bookingId ?? ""} 
+                    onChange={e => updateData({ ...data, tripDates: e.target.value, bookingId: e.target.value })} 
                   />
                 </div>
                 <div>
