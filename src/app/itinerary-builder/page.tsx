@@ -40,7 +40,8 @@ import {
   Wand2,
   Tag,
   Filter,
-  RefreshCw
+  RefreshCw,
+  Car
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { 
@@ -576,8 +577,16 @@ export default function ItineraryBuilder() {
     setAiError("");
 
     try {
-      const systemPrompt = `You are an elite Indian travel planner creating luxury, highly professional travel brochures for "Travel to Uttarakhand" (similar to a premium Chardham Yatra brochure).
-Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappers) with this exact schema:
+      const systemPrompt = `You are an elite Indian luxury travel designer creating brochures for "Travel to Uttarakhand".
+CRITICAL RULES:
+1. Write in flawless, elegant British/Indian English. Absolutely ZERO spelling mistakes, grammatical errors, or garbled characters.
+2. Under NO circumstance should you use weird symbols, unreadable encoding, or corrupted Unicode characters (e.g., do NOT output weird symbols like , special smart quotes, or corrupted apostrophes). Use only clean standard alphanumeric characters, commas, periods, hyphens (-), and simple arrows (→).
+3. DAY NUMBERING: In the "days" array, "dayNumber" must be an integer (1, 2, 3...). In "dateStr", do NOT repeat the word "Day" or write "Day - Day 1" or "Day 1". Provide either an actual calendar date format (e.g. "Day 01 - Haridwar Arrival" or "15 May 2026 (Fri)") or just "Sightseeing & Transit".
+4. ACTIVITIES: Each activity bullet must be a clean, well-formed sentence describing sightseeing, temple darshan, scenic drives, or night halts.
+5. SIGHTSEEING ROUTE: Use clean arrow formatting like "Haridwar → Guptkashi → Kedarnath".
+6. RETURN ONLY valid, raw JSON (strictly no markdown wrappers, no \`\`\`json).
+
+SCHEMA:
 {
   "title": "Main Trip Title in CAPS e.g. DO DHAM YATRA",
   "subTitle": "Region/State in CAPS e.g. UTTARAKHAND",
@@ -597,12 +606,12 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
   "days": [
     {
       "dayNumber": 1,
-      "dateStr": "Day 1",
+      "dateStr": "Haridwar Arrival & Transit",
       "route": "Haridwar → Guptkashi",
       "activities": [
-        "Morning pickup and scenic foothills drive.",
-        "Visit Devprayag and Rudraprayag sangam confluences.",
-        "Evening arrival at Guptkashi and check-in."
+        "Morning pickup and scenic foothills drive along the Alaknanda river.",
+        "Visit Devprayag and Rudraprayag holy river confluences.",
+        "Evening arrival at Guptkashi and hotel check-in."
       ],
       "overnightStay": "Guptkashi"
     }
@@ -724,47 +733,103 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
       const cleanJson = textResponse.replace(/^```json\s*/i, "").replace(/^```\s*/, "").replace(/\s*```$/, "").trim();
       const parsed = JSON.parse(cleanJson);
 
+      // Helper to clean up any unwanted symbols, corrupted encodings, or garbled quotes
+      const cleanText = (str: string): string => {
+        if (!str || typeof str !== "string") return "";
+        return str
+          .replace(/[\uFFFD\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, "") // Remove unprintable / replacement chars
+          .replace(/[‘’]/g, "'")
+          .replace(/[“”]/g, '"')
+          .replace(/â|â|â€“|â€”/g, "–")
+          .replace(/â€™|â€˜/g, "'")
+          .replace(/â€œ|â€/g, '"')
+          .trim();
+      };
+
+      // Helper to clean up day dateStr and avoid "Day - Day 1" or double "Day 1"
+      const formatDayDateStr = (rawStr: any, dayIndex: number): string => {
+        if (!rawStr || typeof rawStr !== "string") return `Day ${dayIndex + 1}`;
+        let cleaned = cleanText(rawStr);
+        // Remove repetitive "Day - Day 1", "Day - Day", "Day 1 - Day 1", etc.
+        cleaned = cleaned.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*\s*/i, "");
+        cleaned = cleaned.replace(/^Day\s*\d+\s*[-–:]*\s*/i, "");
+        cleaned = cleaned.replace(/^Day\s*\d+$/i, "");
+        cleaned = cleaned.trim();
+        return cleaned || `Day ${dayIndex + 1}`;
+      };
+
       // Validate & merge with default fallback fields
-      const newDays: DayPlan[] = (parsed.days || []).map((d: any, idx: number) => ({
-        id: Date.now() + idx,
-        dayNumber: d.dayNumber || idx + 1,
-        dateStr: d.dateStr || `Day ${idx + 1}`,
-        route: d.route || "Tour Route",
-        activities: Array.isArray(d.activities) ? d.activities : [d.description || "Sightseeing and travel."],
-        overnightStay: d.overnightStay || "Hotel"
-      }));
+      const newDays: DayPlan[] = (parsed.days || []).map((d: any, idx: number) => {
+        const rawActivities = Array.isArray(d.activities) ? d.activities : [d.description || "Sightseeing and travel."];
+        const cleanedActivities = rawActivities
+          .map((act: any) => cleanText(String(act)))
+          .filter((act: string) => act.length > 0);
+
+        return {
+          id: Date.now() + idx,
+          dayNumber: idx + 1,
+          dateStr: formatDayDateStr(d.dateStr, idx),
+          route: cleanText(d.route || "Tour Route"),
+          activities: cleanedActivities.length > 0 ? cleanedActivities : ["Sightseeing and travel."],
+          overnightStay: cleanText(d.overnightStay || "Hotel")
+        };
+      });
 
       // Auto-pick matching photos from the Dham Photo Gallery for the generated itinerary
       const activeGallery = dhamGallery.length > 0 ? dhamGallery : getStoredDhamGallery();
       const matchedPhotos = pickDhamPhotosForItinerary(parsed, activeGallery);
 
-      setData(prev => ({
-        ...prev,
-        title: parsed.title || prev.title,
-        subTitle: parsed.subTitle || prev.subTitle,
-        spiritualHeadline: parsed.spiritualHeadline || prev.spiritualHeadline,
-        dhamsSubtitle: parsed.dhamsSubtitle || prev.dhamsSubtitle,
-        preparedFor: parsed.preparedFor || prev.preparedFor,
-        travelDates: parsed.travelDates || prev.travelDates,
-        duration: parsed.duration || prev.duration,
-        startingPoint: parsed.startingPoint || prev.startingPoint,
-        routeCovered: parsed.routeCovered || prev.routeCovered,
-        overviewSummary: parsed.overviewSummary || prev.overviewSummary,
-        glanceDuration: parsed.glanceDuration || parsed.duration || prev.glanceDuration,
-        glanceDhams: parsed.glanceDhams || prev.glanceDhams,
-        glanceSector: parsed.glanceSector || prev.glanceSector,
-        glanceStartEnd: parsed.glanceStartEnd || prev.glanceStartEnd,
-        glancePackages: parsed.glancePackages || prev.glancePackages,
-        days: newDays.length > 0 ? newDays : prev.days,
-        photos: matchedPhotos.length > 0 ? matchedPhotos : prev.photos,
-        pricingSubtitle: parsed.pricingSubtitle || prev.pricingSubtitle,
-        pricingTiers: Array.isArray(parsed.pricingTiers) && parsed.pricingTiers.length > 0 ? parsed.pricingTiers : prev.pricingTiers,
-        pricingNote: parsed.pricingNote || prev.pricingNote,
-        inclusions: Array.isArray(parsed.inclusions) && parsed.inclusions.length > 0 ? parsed.inclusions : prev.inclusions,
-        exclusions: Array.isArray(parsed.exclusions) && parsed.exclusions.length > 0 ? parsed.exclusions : prev.exclusions,
-        goodToKnow: Array.isArray(parsed.goodToKnow) && parsed.goodToKnow.length > 0 ? parsed.goodToKnow : prev.goodToKnow,
-        bookingPayment: Array.isArray(parsed.bookingPayment) && parsed.bookingPayment.length > 0 ? parsed.bookingPayment : prev.bookingPayment
-      }));
+      const cleanArray = (arr: any): string[] => {
+        if (!Array.isArray(arr)) return [];
+        return arr.map(item => cleanText(String(item))).filter(Boolean);
+      };
+
+      setData(prev => {
+        const nextData = {
+          ...prev,
+          title: cleanText(parsed.title) || prev.title,
+          subTitle: cleanText(parsed.subTitle) || prev.subTitle,
+          spiritualHeadline: cleanText(parsed.spiritualHeadline) || prev.spiritualHeadline,
+          dhamsSubtitle: cleanText(parsed.dhamsSubtitle) || prev.dhamsSubtitle,
+          preparedFor: cleanText(parsed.preparedFor) || prev.preparedFor,
+          travelDates: cleanText(parsed.travelDates) || prev.travelDates,
+          duration: cleanText(parsed.duration) || prev.duration,
+          startingPoint: cleanText(parsed.startingPoint) || prev.startingPoint,
+          routeCovered: cleanText(parsed.routeCovered) || prev.routeCovered,
+          overviewSummary: cleanText(parsed.overviewSummary) || prev.overviewSummary,
+          glanceDuration: cleanText(parsed.glanceDuration || parsed.duration) || prev.glanceDuration,
+          glanceDhams: cleanText(parsed.glanceDhams) || prev.glanceDhams,
+          glanceSector: cleanText(parsed.glanceSector) || prev.glanceSector,
+          glanceStartEnd: cleanText(parsed.glanceStartEnd) || prev.glanceStartEnd,
+          glancePackages: cleanText(parsed.glancePackages) || prev.glancePackages,
+          days: newDays.length > 0 ? newDays : prev.days,
+          photos: matchedPhotos.length > 0 ? matchedPhotos : prev.photos,
+          pricingSubtitle: cleanText(parsed.pricingSubtitle) || prev.pricingSubtitle,
+          pricingTiers: Array.isArray(parsed.pricingTiers) && parsed.pricingTiers.length > 0 
+            ? parsed.pricingTiers.map((t: any) => ({
+                package: cleanText(t.package) || "Standard",
+                price: cleanText(t.price) || "₹ 0",
+                hotelCategory: cleanText(t.hotelCategory) || "Standard",
+                meals: cleanText(t.meals) || "As per plan",
+                specialFeature: cleanText(t.specialFeature) || "Included"
+              })) 
+            : prev.pricingTiers,
+          pricingNote: cleanText(parsed.pricingNote) || prev.pricingNote,
+          inclusions: cleanArray(parsed.inclusions).length > 0 ? cleanArray(parsed.inclusions) : prev.inclusions,
+          exclusions: cleanArray(parsed.exclusions).length > 0 ? cleanArray(parsed.exclusions) : prev.exclusions,
+          goodToKnow: cleanArray(parsed.goodToKnow).length > 0 ? cleanArray(parsed.goodToKnow) : prev.goodToKnow,
+          bookingPayment: cleanArray(parsed.bookingPayment).length > 0 ? cleanArray(parsed.bookingPayment) : prev.bookingPayment
+        };
+
+        // Automatically store the latest active itinerary into localStorage
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem("triloki_current_itinerary", JSON.stringify(nextData));
+          } catch (e) {}
+        }
+
+        return nextData;
+      });
 
       if (matchedPhotos.length > 0) {
         setAiPhotoNotification(`✨ AI Auto-Matched ${matchedPhotos.length} Dham photos from Gallery for this tour.`);
@@ -1072,6 +1137,46 @@ Return ONLY a valid, raw JSON object (strictly no markdown, no \`\`\`json wrappe
     saveStoredDhamGallery(updated);
   };
 
+  // Transfer current itinerary directly to Transport Voucher Studio
+  const [transferredToTransport, setTransferredToTransport] = useState(false);
+  const handleSendToTransport = () => {
+    if (typeof window === "undefined") return;
+
+    // Convert days to transport schedule
+    const transportSchedule = data.days.map((day, idx) => ({
+      date: `Day ${day.dayNumber}`,
+      details: `${day.route}${day.activities && day.activities.length > 0 ? " — " + day.activities.join("; ") : ""}`,
+      hotel: day.overnightStay ? `Hotel / Camp, ${day.overnightStay}` : "Hotel / Camp"
+    }));
+
+    const transportData = {
+      date: data.travelDates || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+      exoNo: `UK-TR-${new Date().getFullYear()}`,
+      fileNo: "01",
+      guestName: data.preparedFor || "Valued Guest",
+      managerMobile: data.contactPhone || "+91 9719038278",
+      noOfAdults: "As per booking",
+      vehicleType: "01 Innova Crysta / Tempo Traveller A/C",
+      arrivalDate: data.travelDates ? `${data.travelDates} ~ ${data.startingPoint || "Haridwar / Dehradun"}` : "Haridwar / Dehradun",
+      departureDate: data.travelDates ? `${data.travelDates} ~ Tour Concludes` : "Tour Concludes",
+      favouringGuest: data.preparedFor || "Valued Guest",
+      favouringPax: "As per booking",
+      favouringVehicle: "01 Innova Crysta / Tempo Traveller A/C",
+      itinerary: transportSchedule.length > 0 ? transportSchedule : [
+        { date: "Day 1", details: "Pickup & scenic drive", hotel: "Hotel" }
+      ]
+    };
+
+    try {
+      localStorage.setItem("triloki_current_itinerary", JSON.stringify(data));
+      localStorage.setItem("triloki_transport_voucher_data", JSON.stringify(transportData));
+      setTransferredToTransport(true);
+      setTimeout(() => setTransferredToTransport(false), 3000);
+    } catch (err) {
+      console.warn("Could not save to localStorage:", err);
+    }
+  };
+
   // PDF Multi-Page Generation (captures from print containers)
   const handleDownloadPDF = async () => {
     try {
@@ -1332,8 +1437,12 @@ ${data.motto}`;
             <div key={day.id} className="text-xs space-y-1">
               <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded text-[11px] font-bold tracking-wide flex items-center gap-2">
                 <span>DAY {day.dayNumber}</span>
-                <span className="opacity-75">·</span>
-                <span>{day.dateStr}</span>
+                {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
+                  <>
+                    <span className="opacity-75">·</span>
+                    <span>{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
+                  </>
+                )}
                 <span className="opacity-75">·</span>
                 <span>{day.route}</span>
               </div>
@@ -1390,8 +1499,12 @@ ${data.motto}`;
             <div key={day.id} className="text-xs space-y-1">
               <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded text-[11px] font-bold tracking-wide flex items-center gap-2">
                 <span>DAY {day.dayNumber}</span>
-                <span className="opacity-75">·</span>
-                <span>{day.dateStr}</span>
+                {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
+                  <>
+                    <span className="opacity-75">·</span>
+                    <span>{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
+                  </>
+                )}
                 <span className="opacity-75">·</span>
                 <span>{day.route}</span>
               </div>
@@ -2714,6 +2827,30 @@ ${data.motto}`;
             >
               Fit Page
             </button>
+
+            {/* Send to Transport Voucher */}
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleSendToTransport}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer border ${
+                  transferredToTransport
+                    ? "bg-emerald-500 text-white border-emerald-600 font-bold"
+                    : "bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200"
+                }`}
+                title="Send current client and day itinerary schedule to Transport Voucher Studio"
+              >
+                <Car className="w-3.5 h-3.5 text-purple-600" />
+                <span>{transferredToTransport ? "✓ Sent to Transport!" : "Send to Transport"}</span>
+              </button>
+              <Link
+                href="/transport"
+                className="p-1.5 bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-700 rounded-lg text-xs transition cursor-pointer"
+                title="Open Transport Voucher Studio"
+              >
+                <Car className="w-3.5 h-3.5" />
+              </Link>
+            </div>
 
             {/* WhatsApp */}
             <button

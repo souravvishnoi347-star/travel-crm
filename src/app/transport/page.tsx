@@ -16,7 +16,10 @@ import {
   Maximize2,
   Minimize2,
   ZoomIn,
-  ZoomOut
+  ZoomOut,
+  Sparkles,
+  ArrowDownRight,
+  Check
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
@@ -134,6 +137,95 @@ export default function TransportVouchers() {
     };
   }, [isFormCollapsed, fitMode]);
 
+  // Load saved transport voucher from localStorage or sync with itinerary
+  const [hasSavedItinerary, setHasSavedItinerary] = useState(false);
+  const [importNotification, setImportNotification] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const savedTransport = localStorage.getItem("triloki_transport_voucher_data");
+        if (savedTransport) {
+          const parsed = JSON.parse(savedTransport);
+          if (parsed && parsed.itinerary && parsed.itinerary.length > 0) {
+            setData(parsed);
+          }
+        }
+
+        // Check if an itinerary was prepared in Itinerary Builder
+        const storedItinerary = localStorage.getItem("triloki_current_itinerary");
+        if (storedItinerary) {
+          setHasSavedItinerary(true);
+        }
+      } catch (e) {
+        console.warn("Could not load stored transport voucher:", e);
+      }
+    }
+  }, []);
+
+  // Update data and automatically save to localStorage
+  const updateData = (newData: typeof DEFAULT_TRANSPORT_DATA) => {
+    setData(newData);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("triloki_transport_voucher_data", JSON.stringify(newData));
+      } catch (e) {}
+    }
+  };
+
+  // Import directly from the customer's itinerary builder
+  const handleImportFromItinerary = () => {
+    if (typeof window === "undefined") return;
+    try {
+      const stored = localStorage.getItem("triloki_current_itinerary");
+      if (!stored) {
+        alert("No itinerary found in Itinerary Builder. Please create or open an itinerary first!");
+        return;
+      }
+
+      const itin = JSON.parse(stored);
+      if (!itin || !Array.isArray(itin.days) || itin.days.length === 0) {
+        alert("The current itinerary has no days to import.");
+        return;
+      }
+
+      // Convert day-by-day itinerary to transport voucher format
+      const transportSchedule = itin.days.map((d: any, idx: number) => {
+        const activitiesText = Array.isArray(d.activities) && d.activities.length > 0
+          ? " — " + d.activities.join("; ")
+          : "";
+        return {
+          date: `Day ${d.dayNumber || idx + 1}`,
+          details: `${d.route || "Transit & Sightseeing"}${activitiesText}`,
+          hotel: d.overnightStay ? `Hotel / Camp, ${d.overnightStay}` : "Hotel / Camp"
+        };
+      });
+
+      const importedData = {
+        date: itin.travelDates || new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+        exoNo: `UK-TR-${new Date().getFullYear()}`,
+        fileNo: "01",
+        guestName: itin.preparedFor || "Valued Guest",
+        managerMobile: itin.contactPhone || "+91 97190 38278",
+        noOfAdults: "04 Adults",
+        vehicleType: "01 Innova Crysta / Tempo Traveller A/C",
+        arrivalDate: itin.travelDates ? `${itin.travelDates} ~ ${itin.startingPoint || "Haridwar / Dehradun"}` : "Haridwar / Dehradun",
+        departureDate: itin.travelDates ? `${itin.travelDates} ~ Tour Concludes` : "Tour Concludes",
+        favouringGuest: itin.preparedFor || "Valued Guest",
+        favouringPax: "04",
+        favouringVehicle: "01 Innova Crysta / Tempo Traveller A/C",
+        itinerary: transportSchedule
+      };
+
+      updateData(importedData);
+      setImportNotification(`✓ Successfully imported ${transportSchedule.length} days from Itinerary: "${itin.title || itin.preparedFor || 'Customer Tour'}"`);
+      setTimeout(() => setImportNotification(null), 4500);
+    } catch (err) {
+      console.error("Failed to import itinerary:", err);
+      alert("Failed to import itinerary.");
+    }
+  };
+
   const currentScale = manualZoom !== null ? manualZoom : autoScale;
 
   const handleZoomIn = () => {
@@ -154,18 +246,18 @@ export default function TransportVouchers() {
   const handleItineraryChange = (index: number, field: string, value: string) => {
     const newItinerary = [...data.itinerary];
     newItinerary[index] = { ...newItinerary[index], [field]: value };
-    setData({ ...data, itinerary: newItinerary });
+    updateData({ ...data, itinerary: newItinerary });
   };
 
   const addDay = () => {
-    setData({
+    updateData({
       ...data,
-      itinerary: [...data.itinerary, { date: "", details: "", hotel: "" }]
+      itinerary: [...data.itinerary, { date: `Day ${data.itinerary.length + 1}`, details: "", hotel: "" }]
     });
   };
 
   const removeDay = (index: number) => {
-    setData({
+    updateData({
       ...data,
       itinerary: data.itinerary.filter((_, i) => i !== index)
     });
@@ -443,13 +535,42 @@ export default function TransportVouchers() {
               </div>
             </div>
             <button
-              onClick={() => setData(DEFAULT_TRANSPORT_DATA)}
+              onClick={() => updateData(DEFAULT_TRANSPORT_DATA)}
               className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
               title="Reset to default voucher data"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Reset
             </button>
+          </div>
+
+          {/* Quick Import from Itinerary Banner */}
+          <div className="bg-gradient-to-r from-purple-50 via-indigo-50/70 to-sky-50 p-3 rounded-xl border border-purple-200 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-purple-900 uppercase tracking-wider flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-purple-600" />
+                Sync with Customer Itinerary
+              </span>
+              <span className="text-[10px] text-purple-700 bg-purple-100/80 px-2 py-0.5 rounded-full font-semibold">
+                Auto-Fill
+              </span>
+            </div>
+            <p className="text-[11px] text-gray-600 leading-snug">
+              Agar customer ko Itinerary bana ke di hai, toh yahan ek click me Guest name, date aur Day-wise schedule auto-import kar lijiye:
+            </p>
+            <button
+              type="button"
+              onClick={handleImportFromItinerary}
+              className="w-full flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-lg text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
+            >
+              <ArrowDownRight className="w-3.5 h-3.5" />
+              <span>Import Itinerary Schedule & Details</span>
+            </button>
+            {importNotification && (
+              <p className="text-[10.5px] text-emerald-800 bg-emerald-50 border border-emerald-200 p-1.5 rounded font-semibold">
+                {importNotification}
+              </p>
+            )}
           </div>
 
           <div className="space-y-4 text-xs">
@@ -459,15 +580,15 @@ export default function TransportVouchers() {
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Date</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.date} onChange={e => setData({ ...data, date: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.date} onChange={e => updateData({ ...data, date: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">E.X.O. No.</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.exoNo} onChange={e => setData({ ...data, exoNo: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.exoNo} onChange={e => updateData({ ...data, exoNo: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">File No.</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.fileNo} onChange={e => setData({ ...data, fileNo: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.fileNo} onChange={e => updateData({ ...data, fileNo: e.target.value })} />
                 </div>
               </div>
             </div>
@@ -477,26 +598,26 @@ export default function TransportVouchers() {
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Guest & Vehicle Details</span>
               <div>
                 <label className="block text-[10px] text-gray-500 mb-0.5">Guest / Group Name</label>
-                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.guestName} onChange={e => setData({ ...data, guestName: e.target.value })} />
+                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" value={data.guestName} onChange={e => updateData({ ...data, guestName: e.target.value, favouringGuest: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Vehicle Type</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.vehicleType} onChange={e => setData({ ...data, vehicleType: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold" value={data.vehicleType} onChange={e => updateData({ ...data, vehicleType: e.target.value, favouringVehicle: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Fleet Manager Phone</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono" value={data.managerMobile} onChange={e => setData({ ...data, managerMobile: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono" value={data.managerMobile} onChange={e => updateData({ ...data, managerMobile: e.target.value })} />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Arrival Transfer</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.arrivalDate} onChange={e => setData({ ...data, arrivalDate: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.arrivalDate} onChange={e => updateData({ ...data, arrivalDate: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Departure Transfer</label>
-                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.departureDate} onChange={e => setData({ ...data, departureDate: e.target.value })} />
+                  <input type="text" className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.departureDate} onChange={e => updateData({ ...data, departureDate: e.target.value })} />
                 </div>
               </div>
             </div>
