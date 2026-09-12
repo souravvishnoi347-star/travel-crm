@@ -238,6 +238,23 @@ export function pickDhamPhotosForItinerary(
     ...(itinerary.days || []).flatMap(d => [d.route || "", ...(d.activities || []), d.overnightStay || ""])
   ].join(" ").toLowerCase();
 
+  const selectedPhotos: { id: string; url: string; caption: string }[] = [];
+  const addedIds = new Set<string>();
+
+  // 1. HIGHEST PRIORITY: User's own custom uploaded photos from the gallery!
+  // These are the user's authentic client/group photos (e.g., Chardham group)
+  const customPhotos = gallery.filter(p => p.isCustom);
+  for (const cp of customPhotos) {
+    if (!addedIds.has(cp.id) && selectedPhotos.length < 6) {
+      selectedPhotos.push({
+        id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+        url: cp.url,
+        caption: cp.caption
+      });
+      addedIds.add(cp.id);
+    }
+  }
+
   // Detect which destinations are mentioned
   const hasKedarnath = /kedarnath|kedar|shri kedar/i.test(textCorpus);
   const hasHelicopter = /helicopter|heli|helipad|phata|sersi|guptkashi heli/i.test(textCorpus);
@@ -247,14 +264,11 @@ export function pickDhamPhotosForItinerary(
   const hasHaridwarRishi = /haridwar|rishikesh|ganga aarti|har ki pauri|ram jhula/i.test(textCorpus);
   const hasChopta = /chopta|tungnath|chandrashila|deoriatal/i.test(textCorpus);
 
-  const selectedPhotos: { id: string; url: string; caption: string }[] = [];
-  const addedIds = new Set<string>();
-
   const addPhotoFromDham = (dhamKey: string) => {
-    // Custom uploaded photos first, then default
+    if (selectedPhotos.length >= 6) return;
     const candidates = gallery.filter(p => p.dham === dhamKey && !addedIds.has(p.id));
     if (candidates.length > 0) {
-      // Prioritize custom uploads
+      // Prioritize custom uploads within category, then default
       const photo = candidates.find(p => p.isCustom) || candidates[0];
       selectedPhotos.push({
         id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
@@ -266,18 +280,18 @@ export function pickDhamPhotosForItinerary(
   };
 
   // Order of priority based on pilgrimage flow
+  if (hasKedarnath) addPhotoFromDham("kedarnath");
+  if (hasBadrinath) addPhotoFromDham("badrinath");
   if (hasYamunotri) addPhotoFromDham("yamunotri");
   if (hasGangotri) addPhotoFromDham("gangotri");
-  if (hasKedarnath) addPhotoFromDham("kedarnath");
   if (hasHelicopter) addPhotoFromDham("helicopter");
   if (hasChopta) addPhotoFromDham("chopta_tungnath");
-  if (hasBadrinath) addPhotoFromDham("badrinath");
   if (hasHaridwarRishi) addPhotoFromDham("haridwar_rishikesh");
 
-  // If fewer than 3 photos detected, supplement with top gallery photos
-  if (selectedPhotos.length < 3) {
+  // If fewer than 4 photos, supplement with top gallery photos
+  if (selectedPhotos.length < 4) {
     for (const p of gallery) {
-      if (!addedIds.has(p.id) && selectedPhotos.length < 3) {
+      if (!addedIds.has(p.id) && selectedPhotos.length < 6) {
         selectedPhotos.push({
           id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
           url: p.url,
@@ -288,6 +302,6 @@ export function pickDhamPhotosForItinerary(
     }
   }
 
-  // Cap at 4 photos (optimal for A4 page 1 and page 3 layouts)
-  return selectedPhotos.slice(0, 4);
+  // Cap at 6 photos (3 for Page 1 cover strip, 3 for Page 3 destinations gallery)
+  return selectedPhotos.slice(0, 6);
 }

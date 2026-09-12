@@ -57,6 +57,8 @@ export interface ItineraryPhoto {
   id: string;
   url: string;
   caption: string;
+  position?: "center" | "top" | "bottom";
+  fit?: "cover" | "contain";
 }
 
 export interface DayPlan {
@@ -629,6 +631,9 @@ export default function ItineraryBuilder() {
   const [newDhamUploadUrl, setNewDhamUploadUrl] = useState("");
   const [newDhamUploadCaption, setNewDhamUploadCaption] = useState("");
   const [aiPhotoNotification, setAiPhotoNotification] = useState<string | null>(null);
+  const [showGalleryModal, setShowGalleryModal] = useState(false);
+  const [galleryModalCategory, setGalleryModalCategory] = useState<string>("all");
+  const [customPhotosBannerDismissed, setCustomPhotosBannerDismissed] = useState(false);
   const dhamFileInputRef = useRef<HTMLInputElement>(null);
 
   // Preview Controls
@@ -780,7 +785,30 @@ export default function ItineraryBuilder() {
     }
 
     fetchKey();
-    setDhamGallery(getStoredDhamGallery());
+    const storedGallery = getStoredDhamGallery();
+    setDhamGallery(storedGallery);
+
+    // Auto-sync user's custom uploaded photos from Gallery into current brochure
+    const customPhotos = storedGallery.filter(p => p.isCustom);
+    if (customPhotos.length > 0) {
+      setData(prev => {
+        const hasCustomAlready = (prev.photos || []).some(p => customPhotos.some(cp => cp.url === p.url));
+        if (!hasCustomAlready) {
+          const newPhotos: ItineraryPhoto[] = [
+            ...customPhotos.map((cp, idx) => ({
+              id: `custom-p-${Date.now()}-${idx}`,
+              url: cp.url,
+              caption: cp.caption,
+              position: "center" as const,
+              fit: "cover" as const
+            })),
+            ...(prev.photos || []).filter(p => !customPhotos.some(cp => cp.url === p.url))
+          ].slice(0, 6);
+          return { ...prev, photos: newPhotos };
+        }
+        return prev;
+      });
+    }
   }, []);
 
   // Save API Key permanently across browser and cloud
@@ -1317,13 +1345,44 @@ SCHEMA:
       const newPhoto: ItineraryPhoto = {
         id: `photo-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
         url: photo.url,
-        caption: photo.caption
+        caption: photo.caption,
+        position: "center",
+        fit: "cover"
       };
       setData(prev => ({
         ...prev,
         photos: [...(prev.photos || []), newPhoto]
       }));
     }
+  };
+
+  const handleApplyAllCustomUploads = () => {
+    const activeGallery = dhamGallery.length > 0 ? dhamGallery : getStoredDhamGallery();
+    const customPhotos = activeGallery.filter(p => p.isCustom);
+    if (customPhotos.length === 0) {
+      alert("No custom photos found in gallery. You can upload them in the Dham Photo Library tab!");
+      return;
+    }
+    const newPhotos: ItineraryPhoto[] = customPhotos.map((cp, idx) => ({
+      id: `custom-p-${Date.now()}-${idx}`,
+      url: cp.url,
+      caption: cp.caption,
+      position: "center",
+      fit: "cover"
+    }));
+    // Fill remaining up to 6 with existing or landmark photos
+    const existingRemaining = (data.photos || []).filter(p => !customPhotos.some(cp => cp.url === p.url));
+    const merged = [...newPhotos, ...existingRemaining].slice(0, 6);
+    setData(prev => ({ ...prev, photos: merged }));
+    setAiPhotoNotification(`✓ Applied ${newPhotos.length} custom photo(s) from your gallery!`);
+    setTimeout(() => setAiPhotoNotification(null), 4000);
+  };
+
+  const handleUpdatePhotoSetting = (id: string, field: "position" | "fit", val: any) => {
+    setData(prev => ({
+      ...prev,
+      photos: (prev.photos || []).map(p => p.id === id ? { ...p, [field]: val } : p)
+    }));
   };
 
   const handleAddDhamPhotoFromUrl = () => {
@@ -1587,88 +1646,93 @@ ${data.motto}`;
         </p>
       </div>
 
-      {/* Visual Photo Strip Showcase */}
+      {/* Visual Photo Strip Showcase - Spacious & Uncropped */}
       {data.showPhotosPage1 !== false && data.photos && data.photos.length > 0 && (
-        <div className="relative z-10 my-2">
-          <div className={`grid gap-2 ${
+        <div className="relative z-10 my-3">
+          <div className={`grid gap-2.5 ${
             data.photos.length === 1 ? 'grid-cols-1' : 
             data.photos.length === 2 ? 'grid-cols-2' : 
             'grid-cols-3'
           }`}>
-            {data.photos.slice(0, 3).map((photo, pIdx) => (
-              <div key={photo.id || pIdx} className="relative rounded-lg overflow-hidden border border-[#0369a1]/30 shadow-xs bg-gray-100 h-24 flex flex-col justify-end">
-                <img 
-                  src={photo.url} 
-                  alt={photo.caption || `Highlight ${pIdx + 1}`} 
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-                {photo.caption && (
-                  <div className="relative z-10 bg-gradient-to-t from-black/85 via-black/40 to-transparent px-2 py-0.5 pt-3 text-center">
-                    <p className="text-[9.5px] font-semibold text-white tracking-wide truncate">
-                      {photo.caption}
-                    </p>
-                  </div>
-                )}
-              </div>
-            ))}
+            {data.photos.slice(0, 3).map((photo, pIdx) => {
+              const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
+              const fitClass = photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover";
+
+              return (
+                <div key={photo.id || pIdx} className="relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-gray-100 h-44 flex flex-col justify-end">
+                  <img 
+                    src={photo.url} 
+                    alt={photo.caption || `Highlight ${pIdx + 1}`} 
+                    className={`absolute inset-0 w-full h-full ${fitClass} ${posClass}`}
+                  />
+                  {photo.caption && (
+                    <div className="relative z-10 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-2.5 py-1.5 pt-4 text-center">
+                      <p className="text-[10px] font-bold text-white tracking-wide leading-tight line-clamp-2 drop-shadow-xs">
+                        {photo.caption}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Summary Details Table */}
-      <div className="relative z-10 my-2.5 border-t border-b border-gray-200 py-2.5 text-[11px] space-y-1.5">
+      {/* Summary Details Table - Elegant & Well Spaced */}
+      <div className="relative z-10 my-3 border-t border-b border-gray-200 py-3 text-[11px] space-y-2">
         <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Prepared For</span>
-          <span className="font-semibold text-gray-900">{data.preparedFor}</span>
+          <span className="font-bold text-[#0369a1] text-xs">{data.preparedFor}</span>
         </div>
         <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Travel Dates</span>
-          <span className="font-medium text-gray-800">{data.travelDates}</span>
+          <span className="font-semibold text-gray-800">{data.travelDates}</span>
         </div>
         <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Duration</span>
-          <span className="font-medium text-gray-800">{data.duration}</span>
+          <span className="font-semibold text-gray-800">{data.duration}</span>
         </div>
         <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Starting Point</span>
-          <span className="font-medium text-gray-800">{data.startingPoint}</span>
+          <span className="font-semibold text-gray-800">{data.startingPoint}</span>
         </div>
         <div className="grid grid-cols-[120px_1fr] items-start">
           <span className="font-bold text-gray-700">Route Covered</span>
-          <span className="text-[10.5px] text-gray-700 leading-relaxed">{data.routeCovered}</span>
+          <span className="text-[11px] text-gray-700 leading-relaxed font-medium">{data.routeCovered}</span>
         </div>
       </div>
 
-      {/* Your Journey At A Glance Box */}
-      <div className="relative z-10 space-y-2">
-        <h3 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1]/30 pb-0.5">
+      {/* Your Journey At A Glance Box - Fills Space Gracefully */}
+      <div className="relative z-10 space-y-2.5">
+        <h3 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1]/30 pb-1">
           Your Journey At A Glance
         </h3>
         <p className="text-[11px] text-gray-700 leading-relaxed text-justify">
           {data.overviewSummary}
         </p>
 
-        <table className="w-full text-left text-[11px] border border-gray-200 mt-2">
+        <table className="w-full text-left text-[11px] border border-gray-200 mt-2 rounded-lg overflow-hidden">
           <tbody className="divide-y divide-gray-200">
             <tr className="bg-gray-50/70">
-              <td className="px-2.5 py-1.5 font-bold text-gray-700 w-1/3">Duration</td>
-              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceDuration}</td>
+              <td className="px-3 py-2 font-bold text-gray-700 w-1/3">Duration</td>
+              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceDuration}</td>
             </tr>
             <tr>
-              <td className="px-2.5 py-1.5 font-bold text-gray-700">Dhams Covered</td>
-              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceDhams}</td>
+              <td className="px-3 py-2 font-bold text-gray-700">Dhams Covered</td>
+              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceDhams}</td>
             </tr>
             <tr className="bg-gray-50/70">
-              <td className="px-2.5 py-1.5 font-bold text-gray-700">Kedarnath Sector</td>
-              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceSector}</td>
+              <td className="px-3 py-2 font-bold text-gray-700">Kedarnath Sector</td>
+              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceSector}</td>
             </tr>
             <tr>
-              <td className="px-2.5 py-1.5 font-bold text-gray-700">Start / End Point</td>
-              <td className="px-2.5 py-1.5 text-gray-900">{data.glanceStartEnd}</td>
+              <td className="px-3 py-2 font-bold text-gray-700">Start / End Point</td>
+              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceStartEnd}</td>
             </tr>
             <tr className="bg-gray-50/70">
-              <td className="px-2.5 py-1.5 font-bold text-gray-700">Packages Available</td>
-              <td className="px-2.5 py-1.5 font-bold text-[#0369a1]">{data.glancePackages}</td>
+              <td className="px-3 py-2 font-bold text-gray-700">Packages Available</td>
+              <td className="px-3 py-2 font-bold text-[#0369a1]">{data.glancePackages}</td>
             </tr>
           </tbody>
         </table>
@@ -1702,15 +1766,15 @@ ${data.motto}`;
         <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 space-y-2">
+      <div className="relative z-10 space-y-2.5">
         <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-2">
           Detailed Day-Wise Itinerary (Days 1 to 8)
         </h2>
 
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           {data.days.slice(0, 8).map(day => (
-            <div key={day.id} className="text-xs space-y-0.5">
-              <div className="bg-[#0369a1] text-white px-2 py-0.5 rounded text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
+            <div key={day.id} className="text-xs space-y-1">
+              <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
                 <span>DAY {day.dayNumber}</span>
                 {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
                   <>
@@ -1722,20 +1786,50 @@ ${data.motto}`;
                 <span className="truncate">{day.route}</span>
               </div>
 
-              <ul className="pl-2 space-y-0.5 text-gray-800 text-[10px]">
+              <ul className="pl-3 space-y-0.5 text-gray-800 text-[10.5px]">
                 {day.activities.map((act, aIdx) => (
-                  <li key={aIdx} className="leading-tight">
+                  <li key={aIdx} className="leading-snug">
                     – {act}
                   </li>
                 ))}
               </ul>
 
-              <p className="pl-2 text-[9.5px] text-amber-900 italic font-semibold">
+              <p className="pl-3 text-[9.5px] text-amber-900 italic font-semibold">
                 Overnight Stay: {day.overnightStay}
               </p>
             </div>
           ))}
         </div>
+
+        {/* If fewer than 7 days, fill empty bottom space with yatra assurances */}
+        {data.days.length <= 6 && (
+          <div className="mt-4 p-3.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200 space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-[#0369a1]">
+              <span>✦ Pilgrimage Yatra Highlights & Comfort Standards</span>
+              <span className="text-[10px] font-semibold text-gray-500">Devbhoomi Uttarakhand</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2.5 text-[10px] text-gray-700">
+              <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
+                <p className="font-bold text-gray-900">Dedicated Hill Vehicle</p>
+                <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
+                  Experienced mountain chauffeur, sanitised AC vehicle, all tolls & permits included.
+                </p>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
+                <p className="font-bold text-gray-900">Confirmed Clean Stays</p>
+                <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
+                  Pre-verified deluxe hotels & camps with hot water and hygienic pure veg meals.
+                </p>
+              </div>
+              <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
+                <p className="font-bold text-gray-900">24/7 Yatra Support</p>
+                <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
+                  Dedicated tour coordinator assistance for darshan slip, registration & emergency aid.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Page 2 Footer */}
@@ -1772,7 +1866,7 @@ ${data.motto}`;
         <div className="space-y-1.5">
           {data.days.slice(8).map(day => (
             <div key={day.id} className="text-xs space-y-0.5">
-              <div className="bg-[#0369a1] text-white px-2 py-0.5 rounded text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
+              <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
                 <span>DAY {day.dayNumber}</span>
                 {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
                   <>
@@ -1784,7 +1878,7 @@ ${data.motto}`;
                 <span className="truncate">{day.route}</span>
               </div>
 
-              <ul className="pl-2 space-y-0.5 text-gray-800 text-[10px]">
+              <ul className="pl-3 space-y-0.5 text-gray-800 text-[10px]">
                 {day.activities.map((act, aIdx) => (
                   <li key={aIdx} className="leading-tight">
                     – {act}
@@ -1792,7 +1886,7 @@ ${data.motto}`;
                 ))}
               </ul>
 
-              <p className="pl-2 text-[9.5px] text-amber-900 italic font-semibold">
+              <p className="pl-3 text-[9.5px] text-amber-900 italic font-semibold">
                 Overnight Stay: {day.overnightStay}
               </p>
             </div>
@@ -1811,21 +1905,21 @@ ${data.motto}`;
           <table className="w-full text-xs border border-gray-200 text-center mt-1.5">
             <thead className="bg-[#0369a1] text-white font-bold text-[10.5px]">
               <tr>
-                <th className="px-2.5 py-1.5 text-left">Package</th>
-                <th className="px-2.5 py-1.5">Price / Person</th>
-                <th className="px-2.5 py-1.5">Hotel Category</th>
-                <th className="px-2.5 py-1.5">Meals</th>
-                <th className="px-2.5 py-1.5">Special / Heli</th>
+                <th className="px-3 py-2 text-left">Package</th>
+                <th className="px-3 py-2">Price / Person</th>
+                <th className="px-3 py-2">Hotel Category</th>
+                <th className="px-3 py-2">Meals</th>
+                <th className="px-3 py-2">Special / Heli</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 text-[10.5px]">
               {data.pricingTiers.map((tier, tIdx) => (
                 <tr key={tIdx} className={tIdx % 2 === 0 ? "bg-white" : "bg-gray-50/70"}>
-                  <td className="px-2.5 py-1.5 font-bold text-gray-900 text-left">{tier.package}</td>
-                  <td className="px-2.5 py-1.5 font-bold text-[#0369a1]">{tier.price}</td>
-                  <td className="px-2.5 py-1.5 text-gray-700">{tier.hotelCategory}</td>
-                  <td className="px-2.5 py-1.5 text-gray-700">{tier.meals}</td>
-                  <td className="px-2.5 py-1.5 text-gray-700">{tier.specialFeature}</td>
+                  <td className="px-3 py-2 font-bold text-gray-900 text-left">{tier.package}</td>
+                  <td className="px-3 py-2 font-bold text-[#0369a1]">{tier.price}</td>
+                  <td className="px-3 py-2 text-gray-700">{tier.hotelCategory}</td>
+                  <td className="px-3 py-2 text-gray-700">{tier.meals}</td>
+                  <td className="px-3 py-2 text-gray-700">{tier.specialFeature}</td>
                 </tr>
               ))}
             </tbody>
@@ -1836,36 +1930,42 @@ ${data.motto}`;
           </p>
         </div>
 
-        {/* Page 3 Destinations Gallery */}
+        {/* Page 3 Destinations Gallery - High-Res Uncropped Showcase */}
         {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
-          <div className="pt-1.5 border-t border-gray-200 space-y-1.5">
+          <div className="pt-2 border-t border-gray-200 space-y-2">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-serif font-bold text-[#0369a1]">
-                Sacred Yatra Destinations & Sightseeing
+                Sacred Yatra Destinations & Sightseeing Highlights
               </h4>
               <span className="text-[9.5px] text-gray-500 font-medium">Spiritual Landmarks</span>
             </div>
-            <div className={`grid gap-2 ${data.photos.length === 1 ? 'grid-cols-1' : data.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {(data.photos.length > 3 ? data.photos.slice(3, 6) : data.photos).map((photo, pIdx) => (
-                <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-[#0369a1]/25 shadow-xs bg-gray-50 flex flex-col">
-                  <div className="h-20 relative overflow-hidden bg-gray-100">
-                    <img 
-                      src={photo.url} 
-                      alt={photo.caption || `Landmark ${pIdx + 1}`} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  {photo.caption && (
-                    <div className="p-0.5 bg-white border-t border-gray-100 text-center">
-                      <p className="text-[9.5px] font-semibold text-gray-800 truncate px-1">{photo.caption}</p>
+            <div className={`grid gap-2.5 ${data.photos.length === 1 ? 'grid-cols-1' : data.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              {(data.photos.length > 3 ? data.photos.slice(3, 6) : data.photos).map((photo, pIdx) => {
+                const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
+                const fitClass = photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover";
+
+                return (
+                  <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border-2 border-[#0369a1]/25 shadow-xs bg-gray-50 flex flex-col">
+                    <div className="h-36 relative overflow-hidden bg-gray-100">
+                      <img 
+                        src={photo.url} 
+                        alt={photo.caption || `Landmark ${pIdx + 1}`} 
+                        className={`w-full h-full ${fitClass} ${posClass}`}
+                      />
                     </div>
-                  )}
-                </div>
-              ))}
+                    {photo.caption && (
+                      <div className="p-1.5 bg-white border-t border-gray-100 text-center min-h-[38px] flex items-center justify-center">
+                        <p className="text-[10px] font-semibold text-gray-800 line-clamp-2 px-1 leading-tight">
+                          {photo.caption}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
-
       </div>
 
       {/* Page 3 Footer */}
@@ -2043,7 +2143,57 @@ ${data.motto}`;
             >
               10D Chardham (Standard)
             </button>
+            <button
+              type="button"
+              onClick={() => setShowGalleryModal(true)}
+              className="px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition cursor-pointer shadow-xs flex items-center gap-1"
+              title="Select photos from your Dham Photo Library & Custom Uploads"
+            >
+              <ImageIcon className="w-3.5 h-3.5" />
+              <span>Pick Gallery Photos ({dhamGallery.filter(p => p.isCustom).length > 0 ? `${dhamGallery.filter(p => p.isCustom).length} Custom` : `${dhamGallery.length}`})</span>
+            </button>
           </div>
+
+          {/* Custom Uploads Detected Banner */}
+          {dhamGallery.filter(p => p.isCustom).length > 0 && !customPhotosBannerDismissed && (
+            <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-300 p-3 rounded-xl flex items-center justify-between gap-2 text-xs shadow-xs">
+              <div className="flex items-center gap-2">
+                <span className="text-lg">📸</span>
+                <div>
+                  <p className="font-bold text-amber-900 leading-tight">
+                    {dhamGallery.filter(p => p.isCustom).length} Custom Photos in Gallery
+                  </p>
+                  <p className="text-[10.5px] text-amber-700">
+                    Real client/group photos are available in your library.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleApplyAllCustomUploads}
+                  className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold text-[11px] cursor-pointer shadow-2xs"
+                >
+                  Apply All to Brochure
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowGalleryModal(true)}
+                  className="px-2 py-1 bg-white hover:bg-gray-50 border border-amber-300 text-amber-900 rounded-lg font-semibold text-[11px] cursor-pointer"
+                >
+                  Browse
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCustomPhotosBannerDismissed(true)}
+                  className="text-amber-500 hover:text-amber-800 p-1 cursor-pointer"
+                  title="Dismiss"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* AI GENERATOR CARD */}
           <div className="bg-gradient-to-br from-sky-50 via-blue-50/50 to-cyan-50/30 p-4 rounded-2xl border border-purple-200/80 space-y-3">
@@ -2583,6 +2733,79 @@ ${data.motto}`;
                 </div>
               </div>
 
+              {/* MY UPLOADED CUSTOM PHOTOS HIGHLIGHT */}
+              {dhamGallery.filter(p => p.isCustom).length > 0 && (
+                <div className="bg-gradient-to-br from-amber-50 via-orange-50/70 to-amber-100/40 border-2 border-amber-300 rounded-2xl p-4 space-y-3 shadow-xs">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xl">📸</span>
+                      <div>
+                        <h3 className="font-bold text-amber-950 text-xs flex items-center gap-1.5">
+                          My Uploaded Gallery Photos
+                          <span className="bg-amber-200 text-amber-900 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            {dhamGallery.filter(p => p.isCustom).length} Photos
+                          </span>
+                        </h3>
+                        <p className="text-[10px] text-amber-800">
+                          Your actual client group & tour photos from the Gallery.
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleApplyAllCustomUploads}
+                      className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-xs shadow-xs transition cursor-pointer shrink-0"
+                    >
+                      ★ Use All My Uploaded Photos
+                    </button>
+                  </div>
+
+                  {/* Grid of Custom Uploads */}
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {dhamGallery.filter(p => p.isCustom).map(photo => {
+                      const isSelected = (data.photos || []).some(p => p.url === photo.url);
+                      return (
+                        <div
+                          key={photo.id}
+                          className={`p-1.5 bg-white rounded-xl border transition flex flex-col justify-between gap-1.5 ${
+                            isSelected ? "border-amber-500 ring-2 ring-amber-300 shadow-xs" : "border-amber-200 hover:border-amber-400"
+                          }`}
+                        >
+                          <div className="aspect-[4/3] rounded-lg overflow-hidden relative bg-gray-100">
+                            <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" />
+                            {isSelected && (
+                              <span className="absolute top-1 right-1 px-1.5 py-0.5 bg-amber-600 text-white text-[9px] font-bold rounded shadow-xs">
+                                ✓ In Brochure
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[10.5px] font-semibold text-gray-800 line-clamp-1">{photo.caption}</p>
+                          <button
+                            type="button"
+                            onClick={() => handleTogglePhotoInBrochure(photo)}
+                            className={`w-full py-1 rounded-lg text-[10.5px] font-bold transition cursor-pointer ${
+                              isSelected ? "bg-amber-100 text-amber-800 hover:bg-amber-200" : "bg-amber-500 text-white hover:bg-amber-600"
+                            }`}
+                          >
+                            {isSelected ? "Remove" : "+ Add to Brochure"}
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Browse & Pick from Gallery Button */}
+              <button
+                type="button"
+                onClick={() => setShowGalleryModal(true)}
+                className="w-full py-2.5 px-4 bg-gradient-to-r from-sky-600 to-[#0369a1] hover:from-sky-700 hover:to-[#025684] text-white rounded-xl font-bold text-xs shadow-xs transition flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <ImageIcon className="w-4 h-4" />
+                <span>📷 Open Visual Gallery Picker ({dhamGallery.length} Photos)</span>
+              </button>
+
               {/* BLOCK: DHAM PHOTO GALLERY & AI ASSET POOL */}
               <div className="bg-gradient-to-br from-amber-50/50 via-sky-50/40 to-white border-2 border-sky-200 rounded-2xl p-4 space-y-3.5 shadow-xs">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2.5 border-b border-sky-100">
@@ -2775,12 +2998,18 @@ ${data.motto}`;
                   <div className="space-y-2">
                     {(data.photos || []).map((photo, pIdx) => (
                       <div key={photo.id || pIdx} className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-3">
-                        <div className="w-14 h-12 rounded-lg overflow-hidden bg-gray-200 shrink-0 relative border border-gray-200">
-                          <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover" />
+                        <div className="w-16 h-14 rounded-lg overflow-hidden bg-gray-200 shrink-0 relative border border-gray-200">
+                          <img 
+                            src={photo.url} 
+                            alt={photo.caption} 
+                            className={`w-full h-full ${photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover"} ${photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center"}`} 
+                          />
                         </div>
-                        <div className="flex-1 space-y-1">
+                        <div className="flex-1 space-y-1.5">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-gray-500 uppercase">Photo #{pIdx + 1}</span>
+                            <span className="text-[10px] font-bold text-gray-700 uppercase">
+                              Photo #{pIdx + 1} · {pIdx < 3 ? "Page 1 Cover" : "Page 3 Gallery"}
+                            </span>
                             <div className="flex items-center gap-1">
                               <button
                                 onClick={() => handleMovePhoto(pIdx, "up")}
@@ -2812,8 +3041,36 @@ ${data.motto}`;
                             value={photo.caption}
                             onChange={e => handleUpdatePhotoCaption(photo.id, e.target.value)}
                             placeholder="Enter photo caption..."
-                            className="w-full px-2 py-0.5 bg-white border border-gray-200 rounded text-[11px]"
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
                           />
+                          {/* Image Focus & Fit Controls */}
+                          <div className="flex items-center gap-2 text-[10px]">
+                            <span className="text-gray-500 font-medium">Focus:</span>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdatePhotoSetting(photo.id, "position", "top")}
+                              className={`px-1.5 py-0.5 rounded text-[9.5px] font-bold cursor-pointer transition ${photo.position === "top" ? "bg-sky-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                              title="Focus towards top (keeps heads and temple tops in view)"
+                            >
+                              Top
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdatePhotoSetting(photo.id, "position", "center")}
+                              className={`px-1.5 py-0.5 rounded text-[9.5px] font-bold cursor-pointer transition ${!photo.position || photo.position === "center" ? "bg-sky-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                              title="Center focus"
+                            >
+                              Center
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleUpdatePhotoSetting(photo.id, "fit", photo.fit === "contain" ? "cover" : "contain")}
+                              className={`px-1.5 py-0.5 rounded text-[9.5px] font-bold cursor-pointer transition ${photo.fit === "contain" ? "bg-emerald-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                              title="Fit entire image without cropping (adds clean dark border if needed)"
+                            >
+                              {photo.fit === "contain" ? "✓ Full Fit (No Crop)" : "Crop to Fill"}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -3225,6 +3482,144 @@ ${data.motto}`;
         {renderPage3("print")}
         {renderPage4("print")}
       </div>
+
+      {/* GALLERY SELECTION MODAL */}
+      {showGalleryModal && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Modal Header */}
+            <div className="p-4 bg-gradient-to-r from-sky-600 via-[#0369a1] to-blue-700 text-white flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center font-bold">
+                  <ImageIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm">Select Photos for Itinerary & Brochure</h3>
+                  <p className="text-[11px] text-sky-100">
+                    Pick up to 6 photographs. Slots 1–3 appear on Page 1 (Cover Strip); Slots 4–6 appear on Page 3 (Destinations Gallery).
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowGalleryModal(false)}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Quick Actions & Category Filter Bar */}
+            <div className="p-3 bg-gray-50 border-b border-gray-200 flex flex-wrap items-center justify-between gap-2 text-xs shrink-0">
+              <div className="flex flex-wrap items-center gap-1.5">
+                {DHAM_CATEGORIES.map(cat => {
+                  const count = cat.key === "all"
+                    ? dhamGallery.length
+                    : cat.key === "custom"
+                    ? dhamGallery.filter(p => p.isCustom).length
+                    : dhamGallery.filter(p => p.dham === cat.key).length;
+                  if (count === 0 && cat.key !== "all" && cat.key !== "custom") return null;
+                  const isSel = galleryModalCategory === cat.key;
+                  return (
+                    <button
+                      key={cat.key}
+                      onClick={() => setGalleryModalCategory(cat.key)}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer transition ${
+                        isSel ? "bg-[#0369a1] text-white shadow-xs" : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-100"
+                      }`}
+                    >
+                      {cat.label} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {dhamGallery.filter(p => p.isCustom).length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleApplyAllCustomUploads}
+                    className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition shadow-xs flex items-center gap-1 cursor-pointer"
+                  >
+                    ★ Select All My Uploads ({dhamGallery.filter(p => p.isCustom).length})
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleAutoMatchPhotos}
+                  className="px-3 py-1.5 bg-sky-100 hover:bg-sky-200 text-[#0369a1] rounded-lg text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                >
+                  <Sparkles className="w-3.5 h-3.5" />
+                  Auto-Match
+                </button>
+              </div>
+            </div>
+
+            {/* Photos Grid */}
+            <div className="p-4 overflow-y-auto max-h-[55vh] grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 custom-scrollbar">
+              {dhamGallery
+                .filter(p => {
+                  if (galleryModalCategory === "all") return true;
+                  if (galleryModalCategory === "custom") return p.isCustom;
+                  return p.dham === galleryModalCategory;
+                })
+                .map(photo => {
+                  const isSelected = (data.photos || []).some(p => p.url === photo.url);
+                  const selIdx = (data.photos || []).findIndex(p => p.url === photo.url);
+
+                  return (
+                    <div
+                      key={photo.id}
+                      onClick={() => handleTogglePhotoInBrochure(photo)}
+                      className={`group relative rounded-xl overflow-hidden border-2 cursor-pointer transition flex flex-col bg-white ${
+                        isSelected 
+                          ? "border-[#0369a1] ring-2 ring-[#0369a1]/30 shadow-md" 
+                          : "border-gray-200 hover:border-sky-300 shadow-xs"
+                      }`}
+                    >
+                      <div className="aspect-[4/3] w-full relative overflow-hidden bg-gray-100">
+                        <img src={photo.url} alt={photo.caption} className="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
+                        {/* Checkbox / Slot Indicator */}
+                        <div className={`absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs transition ${
+                          isSelected ? "bg-[#0369a1] text-white shadow-md ring-2 ring-white" : "bg-black/40 text-white border border-white/60"
+                        }`}>
+                          {isSelected ? (selIdx + 1) : "+"}
+                        </div>
+                        {photo.isCustom && (
+                          <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-bold rounded uppercase tracking-wider shadow-xs">
+                            Custom Upload
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-2.5 flex-1 flex flex-col justify-between gap-1.5">
+                        <p className="text-[11px] font-semibold text-gray-800 line-clamp-2 leading-tight">
+                          {photo.caption}
+                        </p>
+                        <span className={`text-[10px] font-bold block ${
+                          isSelected ? "text-[#0369a1]" : "text-gray-400"
+                        }`}>
+                          {isSelected ? `✓ Selected (Slot #${selIdx + 1}${selIdx < 3 ? ' - Page 1' : ' - Page 3'})` : "Click to select"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3.5 bg-gray-50 border-t border-gray-200 flex items-center justify-between shrink-0">
+              <span className="text-xs text-gray-600 font-medium">
+                {(data.photos || []).length} of max 6 photos active in brochure
+              </span>
+              <button
+                onClick={() => setShowGalleryModal(false)}
+                className="px-5 py-2 bg-[#0369a1] hover:bg-[#025684] text-white rounded-xl font-bold text-xs shadow-xs transition cursor-pointer"
+              >
+                Done / Apply to Itinerary
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
