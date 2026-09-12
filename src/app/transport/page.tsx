@@ -151,6 +151,25 @@ export default function TransportVouchers() {
           if (parsed && parsed.itinerary && parsed.itinerary.length > 0) {
             setData(parsed);
           }
+        } else {
+          // Fetch latest saved transport voucher from Supabase Cloud
+          const fetchCloudTransport = async () => {
+            try {
+              const { data: cloudVoucher } = await supabase
+                .from("vouchers")
+                .select("document_data")
+                .eq("voucher_type", "transport")
+                .order("created_at", { ascending: false })
+                .limit(1)
+                .single();
+
+              if (cloudVoucher && cloudVoucher.document_data && Array.isArray((cloudVoucher.document_data as any).itinerary)) {
+                setData(cloudVoucher.document_data as typeof DEFAULT_TRANSPORT_DATA);
+                localStorage.setItem("triloki_transport_voucher_data", JSON.stringify(cloudVoucher.document_data));
+              }
+            } catch {}
+          };
+          fetchCloudTransport();
         }
 
         // Check if an itinerary was prepared in Itinerary Builder

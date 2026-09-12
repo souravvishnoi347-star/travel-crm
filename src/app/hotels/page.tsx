@@ -294,8 +294,28 @@ export default function HotelVouchersPage() {
           const parsed = JSON.parse(saved);
           if (parsed && Array.isArray(parsed.stays) && parsed.stays.length > 0) {
             setData(parsed);
+            return;
           }
         }
+
+        // Fetch latest saved voucher from Supabase Cloud if available
+        const fetchCloudVoucher = async () => {
+          try {
+            const { data: cloudVoucher } = await supabase
+              .from("vouchers")
+              .select("document_data")
+              .eq("voucher_type", "hotel_tour")
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .single();
+
+            if (cloudVoucher && cloudVoucher.document_data && Array.isArray((cloudVoucher.document_data as any).stays)) {
+              setData(cloudVoucher.document_data as HotelVoucherData);
+              localStorage.setItem("triloki_multi_hotel_voucher", JSON.stringify(cloudVoucher.document_data));
+            }
+          } catch {}
+        };
+        fetchCloudVoucher();
       } catch (err) {
         console.warn("Could not load stored hotel voucher:", err);
       }

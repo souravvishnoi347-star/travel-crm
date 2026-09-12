@@ -514,6 +514,29 @@ export default function ItineraryBuilder() {
         // silent fallback
       }
     }
+    // 4. Fetch latest itinerary from cloud if not present locally
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("triloki_current_itinerary");
+      if (!stored) {
+        const fetchCloudItin = async () => {
+          try {
+            const { data: cloudItin } = await supabase
+              .from("itineraries")
+              .select("document_data")
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .single();
+
+            if (cloudItin && cloudItin.document_data && Array.isArray((cloudItin.document_data as any).days)) {
+              setData(cloudItin.document_data as any);
+              localStorage.setItem("triloki_current_itinerary", JSON.stringify(cloudItin.document_data));
+            }
+          } catch {}
+        };
+        fetchCloudItin();
+      }
+    }
+
     fetchKey();
     setDhamGallery(getStoredDhamGallery());
   }, []);

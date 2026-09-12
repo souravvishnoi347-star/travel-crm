@@ -112,6 +112,42 @@ export default function InvoicesPage() {
     };
   }, [isFormCollapsed, fitMode]);
 
+  // Load latest invoice from Supabase Cloud or localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const saved = localStorage.getItem("triloki_invoice_data");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && parsed.packages?.length > 0) {
+            setData(parsed);
+            return;
+          }
+        }
+
+        // Fetch latest saved invoice from Supabase
+        const fetchCloudInvoice = async () => {
+          try {
+            const { data: cloudInvoice } = await supabase
+              .from("invoices")
+              .select("document_data")
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .single();
+
+            if (cloudInvoice && cloudInvoice.document_data && Array.isArray((cloudInvoice.document_data as any).packages)) {
+              setData(cloudInvoice.document_data as typeof DEFAULT_INVOICE_DATA);
+              localStorage.setItem("triloki_invoice_data", JSON.stringify(cloudInvoice.document_data));
+            }
+          } catch {}
+        };
+        fetchCloudInvoice();
+      } catch (e) {
+        console.warn("Could not load invoice data:", e);
+      }
+    }
+  }, []);
+
   const currentScale = manualZoom !== null ? manualZoom : autoScale;
 
   const handleZoomIn = () => {

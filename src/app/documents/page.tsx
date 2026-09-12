@@ -111,6 +111,7 @@ export default function DocumentsHubPage() {
 
   useEffect(() => {
     loadDocs();
+    handleSyncCloud();
   }, []);
 
   const showToast = (msg: string) => {
