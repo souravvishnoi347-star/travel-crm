@@ -44,7 +44,7 @@ const PRESET_TRANSPORT_CHARDHAM_ACTUAL = {
     { date: "16/05/2026", details: "Scenic drive from Barkot to Uttarkashi, Vishwanath temple", hotel: "Hotel Skyline (8923184251)" },
     { date: "17/05/2026", details: "Gangotri Dham Darshan via Harsil Valley & return", hotel: "Hotel Skyline (8923184251)" },
     { date: "18/05/2026", details: "Uttarkashi to Phata Kedarnath base route", hotel: "Hotel Maa Paa (9634528441)" },
-    { date: "19/05/2026", details: "Transfer to Gaurikund, Kedarnath Trek & Darshan", hotel: "Bhagwari Ji Tent (9068648285)" },
+    { date: "19/05/2026", details: "Transfer to Gaurikund, Kedarnath Trek & Darshan", hotel: "Bhagwari Ji (Tent Only - 9068648285)" },
     { date: "20/05/2026", details: "Trek down to Gaurikund & transfer to Phata hotel", hotel: "Hotel Maa Paa (9634528441)" },
     { date: "21/05/2026", details: "Drive Phata to Badrinath via Chopta, evening Aarti", hotel: "Hotel Dhansree (8395091744)" },
     { date: "22/05/2026", details: "Badrinath Darshan, Mana Village & drive to Pipal Koti", hotel: "Hotel Dabral (7452827619)" },
@@ -68,7 +68,7 @@ const PRESET_TRANSPORT_DODHAM_ACTUAL = {
   favouringVehicle: "Tempo Traveller",
   itinerary: [
     { date: "14/05/2026", details: "Haridwar pickup & drive to Badashu / Guptkashi", hotel: "Hotel Omkara (8923334391)" },
-    { date: "15/05/2026", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Darshan", hotel: "Bhagwari Ji Tent (9068648285)" },
+    { date: "15/05/2026", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Darshan", hotel: "Bhagwari Ji (Tent Only - 9068648285)" },
     { date: "16/05/2026", details: "Trek down to Gaurikund, transfer back to Badashu", hotel: "Hotel Omkara (8923334391)" },
     { date: "17/05/2026", details: "Drive Badashu to Pipal Koti / Badrinath route", hotel: "Hotel Dabral (7452827619)" },
     { date: "18/05/2026", details: "Badrinath Dham Darshan, Mana village & return to Pipal Koti", hotel: "Hotel Dabral (7452827619)" },
@@ -95,7 +95,7 @@ const PRESET_TRANSPORT_12P_10D = {
     { date: "Day 3", details: "Scenic drive from Barkot to Uttarkashi, Vishwanath Temple", hotel: "Uttarkashi Deluxe Hotel" },
     { date: "Day 4", details: "Gangotri Dham Darshan via beautiful Harsil Valley & back to Uttarkashi", hotel: "Uttarkashi Deluxe Hotel" },
     { date: "Day 5", details: "Scenic mountain transfer from Uttarkashi to Phata / Rampur / Guptkashi", hotel: "Phata / Rampur Resort" },
-    { date: "Day 6", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Holy Darshan", hotel: "Kedarnath Camp/Stay" },
+    { date: "Day 6", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Holy Darshan", hotel: "Kedarnath (Tent Only)" },
     { date: "Day 7", details: "Morning trek down to Gaurikund, transfer to Sitapur / Phata hotel", hotel: "Phata / Sitapur Resort" },
     { date: "Day 8", details: "Drive to Badrinath via Chopta alpine hill station, evening Aarti", hotel: "Badrinath Deluxe Hotel" },
     { date: "Day 9", details: "Badrinath Darshan, Mana Village, Vyas Gufa, drive to Pipalkoti", hotel: "Pipalkoti Deluxe Hotel" },
@@ -869,8 +869,50 @@ export default function TransportVouchers() {
                         <input type="text" className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs" value={item.date} onChange={e => handleItineraryChange(idx, 'date', e.target.value)} />
                       </div>
                       <div>
-                        <label className="block text-[10px] text-gray-500 mb-0.5">Night Stay / Drop</label>
+                        <div className="flex items-center justify-between mb-0.5">
+                          <label className="block text-[10px] text-gray-500">Night Stay / Drop</label>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const current = item.hotel || "";
+                              if (!current.includes("Tent Only")) {
+                                handleItineraryChange(idx, 'hotel', current ? `${current.replace(/\(Tent.*?\)/i, "").trim()} (Tent Only)` : "Kedarnath (Tent Only)");
+                              }
+                            }}
+                            className={`text-[9px] px-1.5 py-0.2 rounded font-bold transition cursor-pointer ${
+                              item.hotel?.includes("Tent Only")
+                                ? "bg-amber-600 text-white"
+                                : "text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200"
+                            }`}
+                            title="Set Tent Only"
+                          >
+                            ⛺ Tent Only
+                          </button>
+                        </div>
                         <input type="text" className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs font-semibold" value={item.hotel} onChange={e => handleItineraryChange(idx, 'hotel', e.target.value)} />
+                        <div className="flex items-center gap-1 mt-1 flex-wrap">
+                          <button
+                            type="button"
+                            onClick={() => handleItineraryChange(idx, 'hotel', "Kedarnath (Tent Only)")}
+                            className="text-[9px] px-1.5 py-0.5 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition cursor-pointer"
+                          >
+                            Kedarnath (Tent Only)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleItineraryChange(idx, 'hotel', "Hotel Stay")}
+                            className="text-[9px] px-1.5 py-0.5 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition cursor-pointer"
+                          >
+                            Hotel Stay
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleItineraryChange(idx, 'hotel', "Haridwar Drop")}
+                            className="text-[9px] px-1.5 py-0.5 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition cursor-pointer"
+                          >
+                            Drop Off
+                          </button>
+                        </div>
                       </div>
                     </div>
                     <div>

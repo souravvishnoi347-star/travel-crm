@@ -78,7 +78,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
   tripDuration: "Chardham Yatra Package 10 Days 2026",
   emergencyContact: "Amit Chandra: +91 9719038278 · Kuldeep: +91 8449982466",
   specialInstructions: "• Please present this original voucher with government photo ID at check-in.\n• Standard check-in time 12:00 PM, check-out 10:00 AM.\n• Pure vegetarian meals served across all destinations.\n• Non-AC rooms in mountain sectors.",
-  inclusions: "• Confirmed Hotel accommodation across Barkot, Uttarkashi, Phata, Kedarnath Tent, Badrinath & Pipalkoti.\n• Dedicated Innova with driver Haridwar to Haridwar.\n• All tolls, parking, interstate taxes included.",
+  inclusions: "• Confirmed Hotel accommodation across Barkot, Uttarkashi, Phata, Kedarnath (Tent Only), Badrinath & Pipalkoti.\n• Dedicated Innova with driver Haridwar to Haridwar.\n• All tolls, parking, interstate taxes included.",
   stays: [
     {
       id: "stay-act-1",
@@ -132,13 +132,13 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       id: "stay-act-4",
       nightsLabel: "Night 6 (19 May)",
       city: "Kedarnath Base / Top",
-      hotelName: "Bhagwari Ji (Kedarnath Tent)",
+      hotelName: "Bhagwari Ji (Kedarnath Tent Only)",
       hotelAddress: "Near Shri Kedarnath Temple",
       contactNo: "9068648285",
       checkIn: "19/05/2026 (04:00 PM)",
       checkOut: "20/05/2026 (07:00 AM)",
       nights: 1,
-      roomType: "Kedarnath Tent / Stay",
+      roomType: "Tent Only",
       noOfRooms: "Group Sharing",
       mealPlan: "Room Only",
       confirmationNo: "CONF-BHAG-604",
@@ -209,7 +209,7 @@ const PRESET_DODHAM_ACTUAL_VOUCHER: HotelVoucherData = {
   tripDuration: "Do Dham Yatra Hall Package 6 Days 2026",
   emergencyContact: "Amit Chandra: +91 9719038278 · Kuldeep: +91 8449982466",
   specialInstructions: "• Please carry valid photo ID at all hotels.\n• Hall package accommodation confirmed for group.\n• Early morning departure for Kedarnath & Badrinath Darshan.",
-  inclusions: "• Hotel accommodation at Badashu, Kedarnath Tent & Pipal Koti.\n• Dedicated Tempo Traveller Haridwar to Haridwar.\n• Tolls, parking and driver charges included.",
+  inclusions: "• Hotel accommodation at Badashu, Kedarnath (Tent Only) & Pipal Koti.\n• Dedicated Tempo Traveller Haridwar to Haridwar.\n• Tolls, parking and driver charges included.",
   stays: [
     {
       id: "stay-dd-1",
@@ -231,13 +231,13 @@ const PRESET_DODHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       id: "stay-dd-2",
       nightsLabel: "Night 2 (15 May)",
       city: "Kedarnath Base / Top",
-      hotelName: "Bhagwari Ji (Kedarnath Tent)",
+      hotelName: "Bhagwari Ji (Kedarnath Tent Only)",
       hotelAddress: "Near Kedarnath Temple",
       contactNo: "9068648285",
       checkIn: "15/05/2026 (04:00 PM)",
       checkOut: "16/05/2026 (07:00 AM)",
       nights: 1,
-      roomType: "Kedarnath Tent / Stay",
+      roomType: "Tent Only",
       noOfRooms: "Group Sharing",
       mealPlan: "Room Only",
       confirmationNo: "CONF-BHAG-626",
@@ -290,7 +290,7 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
   totalRooms: "Family Basis Deluxe Rooms",
   tripDuration: "10 Days / 09 Nights Chardham Tour",
   emergencyContact: "Amit Chandra · +91 9719038278, 7818952740 (24x7 Helpline)",
-  specialInstructions: "• Please present this original voucher with government photo ID at check-in.\n• Kedarnath Night Stay is in Standard Room / Tent without food (as per yatra norms).\n• Food arrangements are done at hotel; please reach dining hall on time.\n• Non-AC rooms in all hill areas as per mountain terrain norms.\n• Room sharing is on 2 / 3 / 4 / 6 bed family basis as confirmed.",
+  specialInstructions: "• Please present this original voucher with government photo ID at check-in.\n• Kedarnath Night Stay is Tent Only without food (as per yatra norms).\n• Food arrangements are done at hotel; please reach dining hall on time.\n• Non-AC rooms in all hill areas as per mountain terrain norms.\n• Room sharing is on 2 / 3 / 4 / 6 bed family basis as confirmed.",
   inclusions: "• Confirmed Deluxe Hotel Accommodation across Barkot, Uttarkashi, Phata, Badrinath & Pipalkoti.\n• Meal Plan: MAP (Breakfast and Dinner at hotels only).\n• Dedicated 12-Pax Tempo Traveller Haridwar to Haridwar.\n• All Interstate Taxes, Tolls, Driver Allowance and Parking included.",
   stays: [
     {
@@ -351,7 +351,7 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
       checkIn: "Day 6 (04:00 PM)",
       checkOut: "Day 7 (07:00 AM)",
       nights: 1,
-      roomType: "Standard Room / Tent",
+      roomType: "Tent Only",
       noOfRooms: "Sharing Basis",
       mealPlan: "Room Only (Without Food)",
       confirmationNo: "CONF-KD-12P",
@@ -1447,6 +1447,30 @@ export default function HotelVouchersPage() {
                         <option value="EP (Room Only)">EP (Room Only)</option>
                       </select>
                     </div>
+                  </div>
+
+                  {/* Quick Category Chips with Tent Only */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-[10px] text-gray-400 font-medium">Category:</span>
+                    {["Deluxe Room", "Tent Only", "Super Deluxe", "Family Quad", "Hall / Group Rooms"].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => updateStay(idx, { 
+                          roomType: cat,
+                          ...(cat === "Tent Only" ? { mealPlan: "EP (Room Only)" } : {})
+                        })}
+                        className={`text-[9.5px] px-2 py-0.5 rounded-full border transition cursor-pointer ${
+                          stay.roomType === cat 
+                            ? "bg-amber-600 text-white border-amber-600 font-bold shadow-xs" 
+                            : cat === "Tent Only"
+                            ? "bg-amber-50 text-amber-800 border-amber-300 hover:bg-amber-100 font-semibold"
+                            : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                        }`}
+                      >
+                        {cat === "Tent Only" ? "⛺ Tent Only" : cat}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Hotel Phone */}

@@ -431,7 +431,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
         "Perform evening Aarti, Pooja and divine Darshan of Shri Kedarnath Jyotirlinga.",
         "Night stay at Kedarnath in standard room / camp."
       ],
-      overnightStay: "Kedarnath (Standard Room / Tent Without Food)"
+      overnightStay: "Kedarnath (Tent Only - Without Food)"
     },
     {
       id: 7,
@@ -496,7 +496,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
     "2 Night Stay At Barkot (Deluxe Rooms)",
     "2 Night Stay At Uttarkashi (Deluxe Rooms)",
     "2 Night Stay At Sitapur / Phata / Guptkashi / Rampur (Deluxe Rooms)",
-    "1 Night Stay At Shri Kedarnath Dham (Standard Room / Tent)",
+    "1 Night Stay At Shri Kedarnath Dham (Tent Only)",
     "1 Night Stay At Shri Badrinath Dham (Deluxe Rooms)",
     "1 Night Stay At Pipalkoti / Karanprayag / Rudraprayag (Deluxe Rooms)",
     "Meal As Per Plan: Breakfast & Dinner (At Hotels Only)",
@@ -1461,7 +1461,7 @@ SCHEMA:
     const transportSchedule = data.days.map((day, idx) => ({
       date: `Day ${day.dayNumber}`,
       details: `${day.route}${day.activities && day.activities.length > 0 ? " — " + day.activities.join("; ") : ""}`,
-      hotel: day.overnightStay ? `Hotel / Camp, ${day.overnightStay}` : "Hotel / Camp"
+      hotel: day.overnightStay ? (day.overnightStay.toLowerCase().includes("tent") ? day.overnightStay : `Hotel / Camp, ${day.overnightStay}`) : "Hotel / Camp"
     }));
 
     const transportData = {
@@ -2587,13 +2587,58 @@ ${data.motto}`;
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-medium text-amber-800 mb-0.5">Overnight Stay Location</label>
+                      <div className="flex items-center justify-between mb-0.5">
+                        <label className="block text-[10px] font-medium text-amber-800">Overnight Stay Location</label>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const current = day.overnightStay || "";
+                            if (!current.includes("Tent Only")) {
+                              updateDayField(day.id, "overnightStay", current ? `${current.replace(/\(Tent.*?\)/i, "").trim()} (Tent Only)` : "Kedarnath (Tent Only)");
+                            }
+                          }}
+                          className={`text-[9px] px-1.5 py-0.2 rounded font-bold transition cursor-pointer ${
+                            day.overnightStay?.includes("Tent Only")
+                              ? "bg-amber-600 text-white"
+                              : "text-amber-800 bg-amber-100 hover:bg-amber-200 border border-amber-300"
+                          }`}
+                          title="Set Tent Only"
+                        >
+                          ⛺ Tent Only
+                        </button>
+                      </div>
                       <input
                         type="text"
                         value={day.overnightStay}
                         onChange={e => updateDayField(day.id, "overnightStay", e.target.value)}
                         className="w-full px-2 py-1 bg-amber-50/60 border border-amber-200 rounded text-xs font-semibold text-amber-900"
                       />
+                      <div className="flex items-center gap-1 mt-1 flex-wrap">
+                        <button
+                          type="button"
+                          onClick={() => updateDayField(day.id, "overnightStay", "Kedarnath (Tent Only - Without Food)")}
+                          className="text-[9px] px-1.5 py-0.5 rounded border border-amber-200 bg-white hover:bg-amber-50 text-amber-800 transition cursor-pointer font-medium"
+                        >
+                          Kedarnath (Tent Only)
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const current = day.overnightStay || "";
+                            updateDayField(day.id, "overnightStay", current.replace(/\(Tent.*?\)/i, "").replace(/Tent Only/i, "").trim() || "Hotel Stay");
+                          }}
+                          className="text-[9px] px-1.5 py-0.5 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition cursor-pointer"
+                        >
+                          Hotel Stay
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updateDayField(day.id, "overnightStay", "Tour Concludes (Happy Memories)")}
+                          className="text-[9px] px-1.5 py-0.5 rounded border border-gray-200 bg-white hover:bg-gray-50 text-gray-600 transition cursor-pointer"
+                        >
+                          Tour Concludes
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
