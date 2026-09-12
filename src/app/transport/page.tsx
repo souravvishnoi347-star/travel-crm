@@ -24,6 +24,114 @@ import {
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
 
+// Actual Old Voucher: Chardham 10D (Bill 604 - Jayesh Bhai Patel / Innova)
+const PRESET_TRANSPORT_CHARDHAM_ACTUAL = {
+  date: "14 May 2026",
+  exoNo: "BILL NO. 604",
+  fileNo: "604",
+  guestName: "Mr. Jayesh Bhai Babubhai Patel",
+  managerMobile: "+91 97190 38278",
+  noOfAdults: "7 Members",
+  vehicleType: "01 Innova (Private Taxi)",
+  arrivalDate: "14/05/2026 ~ Haridwar Railway Station",
+  departureDate: "23/05/2026 ~ Haridwar Drop",
+  favouringGuest: "Mr. Jayesh Bhai Patel",
+  favouringPax: "7",
+  favouringVehicle: "Innova",
+  itinerary: [
+    { date: "14/05/2026", details: "Haridwar pickup, scenic drive to Barkot & check-in", hotel: "Hotel Sarutal (7818854893)" },
+    { date: "15/05/2026", details: "Barkot to Yamunotri Dham trek, Darshan & return to Barkot", hotel: "Hotel Sarutal (7818854893)" },
+    { date: "16/05/2026", details: "Scenic drive from Barkot to Uttarkashi, Vishwanath temple", hotel: "Hotel Skyline (8923184251)" },
+    { date: "17/05/2026", details: "Gangotri Dham Darshan via Harsil Valley & return", hotel: "Hotel Skyline (8923184251)" },
+    { date: "18/05/2026", details: "Uttarkashi to Phata Kedarnath base route", hotel: "Hotel Maa Paa (9634528441)" },
+    { date: "19/05/2026", details: "Transfer to Gaurikund, Kedarnath Trek & Darshan", hotel: "Bhagwari Ji Tent (9068648285)" },
+    { date: "20/05/2026", details: "Trek down to Gaurikund & transfer to Phata hotel", hotel: "Hotel Maa Paa (9634528441)" },
+    { date: "21/05/2026", details: "Drive Phata to Badrinath via Chopta, evening Aarti", hotel: "Hotel Dhansree (8395091744)" },
+    { date: "22/05/2026", details: "Badrinath Darshan, Mana Village & drive to Pipal Koti", hotel: "Hotel Dabral (7452827619)" },
+    { date: "23/05/2026", details: "Pipal Koti to Haridwar Drop, tour concludes", hotel: "Haridwar Drop" }
+  ]
+};
+
+// Actual Old Voucher: Do Dham 6D (Bill 626 - Surendar Kumar Patti / Tempo Traveller)
+const PRESET_TRANSPORT_DODHAM_ACTUAL = {
+  date: "14 May 2026",
+  exoNo: "BILL NO. 626",
+  fileNo: "626",
+  guestName: "Mr. Surendar Kumar Patti",
+  managerMobile: "+91 97190 38278",
+  noOfAdults: "24+2 Members",
+  vehicleType: "01 Tempo Traveller (Hall Package)",
+  arrivalDate: "14/05/2026 ~ Haridwar",
+  departureDate: "19/05/2026 ~ Haridwar Drop",
+  favouringGuest: "Mr. Surendar Kumar Patti",
+  favouringPax: "24+2",
+  favouringVehicle: "Tempo Traveller",
+  itinerary: [
+    { date: "14/05/2026", details: "Haridwar pickup & drive to Badashu / Guptkashi", hotel: "Hotel Omkara (8923334391)" },
+    { date: "15/05/2026", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Darshan", hotel: "Bhagwari Ji Tent (9068648285)" },
+    { date: "16/05/2026", details: "Trek down to Gaurikund, transfer back to Badashu", hotel: "Hotel Omkara (8923334391)" },
+    { date: "17/05/2026", details: "Drive Badashu to Pipal Koti / Badrinath route", hotel: "Hotel Dabral (7452827619)" },
+    { date: "18/05/2026", details: "Badrinath Dham Darshan, Mana village & return to Pipal Koti", hotel: "Hotel Dabral (7452827619)" },
+    { date: "19/05/2026", details: "Pipal Koti to Haridwar Drop, tour concludes", hotel: "Haridwar Drop" }
+  ]
+};
+
+const PRESET_TRANSPORT_12P_10D = {
+  date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+  exoNo: "UK-TR-12P2026",
+  fileNo: "12P-01",
+  guestName: "12 Pax Pilgrimage Group",
+  managerMobile: "+91 97190 38278",
+  noOfAdults: "12 Persons",
+  vehicleType: "01 Luxury 12-Seater Tempo Traveller",
+  arrivalDate: "Day 1 ~ Haridwar / Rishikesh / Dehradun",
+  departureDate: "Day 10 ~ Haridwar / Dehradun Drop",
+  favouringGuest: "12 Pax Group",
+  favouringPax: "12",
+  favouringVehicle: "Tempo Traveller",
+  itinerary: [
+    { date: "Day 1", details: "Haridwar/Dehradun pickup, drive to Barkot via Kempty Falls", hotel: "Barkot Deluxe Hotel" },
+    { date: "Day 2", details: "Drive to Janki Chatti, Yamunotri Dham trek, Darshan & return to Barkot", hotel: "Barkot Deluxe Hotel" },
+    { date: "Day 3", details: "Scenic drive from Barkot to Uttarkashi, Vishwanath Temple", hotel: "Uttarkashi Deluxe Hotel" },
+    { date: "Day 4", details: "Gangotri Dham Darshan via beautiful Harsil Valley & back to Uttarkashi", hotel: "Uttarkashi Deluxe Hotel" },
+    { date: "Day 5", details: "Scenic mountain transfer from Uttarkashi to Phata / Rampur / Guptkashi", hotel: "Phata / Rampur Resort" },
+    { date: "Day 6", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Holy Darshan", hotel: "Kedarnath Camp/Stay" },
+    { date: "Day 7", details: "Morning trek down to Gaurikund, transfer to Sitapur / Phata hotel", hotel: "Phata / Sitapur Resort" },
+    { date: "Day 8", details: "Drive to Badrinath via Chopta alpine hill station, evening Aarti", hotel: "Badrinath Deluxe Hotel" },
+    { date: "Day 9", details: "Badrinath Darshan, Mana Village, Vyas Gufa, drive to Pipalkoti", hotel: "Pipalkoti Deluxe Hotel" },
+    { date: "Day 10", details: "Enroute Maa Dhari Devi & Devprayag, Rishikesh drop / Haridwar drop", hotel: "Tour Concludes" }
+  ]
+};
+
+const PRESET_TRANSPORT_MATHURA_12D = {
+  date: "10 Sep 2026",
+  exoNo: "UK-TR-MTH12",
+  fileNo: "MTH-01",
+  guestName: "Mr. Ghanshyam & Family",
+  managerMobile: "+91 84452 14371",
+  noOfAdults: "Deluxe Group",
+  vehicleType: "01 AC Innova Crysta / Tempo Traveller",
+  arrivalDate: "10 Sep 2026 ~ Mathura, Uttar Pradesh",
+  departureDate: "21 Sep 2026 ~ Mathura Return Drop",
+  favouringGuest: "Mr. Ghanshyam",
+  favouringPax: "Group",
+  favouringVehicle: "Dedicated AC Vehicle",
+  itinerary: [
+    { date: "Day 1", details: "Mathura to Haridwar snan & drive to Barkot", hotel: "Barkot Hotel" },
+    { date: "Day 2", details: "Barkot to Yamunotri Dham darshan & back to Barkot", hotel: "Barkot Hotel" },
+    { date: "Day 3", details: "Drive from Barkot to Uttarkashi, Vishwanath temple", hotel: "Uttarkashi Hotel" },
+    { date: "Day 4", details: "Uttarkashi to Gangotri Dham darshan & return", hotel: "Uttarkashi Hotel" },
+    { date: "Day 5", details: "Drive to Guptkashi / Phata Kedarnath heli base", hotel: "Guptkashi / Phata Hotel" },
+    { date: "Day 6", details: "Kedarnath Helicopter Darshan & same-day return", hotel: "Guptkashi / Phata Hotel" },
+    { date: "Day 7", details: "Drive Guptkashi/Phata to Badrinath via Chopta & Joshimath", hotel: "Joshimath Hotel" },
+    { date: "Day 8", details: "Joshimath to Rudraprayag Sangam visit & stay", hotel: "Rudraprayag Hotel" },
+    { date: "Day 9", details: "Drive to Devprayag holy Alaknanda-Bhagirathi Sangam", hotel: "Devprayag Hotel" },
+    { date: "Day 10", details: "Devprayag to Rishikesh, Ram Jhula & Triveni Aarti", hotel: "Rishikesh Hotel" },
+    { date: "Day 11", details: "Rishikesh to Haridwar, Har Ki Pauri Ganga Aarti", hotel: "Haridwar Hotel" },
+    { date: "Day 12", details: "Early morning drive back to Mathura, tour concludes", hotel: "Mathura Drop" }
+  ]
+};
+
 const DEFAULT_TRANSPORT_DATA = {
   date: "15 May 2026",
   exoNo: "UK-TR-2026",
@@ -622,6 +730,50 @@ export default function TransportVouchers() {
             >
               <RotateCcw className="w-3.5 h-3.5" />
               Reset
+            </button>
+          </div>
+
+          {/* Quick Presets Bar */}
+          <div className="flex items-center gap-1.5 flex-wrap -mt-2">
+            <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Quick Load:</span>
+            <button
+              type="button"
+              onClick={() => updateData(PRESET_TRANSPORT_CHARDHAM_ACTUAL)}
+              className="px-2.5 py-1 bg-emerald-600 text-white hover:bg-emerald-700 rounded-lg text-xs font-bold transition cursor-pointer shadow-xs"
+              title="Client Voucher: Chardham 10D (Bill 604 - Mr. Jayesh Patel / Innova)"
+            >
+              ★ Chardham 10D (Bill 604)
+            </button>
+            <button
+              type="button"
+              onClick={() => updateData(PRESET_TRANSPORT_DODHAM_ACTUAL)}
+              className="px-2.5 py-1 bg-purple-600 text-white hover:bg-purple-700 rounded-lg text-xs font-bold transition cursor-pointer shadow-xs"
+              title="Client Voucher: Do Dham 6D (Bill 626 - Mr. Surendar Patti / Tempo Traveller)"
+            >
+              ★ Do Dham 6D (Bill 626)
+            </button>
+            <button
+              type="button"
+              onClick={() => updateData(PRESET_TRANSPORT_12P_10D)}
+              className="px-2.5 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs"
+              title="10 Days Chardham 12 Pax Tempo Traveller (Haridwar to Haridwar)"
+            >
+              10D Chardham (12 Pax Tempo)
+            </button>
+            <button
+              type="button"
+              onClick={() => updateData(PRESET_TRANSPORT_MATHURA_12D)}
+              className="px-2.5 py-1 bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-300 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs"
+              title="12 Days Chardham from Mathura (Mr. Ghanshyam)"
+            >
+              12D Chardham (Mathura Tour)
+            </button>
+            <button
+              type="button"
+              onClick={() => updateData(DEFAULT_TRANSPORT_DATA)}
+              className="px-2.5 py-1 bg-sky-50 text-sky-700 hover:bg-sky-100 border border-sky-300 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs"
+            >
+              10D Chardham (Innova)
             </button>
           </div>
 

@@ -64,6 +64,448 @@ export interface HotelVoucherData {
   stays: HotelStay[];
 }
 
+// Actual Old Voucher: Chardham 10 Days (Bill No. 604 - Mr. Jayesh Bhai Patel)
+const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
+  voucherNo: "BILL NO. 604",
+  tripDates: "14/05/2026 TO 22/05/2026",
+  bookingId: "CH-2026-604",
+  dateOfIssue: "14 May 2026",
+  guestName: "Mr. Jayesh Bhai Babubhai Patel",
+  guestPhone: "7984641303",
+  guestEmail: "traveltouttarakhand38@gmail.com",
+  totalPax: "7 Members",
+  totalRooms: "Family Rooms (Innova)",
+  tripDuration: "Chardham Yatra Package 10 Days 2026",
+  emergencyContact: "Amit Chandra: +91 9719038278 · Kuldeep: +91 8449982466",
+  specialInstructions: "• Please present this original voucher with government photo ID at check-in.\n• Standard check-in time 12:00 PM, check-out 10:00 AM.\n• Pure vegetarian meals served across all destinations.\n• Non-AC rooms in mountain sectors.",
+  inclusions: "• Confirmed Hotel accommodation across Barkot, Uttarkashi, Phata, Kedarnath Tent, Badrinath & Pipalkoti.\n• Dedicated Innova with driver Haridwar to Haridwar.\n• All tolls, parking, interstate taxes included.",
+  stays: [
+    {
+      id: "stay-act-1",
+      nightsLabel: "Night 1 & 2 (14-15 May)",
+      city: "Barkot / Yamunotri",
+      hotelName: "Hotel Sarutal",
+      hotelAddress: "Barkot, Yamunotri Road",
+      contactNo: "7818854893",
+      checkIn: "14/05/2026 (12:00 PM)",
+      checkOut: "16/05/2026 (08:00 AM)",
+      nights: 2,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-SAR-604",
+      specialRequest: "Early breakfast for Yamunotri trek"
+    },
+    {
+      id: "stay-act-2",
+      nightsLabel: "Night 3 & 4 (16-17 May)",
+      city: "Uttarkashi / Gangotri",
+      hotelName: "Hotel Skyline",
+      hotelAddress: "Uttarkashi, Gangotri Highway",
+      contactNo: "8923184251",
+      checkIn: "16/05/2026 (01:00 PM)",
+      checkOut: "18/05/2026 (07:30 AM)",
+      nights: 2,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-SKY-604",
+      specialRequest: "Kashi Vishwanath Darshan & Gangotri trip"
+    },
+    {
+      id: "stay-act-3",
+      nightsLabel: "Night 5 (18 May)",
+      city: "Phata / Guptkashi",
+      hotelName: "Hotel Maa Paa",
+      hotelAddress: "Phata, Kedarnath Route",
+      contactNo: "9634528441",
+      checkIn: "18/05/2026 (02:00 PM)",
+      checkOut: "19/05/2026 (06:00 AM)",
+      nights: 1,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-MP-604",
+      specialRequest: "Early morning transfer to Sonprayag / Gaurikund"
+    },
+    {
+      id: "stay-act-4",
+      nightsLabel: "Night 6 (19 May)",
+      city: "Kedarnath Base / Top",
+      hotelName: "Bhagwari Ji (Kedarnath Tent)",
+      hotelAddress: "Near Shri Kedarnath Temple",
+      contactNo: "9068648285",
+      checkIn: "19/05/2026 (04:00 PM)",
+      checkOut: "20/05/2026 (07:00 AM)",
+      nights: 1,
+      roomType: "Kedarnath Tent / Stay",
+      noOfRooms: "Group Sharing",
+      mealPlan: "Room Only",
+      confirmationNo: "CONF-BHAG-604",
+      specialRequest: "Evening Aarti & Darshan assistance"
+    },
+    {
+      id: "stay-act-5",
+      nightsLabel: "Night 7 (20 May)",
+      city: "Phata / Guptkashi",
+      hotelName: "Hotel Maa Paa",
+      hotelAddress: "Phata, Kedarnath Route",
+      contactNo: "9634528441",
+      checkIn: "20/05/2026 (02:00 PM)",
+      checkOut: "21/05/2026 (08:00 AM)",
+      nights: 1,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-MP-604B",
+      specialRequest: "Hot dinner after Kedarnath descent"
+    },
+    {
+      id: "stay-act-6",
+      nightsLabel: "Night 8 (21 May)",
+      city: "Badrinath Dham",
+      hotelName: "Hotel Dhansree",
+      hotelAddress: "Near Badrinath Temple",
+      contactNo: "8395091744",
+      checkIn: "21/05/2026 (02:00 PM)",
+      checkOut: "22/05/2026 (08:30 AM)",
+      nights: 1,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-DHAN-604",
+      specialRequest: "Evening Aarti & Mana Village visit"
+    },
+    {
+      id: "stay-act-7",
+      nightsLabel: "Night 9 (22 May)",
+      city: "Pipal Koti",
+      hotelName: "Hotel Dabral",
+      hotelAddress: "Pipal Koti, Badrinath Highway",
+      contactNo: "7452827619",
+      checkIn: "22/05/2026 (03:00 PM)",
+      checkOut: "23/05/2026 (08:00 AM)",
+      nights: 1,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-DAB-604",
+      specialRequest: "Next day Haridwar drop"
+    }
+  ]
+};
+
+// Actual Old Voucher: Do Dham 6 Days (Bill No. 626 - Mr. Surendar Kumar Patti)
+const PRESET_DODHAM_ACTUAL_VOUCHER: HotelVoucherData = {
+  voucherNo: "BILL NO. 626",
+  tripDates: "14/05/2026 TO 19/05/2026",
+  bookingId: "DD-2026-626",
+  dateOfIssue: "14 May 2026",
+  guestName: "Mr. Surendar Kumar Patti",
+  guestPhone: "9777765675",
+  guestEmail: "traveltouttarakhand38@gmail.com",
+  totalPax: "24+2 Members",
+  totalRooms: "Hall Package (Tempo)",
+  tripDuration: "Do Dham Yatra Hall Package 6 Days 2026",
+  emergencyContact: "Amit Chandra: +91 9719038278 · Kuldeep: +91 8449982466",
+  specialInstructions: "• Please carry valid photo ID at all hotels.\n• Hall package accommodation confirmed for group.\n• Early morning departure for Kedarnath & Badrinath Darshan.",
+  inclusions: "• Hotel accommodation at Badashu, Kedarnath Tent & Pipal Koti.\n• Dedicated Tempo Traveller Haridwar to Haridwar.\n• Tolls, parking and driver charges included.",
+  stays: [
+    {
+      id: "stay-dd-1",
+      nightsLabel: "Night 1 (14 May)",
+      city: "Badashu / Guptkashi",
+      hotelName: "Hotel Omkara",
+      hotelAddress: "Badashu, Kedarnath Route",
+      contactNo: "8923334391",
+      checkIn: "14/05/2026 (02:00 PM)",
+      checkOut: "15/05/2026 (06:00 AM)",
+      nights: 1,
+      roomType: "Hall / Group Rooms",
+      noOfRooms: "Hall Basis",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-OM-626",
+      specialRequest: "Early transfer to Sonprayag"
+    },
+    {
+      id: "stay-dd-2",
+      nightsLabel: "Night 2 (15 May)",
+      city: "Kedarnath Base / Top",
+      hotelName: "Bhagwari Ji (Kedarnath Tent)",
+      hotelAddress: "Near Kedarnath Temple",
+      contactNo: "9068648285",
+      checkIn: "15/05/2026 (04:00 PM)",
+      checkOut: "16/05/2026 (07:00 AM)",
+      nights: 1,
+      roomType: "Kedarnath Tent / Stay",
+      noOfRooms: "Group Sharing",
+      mealPlan: "Room Only",
+      confirmationNo: "CONF-BHAG-626",
+      specialRequest: "Evening Aarti & Darshan"
+    },
+    {
+      id: "stay-dd-3",
+      nightsLabel: "Night 3 (16 May)",
+      city: "Badashu / Guptkashi",
+      hotelName: "Hotel Omkara",
+      hotelAddress: "Badashu, Kedarnath Route",
+      contactNo: "8923334391",
+      checkIn: "16/05/2026 (02:00 PM)",
+      checkOut: "17/05/2026 (07:30 AM)",
+      nights: 1,
+      roomType: "Hall / Group Rooms",
+      noOfRooms: "Hall Basis",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-OM-626B",
+      specialRequest: "Hot meals on arrival after descent"
+    },
+    {
+      id: "stay-dd-4",
+      nightsLabel: "Night 4 & 5 (17-18 May)",
+      city: "Pipal Koti / Badrinath Sector",
+      hotelName: "Hotel Dabral",
+      hotelAddress: "Pipal Koti, Badrinath Highway",
+      contactNo: "7452827619",
+      checkIn: "17/05/2026 (03:00 PM)",
+      checkOut: "19/05/2026 (08:00 AM)",
+      nights: 2,
+      roomType: "Hall / Group Rooms",
+      noOfRooms: "Hall Basis",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-DAB-626",
+      specialRequest: "Badrinath Darshan & 19th May Haridwar drop"
+    }
+  ]
+};
+
+const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
+  voucherNo: "TV-2026-CH12P",
+  tripDates: "May – Oct 2026",
+  bookingId: "BKG-CH-12P2026",
+  dateOfIssue: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+  guestName: "12 Pax Pilgrimage Group",
+  guestPhone: "+91 97190 38278",
+  guestEmail: "amitchandra104@gmail.com",
+  totalPax: "12 Persons",
+  totalRooms: "Family Basis Deluxe Rooms",
+  tripDuration: "10 Days / 09 Nights Chardham Tour",
+  emergencyContact: "Amit Chandra · +91 9719038278, 7818952740 (24x7 Helpline)",
+  specialInstructions: "• Please present this original voucher with government photo ID at check-in.\n• Kedarnath Night Stay is in Standard Room / Tent without food (as per yatra norms).\n• Food arrangements are done at hotel; please reach dining hall on time.\n• Non-AC rooms in all hill areas as per mountain terrain norms.\n• Room sharing is on 2 / 3 / 4 / 6 bed family basis as confirmed.",
+  inclusions: "• Confirmed Deluxe Hotel Accommodation across Barkot, Uttarkashi, Phata, Badrinath & Pipalkoti.\n• Meal Plan: MAP (Breakfast and Dinner at hotels only).\n• Dedicated 12-Pax Tempo Traveller Haridwar to Haridwar.\n• All Interstate Taxes, Tolls, Driver Allowance and Parking included.",
+  stays: [
+    {
+      id: "stay-1",
+      nightsLabel: "Night 1 & 2",
+      city: "Barkot / Yamunotri Sector",
+      hotelName: "Hotel / Camp Deluxe Resort",
+      hotelAddress: "Barkot - Kharadi, Yamunotri Highway",
+      contactNo: "+91 97190 38278",
+      checkIn: "Day 1 (12:00 PM)",
+      checkOut: "Day 3 (08:00 AM)",
+      nights: 2,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Basis Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-BR-12P",
+      specialRequest: "Early morning breakfast before Janki Chatti / Yamunotri trek"
+    },
+    {
+      id: "stay-2",
+      nightsLabel: "Night 3 & 4",
+      city: "Uttarkashi / Gangotri Sector",
+      hotelName: "Hotel Bhagirathi Deluxe",
+      hotelAddress: "Gangotri Road, Uttarkashi",
+      contactNo: "+91 97190 38278",
+      checkIn: "Day 3 (01:00 PM)",
+      checkOut: "Day 5 (07:30 AM)",
+      nights: 2,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Basis Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-UK-12P",
+      specialRequest: "Visit Kashi Vishwanath Temple & Harsil Valley enroute"
+    },
+    {
+      id: "stay-3",
+      nightsLabel: "Night 5 & 7",
+      city: "Phata / Rampur / Guptkashi",
+      hotelName: "Kedar Valley Deluxe Resort",
+      hotelAddress: "Phata / Sitapur / Guptkashi Road",
+      contactNo: "+91 97190 38278",
+      checkIn: "Day 5 (02:00 PM)",
+      checkOut: "Day 8 (07:00 AM)",
+      nights: 2,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Basis Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-PH-12P",
+      specialRequest: "Base camp transfer to Sonprayag / Gaurikund"
+    },
+    {
+      id: "stay-4",
+      nightsLabel: "Night 6",
+      city: "Shri Kedarnath Dham",
+      hotelName: "Kedarnath Bhawan / Camp Stay",
+      hotelAddress: "Near Shri Kedarnath Ji Temple",
+      contactNo: "+91 97190 38278",
+      checkIn: "Day 6 (04:00 PM)",
+      checkOut: "Day 7 (07:00 AM)",
+      nights: 1,
+      roomType: "Standard Room / Tent",
+      noOfRooms: "Sharing Basis",
+      mealPlan: "Room Only (Without Food)",
+      confirmationNo: "CONF-KD-12P",
+      specialRequest: "Darshan assistance & warm bedding arranged"
+    },
+    {
+      id: "stay-5",
+      nightsLabel: "Night 8",
+      city: "Shri Badrinath Dham",
+      hotelName: "Hotel Badri Kedar Deluxe",
+      hotelAddress: "Near Badrinath Temple & Alaknanda River",
+      contactNo: "+91 97190 38278",
+      checkIn: "Day 8 (02:00 PM)",
+      checkOut: "Day 9 (09:00 AM)",
+      nights: 1,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Basis Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-BD-12P",
+      specialRequest: "Taptkund holy bath, Brahma Kamal & Mana Village visit"
+    },
+    {
+      id: "stay-6",
+      nightsLabel: "Night 9",
+      city: "Pipalkoti / Karanprayag / Rudraprayag",
+      hotelName: "Hotel Alaknanda / Similar Deluxe",
+      hotelAddress: "Badrinath - Rishikesh Highway, Pipalkoti",
+      contactNo: "+91 97190 38278",
+      checkIn: "Day 9 (03:00 PM)",
+      checkOut: "Day 10 (07:30 AM)",
+      nights: 1,
+      roomType: "Deluxe Rooms",
+      noOfRooms: "Family Basis Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-PK-12P",
+      specialRequest: "Panch Prayag & Maa Dhari Devi Darshan on way to Haridwar"
+    }
+  ]
+};
+
+const PRESET_MATHURA_12D: HotelVoucherData = {
+  voucherNo: "TV-2026-MTH12",
+  tripDates: "10 Sep 2026 to 21 Sep 2026",
+  bookingId: "BKG-MTH-9021",
+  dateOfIssue: "10 May 2026",
+  guestName: "Mr. Ghanshyam & Family",
+  guestPhone: "+91 84452 14371",
+  guestEmail: "",
+  totalPax: "Deluxe Group",
+  totalRooms: "Deluxe AC / Non-AC Rooms",
+  tripDuration: "12 Days / 11 Nights Chardham Tour (from Mathura with Heli)",
+  emergencyContact: "Mr. Tarun Kaushik · +91 84452 14371 (24x7 Helpline)",
+  specialInstructions: "• Complete Chardham circuit starting and concluding at Mathura.\n• Kedarnath helicopter tickets included (Guptkashi/Phata ⇄ Kedarnath).\n• Please carry valid government photo ID and yatra registration pass.\n• 5% GST extra as applicable.",
+  inclusions: "• AC Vehicle (Innova Crysta / Tempo Traveller) for entire 12-day tour.\n• 11 Nights accommodation as per deluxe category.\n• Meal Plan: MAP (Daily Breakfast & Dinner).\n• Kedarnath Helicopter Tickets (both ways) included.\n• All tolls, parking, interstate taxes and driver allowances.",
+  stays: [
+    {
+      id: "stay-m1",
+      nightsLabel: "Night 1 & 2",
+      city: "Barkot / Yamunotri",
+      hotelName: "Hotel Shivalik Heights / Similar",
+      hotelAddress: "Kharadi, Yamunotri Highway, Barkot",
+      contactNo: "+91 84452 14371",
+      checkIn: "10 Sep 2026 (02:00 PM)",
+      checkOut: "12 Sep 2026 (08:00 AM)",
+      nights: 2,
+      roomType: "Deluxe Room",
+      noOfRooms: "Deluxe Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-BR-M1",
+      specialRequest: "Early breakfast packed for Yamunotri trek"
+    },
+    {
+      id: "stay-m2",
+      nightsLabel: "Night 3 & 4",
+      city: "Uttarkashi / Gangotri",
+      hotelName: "Hotel Bhagirathi View / Similar",
+      hotelAddress: "Netala, Gangotri Road, Uttarkashi",
+      contactNo: "+91 84452 14371",
+      checkIn: "12 Sep 2026 (01:00 PM)",
+      checkOut: "14 Sep 2026 (07:30 AM)",
+      nights: 2,
+      roomType: "Deluxe Room",
+      noOfRooms: "Deluxe Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-UK-M2",
+      specialRequest: "Gangotri Temple & Kashi Vishwanath Darshan"
+    },
+    {
+      id: "stay-m3",
+      nightsLabel: "Night 5 & 6",
+      city: "Guptkashi / Phata (Heli Base)",
+      hotelName: "Kedar Valley Heli Resort",
+      hotelAddress: "Phata / Guptkashi, Helipad Sector",
+      contactNo: "+91 84452 14371",
+      checkIn: "14 Sep 2026 (02:00 PM)",
+      checkOut: "16 Sep 2026 (07:00 AM)",
+      nights: 2,
+      roomType: "Deluxe Room",
+      noOfRooms: "Deluxe Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-HL-M3",
+      specialRequest: "Helipad shuttle transfer & VIP Darshan briefing"
+    },
+    {
+      id: "stay-m4",
+      nightsLabel: "Night 7",
+      city: "Joshimath / Badrinath",
+      hotelName: "Hotel Badri Haven / Similar",
+      hotelAddress: "Joshimath, Badrinath Highway",
+      contactNo: "+91 84452 14371",
+      checkIn: "16 Sep 2026 (03:00 PM)",
+      checkOut: "17 Sep 2026 (08:30 AM)",
+      nights: 1,
+      roomType: "Deluxe Room",
+      noOfRooms: "Deluxe Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-JM-M4",
+      specialRequest: "Shri Badrinath Temple Darshan & Evening Aarti"
+    },
+    {
+      id: "stay-m5",
+      nightsLabel: "Night 8 & 9",
+      city: "Rudraprayag & Devprayag",
+      hotelName: "Hotel Sangam Palace",
+      hotelAddress: "Rudraprayag / Devprayag Valley",
+      contactNo: "+91 84452 14371",
+      checkIn: "17 Sep 2026 (02:00 PM)",
+      checkOut: "19 Sep 2026 (08:00 AM)",
+      nights: 2,
+      roomType: "Deluxe River View",
+      noOfRooms: "Deluxe Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-RP-M5",
+      specialRequest: "Sacred Alaknanda-Mandakini & Bhagirathi Sangam visits"
+    },
+    {
+      id: "stay-m6",
+      nightsLabel: "Night 10 & 11",
+      city: "Rishikesh & Haridwar",
+      hotelName: "Divine Ganga Retreat",
+      hotelAddress: "Tapovan, Rishikesh & Haridwar",
+      contactNo: "+91 84452 14371",
+      checkIn: "19 Sep 2026 (01:00 PM)",
+      checkOut: "21 Sep 2026 (08:00 AM)",
+      nights: 2,
+      roomType: "Deluxe AC Room",
+      noOfRooms: "Deluxe Rooms",
+      mealPlan: "MAP (Breakfast + Dinner)",
+      confirmationNo: "CONF-RK-M6",
+      specialRequest: "Ram Jhula, Triveni Ghat & Har Ki Pauri Ganga Aarti; return to Mathura"
+    }
+  ]
+};
+
 const PRESET_CHARDHAM_10D: HotelVoucherData = {
   voucherNo: "TV-2026-CH01",
   tripDates: "12 Sep 2026 to 20 Sep 2026",
@@ -838,16 +1280,44 @@ export default function HotelVouchersPage() {
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Quick Load:</span>
               <button
-                onClick={() => updateData(PRESET_CHARDHAM_10D)}
-                className="px-2 py-1 bg-sky-50 text-[#0369a1] hover:bg-sky-100 border border-sky-200 rounded text-xs font-semibold transition"
+                onClick={() => updateData(PRESET_CHARDHAM_ACTUAL_VOUCHER)}
+                className="px-2 py-1 bg-emerald-600 text-white hover:bg-emerald-700 rounded text-xs font-bold transition shadow-xs cursor-pointer"
+                title="Client Voucher: Chardham 10D (Bill 604 - Mr. Jayesh Patel, Hotel Sarutal, Skyline, Maa Paa, Dhansree)"
               >
-                10-Day Chardham (6 Stays)
+                ★ Chardham 10D (Bill 604)
+              </button>
+              <button
+                onClick={() => updateData(PRESET_DODHAM_ACTUAL_VOUCHER)}
+                className="px-2 py-1 bg-purple-600 text-white hover:bg-purple-700 rounded text-xs font-bold transition shadow-xs cursor-pointer"
+                title="Client Voucher: Do Dham 6D (Bill 626 - Mr. Surendar Patti, Hotel Omkara, Dabral)"
+              >
+                ★ Do Dham 6D (Bill 626)
+              </button>
+              <button
+                onClick={() => updateData(PRESET_CHARDHAM_12P_10D)}
+                className="px-2 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 rounded text-xs font-semibold transition cursor-pointer"
+                title="10 Days / 9 Nights Chardham for 12 Pax Tempo Traveller"
+              >
+                10D Chardham (12 Pax Deluxe)
+              </button>
+              <button
+                onClick={() => updateData(PRESET_MATHURA_12D)}
+                className="px-2 py-1 bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-300 rounded text-xs font-semibold transition cursor-pointer"
+                title="12 Days / 11 Nights from Mathura with Kedarnath Heli (Mr. Ghanshyam)"
+              >
+                12D Chardham (Mathura & Heli)
+              </button>
+              <button
+                onClick={() => updateData(PRESET_CHARDHAM_10D)}
+                className="px-2 py-1 bg-sky-50 text-[#0369a1] hover:bg-sky-100 border border-sky-200 rounded text-xs font-semibold transition cursor-pointer"
+              >
+                10D Chardham (4 Pax)
               </button>
               <button
                 onClick={() => updateData(PRESET_DODHAM_5D)}
-                className="px-2 py-1 bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 rounded text-xs font-semibold transition"
+                className="px-2 py-1 bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200 rounded text-xs font-semibold transition cursor-pointer"
               >
-                5-Day Do Dham (3 Stays)
+                5D Do Dham
               </button>
             </div>
           </div>

@@ -14,7 +14,23 @@ export interface DhamGalleryPhoto {
 }
 
 export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
-  // Kedarnath Dham
+  // Kedarnath Dham (Authentic Tour Photos)
+  {
+    id: "dham-kedarnath-auth-1",
+    url: "/gallery/chardham_10d_img_13.jpg",
+    caption: "Shri Kedarnath Temple Entrance & Holy Nandi Darshan",
+    dham: "kedarnath",
+    dhamLabel: "Kedarnath Dham",
+    isDefault: true
+  },
+  {
+    id: "dham-kedarnath-auth-2",
+    url: "/gallery/chardham_10d_img_12.jpg",
+    caption: "Shri Kedarnath Dham Temple & Snow Himalaya Peaks",
+    dham: "kedarnath",
+    dhamLabel: "Kedarnath Dham",
+    isDefault: true
+  },
   {
     id: "dham-kedarnath-1",
     url: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80",
@@ -23,26 +39,24 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dhamLabel: "Kedarnath Dham",
     isDefault: true
   },
+
+  // Badrinath Dham (Authentic Tour Photos)
   {
-    id: "dham-kedarnath-2",
-    url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?auto=format&fit=crop&w=1200&q=80",
-    caption: "Kedarnath Valley & Holy Himalayan Pilgrim Trail",
-    dham: "kedarnath",
-    dhamLabel: "Kedarnath Dham",
+    id: "dham-badrinath-auth-1",
+    url: "/gallery/chardham_10d_img_15.jpg",
+    caption: "Shri Badrinath Ji Temple - Divine Facade & Alaknanda Valley",
+    dham: "badrinath",
+    dhamLabel: "Badrinath Dham",
     isDefault: true
   },
-
-  // Kedarnath Helicopter Sector
   {
-    id: "dham-heli-1",
-    url: "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=1200&q=80",
-    caption: "VIP Kedarnath Helicopter Shuttle & Aerial Darshan",
-    dham: "helicopter",
-    dhamLabel: "Helicopter Darshan",
+    id: "dham-badrinath-auth-2",
+    url: "/gallery/chardham_10d_img_16.jpg",
+    caption: "Shri Badrinath Dham Golden Kalash & Evening Aarti",
+    dham: "badrinath",
+    dhamLabel: "Badrinath Dham",
     isDefault: true
   },
-
-  // Badrinath Dham
   {
     id: "dham-badrinath-1",
     url: "https://images.unsplash.com/photo-1609766857329-a1789c09935f?auto=format&fit=crop&w=1200&q=80",
@@ -51,16 +65,16 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dhamLabel: "Badrinath Dham",
     isDefault: true
   },
+
+  // Gangotri Dham (Authentic Tour Photos)
   {
-    id: "dham-badrinath-2",
-    url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
-    caption: "Neelkanth Snow Peak & Mana First Indian Village",
-    dham: "badrinath",
-    dhamLabel: "Badrinath Dham",
+    id: "dham-gangotri-auth-1",
+    url: "/gallery/chardham_10d_img_8.jpg",
+    caption: "Holy Shri Gangotri Dham Temple & Snow Bhagirathi Range",
+    dham: "gangotri",
+    dhamLabel: "Gangotri Dham",
     isDefault: true
   },
-
-  // Gangotri Dham
   {
     id: "dham-gangotri-1",
     url: "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80",
@@ -70,7 +84,7 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     isDefault: true
   },
 
-  // Yamunotri Dham
+  // Yamunotri Dham & Foothills
   {
     id: "dham-yamunotri-1",
     url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
@@ -80,7 +94,53 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     isDefault: true
   },
 
-  // Haridwar & Rishikesh
+  // Complete Chardham 4 Dhams Composite Banner
+  {
+    id: "dham-all4-banner",
+    url: "/gallery/chardham_10d_img_1.jpg",
+    caption: "Char Dham Yatra 4 Holy Shrines: Yamunotri, Gangotri, Kedarnath, Badrinath",
+    dham: "himalayas",
+    dhamLabel: "Chardham Circuit",
+    isDefault: true
+  },
+
+  // Kedarnath Helicopter Sector (Authentic Photos)
+  {
+    id: "dham-heli-auth-1",
+    url: "/gallery/chardham_10d_img_9.jpg",
+    caption: "Kedarnath Valley Helipad & Helicopter Shuttle Darshan",
+    dham: "helicopter",
+    dhamLabel: "Helicopter Darshan",
+    isDefault: true
+  },
+  {
+    id: "dham-heli-auth-2",
+    url: "/gallery/chardham_10d_img_10.jpg",
+    caption: "Himalayan Aerial Kedarnath Helicopter Flight",
+    dham: "helicopter",
+    dhamLabel: "Helicopter Darshan",
+    isDefault: true
+  },
+
+  // Chopta, Tungnath & Chandrashila (Authentic Photos)
+  {
+    id: "dham-chopta-auth-1",
+    url: "/gallery/chardham_10d_img_14.jpg",
+    caption: "Chopta Tungnath & Chandrashila Sacred Himalayan Ridge",
+    dham: "chopta_tungnath",
+    dhamLabel: "Chopta & Tungnath",
+    isDefault: true
+  },
+
+  // Sacred River Confluences & Temples (Maa Dhari Devi & Ganga Aarti)
+  {
+    id: "dham-dharidevi-auth-1",
+    url: "/gallery/chardham_10d_img_18.jpg",
+    caption: "Maa Dhari Devi Temple - Guardian Deity of Devbhoomi",
+    dham: "haridwar_rishikesh",
+    dhamLabel: "Haridwar & Rishikesh",
+    isDefault: true
+  },
   {
     id: "dham-haridwar-1",
     url: "https://images.unsplash.com/photo-1596766141386-f13ce38bb172?auto=format&fit=crop&w=1200&q=80",
@@ -89,22 +149,22 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dhamLabel: "Haridwar & Rishikesh",
     isDefault: true
   },
+
+  // Deluxe Hotels & Group Travel
   {
-    id: "dham-rishikesh-1",
-    url: "https://images.unsplash.com/photo-1600100397608-f010f443906a?auto=format&fit=crop&w=1200&q=80",
-    caption: "Rishikesh Divine Ganga Ghat & Ram Jhula Foothills",
-    dham: "haridwar_rishikesh",
-    dhamLabel: "Haridwar & Rishikesh",
+    id: "dham-hotel-deluxe-1",
+    url: "/gallery/chardham_10d_img_31.jpg",
+    caption: "Confirmed Deluxe Hill Hotel & Comfortable Room Stay",
+    dham: "custom",
+    dhamLabel: "Deluxe Hotels",
     isDefault: true
   },
-
-  // Chopta & Tungnath
   {
-    id: "dham-chopta-1",
-    url: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1200&q=80",
-    caption: "Tungnath Mahadev - Highest Shiva Shrine & Chandrashila",
-    dham: "chopta_tungnath",
-    dhamLabel: "Chopta & Tungnath",
+    id: "dham-group-tempo-1",
+    url: "/gallery/chardham_10d_img_4.jpg",
+    caption: "Pilgrimage Group & Luxury Tempo Traveller",
+    dham: "custom",
+    dhamLabel: "Group Transport",
     isDefault: true
   }
 ];
