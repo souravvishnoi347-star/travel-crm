@@ -103,34 +103,6 @@ const PRESET_TRANSPORT_12P_10D = {
   ]
 };
 
-const PRESET_TRANSPORT_MATHURA_12D = {
-  date: "10 Sep 2026",
-  exoNo: "UK-TR-MTH12",
-  fileNo: "MTH-01",
-  guestName: "Mr. Ghanshyam & Family",
-  managerMobile: "+91 84452 14371",
-  noOfAdults: "Deluxe Group",
-  vehicleType: "01 AC Innova Crysta / Tempo Traveller",
-  arrivalDate: "10 Sep 2026 ~ Mathura, Uttar Pradesh",
-  departureDate: "21 Sep 2026 ~ Mathura Return Drop",
-  favouringGuest: "Mr. Ghanshyam",
-  favouringPax: "Group",
-  favouringVehicle: "Dedicated AC Vehicle",
-  itinerary: [
-    { date: "Day 1", details: "Mathura to Haridwar snan & drive to Barkot", hotel: "Barkot Hotel" },
-    { date: "Day 2", details: "Barkot to Yamunotri Dham darshan & back to Barkot", hotel: "Barkot Hotel" },
-    { date: "Day 3", details: "Drive from Barkot to Uttarkashi, Vishwanath temple", hotel: "Uttarkashi Hotel" },
-    { date: "Day 4", details: "Uttarkashi to Gangotri Dham darshan & return", hotel: "Uttarkashi Hotel" },
-    { date: "Day 5", details: "Drive to Guptkashi / Phata Kedarnath heli base", hotel: "Guptkashi / Phata Hotel" },
-    { date: "Day 6", details: "Kedarnath Helicopter Darshan & same-day return", hotel: "Guptkashi / Phata Hotel" },
-    { date: "Day 7", details: "Drive Guptkashi/Phata to Badrinath via Chopta & Joshimath", hotel: "Joshimath Hotel" },
-    { date: "Day 8", details: "Joshimath to Rudraprayag Sangam visit & stay", hotel: "Rudraprayag Hotel" },
-    { date: "Day 9", details: "Drive to Devprayag holy Alaknanda-Bhagirathi Sangam", hotel: "Devprayag Hotel" },
-    { date: "Day 10", details: "Devprayag to Rishikesh, Ram Jhula & Triveni Aarti", hotel: "Rishikesh Hotel" },
-    { date: "Day 11", details: "Rishikesh to Haridwar, Har Ki Pauri Ganga Aarti", hotel: "Haridwar Hotel" },
-    { date: "Day 12", details: "Early morning drive back to Mathura, tour concludes", hotel: "Mathura Drop" }
-  ]
-};
 
 const DEFAULT_TRANSPORT_DATA = {
   date: "15 May 2026",
@@ -760,14 +732,7 @@ export default function TransportVouchers() {
             >
               10D Chardham (12 Pax Tempo)
             </button>
-            <button
-              type="button"
-              onClick={() => updateData(PRESET_TRANSPORT_MATHURA_12D)}
-              className="px-2.5 py-1 bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-300 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs"
-              title="12 Days Chardham from Mathura (Mr. Ghanshyam)"
-            >
-              12D Chardham (Mathura Tour)
-            </button>
+
             <button
               type="button"
               onClick={() => updateData(DEFAULT_TRANSPORT_DATA)}

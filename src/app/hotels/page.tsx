@@ -392,120 +392,6 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
   ]
 };
 
-const PRESET_MATHURA_12D: HotelVoucherData = {
-  voucherNo: "TV-2026-MTH12",
-  tripDates: "10 Sep 2026 to 21 Sep 2026",
-  bookingId: "BKG-MTH-9021",
-  dateOfIssue: "10 May 2026",
-  guestName: "Mr. Ghanshyam & Family",
-  guestPhone: "+91 84452 14371",
-  guestEmail: "",
-  totalPax: "Deluxe Group",
-  totalRooms: "Deluxe AC / Non-AC Rooms",
-  tripDuration: "12 Days / 11 Nights Chardham Tour (from Mathura with Heli)",
-  emergencyContact: "Mr. Tarun Kaushik · +91 84452 14371 (24x7 Helpline)",
-  specialInstructions: "• Complete Chardham circuit starting and concluding at Mathura.\n• Kedarnath helicopter tickets included (Guptkashi/Phata ⇄ Kedarnath).\n• Please carry valid government photo ID and yatra registration pass.\n• 5% GST extra as applicable.",
-  inclusions: "• AC Vehicle (Innova Crysta / Tempo Traveller) for entire 12-day tour.\n• 11 Nights accommodation as per deluxe category.\n• Meal Plan: MAP (Daily Breakfast & Dinner).\n• Kedarnath Helicopter Tickets (both ways) included.\n• All tolls, parking, interstate taxes and driver allowances.",
-  stays: [
-    {
-      id: "stay-m1",
-      nightsLabel: "Night 1 & 2",
-      city: "Barkot / Yamunotri",
-      hotelName: "Hotel Shivalik Heights / Similar",
-      hotelAddress: "Kharadi, Yamunotri Highway, Barkot",
-      contactNo: "+91 84452 14371",
-      checkIn: "10 Sep 2026 (02:00 PM)",
-      checkOut: "12 Sep 2026 (08:00 AM)",
-      nights: 2,
-      roomType: "Deluxe Room",
-      noOfRooms: "Deluxe Rooms",
-      mealPlan: "MAP (Breakfast + Dinner)",
-      confirmationNo: "CONF-BR-M1",
-      specialRequest: "Early breakfast packed for Yamunotri trek"
-    },
-    {
-      id: "stay-m2",
-      nightsLabel: "Night 3 & 4",
-      city: "Uttarkashi / Gangotri",
-      hotelName: "Hotel Bhagirathi View / Similar",
-      hotelAddress: "Netala, Gangotri Road, Uttarkashi",
-      contactNo: "+91 84452 14371",
-      checkIn: "12 Sep 2026 (01:00 PM)",
-      checkOut: "14 Sep 2026 (07:30 AM)",
-      nights: 2,
-      roomType: "Deluxe Room",
-      noOfRooms: "Deluxe Rooms",
-      mealPlan: "MAP (Breakfast + Dinner)",
-      confirmationNo: "CONF-UK-M2",
-      specialRequest: "Gangotri Temple & Kashi Vishwanath Darshan"
-    },
-    {
-      id: "stay-m3",
-      nightsLabel: "Night 5 & 6",
-      city: "Guptkashi / Phata (Heli Base)",
-      hotelName: "Kedar Valley Heli Resort",
-      hotelAddress: "Phata / Guptkashi, Helipad Sector",
-      contactNo: "+91 84452 14371",
-      checkIn: "14 Sep 2026 (02:00 PM)",
-      checkOut: "16 Sep 2026 (07:00 AM)",
-      nights: 2,
-      roomType: "Deluxe Room",
-      noOfRooms: "Deluxe Rooms",
-      mealPlan: "MAP (Breakfast + Dinner)",
-      confirmationNo: "CONF-HL-M3",
-      specialRequest: "Helipad shuttle transfer & VIP Darshan briefing"
-    },
-    {
-      id: "stay-m4",
-      nightsLabel: "Night 7",
-      city: "Joshimath / Badrinath",
-      hotelName: "Hotel Badri Haven / Similar",
-      hotelAddress: "Joshimath, Badrinath Highway",
-      contactNo: "+91 84452 14371",
-      checkIn: "16 Sep 2026 (03:00 PM)",
-      checkOut: "17 Sep 2026 (08:30 AM)",
-      nights: 1,
-      roomType: "Deluxe Room",
-      noOfRooms: "Deluxe Rooms",
-      mealPlan: "MAP (Breakfast + Dinner)",
-      confirmationNo: "CONF-JM-M4",
-      specialRequest: "Shri Badrinath Temple Darshan & Evening Aarti"
-    },
-    {
-      id: "stay-m5",
-      nightsLabel: "Night 8 & 9",
-      city: "Rudraprayag & Devprayag",
-      hotelName: "Hotel Sangam Palace",
-      hotelAddress: "Rudraprayag / Devprayag Valley",
-      contactNo: "+91 84452 14371",
-      checkIn: "17 Sep 2026 (02:00 PM)",
-      checkOut: "19 Sep 2026 (08:00 AM)",
-      nights: 2,
-      roomType: "Deluxe River View",
-      noOfRooms: "Deluxe Rooms",
-      mealPlan: "MAP (Breakfast + Dinner)",
-      confirmationNo: "CONF-RP-M5",
-      specialRequest: "Sacred Alaknanda-Mandakini & Bhagirathi Sangam visits"
-    },
-    {
-      id: "stay-m6",
-      nightsLabel: "Night 10 & 11",
-      city: "Rishikesh & Haridwar",
-      hotelName: "Divine Ganga Retreat",
-      hotelAddress: "Tapovan, Rishikesh & Haridwar",
-      contactNo: "+91 84452 14371",
-      checkIn: "19 Sep 2026 (01:00 PM)",
-      checkOut: "21 Sep 2026 (08:00 AM)",
-      nights: 2,
-      roomType: "Deluxe AC Room",
-      noOfRooms: "Deluxe Rooms",
-      mealPlan: "MAP (Breakfast + Dinner)",
-      confirmationNo: "CONF-RK-M6",
-      specialRequest: "Ram Jhula, Triveni Ghat & Har Ki Pauri Ganga Aarti; return to Mathura"
-    }
-  ]
-};
-
 const PRESET_CHARDHAM_10D: HotelVoucherData = {
   voucherNo: "TV-2026-CH01",
   tripDates: "12 Sep 2026 to 20 Sep 2026",
@@ -1299,13 +1185,6 @@ export default function HotelVouchersPage() {
                 title="10 Days / 9 Nights Chardham for 12 Pax Tempo Traveller"
               >
                 10D Chardham (12 Pax Deluxe)
-              </button>
-              <button
-                onClick={() => updateData(PRESET_MATHURA_12D)}
-                className="px-2 py-1 bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-300 rounded text-xs font-semibold transition cursor-pointer"
-                title="12 Days / 11 Nights from Mathura with Kedarnath Heli (Mr. Ghanshyam)"
-              >
-                12D Chardham (Mathura & Heli)
               </button>
               <button
                 onClick={() => updateData(PRESET_CHARDHAM_10D)}
