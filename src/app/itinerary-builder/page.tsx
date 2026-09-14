@@ -69,6 +69,7 @@ export interface HotelPhoto {
   roomType?: string;
   caption?: string;
   fit?: "cover" | "contain";
+  position?: "center" | "top" | "bottom";
 }
 
 export interface DayPlan {
@@ -133,6 +134,18 @@ export interface ItineraryData {
   showPhotosPage3?: boolean;
   hotelPhotos?: HotelPhoto[];
   showHotelPhotos?: boolean;
+
+  // Trust & Credentials (Owner Photo, Certificate, Office Image)
+  trustPhotos?: {
+    ownerPhoto?: string;
+    ownerName?: string;
+    ownerTitle?: string;
+    certificatePhoto?: string;
+    certificateCaption?: string;
+    officePhoto?: string;
+    officeCaption?: string;
+  };
+  showTrustSection?: boolean;
 }
 
 export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
@@ -385,7 +398,17 @@ const CHARDHAM_PRESET: ItineraryData = {
   hotelPhotos: CURATED_HOTEL_PHOTO_PRESETS,
   showPhotosPage1: true,
   showPhotosPage3: true,
-  showHotelPhotos: true
+  showHotelPhotos: true,
+  trustPhotos: {
+    ownerPhoto: "/gallery/chardham_10d_img_7.jpg",
+    ownerName: "Amit Chandra",
+    ownerTitle: "Founder & Managing Director",
+    certificatePhoto: "",
+    certificateCaption: "Govt. Registered Tour Operator",
+    officePhoto: "/gallery/chardham_10d_img_27.jpg",
+    officeCaption: "Our Booking Office — Haridwar"
+  },
+  showTrustSection: true
 };
 
 // Exact preset matching the client's 10 Days / 09 Nights 12-Pax Chardham Yatra Package
@@ -1000,6 +1023,19 @@ export default function ItineraryBuilder() {
                 }
                 return hp;
               });
+            }
+            // Auto-migrate trust & credentials photos
+            if (!parsed.trustPhotos || !parsed.trustPhotos.ownerPhoto || parsed.trustPhotos.ownerPhoto.includes("img_7")) {
+              parsed.trustPhotos = {
+                ownerPhoto: "/certificates/owner.jpeg",
+                ownerName: "Amit Chandra",
+                ownerTitle: "Founder & Managing Director",
+                certificatePhoto: "/certificates/uttrakhand_tourism.jpeg",
+                certificateCaption: "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176",
+                officePhoto: "/certificates/office_front.jpeg",
+                officeCaption: "Booking Office: Pursharthi Market, Haridwar"
+              };
+              parsed.showTrustSection = true;
             }
             setData(parsed);
           }
@@ -2147,106 +2183,108 @@ ${data.motto}`;
         <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 space-y-2.5">
-        <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-2 flex items-center justify-between">
+      <div className="relative z-10 space-y-2">
+        <h2 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-1.5 flex items-center justify-between">
           <span>Detailed Day-Wise Itinerary ({data.duration || `${data.days.length} Days / ${Math.max(1, data.days.length - 1)} Nights Plan`})</span>
-          {data.days.length > 8 && (
-            <span className="text-xs font-sans font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
-              Part 1 · Days 1 to 8
-            </span>
-          )}
+          <span className="text-[10px] font-sans font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+            Complete Day 1 to Day {Math.min(10, data.days.length)} Plan
+          </span>
         </h2>
 
-        <div className="space-y-2">
-          {data.days.slice(0, 8).map(day => (
-            <div key={day.id} className="text-xs space-y-1">
-              <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
-                <span>DAY {day.dayNumber}</span>
-                {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
-                  <>
-                    <span className="opacity-75">·</span>
-                    <span>{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
-                  </>
+        <div className="space-y-1.5">
+          {data.days.slice(0, 10).map(day => (
+            <div key={day.id} className="text-xs space-y-0.5">
+              <div className="bg-[#0369a1] text-white px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide flex items-center justify-between">
+                <div className="flex items-center gap-1.5 truncate">
+                  <span>DAY {day.dayNumber}</span>
+                  {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
+                    <>
+                      <span className="opacity-75">·</span>
+                      <span className="font-normal opacity-90">{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
+                    </>
+                  )}
+                  <span className="opacity-75">·</span>
+                  <span className="truncate">{day.route}</span>
+                </div>
+                {day.overnightStay && (
+                  <span className="text-[9px] bg-sky-900/60 px-1.5 py-0.2 rounded font-medium shrink-0 ml-1 text-sky-100">
+                    Stay: {day.overnightStay}
+                  </span>
                 )}
-                <span className="opacity-75">·</span>
-                <span className="truncate">{day.route}</span>
               </div>
 
-              <ul className="pl-3 space-y-0.5 text-gray-800 text-[10.5px]">
+              <ul className="pl-3 space-y-0.5 text-gray-800 text-[9.5px]">
                 {day.activities.map((act, aIdx) => (
-                  <li key={aIdx} className="leading-snug">
+                  <li key={aIdx} className="leading-tight">
                     – {act}
                   </li>
                 ))}
               </ul>
-
-              <p className="pl-3 text-[9.5px] text-amber-900 italic font-semibold">
-                Overnight Stay: {day.overnightStay}
-              </p>
             </div>
           ))}
         </div>
 
         {/* If fewer than 8 days, fill empty bottom space with holy sightseeing photos & yatra assurances */}
-        {data.days.length <= 7 && (
-          <div className="mt-3 space-y-2">
-            {/* Sacred Sightseeing Highlights Strip */}
-            {data.photos && data.photos.length > 0 && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-[11px] font-bold text-[#0369a1]">
-                  <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
-                  <span className="text-[9.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {data.photos.slice(0, 3).map((photo, pIdx) => (
-                    <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white">
-                      <div className="h-20 overflow-hidden bg-gray-100">
-                        <img 
-                          src={photo.url} 
-                          alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      {photo.caption && (
-                        <p className="text-[8.5px] font-semibold text-gray-800 p-1 text-center truncate bg-sky-50/50">
-                          {photo.caption}
-                        </p>
-                      )}
+        {data.days.length <= 7 && data.photos && data.photos.length > 0 && (
+          <div className="mt-2 space-y-1">
+            <div className="flex items-center justify-between text-[10.5px] font-bold text-[#0369a1]">
+              <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
+              <span className="text-[9px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              {data.photos.slice(0, 3).map((photo, pIdx) => {
+                const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
+                const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
+                return (
+                  <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white">
+                    <div className="h-16 overflow-hidden bg-gray-100 flex items-center justify-center">
+                      <img 
+                        src={photo.url} 
+                        alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
+                        className={`w-full h-full ${fitClass} ${posClass}`}
+                      />
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Comfort Standards & Assurances */}
-            <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
-              <div className="flex items-center justify-between text-[10.5px] font-bold text-[#0369a1] mb-1.5">
-                <span>✦ Pilgrimage Yatra Highlights & Comfort Standards</span>
-                <span className="text-[9.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2 text-[9.5px] text-gray-700">
-                <div className="bg-white/90 p-2 rounded-lg border border-sky-100 shadow-2xs">
-                  <p className="font-bold text-gray-900">Dedicated Hill Vehicle</p>
-                  <p className="text-[9px] text-gray-500 mt-0.5 leading-snug">
-                    Experienced mountain chauffeur, sanitised vehicle (Non-AC in hills), all tolls & permits included.
-                  </p>
-                </div>
-                <div className="bg-white/90 p-2 rounded-lg border border-sky-100 shadow-2xs">
-                  <p className="font-bold text-gray-900">Confirmed Clean Stays</p>
-                  <p className="text-[9px] text-gray-500 mt-0.5 leading-snug">
-                    Pre-verified standard clean hotels & alpine camps with hot water and hygienic pure veg meals.
-                  </p>
-                </div>
-                <div className="bg-white/90 p-2 rounded-lg border border-sky-100 shadow-2xs">
-                  <p className="font-bold text-gray-900">24/7 Yatra Support</p>
-                  <p className="text-[9px] text-gray-500 mt-0.5 leading-snug">
-                    Dedicated tour coordinator assistance for darshan slip, registration & emergency aid.
-                  </p>
-                </div>
-              </div>
+                    {photo.caption && (
+                      <p className="text-[8px] font-semibold text-gray-800 p-0.5 text-center truncate bg-sky-50/50">
+                        {photo.caption}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}
+
+        {/* Comfort Standards & Assurances */}
+        <div className="pt-1.5">
+          <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
+            <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1] mb-1">
+              <span>✦ Pilgrimage Yatra Highlights & Mountain Support</span>
+              <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-[9px] text-gray-700">
+              <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                <p className="font-bold text-gray-900">Dedicated Mountain Fleet</p>
+                <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                  Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
+                </p>
+              </div>
+              <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                <p className="font-bold text-gray-900">Clean Verified Stays</p>
+                <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                  Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
+                </p>
+              </div>
+              <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                <p className="font-bold text-gray-900">24/7 Pilgrimage Desk</p>
+                <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                  Darshan slip assistance, registration support & 24/7 route coordination.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Page 2 Footer */}
@@ -2279,16 +2317,16 @@ ${data.motto}`;
 
       <div className="relative z-10 space-y-2.5">
         
-        {/* Remaining Days (Days 9+) */}
-        {data.days.slice(8).length > 0 && (
+        {/* Remaining Days (Only for large itineraries > 10 days) */}
+        {data.days.length > 10 && (
           <div className="space-y-1.5">
             <h4 className="text-xs font-serif font-bold text-[#0369a1] border-b border-sky-100 pb-0.5 flex items-center justify-between">
-              <span>Detailed Day-Wise Itinerary (Continued — Days 9 to {data.days.length} of {data.days.length} Days)</span>
+              <span>Detailed Day-Wise Itinerary (Continued — Days 11 to {data.days.length} of {data.days.length} Days)</span>
               <span className="text-[10px] font-sans font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">
-                Part 2 · Concluding Days
+                Part 2 · Extended Days
               </span>
             </h4>
-            {data.days.slice(8).map(day => (
+            {data.days.slice(10).map(day => (
               <div key={day.id} className="text-xs space-y-0.5">
                 <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
                   <span>DAY {day.dayNumber}</span>
@@ -2375,11 +2413,11 @@ ${data.motto}`;
                   : hp.url;
                 return (
                   <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                    <div className="h-24 relative overflow-hidden bg-gray-100">
+                    <div className="h-28 relative overflow-hidden bg-slate-50 flex items-center justify-center">
                       <img 
                         src={safeUrl} 
                         alt={hp.roomType || 'Accommodation'} 
-                        className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain bg-slate-900' : 'object-cover'}`}
+                        className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain bg-slate-50' : 'object-cover'} ${hp.position || 'object-center'}`}
                       />
                       <span className={`absolute top-1 right-1 text-[8px] font-bold px-1.5 py-0.5 rounded shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
                         {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Standard Room')}
@@ -2419,11 +2457,11 @@ ${data.motto}`;
             <div className={`grid gap-2 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
               {data.photos.slice(0, 6).map((photo, pIdx) => {
                 const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-                const fitClass = photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover";
+                const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
 
                 return (
                   <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/25 shadow-2xs bg-gray-50 flex flex-col">
-                    <div className={`${data.hotelPhotos && data.hotelPhotos.length > 0 ? 'h-20' : 'h-28'} relative overflow-hidden bg-gray-100`}>
+                    <div className={`${data.hotelPhotos && data.hotelPhotos.length > 0 ? 'h-24' : 'h-32'} relative overflow-hidden bg-slate-50 flex items-center justify-center`}>
                       <img 
                         src={photo.url} 
                         alt={photo.caption || `Landmark ${pIdx + 1}`} 
@@ -2535,6 +2573,77 @@ ${data.motto}`;
             ))}
           </ul>
         </div>
+
+        {/* Trust & Credentials Section — Owner, Certificate, Office */}
+        {data.showTrustSection !== false && data.trustPhotos && (data.trustPhotos.ownerPhoto || data.trustPhotos.certificatePhoto || data.trustPhotos.officePhoto) && (
+          <div className="pt-2 border-t border-gray-200 space-y-1.5">
+            <h3 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-2">
+              <span>🏆 Why Trust Us — Our Credentials</span>
+              <span className="text-[9px] font-normal px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                Govt. Registered & Verified
+              </span>
+            </h3>
+            <div className={`grid gap-3 ${[data.trustPhotos.ownerPhoto, data.trustPhotos.certificatePhoto, data.trustPhotos.officePhoto].filter(Boolean).length === 1 ? 'grid-cols-1' : [data.trustPhotos.ownerPhoto, data.trustPhotos.certificatePhoto, data.trustPhotos.officePhoto].filter(Boolean).length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              
+              {/* Owner Photo */}
+              {data.trustPhotos.ownerPhoto && (
+                <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                  <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center">
+                    <img 
+                      src={data.trustPhotos.ownerPhoto} 
+                      alt={data.trustPhotos.ownerName || "Owner"} 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="p-1.5 bg-sky-50/40 text-center">
+                    <p className="text-[10px] font-bold text-gray-900 leading-tight">
+                      {data.trustPhotos.ownerName || "Owner"}
+                    </p>
+                    <p className="text-[8.5px] text-[#0369a1] font-semibold">
+                      {data.trustPhotos.ownerTitle || "Founder & Director"}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Certificate Photo */}
+              {data.trustPhotos.certificatePhoto && (
+                <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                  <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center">
+                    <img 
+                      src={data.trustPhotos.certificatePhoto} 
+                      alt="Certificate" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="p-1.5 bg-sky-50/40 text-center">
+                    <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                      {data.trustPhotos.certificateCaption || "Govt. Registered Tour Operator"}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Office Photo */}
+              {data.trustPhotos.officePhoto && (
+                <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                  <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center">
+                    <img 
+                      src={data.trustPhotos.officePhoto} 
+                      alt="Office" 
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="p-1.5 bg-sky-50/40 text-center">
+                    <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                      {data.trustPhotos.officeCaption || "Our Booking Office"}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* For Bookings & Queries Center Box */}
         <div className="flex flex-col items-center justify-center text-center pt-1.5">
@@ -3432,19 +3541,67 @@ ${data.motto}`;
                               placeholder="/gallery/... or upload above"
                             />
                             {hp.url && (
-                              <div className="mt-1 flex items-center gap-2">
-                                <div className="h-10 w-16 rounded overflow-hidden border border-gray-200 shrink-0">
-                                  <img 
-                                    src={hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url} 
-                                    alt={hp.hotelName} 
-                                    className="w-full h-full object-cover" 
-                                  />
+                              <div className="mt-1 space-y-1">
+                                <div className="flex items-center gap-2">
+                                  <div className="h-10 w-16 rounded overflow-hidden border border-gray-200 shrink-0 bg-slate-50 flex items-center justify-center">
+                                    <img 
+                                      src={hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url} 
+                                      alt={hp.hotelName} 
+                                      className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain' : 'object-cover'}`} 
+                                    />
+                                  </div>
+                                  <span className="text-[9px] text-gray-400 font-mono truncate max-w-[180px]">
+                                    {hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url}
+                                  </span>
                                 </div>
-                                <span className="text-[9px] text-gray-400 font-mono truncate max-w-[180px]">
-                                  {hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url}
-                                </span>
+                                <div className="flex items-center justify-between bg-gray-50 px-2 py-1 rounded border border-gray-100">
+                                  <span className="text-[9px] text-gray-500 font-medium">Photo Fit:</span>
+                                  <div className="flex gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => updateHotelPhoto(hp.id, "fit", "cover")}
+                                      className={`text-[9px] px-2 py-0.5 rounded font-semibold ${hp.fit !== 'contain' ? 'bg-sky-600 text-white' : 'bg-white text-gray-700 border border-gray-200'}`}
+                                      title="Fill container (landscape)"
+                                    >
+                                      Cover (Fill)
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => updateHotelPhoto(hp.id, "fit", "contain")}
+                                      className={`text-[9px] px-2 py-0.5 rounded font-semibold ${hp.fit === 'contain' ? 'bg-sky-600 text-white' : 'bg-white text-gray-700 border border-gray-200'}`}
+                                      title="Show full photo without cutting portrait/vertical shots"
+                                    >
+                                      Contain (No Cut)
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             )}
+
+                            {/* Quick Select from Uploaded Hotel Stays */}
+                            <div className="mt-1">
+                              <span className="text-[9px] text-gray-400 block mb-0.5">Quick pick uploaded stay photo:</span>
+                              <div className="flex gap-1 overflow-x-auto py-0.5 custom-scrollbar">
+                                {[
+                                  { url: "/hotels_custom/hotel_stay_2.jpeg", label: "Quad Room" },
+                                  { url: "/hotels_custom/hotel_stay_4.jpeg", label: "Double Bed" },
+                                  { url: "/hotels_custom/hotel_stay_3.jpeg", label: "Mountain Stay" },
+                                  { url: "/hotels_custom/hotel_stay_6.jpeg", label: "Twin Room" },
+                                  { url: "/hotels_custom/hotel_stay_7.jpeg", label: "Deluxe Bed" },
+                                  { url: "/hotels_custom/hotel_stay_1.jpeg", label: "Bath/Geyser" },
+                                  { url: "/gallery/kedarnath_alpine_tent.jpg", label: "Alpine Tent" }
+                                ].map((pic, pIdx) => (
+                                  <button
+                                    key={pIdx}
+                                    type="button"
+                                    onClick={() => updateHotelPhoto(hp.id, "url", pic.url)}
+                                    className={`text-[8.5px] px-1.5 py-0.5 rounded shrink-0 border transition ${hp.url === pic.url ? 'bg-sky-100 text-sky-800 border-sky-300 font-bold' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                                  >
+                                    {pic.label}
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
                           </div>
                         </div>
 
@@ -3461,6 +3618,230 @@ ${data.motto}`;
                       </div>
                     );
                   })}
+                </div>
+              </div>
+
+              {/* Trust & Credentials Editor — Owner, Certificate, Office */}
+              <div className="bg-gradient-to-br from-emerald-50/60 via-teal-50/40 to-white border-2 border-emerald-200 rounded-2xl p-4 space-y-3 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">🏆</span>
+                    <div>
+                      <h3 className="font-bold text-emerald-950 text-xs">Trust & Credentials (Page 4)</h3>
+                      <p className="text-[10px] text-emerald-800">Owner photo, registration certificate & office image</p>
+                    </div>
+                  </div>
+                  <label className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-lg border border-emerald-200">
+                    <input
+                      type="checkbox"
+                      checked={data.showTrustSection !== false}
+                      onChange={e => setData({ ...data, showTrustSection: e.target.checked })}
+                      className="rounded"
+                    />
+                    Show in PDF
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3">
+                  {/* Owner Photo */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-bold text-gray-700">👤 Owner Photo</label>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            ownerPhoto: "/certificates/owner.jpeg",
+                            ownerName: "Amit Chandra",
+                            ownerTitle: "Founder & Managing Director"
+                          }
+                        }))}
+                        className="text-[9px] px-1.5 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 text-center"
+                      >
+                        Office Desk
+                      </button>
+                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded border border-emerald-200">
+                        📤 Upload
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                setData(prev => ({
+                                  ...prev,
+                                  trustPhotos: { ...prev.trustPhotos, ownerPhoto: reader.result as string }
+                                }));
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    {data.trustPhotos?.ownerPhoto && (
+                      <div className="h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                        <img src={data.trustPhotos.ownerPhoto} alt="Owner" className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <input
+                      type="text"
+                      value={data.trustPhotos?.ownerName || ""}
+                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, ownerName: e.target.value } }))}
+                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                      placeholder="Owner Name"
+                    />
+                    <input
+                      type="text"
+                      value={data.trustPhotos?.ownerTitle || ""}
+                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, ownerTitle: e.target.value } }))}
+                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                      placeholder="Title e.g. Founder & Director"
+                    />
+                  </div>
+
+                  {/* Certificate Photo */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-bold text-gray-700">📜 Certificate</label>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            certificatePhoto: "/certificates/uttrakhand_tourism.jpeg",
+                            certificateCaption: "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176"
+                          }
+                        }))}
+                        className="text-[9px] px-1 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 truncate"
+                        title="Tourism Development Board Certificate"
+                      >
+                        Tourism Reg.
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            certificatePhoto: "/certificates/certificate.jpeg",
+                            certificateCaption: "Transport Authority Reg: 44/आरटीए/2025"
+                          }
+                        }))}
+                        className="text-[9px] px-1 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded font-semibold border border-purple-200 flex-1 truncate"
+                        title="Transport Authority License"
+                      >
+                        RTA License
+                      </button>
+                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded border border-emerald-200">
+                        📤
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                setData(prev => ({
+                                  ...prev,
+                                  trustPhotos: { ...prev.trustPhotos, certificatePhoto: reader.result as string }
+                                }));
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    {data.trustPhotos?.certificatePhoto && (
+                      <div className="h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                        <img src={data.trustPhotos.certificatePhoto} alt="Certificate" className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <input
+                      type="text"
+                      value={data.trustPhotos?.certificateCaption || ""}
+                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, certificateCaption: e.target.value } }))}
+                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                      placeholder="e.g. Govt. Registered Tour Operator"
+                    />
+                  </div>
+
+                  {/* Office Photo */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-bold text-gray-700">🏢 Office Photo</label>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            officePhoto: "/certificates/office_front.jpeg",
+                            officeCaption: "Booking Office: Pursharthi Market, Haridwar"
+                          }
+                        }))}
+                        className="text-[9px] px-1 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 truncate"
+                      >
+                        Front Board
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            officePhoto: "/gallery/chardham_10d_img_27.jpg",
+                            officeCaption: "Booking Desk — Haridwar"
+                          }
+                        }))}
+                        className="text-[9px] px-1 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 truncate"
+                      >
+                        Inner Desk
+                      </button>
+                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded border border-emerald-200">
+                        📤
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                setData(prev => ({
+                                  ...prev,
+                                  trustPhotos: { ...prev.trustPhotos, officePhoto: reader.result as string }
+                                }));
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+                    {data.trustPhotos?.officePhoto && (
+                      <div className="h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                        <img src={data.trustPhotos.officePhoto} alt="Office" className="w-full h-full object-contain" />
+                      </div>
+                    )}
+                    <input
+                      type="text"
+                      value={data.trustPhotos?.officeCaption || ""}
+                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, officeCaption: e.target.value } }))}
+                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                      placeholder="e.g. Our Booking Office — Haridwar"
+                    />
+                  </div>
                 </div>
               </div>
 
