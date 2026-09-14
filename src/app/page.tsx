@@ -271,7 +271,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
           {[
             { label: "Itinerary Studio", desc: "PDF Proposals & Quotes", icon: Map, color: "text-blue-600", bg: "bg-blue-50", href: "/itinerary-builder" },
-            { label: "Tax Invoices", desc: "Bill of Supply & GST", icon: FileText, color: "text-sky-600", bg: "bg-sky-50", href: "/invoices" },
+            { label: "Billing Invoices", desc: "Advance & Booking Slips", icon: FileText, color: "text-sky-600", bg: "bg-sky-50", href: "/invoices" },
             { label: "Hotel Vouchers", desc: "Multi-Stay Accommodation", icon: Hotel, color: "text-cyan-600", bg: "bg-cyan-50", href: "/hotels" },
             { label: "Transport Vouchers", desc: "Vehicle & Fleet Allocation", icon: Car, color: "text-purple-600", bg: "bg-purple-50", href: "/transport" },
             { label: "Lead Pipeline", desc: "Kanban Inquiry Stages", icon: Users, color: "text-amber-600", bg: "bg-amber-50", href: "/leads" },

@@ -358,16 +358,16 @@ export default function SettingsPage() {
             />
           </div>
 
-          {/* GST Number */}
+          {/* Registration / License Number */}
           <div className="space-y-1.5">
             <label className="text-sm font-medium text-gray-500">
-              GST Number
+              Govt. Registration / License No.
             </label>
             <input
               type="text"
               value={settings.gst_number}
               onChange={(e) => update("gst_number", e.target.value)}
-              placeholder="22AAAAA0000A1Z5"
+              placeholder="UK-TO-2026-001"
               className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition"
             />
           </div>

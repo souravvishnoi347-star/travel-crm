@@ -36,7 +36,6 @@ export interface InvoiceData {
   guestName: string;
   guestPhone: string;
   guestEmail: string;
-  guestGst: string;
   dateType: string;
   travelDate: string;
   bookingDate: string;
@@ -88,7 +87,6 @@ const DEFAULT_INVOICE_DATA: InvoiceData = {
   guestName: "",
   guestPhone: "",
   guestEmail: "",
-  guestGst: "",
   dateType: "Travel Date",
   travelDate: "",
   bookingDate: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),

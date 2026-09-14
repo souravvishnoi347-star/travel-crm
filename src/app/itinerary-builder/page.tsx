@@ -162,11 +162,11 @@ export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
   },
   {
     id: "hp-4",
-    url: "/gallery/chardham_10d_img_32.jpg",
+    url: "/gallery/kedarnath_alpine_tent.jpg",
     hotelName: "Kedarnath Base Camp / Alpine Stay",
     location: "Kedarnath Dham",
     roomType: "Tent Only (Without Food)",
-    caption: "High-altitude mountain alpine camp / tent near shrine perimeter"
+    caption: "High-altitude mountain alpine camp / Swiss tents with warm bedding near shrine"
   }
 ];
 
@@ -992,6 +992,15 @@ export default function ItineraryBuilder() {
             if (!parsed.motto || parsed.motto === "ॐ नमः शिवाय" || parsed.motto === "!! HAR HAR MAHADEV !!") {
               parsed.motto = "जय श्री केदार · जय बद्री विशाल";
             }
+            // Auto-migrate tent stay photo away from car image
+            if (Array.isArray(parsed.hotelPhotos)) {
+              parsed.hotelPhotos = parsed.hotelPhotos.map((hp: any) => {
+                if (hp.url === "/gallery/chardham_10d_img_32.jpg" || (hp.roomType?.toLowerCase().includes("tent") && hp.url?.includes("img_32"))) {
+                  return { ...hp, url: "/gallery/kedarnath_alpine_tent.jpg" };
+                }
+                return hp;
+              });
+            }
             setData(parsed);
           }
         } catch {}
@@ -1021,6 +1030,14 @@ export default function ItineraryBuilder() {
               }
               if (!cloudData.motto || cloudData.motto === "ॐ नमः शिवाय" || cloudData.motto === "!! HAR HAR MAHADEV !!") {
                 cloudData.motto = "जय श्री केदार · जय बद्री विशाल";
+              }
+              if (Array.isArray(cloudData.hotelPhotos)) {
+                cloudData.hotelPhotos = cloudData.hotelPhotos.map((hp: any) => {
+                  if (hp.url === "/gallery/chardham_10d_img_32.jpg" || (hp.roomType?.toLowerCase().includes("tent") && hp.url?.includes("img_32"))) {
+                    return { ...hp, url: "/gallery/kedarnath_alpine_tent.jpg" };
+                  }
+                  return hp;
+                });
               }
               setData(cloudData);
               localStorage.setItem("triloki_current_itinerary", JSON.stringify(cloudData));
@@ -2131,8 +2148,13 @@ ${data.motto}`;
       </div>
 
       <div className="relative z-10 space-y-2.5">
-        <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-2">
-          Detailed Day-Wise Itinerary (Days 1 to {Math.min(8, data.days.length)})
+        <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-2 flex items-center justify-between">
+          <span>Detailed Day-Wise Itinerary ({data.duration || `${data.days.length} Days / ${Math.max(1, data.days.length - 1)} Nights Plan`})</span>
+          {data.days.length > 8 && (
+            <span className="text-xs font-sans font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+              Part 1 · Days 1 to 8
+            </span>
+          )}
         </h2>
 
         <div className="space-y-2">
@@ -2260,8 +2282,11 @@ ${data.motto}`;
         {/* Remaining Days (Days 9+) */}
         {data.days.slice(8).length > 0 && (
           <div className="space-y-1.5">
-            <h4 className="text-xs font-serif font-bold text-[#0369a1] border-b border-sky-100 pb-0.5">
-              Itinerary Continued (Days 9 to {data.days.length})
+            <h4 className="text-xs font-serif font-bold text-[#0369a1] border-b border-sky-100 pb-0.5 flex items-center justify-between">
+              <span>Detailed Day-Wise Itinerary (Continued — Days 9 to {data.days.length} of {data.days.length} Days)</span>
+              <span className="text-[10px] font-sans font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">
+                Part 2 · Concluding Days
+              </span>
             </h4>
             {data.days.slice(8).map(day => (
               <div key={day.id} className="text-xs space-y-0.5">
@@ -2345,11 +2370,14 @@ ${data.motto}`;
             <div className={`grid gap-2 ${data.hotelPhotos.length === 1 ? 'grid-cols-1' : data.hotelPhotos.length === 2 ? 'grid-cols-2' : data.hotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
               {data.hotelPhotos.slice(0, 4).map((hp, hIdx) => {
                 const isTent = hp.roomType?.toLowerCase().includes("tent");
+                const safeUrl = (isTent && (hp.url?.includes("32") || !hp.url)) || hp.url === "/gallery/chardham_10d_img_32.jpg"
+                  ? "/gallery/kedarnath_alpine_tent.jpg"
+                  : hp.url;
                 return (
                   <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
                     <div className="h-24 relative overflow-hidden bg-gray-100">
                       <img 
-                        src={hp.url} 
+                        src={safeUrl} 
                         alt={hp.roomType || 'Accommodation'} 
                         className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain bg-slate-900' : 'object-cover'}`}
                       />
@@ -3406,9 +3434,15 @@ ${data.motto}`;
                             {hp.url && (
                               <div className="mt-1 flex items-center gap-2">
                                 <div className="h-10 w-16 rounded overflow-hidden border border-gray-200 shrink-0">
-                                  <img src={hp.url} alt={hp.hotelName} className="w-full h-full object-cover" />
+                                  <img 
+                                    src={hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url} 
+                                    alt={hp.hotelName} 
+                                    className="w-full h-full object-cover" 
+                                  />
                                 </div>
-                                <span className="text-[9px] text-gray-400 font-mono truncate max-w-[180px]">{hp.url}</span>
+                                <span className="text-[9px] text-gray-400 font-mono truncate max-w-[180px]">
+                                  {hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url}
+                                </span>
                               </div>
                             )}
                           </div>
