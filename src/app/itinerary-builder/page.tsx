@@ -278,7 +278,7 @@ const CHARDHAM_PRESET: ItineraryData = {
     { package: "Deluxe", price: "₹ 38,500", hotelCategory: "3-Star Deluxe Hotels", meals: "Included (MAP)", specialFeature: "Included" },
     { package: "Luxury", price: "₹ 54,500", hotelCategory: "Luxury Resorts & Hotels", meals: "All Meals Included", specialFeature: "Included" }
   ],
-  pricingNote: "Note: 5% GST applicable extra on all packages, as per government norms. Rates are per person on twin/triple sharing basis.",
+  pricingNote: "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
 
   inclusions: [
     "AC vehicle (Innova Crysta / Tempo Traveller as per group size) for the entire 10-day yatra",
@@ -290,7 +290,6 @@ const CHARDHAM_PRESET: ItineraryData = {
     "Support team assistance throughout the yatra"
   ],
   exclusions: [
-    "5% GST, extra as applicable",
     "Personal expenses — laundry, tips, phone calls, shopping",
     "Pony, palki, doli or porter charges at Yamunotri & other trek points",
     "Overnight stay at Kedarnath (optional, available on request at extra cost)",
@@ -489,7 +488,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
     { package: "6 Pax Crysta Tour", price: "₹ 38,500 / Pax", hotelCategory: "Deluxe Rooms (Twin/Triple)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Innova Crysta AC" },
     { package: "VIP Heli Chardham", price: "₹ 62,500 / Pax", hotelCategory: "Deluxe / 4-Star Hotels", meals: "All Meals Included", specialFeature: "Kedarnath Heli Included" }
   ],
-  pricingNote: "Note: Total package cost for 12 Persons = ₹ 3,90,000/- (at ₹ 32,500 per person). 5% GST extra as applicable.",
+  pricingNote: "Note: Total package cost for 12 Persons = ₹ 3,90,000/- (at ₹ 32,500 per person). All tolls, parking, and driver charges included.",
 
   inclusions: [
     "Personal Taxi / Tempo Traveller Haridwar To Haridwar (Assistance On Arrival)",
@@ -906,7 +905,7 @@ SCHEMA:
     { "package": "Deluxe", "price": "₹ 34,500", "hotelCategory": "3-Star Deluxe", "meals": "All Meals Included", "specialFeature": "Included" },
     { "package": "Luxury", "price": "₹ 48,500", "hotelCategory": "Luxury Resorts", "meals": "All Meals Included", "specialFeature": "Priority Darshan" }
   ],
-  "pricingNote": "Note: 5% GST applicable extra on all packages. Rates are per person on twin/triple sharing basis.",
+  "pricingNote": "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
   "inclusions": [
     "AC vehicle (Innova Crysta / Tempo Traveller) for entire tour",
     "Selected hotel accommodation with specified meal plan",
@@ -914,7 +913,6 @@ SCHEMA:
     "24/7 on-ground assistance and registration support"
   ],
   "exclusions": [
-    "5% GST as applicable",
     "Personal expenses (laundry, phone, tips)",
     "Pony, palki or VIP darshan charges",
     "Anything not mentioned in inclusions"
@@ -1629,7 +1627,7 @@ ${data.motto}`;
 
       {/* Header / Logo */}
       <div className="relative z-10 flex flex-col items-center text-center pt-1">
-        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-14 w-auto object-contain mb-1.5" />
+        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-24 w-auto object-contain mb-1.5 drop-shadow-xs" />
         <p className="text-[10.5px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
         
         <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-2 uppercase">
@@ -2061,7 +2059,7 @@ ${data.motto}`;
 
         {/* For Bookings & Queries Center Box */}
         <div className="flex flex-col items-center justify-center text-center pt-1.5">
-          <img src="/logo.png" alt="logo" className="h-10 w-auto object-contain mb-0.5" />
+          <img src="/logo.png" alt="logo" className="h-14 w-auto object-contain mb-0.5 drop-shadow-xs" />
           <p className="text-[8.5px] uppercase tracking-widest text-gray-500 font-bold">For Bookings & Queries</p>
           <h4 className="text-sm font-serif font-bold text-[#0369a1]">{data.contactAgency}</h4>
           <p className="text-[11px] text-gray-800 font-semibold">{data.contactPerson}</p>
@@ -2736,7 +2734,7 @@ ${data.motto}`;
               </div>
 
               <div>
-                <label className="block font-medium text-gray-600 mb-1">Pricing Footnote (GST & Terms)</label>
+                <label className="block font-medium text-gray-600 mb-1">Pricing Footnote (Terms & Notes)</label>
                 <textarea
                   rows={2}
                   value={data.pricingNote}

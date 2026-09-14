@@ -405,7 +405,7 @@ const PRESET_CHARDHAM_10D: HotelVoucherData = {
   tripDuration: "10 Days / 09 Nights Chardham Tour",
   emergencyContact: "Mr. Amit kumar · +91 9719038278 (24x7 Helpline)",
   specialInstructions: "• Please present this original voucher with government photo ID at each hotel check-in.\n• Standard check-in time is 12:00 PM and check-out is 10:00 AM.\n• Early check-in is strictly subject to room availability upon arrival.\n• Pure vegetarian meals served across all destinations.",
-  inclusions: "• Accommodation on twin sharing basis as per selected categories.\n• Meal Plan: MAP (Daily Bed Tea, Buffet Breakfast & Dinner).\n• All applicable luxury, GST and hotel service taxes included.\n• 24x7 on-call ground tour assistance.",
+  inclusions: "• Accommodation on twin sharing basis as per selected categories.\n• Meal Plan: MAP (Daily Bed Tea, Buffet Breakfast & Dinner).\n• All applicable hotel taxes and service charges included.\n• 24x7 on-call ground tour assistance.",
   stays: [
     {
       id: "stay-1",
@@ -583,7 +583,7 @@ const BLANK_VOUCHER: HotelVoucherData = {
   tripDuration: "",
   emergencyContact: "Mr. Amit kumar · +91 9719038278 (24x7 Helpline)",
   specialInstructions: "• Please present this original voucher with government photo ID at each hotel check-in.\n• Standard check-in time is 12:00 PM and check-out is 10:00 AM.\n• Early check-in is strictly subject to room availability upon arrival.",
-  inclusions: "• Hotel accommodation as per confirmed room categories.\n• Meals as per specified meal plans (EP/CP/MAP/AP).\n• All applicable hotel and GST taxes included.",
+  inclusions: "• Hotel accommodation as per confirmed room categories.\n• Meals as per specified meal plans (EP/CP/MAP/AP).\n• All applicable hotel taxes included.",
   stays: [
     {
       id: "stay-1",

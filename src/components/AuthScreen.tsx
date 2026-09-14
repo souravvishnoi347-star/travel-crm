@@ -13,7 +13,6 @@ import {
   CheckCircle2, 
   ArrowLeft, 
   Loader2, 
-  Sparkles,
   PhoneCall
 } from "lucide-react";
 
@@ -23,7 +22,7 @@ export function AuthScreen() {
   const [mode, setMode] = useState<"login" | "forgot">("login");
   
   // Login Form States
-  const [loginId, setLoginId] = useState("admin@traveltouttrakhand.com");
+  const [loginId, setLoginId] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
@@ -31,7 +30,7 @@ export function AuthScreen() {
   const [loginError, setLoginError] = useState<string | null>(null);
 
   // Forgot Password States
-  const [forgotEmail, setForgotEmail] = useState("admin@traveltouttrakhand.com");
+  const [forgotEmail, setForgotEmail] = useState("");
   const [recoveryPin, setRecoveryPin] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -52,12 +51,6 @@ export function AuthScreen() {
       }
       setLoginLoading(false);
     }, 400);
-  };
-
-  const handleQuickFill = () => {
-    setLoginId("admin@traveltouttrakhand.com");
-    setLoginPassword("Devbhoomi@2026");
-    setLoginError(null);
   };
 
   const handleForgotSubmit = (e: React.FormEvent) => {
@@ -235,31 +228,6 @@ export function AuthScreen() {
                     </>
                   )}
                 </button>
-
-                {/* Quick Auto-Fill Info Card */}
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <div className="bg-sky-50/70 border border-sky-100 rounded-xl p-3 text-left">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[11px] font-bold text-sky-900 flex items-center gap-1.5">
-                        <Sparkles className="w-3.5 h-3.5 text-sky-600" />
-                        Default Admin Access:
-                      </span>
-                      <button
-                        type="button"
-                        onClick={handleQuickFill}
-                        className="text-[10px] font-bold text-sky-700 bg-white hover:bg-sky-100 px-2 py-0.5 rounded-md border border-sky-200 transition cursor-pointer shadow-2xs"
-                      >
-                        Auto-Fill
-                      </button>
-                    </div>
-                    <p className="text-[10.5px] text-gray-600">
-                      ID: <strong className="font-mono text-gray-900">admin@traveltouttrakhand.com</strong>
-                    </p>
-                    <p className="text-[10.5px] text-gray-600">
-                      Pass: <strong className="font-mono text-gray-900">Devbhoomi@2026</strong>
-                    </p>
-                  </div>
-                </div>
               </form>
             )}
 
@@ -320,25 +288,20 @@ export function AuthScreen() {
 
                 {/* Master Security PIN */}
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-xs font-semibold text-gray-700">
-                      Master Recovery PIN / Security Code
-                    </label>
-                    <span className="text-[10px] text-gray-500 font-mono">
-                      PIN: 971903
-                    </span>
-                  </div>
+                  <label className="block text-xs font-semibold text-gray-700">
+                    Master Recovery PIN / Security Code
+                  </label>
                   <input
-                    type="text"
+                    type="password"
                     required
                     maxLength={6}
                     value={recoveryPin}
                     onChange={(e) => setRecoveryPin(e.target.value)}
-                    placeholder="Enter 6-digit PIN (e.g. 971903)"
+                    placeholder="Enter 6-digit Security PIN"
                     className="w-full px-3.5 py-2 bg-gray-50/80 border border-gray-200 rounded-xl text-xs font-mono text-gray-900 tracking-wider focus:bg-white focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500"
                   />
                   <p className="text-[10px] text-gray-500">
-                    Linked to owner mobile: <strong>+91 9719038278</strong> (First 6 digits)
+                    Enter your authorized 6-digit administrative security code.
                   </p>
                 </div>
 

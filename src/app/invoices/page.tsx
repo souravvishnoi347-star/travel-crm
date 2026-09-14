@@ -196,12 +196,11 @@ export default function InvoicesPage() {
     const subTotal = data.packages.reduce((sum, pkg) => sum + (Number(pkg.amount) || 0), 0);
     const discount = Number(data.discount) || 0;
     const afterDiscount = Math.max(0, subTotal - discount);
-    const taxAmount = afterDiscount * ((Number(data.taxPercent) || 0) / 100);
-    const total = Math.round(afterDiscount + taxAmount);
+    const total = Math.round(afterDiscount);
     const paid = Number(data.amountPaid) || 0;
     const pending = total - paid;
-    return { subTotal, discount, taxAmount, total, paid, pending, totalWords: numberToWords(total) };
-  }, [data.packages, data.discount, data.taxPercent, data.amountPaid]);
+    return { subTotal, discount, taxAmount: 0, total, paid, pending, totalWords: numberToWords(total) };
+  }, [data.packages, data.discount, data.amountPaid]);
 
   const handleDownload = async () => {
     try {
@@ -333,13 +332,13 @@ export default function InvoicesPage() {
         <div className="space-y-3">
           {/* Header Branding */}
           <div className="flex flex-col items-center text-center pb-1.5 border-b border-gray-200">
-            <img src="/logo.png" alt="Logo" className="h-14 w-auto object-contain mb-1" />
+            <img src="/logo.png" alt="Logo" className="h-24 w-auto object-contain mb-1.5 drop-shadow-xs" />
             <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
             <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
-              TAX INVOICE
+              TOUR INVOICE
             </h1>
             <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
-              BILL OF SUPPLY & SERVICE INVOICE
+              BILL OF SUPPLY & SERVICE VOUCHER
             </p>
             <div className="text-[10px] text-gray-500 mt-1 flex flex-wrap justify-center gap-2">
               <span>Contact: <strong className="text-gray-700">+91 9719038278</strong></span>
@@ -364,14 +363,12 @@ export default function InvoicesPage() {
               <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.guestName}</h3>
               {data.guestPhone && <p className="text-gray-700 text-[10px]">Phone: <strong className="text-gray-900">{data.guestPhone}</strong></p>}
               {data.guestEmail && <p className="text-gray-700 text-[10px]">Email: {data.guestEmail}</p>}
-              {data.guestGst && <p className="text-gray-700 text-[10px]">GSTIN: <strong className="font-mono text-gray-900">{data.guestGst}</strong></p>}
             </div>
 
             <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 space-y-0.5">
               <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Billed By (Service Provider)</span>
               <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.companySettings}</h3>
               <p className="text-gray-700 text-[10px]">Registered Office: Haridwar / Dehradun, Uttarakhand</p>
-              <p className="text-gray-700 text-[10px]">GSTIN: <strong className="font-mono text-gray-900">05AAACT1234A1Z5</strong></p>
               <p className="text-gray-700 text-[10px]">Helpline: +91 9719038278</p>
             </div>
           </div>
@@ -381,11 +378,10 @@ export default function InvoicesPage() {
             <table className="w-full text-left">
               <thead className="bg-[#0369a1] text-white text-[10.5px] font-bold uppercase tracking-wider">
                 <tr>
-                  <th className="px-2.5 py-1.5 w-[7%] text-center">#</th>
-                  <th className="px-3 py-1.5 w-[55%]">Description of Tour Services & Packages</th>
-                  <th className="px-2.5 py-1.5 w-[12%] text-center">Pax / Qty</th>
-                  <th className="px-2.5 py-1.5 w-[13%] text-right">Rate (₹)</th>
-                  <th className="px-3 py-1.5 w-[13%] text-right">Amount (₹)</th>
+                  <th className="px-2.5 py-1.5 w-[8%] text-center">#</th>
+                  <th className="px-3 py-1.5 w-[64%]">Description of Tour Services & Packages</th>
+                  <th className="px-2.5 py-1.5 w-[14%] text-center">Pax / Qty</th>
+                  <th className="px-3 py-1.5 w-[14%] text-right">Amount (₹)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 text-[11px]">
@@ -394,7 +390,6 @@ export default function InvoicesPage() {
                     <td className="px-2.5 py-1.5 text-center text-gray-500 font-medium align-top">{idx + 1}</td>
                     <td className="px-3 py-1.5 text-gray-900 leading-snug font-medium align-top">{pkg.detail || "Custom Tour Package"}</td>
                     <td className="px-2.5 py-1.5 text-center text-gray-700 align-top">{pkg.person}</td>
-                    <td className="px-2.5 py-1.5 text-right text-gray-800 align-top font-mono">₹{Number(pkg.rate || 0).toLocaleString("en-IN")}</td>
                     <td className="px-3 py-1.5 text-right font-bold text-gray-900 align-top font-mono">₹{Number(pkg.amount || 0).toLocaleString("en-IN")}</td>
                   </tr>
                 ))}
@@ -437,12 +432,6 @@ export default function InvoicesPage() {
                       <td className="px-2.5 py-1 text-right font-mono font-semibold text-emerald-700">-₹{calculations.discount.toLocaleString("en-IN")}</td>
                     </tr>
                   )}
-                  {Number(data.taxPercent) > 0 && (
-                    <tr>
-                      <td className="px-2.5 py-1 text-gray-600 font-medium">GST ({data.taxPercent}%):</td>
-                      <td className="px-2.5 py-1 text-right font-mono font-semibold text-gray-900">₹{calculations.taxAmount.toLocaleString("en-IN")}</td>
-                    </tr>
-                  )}
                   <tr className="bg-[#0369a1] text-white">
                     <td className="px-2.5 py-1.5 font-bold uppercase tracking-wider text-[11px]">Grand Total:</td>
                     <td className="px-2.5 py-1.5 text-right font-bold text-xs font-mono">₹{calculations.total.toLocaleString("en-IN")}</td>
@@ -464,7 +453,7 @@ export default function InvoicesPage() {
         <div className="space-y-2 pt-1 border-t border-gray-200">
           <div className="flex justify-between items-center">
             <div className="flex items-center gap-2.5">
-              <img src="/logo.png" alt="logo" className="h-8 w-auto object-contain" />
+              <img src="/logo.png" alt="logo" className="h-11 w-auto object-contain" />
               <div>
                 <p className="text-[8px] uppercase tracking-widest text-gray-400 font-bold">Issued By</p>
                 <h4 className="text-xs font-serif font-bold text-[#0369a1]">Travel to Uttarakhand</h4>
@@ -572,10 +561,6 @@ export default function InvoicesPage() {
                   <input type="email" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs" value={data.guestEmail} onChange={e => setData({ ...data, guestEmail: e.target.value })} />
                 </div>
               </div>
-              <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">Client GSTIN (Optional)</label>
-                <input type="text" className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono" value={data.guestGst} onChange={e => setData({ ...data, guestGst: e.target.value })} />
-              </div>
             </div>
 
             {/* 3. Package & Services Items */}
@@ -618,17 +603,13 @@ export default function InvoicesPage() {
               </div>
             </div>
 
-            {/* 4. Tax, Discount, Advance */}
+            {/* 4. Discount & Advance Settlement */}
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Tax & Advance Settlement</span>
-              <div className="grid grid-cols-3 gap-2">
+              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Discount & Advance Settlement</span>
+              <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Discount (₹)</label>
                   <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono" value={data.discount} onChange={e => setData({ ...data, discount: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">GST %</label>
-                  <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono" value={data.taxPercent} onChange={e => setData({ ...data, taxPercent: e.target.value })} />
                 </div>
                 <div>
                   <label className="block text-[10px] text-gray-500 mb-0.5">Advance Paid (₹)</label>
