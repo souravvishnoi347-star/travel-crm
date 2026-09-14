@@ -62,16 +62,16 @@ const DEFAULT_INVOICE_DATA = {
   taxPercent: "5",
   discount: "0",
   amountPaid: "0",
-  bankName: "Bandhan Bank",
+  bankName: "Central Bank of India",
   accountHolder: "Travel to Uttarakhand",
-  accountNumber: "10180000573933",
-  ifscCode: "BDBL0001536",
+  accountNumber: "5242273759",
+  ifscCode: "CBIN0280274",
   accountType: "Current Account",
   branchName: "Haridwar Branch",
-  upiId: "traveluttarakhand@hdfcbank",
+  upiId: "",
   showUpiQr: true,
-  customQrUrl: "",
-  notes: `Bank Details for Remittance:\n• Beneficiary: Travel to Uttarakhand\n• Bank Name: Bandhan Bank\n• Account No: 10180000573933\n• IFSC Code: BDBL0001536\n• UPI ID: traveluttarakhand@hdfcbank\n\nTerms & Payment Conditions:\n• Advance payment required prior to trip commencement.\n• Rates include all applicable toll taxes, parking fees, and driver allowances.\n• Cancellation and rescheduling are governed by partner hotel & transport policies.`
+  customQrUrl: "/QR.jpg",
+  notes: `Bank Details for Remittance:\n• Beneficiary: Travel to Uttarakhand\n• Bank Name: Central Bank of India\n• Account No: 5242273759\n• IFSC Code: CBIN0280274\n\nTerms & Payment Conditions:\n• Advance payment required prior to trip commencement.\n• Rates include all applicable toll taxes, parking fees, and driver allowances.\n• Cancellation and rescheduling are governed by partner hotel & transport policies.`
 };
 
 export default function InvoicesPage() {
@@ -129,6 +129,15 @@ export default function InvoicesPage() {
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && parsed.packages?.length > 0) {
+            // If cached data has older mock bank details, migrate to actual Central Bank of India details
+            if (!parsed.accountNumber || parsed.accountNumber === "10180000573933") {
+              parsed.bankName = "Central Bank of India";
+              parsed.accountHolder = "Travel to Uttarakhand";
+              parsed.accountNumber = "5242273759";
+              parsed.ifscCode = "CBIN0280274";
+              parsed.upiId = "";
+              parsed.customQrUrl = "/QR.jpg";
+            }
             setData({ ...DEFAULT_INVOICE_DATA, ...parsed });
             return;
           }
@@ -145,8 +154,17 @@ export default function InvoicesPage() {
               .single();
 
             if (cloudInvoice && cloudInvoice.document_data && Array.isArray((cloudInvoice.document_data as any).packages)) {
-              setData({ ...DEFAULT_INVOICE_DATA, ...(cloudInvoice.document_data as any) });
-              localStorage.setItem("triloki_invoice_data", JSON.stringify(cloudInvoice.document_data));
+              const cloudData = cloudInvoice.document_data as any;
+              if (!cloudData.accountNumber || cloudData.accountNumber === "10180000573933") {
+                cloudData.bankName = "Central Bank of India";
+                cloudData.accountHolder = "Travel to Uttarakhand";
+                cloudData.accountNumber = "5242273759";
+                cloudData.ifscCode = "CBIN0280274";
+                cloudData.upiId = "";
+                cloudData.customQrUrl = "/QR.jpg";
+              }
+              setData({ ...DEFAULT_INVOICE_DATA, ...cloudData });
+              localStorage.setItem("triloki_invoice_data", JSON.stringify(cloudData));
             }
           } catch {}
         };
@@ -317,7 +335,7 @@ export default function InvoicesPage() {
   };
 
   const handleShareWhatsApp = () => {
-    const text = `*TAX INVOICE - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName},\n\nPlease find your invoice details:\n• Invoice No: ${data.invoiceNumber}\n• Date: ${data.bookingDate}\n• Total Amount: ₹${calculations.total.toLocaleString("en-IN")}\n• Advance Received: ₹${calculations.paid.toLocaleString("en-IN")}\n• Balance Due: ₹${calculations.pending.toLocaleString("en-IN")}\n\nBank: Bandhan Bank | A/C: 10180000573933 | IFSC: BDBL0001536 | UPI: traveluttarakhand@hdfcbank\n\nThank you for choosing Travel to Uttarakhand!`;
+    const text = `*TAX INVOICE - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName},\n\nPlease find your invoice details:\n• Invoice No: ${data.invoiceNumber}\n• Date: ${data.bookingDate}\n• Total Amount: ₹${calculations.total.toLocaleString("en-IN")}\n• Advance Received: ₹${calculations.paid.toLocaleString("en-IN")}\n• Balance Due: ₹${calculations.pending.toLocaleString("en-IN")}\n\nBank: ${data.bankName || "Central Bank of India"} | A/C: ${data.accountNumber || "5242273759"} | IFSC: ${data.ifscCode || "CBIN0280274"}${data.upiId ? ` | UPI: ${data.upiId}` : ""}\n\nThank you for choosing Travel to Uttarakhand!`;
     const encoded = encodeURIComponent(text);
     const phone = data.guestPhone ? data.guestPhone.replace(/[^0-9]/g, "") : "";
     window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
@@ -471,24 +489,32 @@ export default function InvoicesPage() {
                 </div>
                 <div>
                   <span className="text-gray-500">Bank Name: </span>
-                  <strong className="text-gray-900 font-semibold">{data.bankName || "Bandhan Bank"}</strong>
+                  <strong className="text-gray-900 font-semibold">{data.bankName || "Central Bank of India"}</strong>
                 </div>
                 <div>
                   <span className="text-gray-500">Account No: </span>
-                  <strong className="font-mono text-gray-900 font-bold tracking-wider">{data.accountNumber || "10180000573933"}</strong>
+                  <strong className="font-mono text-gray-900 font-bold tracking-wider">{data.accountNumber || "5242273759"}</strong>
                 </div>
                 <div>
                   <span className="text-gray-500">IFSC Code: </span>
-                  <strong className="font-mono text-gray-900 font-bold tracking-wider">{data.ifscCode || "BDBL0001536"}</strong>
+                  <strong className="font-mono text-gray-900 font-bold tracking-wider">{data.ifscCode || "CBIN0280274"}</strong>
                 </div>
               </div>
 
               <div className="pt-0.5 flex items-center gap-2 text-[9px] text-gray-600 flex-wrap">
-                <span className="text-gray-500">UPI ID / VPA:</span>
-                <span className="font-mono font-bold text-[#0369a1] bg-white px-2 py-0.5 rounded border border-sky-200">
-                  {data.upiId || "traveluttarakhand@hdfcbank"}
-                </span>
-                <span className="text-[8.5px] text-gray-400 italic">• 100% full settlement required before start of travel</span>
+                {data.upiId && data.upiId.trim() ? (
+                  <>
+                    <span className="text-gray-500">UPI ID / VPA:</span>
+                    <span className="font-mono font-bold text-[#0369a1] bg-white px-2 py-0.5 rounded border border-sky-200">
+                      {data.upiId}
+                    </span>
+                  </>
+                ) : (
+                  <span className="text-gray-500 font-medium">
+                    UPI ID: <span className="text-gray-400 italic font-mono">______________</span>
+                  </span>
+                )}
+                <span className="text-[8.5px] text-gray-400 italic ml-auto">• 100% full settlement required before start of travel</span>
               </div>
             </div>
 
@@ -497,19 +523,9 @@ export default function InvoicesPage() {
               <div className="shrink-0 flex flex-col items-center bg-white p-1.5 rounded-xl border border-sky-200 shadow-2xs">
                 <div className="w-[82px] h-[82px] relative overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
                   <img
-                    src={
-                      data.customQrUrl ||
-                      `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(
-                        `upi://pay?pa=${data.upiId || "traveluttarakhand@hdfcbank"}&pn=${encodeURIComponent(
-                          data.accountHolder || "Travel to Uttarakhand"
-                        )}&am=${calculations.pending > 0 ? calculations.pending : calculations.total}&cu=INR&tn=Invoice%20${encodeURIComponent(
-                          data.invoiceNumber || "INV-001"
-                        )}`
-                      )}`
-                    }
-                    alt="UPI Payment QR Code"
+                    src={data.customQrUrl || "/QR.jpg"}
+                    alt="Official UPI Payment QR Code"
                     className="w-full h-full object-contain"
-                    crossOrigin="anonymous"
                   />
                 </div>
                 <div className="mt-1 text-center">
@@ -722,7 +738,7 @@ export default function InvoicesPage() {
                   <input
                     type="text"
                     className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-medium"
-                    value={data.bankName ?? "Bandhan Bank"}
+                    value={data.bankName ?? "Central Bank of India"}
                     onChange={e => setData({ ...data, bankName: e.target.value })}
                   />
                 </div>
@@ -734,7 +750,7 @@ export default function InvoicesPage() {
                   <input
                     type="text"
                     className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono font-bold"
-                    value={data.accountNumber ?? "10180000573933"}
+                    value={data.accountNumber ?? "5242273759"}
                     onChange={e => setData({ ...data, accountNumber: e.target.value })}
                   />
                 </div>
@@ -743,7 +759,7 @@ export default function InvoicesPage() {
                   <input
                     type="text"
                     className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono font-bold uppercase"
-                    value={data.ifscCode ?? "BDBL0001536"}
+                    value={data.ifscCode ?? "CBIN0280274"}
                     onChange={e => setData({ ...data, ifscCode: e.target.value })}
                   />
                 </div>
@@ -751,13 +767,13 @@ export default function InvoicesPage() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">UPI ID / VPA</label>
+                  <label className="block text-[10px] text-gray-500 mb-0.5">UPI ID / VPA (Optional)</label>
                   <input
                     type="text"
                     className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono text-[#0369a1] font-bold"
-                    value={data.upiId ?? "traveluttarakhand@hdfcbank"}
+                    value={data.upiId ?? ""}
                     onChange={e => setData({ ...data, upiId: e.target.value })}
-                    placeholder="name@bank"
+                    placeholder="Leave blank or enter later"
                   />
                 </div>
                 <div>
@@ -772,16 +788,16 @@ export default function InvoicesPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">Custom QR Code Image URL (Optional)</label>
+                <label className="block text-[10px] text-gray-500 mb-0.5">QR Code Image Path / URL</label>
                 <input
                   type="text"
-                  className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs"
-                  placeholder="Leave empty to auto-generate dynamic UPI payment QR"
-                  value={data.customQrUrl ?? ""}
+                  className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono"
+                  placeholder="/QR.jpg"
+                  value={data.customQrUrl ?? "/QR.jpg"}
                   onChange={e => setData({ ...data, customQrUrl: e.target.value })}
                 />
                 <p className="text-[9px] text-gray-400 mt-0.5">
-                  When empty, a live scannable QR with invoice amount (₹{calculations.pending > 0 ? calculations.pending.toLocaleString("en-IN") : calculations.total.toLocaleString("en-IN")}) is automatically generated.
+                  Official QR image (/QR.jpg) loaded from your project folder.
                 </p>
               </div>
             </div>
