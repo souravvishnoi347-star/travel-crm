@@ -25,7 +25,13 @@ import {
   Bed,
   Utensils,
   Clock,
-  BedDouble
+  BedDouble,
+  Users,
+  FileSpreadsheet,
+  Upload,
+  Car,
+  Hash,
+  ShieldCheck
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
@@ -62,6 +68,110 @@ export interface HotelVoucherData {
   inclusions: string;
   emergencyContact: string;
   stays: HotelStay[];
+}
+
+// ----------------------------------------------------
+// GROUP TRAVEL / MULTI-GROUP ALLOCATION VOUCHER MODELS
+// ----------------------------------------------------
+export interface GroupMemberAllocation {
+  id: string;
+  sNo: number;
+  billNo: string;
+  member: string; // e.g. "4 Pax"
+  bedroom: string; // e.g. "1 FOUR BEDROOM"
+  name: string; // e.g. "VIJAY KUMAR"
+  mobileNo: string; // e.g. "8294655064"
+}
+
+export interface GroupHotelSchedule {
+  id: string;
+  date: string; // e.g. "28/04/2026"
+  place: string; // e.g. "BARKOT"
+  hotelName: string; // e.g. "HOTEL TRISHUL"
+  hotelMobile: string; // e.g. "8392932020"
+}
+
+export interface GroupTravelVoucherData {
+  voucherTitle: string; // "TRAVEL TO UTTARAKHAND (reg.)"
+  subTitle: string; // "CHARDHAM YATRA GROUP PACKAGE 10 DAYS"
+  officeAddress: string;
+  contactEmail: string;
+  contactPhones: string;
+  transportType: string; // "TEMPO TRAVELLER (Non-AC in Hills)"
+  yatraDates: string; // "28 APRIL TO 07 MAY"
+  carNumber: string; // "UK 07 TA 4821"
+  driverName: string; // "Dharmendra Singh"
+  driverMobile: string; // "9411582310"
+  remarks: string;
+  allocations: GroupMemberAllocation[];
+  hotelSchedules: GroupHotelSchedule[];
+}
+
+export const PRESET_GROUP_CHARDHAM_28APRIL: GroupTravelVoucherData = {
+  voucherTitle: "TRAVEL TO UTTARAKHAND (reg.)",
+  subTitle: "CHARDHAM YATRA GROUP PACKAGE 10 DAYS",
+  officeAddress: "OPP RAILWAY STATION GATE NO.2 HARIDWAR",
+  contactEmail: "traveltouttarakhand38@gmail.com",
+  contactPhones: "AMIT CHANDRA: +91 9719038278 · KULDEEP: +91 8449982466",
+  transportType: "TEMPO TRAVELLER (Non-AC in Hills)",
+  yatraDates: "28 APRIL TO 07 MAY 2026",
+  carNumber: "UK 07 TA 4821",
+  driverName: "Dharmendra Singh",
+  driverMobile: "9411582310",
+  remarks: "• Non-AC vehicle operates in hill and mountain terrains as per safety regulations.\n• Kedarnath accommodation is in camps/tents on a sharing basis as per high altitude norms.\n• All guests must carry valid original Government Photo ID (Aadhaar / Voter ID) at each check-in.\n• Group members must adhere to the morning departure timings announced by your tour manager/driver.",
+  allocations: [
+    { id: "ga-1", sNo: 1, billNo: "Bill 528", member: "4 Pax", bedroom: "1 FOUR BEDROOM", name: "VIJAY KUMAR", mobileNo: "8294655064" },
+    { id: "ga-2", sNo: 2, billNo: "Bill 533", member: "2 Pax", bedroom: "1 DOUBLE BEDROOM", name: "LAXMAN DARYANI", mobileNo: "9828468846" },
+    { id: "ga-3", sNo: 3, billNo: "Bill 527", member: "2 Pax", bedroom: "1 DOUBLE BEDROOM", name: "MAHESH KUMAR", mobileNo: "9861014590" },
+    { id: "ga-4", sNo: 4, billNo: "Bill 526", member: "2 Pax", bedroom: "1 DOUBLE BEDROOM", name: "SOHAN ARORA", mobileNo: "9414088688" },
+    { id: "ga-5", sNo: 5, billNo: "Bill 516", member: "5 Pax", bedroom: "1 DOUBLE AND 1 TRIPLE BED", name: "PARSHANT SINGH", mobileNo: "6355673714" },
+    { id: "ga-6", sNo: 6, billNo: "Bill 514", member: "2 Pax", bedroom: "1 DOUBLE BEDROOM", name: "PRASAD TARE", mobileNo: "9820541233" },
+    { id: "ga-7", sNo: 7, billNo: "Bill 515", member: "4+1 Pax", bedroom: "1 FOUR BEDROOM", name: "RANIT RANA", mobileNo: "9734589012" },
+    { id: "ga-8", sNo: 8, billNo: "Bill 518", member: "1 Pax", bedroom: "1 DOUBLE BEDROOM", name: "SUNITA LIMBOO", mobileNo: "9818765432" }
+  ],
+  hotelSchedules: [
+    { id: "gh-1", date: "28/04/2026", place: "BARKOT", hotelName: "HOTEL TRISHUL", hotelMobile: "8392932020" },
+    { id: "gh-2", date: "29/04/2026", place: "BARKOT", hotelName: "HOTEL TRISHUL", hotelMobile: "8392932020" },
+    { id: "gh-3", date: "30/04/2026", place: "UTTARKASHI HINA", hotelName: "HOTEL KAILASHA", hotelMobile: "9718640101" },
+    { id: "gh-4", date: "01/05/2026", place: "UTTARKASHI HINA", hotelName: "HOTEL KAILASHA", hotelMobile: "9718640101" },
+    { id: "gh-5", date: "02/05/2026", place: "PHATA", hotelName: "HOTEL MAA PAA", hotelMobile: "9634528441" },
+    { id: "gh-6", date: "03/05/2026", place: "KEDARNATH", hotelName: "BHAGWARI JI (Camps / Tents)", hotelMobile: "9068648285" },
+    { id: "gh-7", date: "04/05/2026", place: "PHATA", hotelName: "HOTEL MAA PAA", hotelMobile: "9634528441" },
+    { id: "gh-8", date: "05/05/2026", place: "PIPALKOTI", hotelName: "HOTEL DABRAL", hotelMobile: "7452827619" },
+    { id: "gh-9", date: "06/05/2026", place: "PIPALKOTI", hotelName: "HOTEL DABRAL", hotelMobile: "7452827619" }
+  ]
+};
+
+export const BLANK_GROUP_VOUCHER: GroupTravelVoucherData = {
+  voucherTitle: "TRAVEL TO UTTARAKHAND (reg.)",
+  subTitle: "CHARDHAM YATRA GROUP PACKAGE 10 DAYS",
+  officeAddress: "OPP RAILWAY STATION GATE NO.2 HARIDWAR",
+  contactEmail: "traveltouttarakhand38@gmail.com",
+  contactPhones: "AMIT CHANDRA: +91 9719038278 · KULDEEP: +91 8449982466",
+  transportType: "TEMPO TRAVELLER (Non-AC in Hills)",
+  yatraDates: "",
+  carNumber: "",
+  driverName: "",
+  driverMobile: "",
+  remarks: "• Non-AC vehicle operates in hill and mountain terrains as per safety regulations.\n• Kedarnath accommodation is in camps/tents on a sharing basis as per high altitude norms.\n• All guests must carry valid original Government Photo ID (Aadhaar / Voter ID).",
+  allocations: [
+    { id: "ga-1", sNo: 1, billNo: "Bill 001", member: "2 Pax", bedroom: "1 DOUBLE BEDROOM", name: "", mobileNo: "" }
+  ],
+  hotelSchedules: [
+    { id: "gh-1", date: "", place: "", hotelName: "", hotelMobile: "" }
+  ]
+};
+
+function parseExcelSerialDate(val: any): string {
+  if (!val && val !== 0) return "";
+  if (typeof val === "number" && val > 30000 && val < 60000) {
+    const jsDate = new Date(Math.round((val - 25569) * 86400 * 1000));
+    const d = String(jsDate.getDate()).padStart(2, "0");
+    const m = String(jsDate.getMonth() + 1).padStart(2, "0");
+    const y = jsDate.getFullYear();
+    return `${d}/${m}/${y}`;
+  }
+  return String(val).trim();
 }
 
 // Actual Old Voucher: Chardham 10 Days (Bill No. 604 - Mr. Jayesh Bhai Patel)
@@ -417,7 +527,7 @@ const PRESET_CHARDHAM_10D: HotelVoucherData = {
       checkIn: "15 May 2026 (12:00 PM)",
       checkOut: "16 May 2026 (10:00 AM)",
       nights: 1,
-      roomType: "Deluxe AC Room",
+      roomType: "Deluxe Room",
       noOfRooms: "02 Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-HW-101",
@@ -530,7 +640,7 @@ const PRESET_DODHAM_5D: HotelVoucherData = {
       checkIn: "15 May 2026 (12:00 PM)",
       checkOut: "16 May 2026 (07:00 AM)",
       nights: 1,
-      roomType: "Deluxe AC Room",
+      roomType: "Deluxe Room",
       noOfRooms: "01 Room",
       mealPlan: "MAP",
       confirmationNo: "CONF-HW-51",
@@ -605,7 +715,9 @@ const BLANK_VOUCHER: HotelVoucherData = {
 };
 
 export default function HotelVouchersPage() {
+  const [activeTab, setActiveTab] = useState<"single" | "group">("group");
   const [data, setData] = useState<HotelVoucherData>(PRESET_CHARDHAM_10D);
+  const [groupData, setGroupData] = useState<GroupTravelVoucherData>(PRESET_GROUP_CHARDHAM_28APRIL);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isFormCollapsed, setIsFormCollapsed] = useState(false);
   const [autoScale, setAutoScale] = useState<number>(0.55);
@@ -617,6 +729,19 @@ export default function HotelVouchersPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
+        const savedTab = localStorage.getItem("triloki_hotel_active_tab");
+        if (savedTab === "single" || savedTab === "group") {
+          setActiveTab(savedTab);
+        }
+
+        const savedGroup = localStorage.getItem("triloki_group_hotel_voucher");
+        if (savedGroup) {
+          const parsedGroup = JSON.parse(savedGroup);
+          if (parsedGroup && Array.isArray(parsedGroup.allocations) && parsedGroup.allocations.length > 0) {
+            setGroupData(parsedGroup);
+          }
+        }
+
         const saved = localStorage.getItem("triloki_multi_hotel_voucher");
         if (saved) {
           const parsed = JSON.parse(saved);
@@ -657,6 +782,255 @@ export default function HotelVouchersPage() {
       try {
         localStorage.setItem("triloki_multi_hotel_voucher", JSON.stringify(newData));
       } catch (e) {}
+    }
+  };
+
+  const updateGroupData = (newData: GroupTravelVoucherData) => {
+    setGroupData(newData);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("triloki_group_hotel_voucher", JSON.stringify(newData));
+      } catch (e) {}
+    }
+  };
+
+  const handleTabChange = (tab: "single" | "group") => {
+    setActiveTab(tab);
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("triloki_hotel_active_tab", tab);
+      } catch (e) {}
+    }
+  };
+
+  // Group Allocations CRUD
+  const addGroupAllocation = () => {
+    const nextSno = groupData.allocations.length + 1;
+    const newAlloc: GroupMemberAllocation = {
+      id: `ga-${Date.now()}`,
+      sNo: nextSno,
+      billNo: `Bill ${500 + nextSno}`,
+      member: "2 Pax",
+      bedroom: "1 DOUBLE BEDROOM",
+      name: "",
+      mobileNo: ""
+    };
+    updateGroupData({ ...groupData, allocations: [...groupData.allocations, newAlloc] });
+  };
+
+  const updateGroupAllocation = (index: number, updated: Partial<GroupMemberAllocation>) => {
+    const updatedAllocs = [...groupData.allocations];
+    updatedAllocs[index] = { ...updatedAllocs[index], ...updated };
+    updateGroupData({ ...groupData, allocations: updatedAllocs });
+  };
+
+  const removeGroupAllocation = (index: number) => {
+    if (groupData.allocations.length <= 1) {
+      alert("At least one booking allocation must be present.");
+      return;
+    }
+    const updatedAllocs = groupData.allocations.filter((_, i) => i !== index).map((row, i) => ({ ...row, sNo: i + 1 }));
+    updateGroupData({ ...groupData, allocations: updatedAllocs });
+  };
+
+  const moveGroupAllocation = (index: number, direction: "up" | "down") => {
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === groupData.allocations.length - 1) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const updated = [...groupData.allocations];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+    const reindexed = updated.map((row, i) => ({ ...row, sNo: i + 1 }));
+    updateGroupData({ ...groupData, allocations: reindexed });
+  };
+
+  // Group Hotel Schedules CRUD
+  const addGroupHotel = () => {
+    const newHotel: GroupHotelSchedule = {
+      id: `gh-${Date.now()}`,
+      date: "",
+      place: "",
+      hotelName: "",
+      hotelMobile: ""
+    };
+    updateGroupData({ ...groupData, hotelSchedules: [...groupData.hotelSchedules, newHotel] });
+  };
+
+  const updateGroupHotel = (index: number, updated: Partial<GroupHotelSchedule>) => {
+    const updatedHotels = [...groupData.hotelSchedules];
+    updatedHotels[index] = { ...updatedHotels[index], ...updated };
+    updateGroupData({ ...groupData, hotelSchedules: updatedHotels });
+  };
+
+  const removeGroupHotel = (index: number) => {
+    if (groupData.hotelSchedules.length <= 1) {
+      alert("At least one hotel schedule must be present.");
+      return;
+    }
+    const updatedHotels = groupData.hotelSchedules.filter((_, i) => i !== index);
+    updateGroupData({ ...groupData, hotelSchedules: updatedHotels });
+  };
+
+  const moveGroupHotel = (index: number, direction: "up" | "down") => {
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === groupData.hotelSchedules.length - 1) return;
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    const updated = [...groupData.hotelSchedules];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+    updateGroupData({ ...groupData, hotelSchedules: updated });
+  };
+
+  // Excel (.xlsx) File Importer
+  const handleExcelUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const XLSX = await import("xlsx");
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = XLSX.read(arrayBuffer, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const rows: any[][] = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      let parsedTitle = "TRAVEL TO UTTARAKHAND (reg.)";
+      let parsedSubtitle = "CHARDHAM YATRA GROUP PACKAGE 10 DAYS";
+      let parsedTransport = "TEMPO TRAVELLER (Non-AC in Hills)";
+      let parsedDates = "";
+      let parsedAddress = "OPP RAILWAY STATION GATE NO.2 HARIDWAR";
+      let parsedEmail = "traveltouttarakhand38@gmail.com";
+      let parsedPhones = "AMIT CHANDRA: +91 9719038278 · KULDEEP: +91 8449982466";
+      let parsedCar = "";
+      let parsedDriver = "";
+      let parsedDriverMobile = "";
+      let parsedRemarks = "• Non-AC vehicle operates in hill and mountain terrains as per safety regulations.\n• Kedarnath accommodation is in camps/tents on a sharing basis as per high altitude norms.\n• All guests must carry valid original Government Photo ID (Aadhaar / Voter ID) at each check-in.\n• Group members must adhere to the morning departure timings announced by your tour manager/driver.";
+
+      const allocations: GroupMemberAllocation[] = [];
+      const hotelSchedules: GroupHotelSchedule[] = [];
+
+      let inAllocationTable = false;
+      let inHotelTable = false;
+
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (!row || row.length === 0) continue;
+
+        const firstCell = String(row[0] || "").trim();
+        const rowText = row.map(c => String(c || "")).join(" ");
+
+        if (i === 0 && firstCell) {
+          parsedTitle = firstCell;
+        }
+        if (rowText.includes("CHARDHAM") || rowText.includes("YATRA GROUP PACKAGE")) {
+          parsedSubtitle = firstCell || rowText.trim();
+        }
+
+        if (rowText.includes("TRANSPORTATION") || rowText.includes("YATRA DATE")) {
+          const transMatch = rowText.match(/TRANSPORTATION\s*:\s*([^Y]+)/i);
+          if (transMatch) parsedTransport = transMatch[1].trim() + " (Non-AC in Hills)";
+          const dateMatch = rowText.match(/YATRA DATE\s*:\s*(.+)/i);
+          if (dateMatch) parsedDates = dateMatch[1].trim();
+        }
+
+        if (row.some(c => String(c).includes("BILLNO") || String(c).includes("BILL NO"))) {
+          inAllocationTable = true;
+          inHotelTable = false;
+          continue;
+        }
+
+        if (rowText.includes("TOTAL MEMBER") || rowText.includes("HOTEL DETAILS")) {
+          inAllocationTable = false;
+        }
+
+        if (row.some(c => String(c).includes("HOTEL NAME"))) {
+          inHotelTable = true;
+          inAllocationTable = false;
+          continue;
+        }
+
+        if (rowText.includes("CAR NUMBER")) {
+          inHotelTable = false;
+          const m = rowText.match(/CAR NUMBER\s*:\s*(.*)/i);
+          if (m && m[1].trim()) parsedCar = m[1].trim();
+        }
+        if (rowText.includes("DRIVER NAME")) {
+          const m = rowText.match(/DRIVER NAME\s*:\s*(.*)/i);
+          if (m && m[1].trim()) parsedDriver = m[1].trim();
+        }
+        if (rowText.includes("DRIVER MOBILE")) {
+          const m = rowText.match(/DRIVER MOBILE\s*(?:NO\.?)?\s*:\s*(.*)/i);
+          if (m && m[1].trim()) parsedDriverMobile = m[1].trim();
+        }
+        if (rowText.includes("REMARK")) {
+          const m = rowText.match(/REMARK\s*:\s*(.*)/i);
+          if (m && m[1].trim()) parsedRemarks = m[1].trim() + "\n" + parsedRemarks;
+        }
+
+        if (inAllocationTable) {
+          const sNo = Number(row[0]) || allocations.length + 1;
+          const rawBill = row[1] !== undefined ? String(row[1]).trim() : "";
+          const billNo = rawBill ? `Bill ${rawBill}`.replace(/Bill\s*Bill/i, "Bill") : "";
+          const rawMember = row[2] !== undefined ? String(row[2]).trim() : "";
+          const member = rawMember ? (rawMember.toLowerCase().includes("pax") ? rawMember : `${rawMember} Pax`) : "";
+          const bedroom = String(row[3] || "").trim();
+          const name = String(row[4] || "").trim();
+          const mob = String(row[5] || "").trim();
+
+          if (bedroom || name || billNo) {
+            allocations.push({
+              id: `ga-${Date.now()}-${allocations.length}`,
+              sNo,
+              billNo,
+              member,
+              bedroom,
+              name,
+              mobileNo: mob
+            });
+          }
+        }
+
+        if (inHotelTable) {
+          const dateVal = parseExcelSerialDate(row[0]);
+          const place = String(row[1] || "").trim();
+          const hotelName = String(row[2] || "").trim();
+          const hotelMobile = String(row[3] || "").trim();
+
+          if (place || hotelName || dateVal) {
+            hotelSchedules.push({
+              id: `gh-${Date.now()}-${hotelSchedules.length}`,
+              date: dateVal,
+              place,
+              hotelName,
+              hotelMobile
+            });
+          }
+        }
+      }
+
+      const updatedGroupData: GroupTravelVoucherData = {
+        voucherTitle: parsedTitle || groupData.voucherTitle,
+        subTitle: parsedSubtitle || groupData.subTitle,
+        officeAddress: parsedAddress,
+        contactEmail: parsedEmail,
+        contactPhones: parsedPhones,
+        transportType: parsedTransport || groupData.transportType,
+        yatraDates: parsedDates || groupData.yatraDates,
+        carNumber: parsedCar || groupData.carNumber,
+        driverName: parsedDriver || groupData.driverName,
+        driverMobile: parsedDriverMobile || groupData.driverMobile,
+        remarks: parsedRemarks || groupData.remarks,
+        allocations: allocations.length > 0 ? allocations : groupData.allocations,
+        hotelSchedules: hotelSchedules.length > 0 ? hotelSchedules : groupData.hotelSchedules
+      };
+
+      updateGroupData(updatedGroupData);
+      alert(`✓ Successfully imported Excel file!\nLoaded ${allocations.length} sub-group bookings and ${hotelSchedules.length} hotel stays.`);
+    } catch (err) {
+      alert("Could not parse Excel file: " + (err as Error).message);
+    } finally {
+      e.target.value = "";
     }
   };
 
@@ -775,47 +1149,73 @@ export default function HotelVouchersPage() {
     updateData({ ...data, stays: updatedStays });
   };
 
+  const totalGroupMembers = groupData.allocations.reduce((sum, item) => {
+    const match = item.member ? item.member.match(/(\d+)/) : null;
+    return sum + (match ? parseInt(match[1], 10) : 0);
+  }, 0);
+
   // High-Resolution 1-Page PDF Download (Clean A4 without splitting)
   const handleDownloadPdf = async () => {
     try {
       setIsDownloading(true);
-      const element = document.getElementById("print-multi-hotel-voucher");
+      const elementId = activeTab === "group" ? "print-group-hotel-voucher" : "print-multi-hotel-voucher";
+      const element = document.getElementById(elementId);
       if (!element) {
         alert("Could not find the print voucher container.");
         setIsDownloading(false);
         return;
       }
 
-      // Record in Supabase if online
-      try {
-        if (data.guestName) {
-          await supabase.from("vouchers").insert({
-            voucher_type: "hotel_tour",
-            guest_name: data.guestName,
-            document_data: data
+      if (activeTab === "group") {
+        try {
+          saveDocumentToHub({
+            id: `group-hotel-${Date.now()}`,
+            type: "hotel_voucher",
+            title: `Group Voucher - ${groupData.subTitle || "Chardham Group"}`,
+            docNumber: `GRP-${groupData.yatraDates ? groupData.yatraDates.split(" ")[0] : "2026"}`,
+            guestName: `${groupData.allocations.length} Sub-Groups (${totalGroupMembers} Pax)`,
+            guestPhone: groupData.driverMobile || groupData.contactPhones,
+            travelDates: groupData.yatraDates,
+            paxCount: `${totalGroupMembers} Pax · ${groupData.allocations.length} Rooms`,
+            detailsSummary: `${groupData.transportType} | ${groupData.hotelSchedules.length} Hotels: ${groupData.hotelSchedules.map(h => h.place).filter(Boolean).join(", ")}`,
+            studioUrl: "/hotels",
+            rawPayload: groupData
           });
+        } catch (hubErr) {
+          console.warn("Local hub save:", hubErr);
         }
-      } catch (dbError) {
-        console.warn("Cloud backup notice:", dbError);
-      }
+      } else {
+        // Record in Supabase if online
+        try {
+          if (data.guestName) {
+            await supabase.from("vouchers").insert({
+              voucher_type: "hotel_tour",
+              guest_name: data.guestName,
+              document_data: data
+            });
+          }
+        } catch (dbError) {
+          console.warn("Cloud backup notice:", dbError);
+        }
 
-      // Record in local Document Hub
-      try {
-        saveDocumentToHub({
-          id: `hotel-${data.voucherNo || Date.now()}`,
-          type: "hotel_voucher",
-          title: `Hotel Voucher - ${data.guestName || "Tour"}`,
-          docNumber: data.voucherNo || "TV-2026",
-          guestName: data.guestName || "Valued Guest",
-          guestPhone: data.guestPhone || "",
-          travelDates: data.tripDates || data.bookingId || "",
-          paxCount: data.totalPax || "",
-          detailsSummary: `${data.stays.length} Hotel/Camp Stay(s): ${data.stays.map(s => s.city || s.hotelName).filter(Boolean).join(", ")}`,
-          studioUrl: "/hotels",
-          rawPayload: data
-        });
-      } catch (hubErr) {
-        console.warn("Local hub save:", hubErr);
+        // Record in local Document Hub
+        try {
+          saveDocumentToHub({
+            id: `hotel-${data.voucherNo || Date.now()}`,
+            type: "hotel_voucher",
+            title: `Hotel Voucher - ${data.guestName || "Tour"}`,
+            docNumber: data.voucherNo || "TV-2026",
+            guestName: data.guestName || "Valued Guest",
+            guestPhone: data.guestPhone || "",
+            travelDates: data.tripDates || data.bookingId || "",
+            paxCount: data.totalPax || "",
+            detailsSummary: `${data.stays.length} Hotel/Camp Stay(s): ${data.stays.map(s => s.city || s.hotelName).filter(Boolean).join(", ")}`,
+            studioUrl: "/hotels",
+            rawPayload: data
+          });
+        } catch (hubErr) {
+          console.warn("Local hub save:", hubErr);
+        }
       }
 
       const html2canvasModule = await import("html2canvas-pro");
@@ -863,8 +1263,13 @@ export default function HotelVouchersPage() {
         console.warn("Could not attach PDF link annotations:", linkErr);
       }
       
-      const safeName = data.guestName ? data.guestName.replace(/[^a-zA-Z0-9]/g, "_") : "Tour";
-      pdf.save(`Hotel_Stay_Voucher_${safeName}_${data.voucherNo || "Doc"}.pdf`);
+      if (activeTab === "group") {
+        const safeDates = groupData.yatraDates ? groupData.yatraDates.replace(/[^a-zA-Z0-9]/g, "_") : "Group";
+        pdf.save(`Group_Hotel_Allocation_Voucher_${safeDates}.pdf`);
+      } else {
+        const safeName = data.guestName ? data.guestName.replace(/[^a-zA-Z0-9]/g, "_") : "Tour";
+        pdf.save(`Hotel_Stay_Voucher_${safeName}_${data.voucherNo || "Doc"}.pdf`);
+      }
     } catch (error: any) {
       console.error("PDF generation failed:", error);
       alert(`Failed to generate PDF: ${error.message || error}`);
@@ -874,31 +1279,64 @@ export default function HotelVouchersPage() {
   };
 
   // WhatsApp formatted share message
-  const handleShareWhatsApp = () => {
-    let message = `*🏨 HOTEL & STAY SERVICE VOUCHER*\n`;
-    message += `*Travel to Uttarakhand - Devbhoomi Hospitality*\n`;
+  const handleShareGroupWhatsApp = () => {
+    let message = `*TRAVEL TO UTTARAKHAND (reg.)*\n`;
+    message += `*GROUP HOTEL & ROOM ALLOCATION VOUCHER*\n`;
     message += `━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `📋 *Voucher No:* ${data.voucherNo || "N/A"}\n`;
-    message += `👤 *Guest Name:* ${data.guestName || "Guest"}\n`;
-    message += `👥 *Total Pax:* ${data.totalPax || "N/A"} (${data.totalRooms || "N/A"})\n`;
-    message += `🗓 *Duration:* ${data.tripDuration || "Tour Stay"}\n\n`;
-    message += `*CONFIRMED HOTEL / HOSTEL STAYS:*\n`;
+    message += `📋 *Tour:* ${groupData.subTitle}\n`;
+    message += `🚌 *Vehicle:* ${groupData.transportType}\n`;
+    message += `🗓 *Yatra Dates:* ${groupData.yatraDates}\n`;
+    message += `🚗 *Car No:* ${groupData.carNumber || "To be assigned"}\n`;
+    message += `👤 *Chauffeur:* ${groupData.driverName || "Assigned Driver"} (${groupData.driverMobile || "Will be shared"})\n\n`;
 
-    data.stays.forEach((stay, idx) => {
-      message += `\n📍 *${stay.nightsLabel || `Stop ${idx + 1}`}: ${stay.city || "Destination"}*\n`;
-      message += `• *Hotel:* ${stay.hotelName || "Hotel / Resort"}\n`;
-      if (stay.roomType) message += `• *Room:* ${stay.roomType} (${stay.noOfRooms})\n`;
-      if (stay.mealPlan) message += `• *Meal Plan:* ${stay.mealPlan}\n`;
-      if (stay.contactNo) message += `• *Hotel Contact:* ${stay.contactNo}\n`;
+    message += `*🏨 CONFIRMED HOTEL STAYS:*\n`;
+    groupData.hotelSchedules.forEach(h => {
+      message += `• ${h.date} (${h.place}): *${h.hotelName}* | Ph: ${h.hotelMobile || "—"}\n`;
+    });
+
+    message += `\n*👥 ROOM ALLOCATIONS (${groupData.allocations.length} Rooms / ${totalGroupMembers} Pax):*\n`;
+    groupData.allocations.forEach(a => {
+      message += `${a.sNo}. ${a.billNo} - *${a.name}* (${a.member}) → ${a.bedroom}${a.mobileNo ? ` [Ph: ${a.mobileNo}]` : ""}\n`;
     });
 
     message += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `📞 *24x7 Operations Helpline:* ${data.emergencyContact}\n`;
+    message += `📞 *Operations Helpline:* ${groupData.contactPhones}\n`;
     message += `🌐 *Website:* https://traveltouttrakhand.com\n\n`;
-    message += `Wishing you a spiritually enriching and pleasant pilgrimage! 🙏`;
+    message += `Wishing everyone a safe, comfortable and divine yatra! 🙏`;
 
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
+  };
+
+  const handleShareWhatsApp = () => {
+    if (activeTab === "group") {
+      handleShareGroupWhatsApp();
+    } else {
+      let message = `*🏨 HOTEL & STAY SERVICE VOUCHER*\n`;
+      message += `*Travel to Uttarakhand - Devbhoomi Hospitality*\n`;
+      message += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `📋 *Voucher No:* ${data.voucherNo || "N/A"}\n`;
+      message += `👤 *Guest Name:* ${data.guestName || "Guest"}\n`;
+      message += `👥 *Total Pax:* ${data.totalPax || "N/A"} (${data.totalRooms || "N/A"})\n`;
+      message += `🗓 *Duration:* ${data.tripDuration || "Tour Stay"}\n\n`;
+      message += `*CONFIRMED HOTEL / HOSTEL STAYS:*\n`;
+
+      data.stays.forEach((stay, idx) => {
+        message += `\n📍 *${stay.nightsLabel || `Stop ${idx + 1}`}: ${stay.city || "Destination"}*\n`;
+        message += `• *Hotel:* ${stay.hotelName || "Hotel / Resort"}\n`;
+        if (stay.roomType) message += `• *Room:* ${stay.roomType} (${stay.noOfRooms})\n`;
+        if (stay.mealPlan) message += `• *Meal Plan:* ${stay.mealPlan}\n`;
+        if (stay.contactNo) message += `• *Hotel Contact:* ${stay.contactNo}\n`;
+      });
+
+      message += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `📞 *24x7 Operations Helpline:* ${data.emergencyContact}\n`;
+      message += `🌐 *Website:* https://traveltouttrakhand.com\n\n`;
+      message += `Wishing you a spiritually enriching and pleasant pilgrimage! 🙏`;
+
+      const encodedMessage = encodeURIComponent(message);
+      window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
+    }
   };
 
   // Render the voucher document - Exactly 1 A4 Page (1122px height) with Zero Cutoff
@@ -1133,15 +1571,612 @@ export default function HotelVouchersPage() {
     </div>
   );
 
-  return (
-    <div className="flex flex-col lg:flex-row gap-5 w-full h-[calc(100vh-5rem)]">
-      
-      {/* Left Column: Multi-Stay Form Controls */}
-      {!isFormCollapsed && (
-        <div className="w-full lg:w-[42%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
+  // Render Group Travel Allocation Voucher - Exactly 1 A4 Page (1122px height) matching Excel layout
+  const renderGroupVoucherContent = (prefix: string) => {
+    return (
+      <div 
+        id={`${prefix}-group-hotel-voucher`} 
+        className="w-[794px] h-[1122px] min-h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-7 py-5 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+        style={{ boxSizing: "border-box" }}
+      >
+        {/* Background Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+          <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
+        </div>
+
+        <div className="relative z-10 flex flex-col justify-between h-full">
           
-          {/* Header & Quick Preset Bar */}
-          <div className="pb-3 border-b border-gray-100 space-y-2.5">
+          {/* TOP SECTION: Header, Sub-Groups & Hotels */}
+          <div className="space-y-2">
+            
+            {/* Brand Header */}
+            <div className="flex items-center justify-between pb-1.5 border-b-2 border-sky-100 gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <img src="/logo.png" alt="Travel to Uttarakhand" className="h-16 w-auto object-contain shrink-0" />
+                <div className="min-w-0">
+                  <h2 className="text-[18px] font-serif font-black tracking-tight text-[#0369a1] leading-none uppercase">
+                    {groupData.voucherTitle || "TRAVEL TO UTTARAKHAND (reg.)"}
+                  </h2>
+                  <p className="text-[11px] font-bold text-amber-700 tracking-wider mt-0.5 uppercase">
+                    {groupData.subTitle || "CHARDHAM YATRA GROUP PACKAGE 10 DAYS"}
+                  </p>
+                  <p className="text-[9.5px] text-gray-500 mt-0.5 leading-none">
+                    {groupData.officeAddress} · {groupData.contactEmail}
+                  </p>
+                </div>
+              </div>
+
+              {/* Right: Badge */}
+              <div className="text-right flex flex-col items-end shrink-0 w-[235px]">
+                <div className="bg-[#0369a1] text-white px-3 py-1 rounded-md shadow-xs w-full text-center">
+                  <span className="text-[11px] font-serif font-bold uppercase tracking-wider block">
+                    GROUP HOTEL & ROOM VOUCHER
+                  </span>
+                </div>
+                <div className="mt-1 bg-amber-50 border border-amber-300 rounded px-2 py-0.5 w-full text-center">
+                  <span className="text-[9.5px] font-bold text-amber-900 uppercase tracking-wider block">
+                    {groupData.transportType}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Reference Meta Strip */}
+            <div className="bg-sky-50/90 border border-sky-200 rounded-lg py-1 px-3 text-[11px] text-gray-800 flex justify-between items-center font-medium">
+              <span>Yatra Dates: <strong className="text-[#0369a1] font-bold text-[11.5px]">{groupData.yatraDates || "28 APRIL TO 07 MAY 2026"}</strong></span>
+              <span>Total Bookings: <strong className="text-gray-900 font-bold">{groupData.allocations.length} Sub-Groups ({totalGroupMembers} Pax)</strong></span>
+              <span>Helpline: <strong className="text-gray-900 font-bold">{groupData.contactPhones}</strong></span>
+            </div>
+
+            {/* SECTION A: SUB-GROUP ROOM ALLOCATION TABLE */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif font-bold text-[11.5px] uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+                  <Users className="w-3.5 h-3.5" />
+                  <span>Sub-Group Room Allocation Roster ({groupData.allocations.length} Bookings · {groupData.allocations.length} Bedrooms)</span>
+                </h3>
+                <span className="text-[9.5px] text-emerald-700 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                  Confirmed Allotment
+                </span>
+              </div>
+
+              <div className="rounded-lg overflow-hidden border border-gray-300">
+                <table className="w-full text-left">
+                  <thead className="bg-[#0369a1] text-white text-[10px] uppercase font-bold tracking-wider">
+                    <tr>
+                      <th className="py-1 px-2 text-center w-9">S.No</th>
+                      <th className="py-1 px-2 w-20">Bill No.</th>
+                      <th className="py-1 px-2 w-18">Member</th>
+                      <th className="py-1 px-2.5 w-44">Bedroom Allocated</th>
+                      <th className="py-1 px-2.5">Lead Guest Name</th>
+                      <th className="py-1 px-2 text-right w-24">Mobile No.</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 text-[10.5px]">
+                    {groupData.allocations.map((alloc, idx) => (
+                      <tr key={alloc.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
+                        <td className="py-0.8 px-2 text-center font-bold text-gray-500">{alloc.sNo || idx + 1}</td>
+                        <td className="py-0.8 px-2 font-bold text-[#0369a1] whitespace-nowrap">{alloc.billNo}</td>
+                        <td className="py-0.8 px-2 font-semibold text-gray-800 whitespace-nowrap">{alloc.member}</td>
+                        <td className="py-0.8 px-2.5 font-bold text-gray-900 whitespace-nowrap">{alloc.bedroom}</td>
+                        <td className="py-0.8 px-2.5 font-bold uppercase text-gray-900 whitespace-nowrap">{alloc.name}</td>
+                        <td className="py-0.8 px-2 text-right font-medium text-gray-700 whitespace-nowrap">{alloc.mobileNo || "—"}</td>
+                      </tr>
+                    ))}
+                    {/* Summary Row */}
+                    <tr className="bg-sky-100/70 border-t-2 border-[#0369a1] font-bold text-gray-900 text-[10.5px]">
+                      <td colSpan={2} className="py-1 px-2 text-center text-[#0369a1] uppercase">
+                        TOTALS
+                      </td>
+                      <td className="py-1 px-2 text-[#0369a1] font-black whitespace-nowrap">
+                        {totalGroupMembers} Pax
+                      </td>
+                      <td className="py-1 px-2.5" colSpan={3}>
+                        TOTAL BEDROOMS: <span className="text-[#0369a1] font-black">{groupData.allocations.length} Bedrooms</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* SECTION B: TOUR HOTEL STAY SCHEDULE */}
+            <div className="space-y-1">
+              <div className="flex items-center justify-between">
+                <h3 className="font-serif font-bold text-[11.5px] uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+                  <Building2 className="w-3.5 h-3.5" />
+                  <span>Tour Hotel & Camp Stay Schedule ({groupData.hotelSchedules.length} Night Halts)</span>
+                </h3>
+                <span className="text-[9.5px] text-sky-700 bg-sky-50 border border-sky-300 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                  Complete Tour Route
+                </span>
+              </div>
+
+              <div className="rounded-lg overflow-hidden border border-gray-300">
+                <table className="w-full text-left">
+                  <thead className="bg-[#0369a1] text-white text-[10px] uppercase font-bold tracking-wider">
+                    <tr>
+                      <th className="py-1 px-2.5 w-24">Date</th>
+                      <th className="py-1 px-2.5 w-36">Place / Sector</th>
+                      <th className="py-1 px-2.5">Hotel / Camp Name</th>
+                      <th className="py-1 px-2.5 text-right w-36">Hotel Mobile No.</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 text-[10.5px]">
+                    {groupData.hotelSchedules.map((hotel, idx) => (
+                      <tr key={hotel.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
+                        <td className="py-0.8 px-2.5 font-bold text-gray-800 whitespace-nowrap">{hotel.date}</td>
+                        <td className="py-0.8 px-2.5 font-bold text-[#0369a1] whitespace-nowrap uppercase">{hotel.place}</td>
+                        <td className="py-0.8 px-2.5 font-bold text-gray-900">{hotel.hotelName}</td>
+                        <td className="py-0.8 px-2.5 text-right font-semibold text-emerald-800 whitespace-nowrap">{hotel.hotelMobile || "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* SECTION C: DRIVER & VEHICLE BANNER */}
+            <div className="border border-gray-300 rounded-lg p-2 bg-gray-50/90 grid grid-cols-3 gap-2 text-[10.5px]">
+              <div>
+                <span className="text-[9px] text-gray-500 font-semibold block uppercase">Car / Vehicle No.</span>
+                <span className="font-mono font-bold text-[11px] text-[#0369a1]">{groupData.carNumber || "To be assigned"}</span>
+              </div>
+              <div>
+                <span className="text-[9px] text-gray-500 font-semibold block uppercase">Driver / Chauffeur Name</span>
+                <span className="font-bold text-[11px] text-gray-900">{groupData.driverName || "Assigned Chauffeur"}</span>
+              </div>
+              <div>
+                <span className="text-[9px] text-gray-500 font-semibold block uppercase">Driver Mobile No.</span>
+                <span className="font-mono font-bold text-[11px] text-emerald-800">{groupData.driverMobile || "Will be shared upon arrival"}</span>
+              </div>
+            </div>
+
+            {/* SECTION D: GUIDELINES & REMARKS */}
+            <div className="border border-amber-200 bg-amber-50/70 rounded-lg p-2 text-[9.5px] text-amber-950 space-y-0.5">
+              <span className="font-bold text-[10px] uppercase tracking-wider text-amber-900 block">
+                ⚠ Tour Guidelines & Hill Regulations:
+              </span>
+              <div className="whitespace-pre-line leading-tight text-gray-800 font-medium">
+                {groupData.remarks}
+              </div>
+            </div>
+
+          </div>
+
+          {/* BOTTOM SECTION: Sign-off & Footer */}
+          <div className="pt-1.5 border-t-2 border-sky-100 flex justify-between items-center text-[10px] text-gray-500 font-medium">
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold text-gray-900">TRAVEL TO UTTARAKHAND (reg.)</span>
+              <span>·</span>
+              <a 
+                href="https://traveltouttrakhand.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                data-pdf-link="https://traveltouttrakhand.com" 
+                className="font-bold text-[#0369a1] hover:underline"
+              >
+                traveltouttrakhand.com
+              </a>
+              <span>·</span>
+              <span>Helpline: {groupData.contactPhones}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-serif font-bold text-gray-700">Page 1 of 1</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex flex-col gap-3 w-full h-[calc(100vh-5rem)]">
+      
+      {/* TOP TABS: Single Family Voucher vs Group Travel Allocation Voucher */}
+      <div className="flex flex-wrap items-center justify-between bg-white border border-gray-200 rounded-xl p-2 shadow-2xs shrink-0 gap-2">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleTabChange("single")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+              activeTab === "single"
+                ? "bg-[#0369a1] text-white shadow-xs"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            }`}
+          >
+            <Building2 className="w-4 h-4" />
+            <span>Single Family / FIT Voucher</span>
+          </button>
+
+          <button
+            onClick={() => handleTabChange("group")}
+            className={`flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+              activeTab === "group"
+                ? "bg-[#0369a1] text-white shadow-xs"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+            }`}
+          >
+            <Users className="w-4 h-4" />
+            <span>Group Travel Room Allocation Voucher</span>
+            <span className="text-[10px] px-1.5 py-0.5 bg-amber-400 text-amber-950 rounded font-black uppercase tracking-wider">
+              Excel / Group Mode
+            </span>
+          </button>
+        </div>
+
+        {activeTab === "group" && (
+          <div className="flex items-center gap-2">
+            <label className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs">
+              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+              <span>Import Excel Sheet (.xlsx)</span>
+              <input 
+                type="file" 
+                accept=".xlsx,.xls" 
+                className="hidden" 
+                onChange={handleExcelUpload} 
+              />
+            </label>
+          </div>
+        )}
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-5 w-full flex-1 min-h-0">
+        {/* Left Column: Form Controls */}
+        {!isFormCollapsed && (
+          <div className="w-full lg:w-[42%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-4 transition-all duration-300 custom-scrollbar">
+            {activeTab === "group" ? (
+              <div className="space-y-4 text-xs">
+                {/* Header & Quick Preset Bar */}
+                <div className="pb-3 border-b border-gray-100 space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center font-bold">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h2 className="text-base font-bold text-gray-900 leading-tight">Group Tour Allocation</h2>
+                        <p className="text-xs text-gray-500">Tempo / Bus Room Allotment (12–25+ Pax)</p>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => updateGroupData(BLANK_GROUP_VOUCHER)}
+                      className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-red-600 bg-gray-50 hover:bg-red-50 px-2.5 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
+                      title="Clear all fields and start fresh"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Clear
+                    </button>
+                  </div>
+
+                  {/* Presets & Excel bar */}
+                  <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                    <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Quick Load:</span>
+                    <button
+                      onClick={() => updateGroupData(PRESET_GROUP_CHARDHAM_28APRIL)}
+                      className="px-2.5 py-1 bg-amber-600 hover:bg-amber-700 text-white rounded text-xs font-bold transition shadow-xs cursor-pointer flex items-center gap-1"
+                      title="Load sample from 28 April Chardham Group Excel"
+                    >
+                      <span>★ 28 April Chardham Group (Tempo)</span>
+                    </button>
+                    <label className="flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-xs font-bold transition shadow-xs cursor-pointer">
+                      <FileSpreadsheet className="w-3.5 h-3.5" />
+                      <span>Upload Excel (.xlsx)</span>
+                      <input 
+                        type="file" 
+                        accept=".xlsx,.xls" 
+                        className="hidden" 
+                        onChange={handleExcelUpload} 
+                      />
+                    </label>
+                  </div>
+                </div>
+
+                {/* 1. Tour & Transport Details */}
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">1. Tour & Vehicle Details</span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Tour Title / Headline</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]"
+                        value={groupData.subTitle}
+                        onChange={e => updateGroupData({ ...groupData, subTitle: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Transportation Type</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-800"
+                        value={groupData.transportType}
+                        onChange={e => updateGroupData({ ...groupData, transportType: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Yatra Travel Dates</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold text-[#0369a1]"
+                        placeholder="e.g. 28 APRIL TO 07 MAY 2026"
+                        value={groupData.yatraDates}
+                        onChange={e => updateGroupData({ ...groupData, yatraDates: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-500 mb-0.5">Helpline Phone(s)</label>
+                      <input 
+                        type="text" 
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-medium"
+                        value={groupData.contactPhones}
+                        onChange={e => updateGroupData({ ...groupData, contactPhones: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* 2. Sub-Group Allocations */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-bold text-[#0369a1] uppercase tracking-wider block">
+                        2. Sub-Group Allocations ({groupData.allocations.length} Bookings · {totalGroupMembers} Pax)
+                      </span>
+                      <span className="text-[10px] text-gray-500">Each family / bill gets assigned room</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addGroupAllocation}
+                      className="flex items-center gap-1 px-2.5 py-1 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Booking</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {groupData.allocations.map((alloc, idx) => (
+                      <div key={alloc.id || idx} className="bg-gray-50 p-2.5 rounded-xl border border-gray-200 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="w-5 h-5 rounded-full bg-[#0369a1] text-white flex items-center justify-center font-bold text-[10px]">
+                              {alloc.sNo || idx + 1}
+                            </span>
+                            <input
+                              type="text"
+                              placeholder="Bill No."
+                              className="px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1] w-24"
+                              value={alloc.billNo}
+                              onChange={e => updateGroupAllocation(idx, { billNo: e.target.value })}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Pax"
+                              className="px-2 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-700 w-20"
+                              value={alloc.member}
+                              onChange={e => updateGroupAllocation(idx, { member: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => moveGroupAllocation(idx, "up")}
+                              disabled={idx === 0}
+                              className="p-1 hover:bg-gray-200 text-gray-500 rounded disabled:opacity-30 cursor-pointer"
+                              title="Move Up"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveGroupAllocation(idx, "down")}
+                              disabled={idx === groupData.allocations.length - 1}
+                              className="p-1 hover:bg-gray-200 text-gray-500 rounded disabled:opacity-30 cursor-pointer"
+                              title="Move Down"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeGroupAllocation(idx)}
+                              className="p-1 hover:bg-red-100 text-red-500 rounded cursor-pointer"
+                              title="Delete Row"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                          <div>
+                            <label className="block text-[9.5px] text-gray-500 mb-0.5">Bedroom Type</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. 1 FOUR BEDROOM"
+                              className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-900"
+                              value={alloc.bedroom}
+                              onChange={e => updateGroupAllocation(idx, { bedroom: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[9.5px] text-gray-500 mb-0.5">Lead Guest Name</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. VIJAY KUMAR"
+                              className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold uppercase text-gray-900"
+                              value={alloc.name}
+                              onChange={e => updateGroupAllocation(idx, { name: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[9.5px] text-gray-500 mb-0.5">Mobile No.</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. 8294655064"
+                              className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-medium text-gray-800"
+                              value={alloc.mobileNo}
+                              onChange={e => updateGroupAllocation(idx, { mobileNo: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. Tour Hotel Stay Schedule */}
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="text-[11px] font-bold text-[#0369a1] uppercase tracking-wider block">
+                        3. Hotel Stay Schedule ({groupData.hotelSchedules.length} Night Halts)
+                      </span>
+                      <span className="text-[10px] text-gray-500">Dates, Destinations & Hotel Contacts</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={addGroupHotel}
+                      className="flex items-center gap-1 px-2.5 py-1 bg-[#0369a1] hover:bg-[#025684] text-white rounded-lg text-xs font-bold transition shadow-xs cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Add Hotel</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    {groupData.hotelSchedules.map((hotel, idx) => (
+                      <div key={hotel.id || idx} className="bg-gray-50 p-2.5 rounded-xl border border-gray-200 space-y-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5 flex-1">
+                            <input
+                              type="text"
+                              placeholder="Date (e.g. 28/04/2026)"
+                              className="px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold text-gray-800 w-28"
+                              value={hotel.date}
+                              onChange={e => updateGroupHotel(idx, { date: e.target.value })}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Place (e.g. BARKOT)"
+                              className="px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1] uppercase flex-1"
+                              value={hotel.place}
+                              onChange={e => updateGroupHotel(idx, { place: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            <button
+                              type="button"
+                              onClick={() => moveGroupHotel(idx, "up")}
+                              disabled={idx === 0}
+                              className="p-1 hover:bg-gray-200 text-gray-500 rounded disabled:opacity-30 cursor-pointer"
+                              title="Move Up"
+                            >
+                              <ArrowUp className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveGroupHotel(idx, "down")}
+                              disabled={idx === groupData.hotelSchedules.length - 1}
+                              className="p-1 hover:bg-gray-200 text-gray-500 rounded disabled:opacity-30 cursor-pointer"
+                              title="Move Down"
+                            >
+                              <ArrowDown className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeGroupHotel(idx)}
+                              className="p-1 hover:bg-red-100 text-red-500 rounded cursor-pointer"
+                              title="Delete Stay"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div>
+                            <label className="block text-[9.5px] text-gray-500 mb-0.5">Hotel / Camp Name</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. HOTEL TRISHUL"
+                              className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-bold text-gray-900"
+                              value={hotel.hotelName}
+                              onChange={e => updateGroupHotel(idx, { hotelName: e.target.value })}
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[9.5px] text-gray-500 mb-0.5">Hotel Mobile No.</label>
+                            <input
+                              type="text"
+                              placeholder="e.g. 8392932020"
+                              className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-semibold text-emerald-800"
+                              value={hotel.hotelMobile}
+                              onChange={e => updateGroupHotel(idx, { hotelMobile: e.target.value })}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 4. Driver & Fleet Information */}
+                <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
+                  <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">4. Driver & Fleet Details</span>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <label className="block text-[9.5px] text-gray-500 mb-0.5">Car / Vehicle No.</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. UK 07 TA 4821"
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-[#0369a1]"
+                        value={groupData.carNumber}
+                        onChange={e => updateGroupData({ ...groupData, carNumber: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9.5px] text-gray-500 mb-0.5">Chauffeur Name</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. Dharmendra Singh"
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-gray-900"
+                        value={groupData.driverName}
+                        onChange={e => updateGroupData({ ...groupData, driverName: e.target.value })}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[9.5px] text-gray-500 mb-0.5">Driver Mobile No.</label>
+                      <input
+                        type="text"
+                        placeholder="e.g. 9411582310"
+                        className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-emerald-800"
+                        value={groupData.driverMobile}
+                        onChange={e => updateGroupData({ ...groupData, driverMobile: e.target.value })}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[9.5px] text-gray-500 mb-0.5">Remarks & Mountain Guidelines</label>
+                    <textarea
+                      rows={4}
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-medium text-gray-800"
+                      value={groupData.remarks}
+                      onChange={e => updateGroupData({ ...groupData, remarks: e.target.value })}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {/* Header & Quick Preset Bar */}
+                <div className="pb-3 border-b border-gray-100 space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <div className="w-9 h-9 rounded-xl bg-sky-100 text-[#0369a1] flex items-center justify-center font-bold">
@@ -1534,6 +2569,8 @@ export default function HotelVouchersPage() {
             </div>
 
           </div>
+              </>
+            )}
         </div>
       )}
 
@@ -1657,16 +2694,19 @@ export default function HotelVouchersPage() {
                 transition: "transform 0.15s ease-out"
               }}
             >
-              {renderVoucherContent("view")}
+              {activeTab === "group" ? renderGroupVoucherContent("view") : renderVoucherContent("view")}
             </div>
           </div>
         </div>
 
       </div>
 
+      </div>
+
       {/* Hidden Print Container for Multi-Page PDF Export */}
       <div className="fixed -left-[99999px] top-0 pointer-events-none opacity-100 z-[-100]">
         {renderVoucherContent("print")}
+        {renderGroupVoucherContent("print")}
       </div>
 
     </div>

@@ -111,12 +111,12 @@ const DEFAULT_TRANSPORT_DATA = {
   guestName: "Valued Guest & Family",
   managerMobile: "+91 97190 38278",
   noOfAdults: "04 Adults",
-  vehicleType: "01 Innova Crysta A/C",
+  vehicleType: "01 Innova Crysta (Non-AC in Hills)",
   arrivalDate: "15 May 2026 ~ Haridwar / Dehradun",
   departureDate: "24 May 2026 ~ Haridwar / Dehradun",
   favouringGuest: "Valued Guest",
   favouringPax: "04",
-  favouringVehicle: "01 Innova Crysta A/C",
+  favouringVehicle: "01 Innova Crysta (Non-AC in Hills)",
   itinerary: [
     { 
       date: "Day 1", 
@@ -308,12 +308,12 @@ export default function TransportVouchers() {
         guestName: itin.preparedFor || "Valued Guest",
         managerMobile: itin.contactPhone || "+91 97190 38278",
         noOfAdults: "04 Adults",
-        vehicleType: "01 Innova Crysta / Tempo Traveller A/C",
+        vehicleType: "01 Innova Crysta / Tempo Traveller (Non-AC in Hills)",
         arrivalDate: itin.travelDates ? `${itin.travelDates} ~ ${itin.startingPoint || "Haridwar / Dehradun"}` : "Haridwar / Dehradun",
         departureDate: itin.travelDates ? `${itin.travelDates} ~ Tour Concludes` : "Tour Concludes",
         favouringGuest: itin.preparedFor || "Valued Guest",
         favouringPax: "04",
-        favouringVehicle: "01 Innova Crysta / Tempo Traveller A/C",
+        favouringVehicle: "01 Innova Crysta / Tempo Traveller (Non-AC in Hills)",
         itinerary: transportSchedule
       };
 
@@ -639,7 +639,7 @@ export default function TransportVouchers() {
               </p>
               <p className="flex items-start gap-1">
                 <span className="text-amber-600 font-bold shrink-0">ℹ</span>
-                <span>Vehicle air conditioning operates on plain highway stretches and remains switched off during steep uphill ghat climbs for safety.</span>
+                <span>Vehicle air conditioning does not operate in hill areas/steep ghat climbs as per mountain regulations. Dedicated vehicle operates Non-AC on hill sectors.</span>
               </p>
               <p className="flex items-start gap-1">
                 <span className="text-amber-600 font-bold shrink-0">ℹ</span>

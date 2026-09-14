@@ -326,7 +326,7 @@ const CHARDHAM_PRESET: ItineraryData = {
   pricingNote: "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
 
   inclusions: [
-    "AC vehicle (Innova Crysta / Tempo Traveller as per group size) for the entire 10-day yatra",
+    "Dedicated Hill Vehicle (Innova Crysta / Tempo Traveller - Non-AC in hill areas) for the entire 10-day yatra",
     "Accommodation for 09 nights as per selected package category",
     "Meal plan as per package selected",
     "Kedarnath helicopter tickets, both ways (Guptkashi/Phata ⇄ Kedarnath)",
@@ -566,7 +566,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
     "Room Sharing: 2 / 3 / 4 / 6 bed family basis (depends upon total persons & hotel room layout).",
     "Kedarnath Room Sharing: 3 / 4 / 6 / 8 sharing depends upon availability of hotel/camp at high altitude.",
     "Rishikesh local sightseeing on return journey is optional and strictly subject to reaching Rishikesh before 06:00 PM due to traffic restrictions.",
-    "Non-AC Rooms: All hotel rooms in hill areas are non-AC as per mountain climate.",
+    "Non-AC Rooms & Vehicle: All hotel rooms in hill areas are non-AC as per mountain climate. In hill/ghat areas, vehicle AC does not operate due to steep climbs and engine safety norms.",
     "Vehicles are driven between 5:00 AM and 10:00 PM for maximum mountain road safety."
   ],
   bookingPayment: [
@@ -1118,6 +1118,7 @@ CRITICAL RULES:
 6. RETURN ONLY valid, raw JSON (strictly no markdown wrappers, no \`\`\`json).
 7. SINGLE PACKAGE ONLY: In "pricingTiers", generate strictly ONE package tier titled "Standard Package". Never generate 3 packages or multiple package tiers.
 8. BLESSING MOTTO: "motto" must strictly be in Hindi: "जय श्री केदार · जय बद्री विशाल". Only this blessing tagline must be used.
+9. VEHICLE & NON-AC IN HILLS: In Uttarakhand mountain and hill areas, vehicle AC does NOT work due to steep mountain gradients and engine safety norms. In inclusions, transport details, and goodToKnow, strictly write "Dedicated Hill Vehicle (Innova Crysta / Tempo Traveller - Non-AC in hill areas)". NEVER write "AC vehicle" or "sanitised AC vehicle". All hill transport and hill hotel rooms must be strictly designated as Non-AC.
 
 SCHEMA:
 {
@@ -1155,7 +1156,7 @@ SCHEMA:
   ],
   "pricingNote": "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
   "inclusions": [
-    "AC vehicle (Innova Crysta / Tempo Traveller) for entire tour",
+    "Dedicated Hill Vehicle (Innova Crysta / Tempo Traveller - Non-AC in hill areas) for entire tour",
     "Selected hotel accommodation with specified meal plan",
     "All toll taxes, parking fees and driver allowance",
     "24/7 on-ground assistance and registration support"
@@ -1833,12 +1834,12 @@ SCHEMA:
       guestName: data.preparedFor || "Valued Guest",
       managerMobile: data.contactPhone || "+91 9719038278",
       noOfAdults: "As per booking",
-      vehicleType: "01 Innova Crysta / Tempo Traveller A/C",
+      vehicleType: "01 Innova Crysta / Tempo Traveller (Non-AC in Hills)",
       arrivalDate: data.travelDates ? `${data.travelDates} ~ ${data.startingPoint || "Haridwar / Dehradun"}` : "Haridwar / Dehradun",
       departureDate: data.travelDates ? `${data.travelDates} ~ Tour Concludes` : "Tour Concludes",
       favouringGuest: data.preparedFor || "Valued Guest",
       favouringPax: "As per booking",
-      favouringVehicle: "01 Innova Crysta / Tempo Traveller A/C",
+      favouringVehicle: "01 Innova Crysta / Tempo Traveller (Non-AC in Hills)",
       itinerary: transportSchedule.length > 0 ? transportSchedule : [
         { date: "Day 1", details: "Pickup & scenic drive", hotel: "Hotel" }
       ]
@@ -2174,7 +2175,7 @@ ${data.motto}`;
               <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
                 <p className="font-bold text-gray-900">Dedicated Hill Vehicle</p>
                 <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
-                  Experienced mountain chauffeur, sanitised AC vehicle, all tolls & permits included.
+                  Experienced mountain chauffeur, sanitised vehicle (Non-AC in hills), all tolls & permits included.
                 </p>
               </div>
               <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
