@@ -1662,7 +1662,7 @@ export default function HotelVouchersPage() {
     return (
       <div 
         id={`${prefix}-group-hotel-voucher`} 
-        className="w-[794px] h-[1122px] min-h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-7 py-5 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+        className="w-[794px] h-[1122px] min-h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
         style={{ boxSizing: "border-box" }}
       >
         {/* Background Watermark */}
@@ -1670,37 +1670,37 @@ export default function HotelVouchersPage() {
           <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
         </div>
 
-        <div className="relative z-10 flex flex-col justify-between h-full">
+        <div className="relative z-10 flex flex-col justify-between h-full space-y-2.5">
           
           {/* TOP SECTION: Header, Sub-Groups & Hotels */}
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             
             {/* Brand Header */}
-            <div className="flex items-center justify-between pb-1.5 border-b-2 border-sky-100 gap-3">
-              <div className="flex items-center gap-3 min-w-0">
-                <img src="/logo.png" alt="Travel to Uttarakhand" className="h-16 w-auto object-contain shrink-0" />
+            <div className="flex items-center justify-between pb-2 border-b-2 border-sky-100 gap-3">
+              <div className="flex items-center gap-3.5 min-w-0">
+                <img src="/logo.png" alt="Travel to Uttarakhand" className="h-18 w-auto object-contain shrink-0 drop-shadow-xs" />
                 <div className="min-w-0">
-                  <h2 className="text-[18px] font-serif font-black tracking-tight text-[#0369a1] leading-none uppercase">
+                  <h2 className="text-[20px] font-serif font-black tracking-tight text-[#0369a1] leading-none uppercase">
                     {groupData.voucherTitle || "TRAVEL TO UTTARAKHAND (reg.)"}
                   </h2>
-                  <p className="text-[11px] font-bold text-amber-700 tracking-wider mt-0.5 uppercase">
+                  <p className="text-[12px] font-bold text-amber-700 tracking-wider mt-1 uppercase">
                     {groupData.subTitle || "CHARDHAM YATRA GROUP PACKAGE 10 DAYS"}
                   </p>
-                  <p className="text-[9.5px] text-gray-500 mt-0.5 leading-none">
+                  <p className="text-[10.5px] text-gray-600 mt-0.5 leading-snug">
                     {groupData.officeAddress} · {groupData.contactEmail}
                   </p>
                 </div>
               </div>
 
               {/* Right: Badge */}
-              <div className="text-right flex flex-col items-end shrink-0 w-[235px]">
-                <div className="bg-[#0369a1] text-white px-3 py-1 rounded-md shadow-xs w-full text-center">
-                  <span className="text-[11px] font-serif font-bold uppercase tracking-wider block">
+              <div className="text-right flex flex-col items-end shrink-0 w-[245px]">
+                <div className="bg-[#0369a1] text-white px-3.5 py-1.5 rounded-md shadow-xs w-full text-center">
+                  <span className="text-[12px] font-serif font-bold uppercase tracking-wider block">
                     GROUP HOTEL & ROOM VOUCHER
                   </span>
                 </div>
-                <div className="mt-1 bg-amber-50 border border-amber-300 rounded px-2 py-0.5 w-full text-center">
-                  <span className="text-[9.5px] font-bold text-amber-900 uppercase tracking-wider block">
+                <div className="mt-1 bg-amber-50 border border-amber-300 rounded px-2.5 py-1 w-full text-center">
+                  <span className="text-[10.5px] font-bold text-amber-900 uppercase tracking-wider block">
                     {groupData.transportType}
                   </span>
                 </div>
@@ -1708,8 +1708,8 @@ export default function HotelVouchersPage() {
             </div>
 
             {/* Reference Meta Strip */}
-            <div className="bg-sky-50/90 border border-sky-200 rounded-lg py-1 px-3 text-[11px] text-gray-800 flex justify-between items-center font-medium">
-              <span>Yatra Dates: <strong className="text-[#0369a1] font-bold text-[11.5px]">{groupData.yatraDates || "28 APRIL TO 07 MAY 2026"}</strong></span>
+            <div className="bg-sky-50 border border-sky-200 rounded-xl py-1.5 px-3.5 text-[12px] text-gray-800 flex justify-between items-center font-medium shadow-2xs">
+              <span>Yatra Dates: <strong className="text-[#0369a1] font-bold text-[13px]">{groupData.yatraDates || "28 APRIL TO 07 MAY 2026"}</strong></span>
               <span>Total Bookings: <strong className="text-gray-900 font-bold">{groupData.allocations.length} Sub-Groups ({totalGroupMembers} Pax)</strong></span>
               <span>Helpline: <strong className="text-gray-900 font-bold">{groupData.contactPhones}</strong></span>
             </div>
@@ -1717,48 +1717,48 @@ export default function HotelVouchersPage() {
             {/* SECTION A: SUB-GROUP ROOM ALLOCATION TABLE */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <h3 className="font-serif font-bold text-[11.5px] uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
-                  <Users className="w-3.5 h-3.5" />
+                <h3 className="font-serif font-bold text-[12.5px] uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+                  <Users className="w-4 h-4" />
                   <span>Sub-Group Room Allocation Roster ({groupData.allocations.length} Bookings · {groupData.allocations.length} Bedrooms)</span>
                 </h3>
-                <span className="text-[9.5px] text-emerald-700 bg-emerald-50 border border-emerald-300 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                <span className="text-[10px] text-emerald-800 bg-emerald-50 border border-emerald-300 px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
                   Confirmed Allotment
                 </span>
               </div>
 
-              <div className="rounded-lg overflow-hidden border border-gray-300">
+              <div className="rounded-lg overflow-hidden border border-gray-300 shadow-2xs">
                 <table className="w-full text-left">
-                  <thead className="bg-[#0369a1] text-white text-[10px] uppercase font-bold tracking-wider">
+                  <thead className="bg-[#0369a1] text-white text-[11px] uppercase font-bold tracking-wider">
                     <tr>
-                      <th className="py-1 px-2 text-center w-9">S.No</th>
-                      <th className="py-1 px-2 w-20">Bill No.</th>
-                      <th className="py-1 px-2 w-18">Member</th>
-                      <th className="py-1 px-2.5 w-44">Bedroom Allocated</th>
-                      <th className="py-1 px-2.5">Lead Guest Name</th>
-                      <th className="py-1 px-2 text-right w-24">Mobile No.</th>
+                      <th className="py-1.5 px-2.5 text-center w-10">S.No</th>
+                      <th className="py-1.5 px-2.5 w-24">Bill No.</th>
+                      <th className="py-1.5 px-2.5 w-20">Member</th>
+                      <th className="py-1.5 px-3 w-48">Bedroom Allocated</th>
+                      <th className="py-1.5 px-3">Lead Guest Name</th>
+                      <th className="py-1.5 px-3 text-right w-28">Mobile No.</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 text-[10.5px]">
+                  <tbody className="divide-y divide-gray-200 text-[11.5px]">
                     {groupData.allocations.map((alloc, idx) => (
-                      <tr key={alloc.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
-                        <td className="py-0.8 px-2 text-center font-bold text-gray-500">{alloc.sNo || idx + 1}</td>
-                        <td className="py-0.8 px-2 font-bold text-[#0369a1] whitespace-nowrap">{alloc.billNo}</td>
-                        <td className="py-0.8 px-2 font-semibold text-gray-800 whitespace-nowrap">{alloc.member}</td>
-                        <td className="py-0.8 px-2.5 font-bold text-gray-900 whitespace-nowrap">{alloc.bedroom}</td>
-                        <td className="py-0.8 px-2.5 font-bold uppercase text-gray-900 whitespace-nowrap">{alloc.name}</td>
-                        <td className="py-0.8 px-2 text-right font-medium text-gray-700 whitespace-nowrap">{alloc.mobileNo || "—"}</td>
+                      <tr key={alloc.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/40"}>
+                        <td className="py-1.2 px-2.5 text-center font-bold text-gray-500">{alloc.sNo || idx + 1}</td>
+                        <td className="py-1.2 px-2.5 font-bold text-[#0369a1] whitespace-nowrap">{alloc.billNo}</td>
+                        <td className="py-1.2 px-2.5 font-semibold text-gray-800 whitespace-nowrap">{alloc.member}</td>
+                        <td className="py-1.2 px-3 font-bold text-gray-900 whitespace-nowrap">{alloc.bedroom}</td>
+                        <td className="py-1.2 px-3 font-bold uppercase text-gray-900 whitespace-nowrap">{alloc.name}</td>
+                        <td className="py-1.2 px-3 text-right font-semibold text-gray-700 whitespace-nowrap">{alloc.mobileNo || "—"}</td>
                       </tr>
                     ))}
                     {/* Summary Row */}
-                    <tr className="bg-sky-100/70 border-t-2 border-[#0369a1] font-bold text-gray-900 text-[10.5px]">
-                      <td colSpan={2} className="py-1 px-2 text-center text-[#0369a1] uppercase">
+                    <tr className="bg-sky-100/80 border-t-2 border-[#0369a1] font-bold text-gray-900 text-[11.5px]">
+                      <td colSpan={2} className="py-1.5 px-2.5 text-center text-[#0369a1] uppercase font-black">
                         TOTALS
                       </td>
-                      <td className="py-1 px-2 text-[#0369a1] font-black whitespace-nowrap">
+                      <td className="py-1.5 px-2.5 text-[#0369a1] font-black whitespace-nowrap">
                         {totalGroupMembers} Pax
                       </td>
-                      <td className="py-1 px-2.5" colSpan={3}>
-                        TOTAL BEDROOMS: <span className="text-[#0369a1] font-black">{groupData.allocations.length} Bedrooms</span>
+                      <td className="py-1.5 px-3" colSpan={3}>
+                        TOTAL BEDROOMS: <span className="text-[#0369a1] font-black">{groupData.allocations.length} Bedrooms Confirmed</span>
                       </td>
                     </tr>
                   </tbody>
@@ -1769,32 +1769,32 @@ export default function HotelVouchersPage() {
             {/* SECTION B: TOUR HOTEL STAY SCHEDULE */}
             <div className="space-y-1">
               <div className="flex items-center justify-between">
-                <h3 className="font-serif font-bold text-[11.5px] uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
-                  <Building2 className="w-3.5 h-3.5" />
+                <h3 className="font-serif font-bold text-[12.5px] uppercase tracking-wider text-[#0369a1] flex items-center gap-1.5">
+                  <Building2 className="w-4 h-4" />
                   <span>Tour Hotel & Camp Stay Schedule ({groupData.hotelSchedules.length} Night Halts)</span>
                 </h3>
-                <span className="text-[9.5px] text-sky-700 bg-sky-50 border border-sky-300 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                <span className="text-[10px] text-sky-800 bg-sky-50 border border-sky-300 px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
                   Complete Tour Route
                 </span>
               </div>
 
-              <div className="rounded-lg overflow-hidden border border-gray-300">
+              <div className="rounded-lg overflow-hidden border border-gray-300 shadow-2xs">
                 <table className="w-full text-left">
-                  <thead className="bg-[#0369a1] text-white text-[10px] uppercase font-bold tracking-wider">
+                  <thead className="bg-[#0369a1] text-white text-[11px] uppercase font-bold tracking-wider">
                     <tr>
-                      <th className="py-1 px-2.5 w-24">Date</th>
-                      <th className="py-1 px-2.5 w-36">Place / Sector</th>
-                      <th className="py-1 px-2.5">Hotel / Camp Name</th>
-                      <th className="py-1 px-2.5 text-right w-36">Hotel Mobile No.</th>
+                      <th className="py-1.5 px-3 w-28">Date</th>
+                      <th className="py-1.5 px-3 w-40">Place / Sector</th>
+                      <th className="py-1.5 px-3">Hotel / Camp Name</th>
+                      <th className="py-1.5 px-3 text-right w-40">Hotel Mobile No.</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 text-[10.5px]">
+                  <tbody className="divide-y divide-gray-200 text-[11.5px]">
                     {groupData.hotelSchedules.map((hotel, idx) => (
-                      <tr key={hotel.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/30"}>
-                        <td className="py-0.8 px-2.5 font-bold text-gray-800 whitespace-nowrap">{hotel.date}</td>
-                        <td className="py-0.8 px-2.5 font-bold text-[#0369a1] whitespace-nowrap uppercase">{hotel.place}</td>
-                        <td className="py-0.8 px-2.5 font-bold text-gray-900">{hotel.hotelName}</td>
-                        <td className="py-0.8 px-2.5 text-right font-semibold text-emerald-800 whitespace-nowrap">{hotel.hotelMobile || "—"}</td>
+                      <tr key={hotel.id || idx} className={idx % 2 === 0 ? "bg-white" : "bg-sky-50/40"}>
+                        <td className="py-1.2 px-3 font-bold text-gray-800 whitespace-nowrap">{hotel.date}</td>
+                        <td className="py-1.2 px-3 font-bold text-[#0369a1] whitespace-nowrap uppercase">{hotel.place}</td>
+                        <td className="py-1.2 px-3 font-bold text-gray-900">{hotel.hotelName}</td>
+                        <td className="py-1.2 px-3 text-right font-bold text-emerald-800 whitespace-nowrap">{hotel.hotelMobile || "—"}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -1803,37 +1803,76 @@ export default function HotelVouchersPage() {
             </div>
 
             {/* SECTION C: DRIVER & VEHICLE BANNER */}
-            <div className="border border-gray-300 rounded-lg p-2 bg-gray-50/90 grid grid-cols-3 gap-2 text-[10.5px]">
+            <div className="border border-sky-200 rounded-xl p-2.5 bg-gradient-to-r from-sky-50/70 via-gray-50 to-sky-50/40 grid grid-cols-3 gap-3 shadow-2xs">
               <div>
-                <span className="text-[9px] text-gray-500 font-semibold block uppercase">Car / Vehicle No.</span>
-                <span className="font-mono font-bold text-[11px] text-[#0369a1]">{groupData.carNumber || "To be assigned"}</span>
+                <span className="text-[9.5px] text-gray-500 font-bold block uppercase tracking-wider">Car / Vehicle No.</span>
+                <span className="font-mono font-black text-[13px] text-[#0369a1] mt-0.5 block">{groupData.carNumber || "To be assigned"}</span>
               </div>
               <div>
-                <span className="text-[9px] text-gray-500 font-semibold block uppercase">Driver / Chauffeur Name</span>
-                <span className="font-bold text-[11px] text-gray-900">{groupData.driverName || "Assigned Chauffeur"}</span>
+                <span className="text-[9.5px] text-gray-500 font-bold block uppercase tracking-wider">Driver / Chauffeur Name</span>
+                <span className="font-bold text-[13px] text-gray-900 mt-0.5 block">{groupData.driverName || "Assigned Chauffeur"}</span>
               </div>
               <div>
-                <span className="text-[9px] text-gray-500 font-semibold block uppercase">Driver Mobile No.</span>
-                <span className="font-mono font-bold text-[11px] text-emerald-800">{groupData.driverMobile || "Will be shared upon arrival"}</span>
+                <span className="text-[9.5px] text-gray-500 font-bold block uppercase tracking-wider">Driver Mobile No.</span>
+                <span className="font-mono font-black text-[13px] text-emerald-800 mt-0.5 block">{groupData.driverMobile || "Will be shared upon arrival"}</span>
               </div>
             </div>
 
             {/* SECTION D: GUIDELINES & REMARKS */}
-            <div className="border border-amber-200 bg-amber-50/70 rounded-lg p-2 text-[9.5px] text-amber-950 space-y-0.5">
-              <span className="font-bold text-[10px] uppercase tracking-wider text-amber-900 block">
-                ⚠ Tour Guidelines & Hill Regulations:
+            <div className="border border-amber-200 bg-amber-50/80 rounded-xl p-2.5 text-amber-950 space-y-1 shadow-2xs">
+              <span className="font-bold text-[11px] uppercase tracking-wider text-amber-900 flex items-center gap-1.5">
+                <span>⚠</span> Tour Guidelines & Hill Regulations:
               </span>
-              <div className="whitespace-pre-line leading-tight text-gray-800 font-medium">
+              <div className="whitespace-pre-line leading-relaxed text-gray-800 font-medium text-[10.5px]">
                 {groupData.remarks}
+              </div>
+            </div>
+
+            {/* SECTION E: PILGRIMAGE GREETING & THANK YOU BANNER */}
+            <div className="rounded-xl border-2 border-dashed border-[#0369a1]/30 bg-gradient-to-r from-sky-50/90 via-indigo-50/40 to-amber-50/60 p-3 flex items-center justify-between gap-3 shadow-2xs">
+              <div className="space-y-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xl">🙏</span>
+                  <h4 className="text-[13px] font-serif font-black text-[#0369a1] tracking-wide uppercase">
+                    Thank You For Travelling With Travel to Uttarakhand!
+                  </h4>
+                  <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 shrink-0">
+                    जय श्री केदार · जय बद्री विशाल
+                  </span>
+                </div>
+                <p className="text-[11px] text-gray-700 leading-snug">
+                  It is our utmost privilege to host your sacred Chardham pilgrimage. Wishing you and all group members a blessed, peaceful, and joyful spiritual journey!
+                </p>
+                <div className="flex items-center gap-3 text-[10px] text-gray-600 font-medium pt-0.5">
+                  <span className="text-emerald-800 font-bold">✓ 24/7 Route Assistance</span>
+                  <span>·</span>
+                  <span className="text-sky-800 font-bold">✓ Pre-Verified Clean Stays</span>
+                  <span>·</span>
+                  <span className="text-amber-900 font-bold">✓ Dedicated Hill Chauffeur Fleet</span>
+                </div>
+              </div>
+
+              {/* 24/7 Helpline Badge */}
+              <div className="shrink-0 text-center bg-white/95 border border-sky-200 rounded-lg p-2 shadow-2xs w-[165px]">
+                <p className="text-[9px] font-bold uppercase tracking-wider text-gray-500">24/7 Control Desk</p>
+                <p className="text-[12px] font-mono font-black text-[#0369a1] mt-0.5 leading-tight">
+                  +91 9719038278
+                </p>
+                <p className="text-[11px] font-mono font-bold text-gray-700">
+                  +91 8449982466
+                </p>
+                <p className="text-[8.5px] text-emerald-700 font-bold mt-0.5 uppercase tracking-wide">
+                  Haridwar Head Office
+                </p>
               </div>
             </div>
 
           </div>
 
           {/* BOTTOM SECTION: Sign-off & Footer */}
-          <div className="pt-1.5 border-t-2 border-sky-100 flex justify-between items-center text-[10px] text-gray-500 font-medium">
-            <div className="flex items-center gap-1.5">
-              <span className="font-bold text-gray-900">TRAVEL TO UTTARAKHAND (reg.)</span>
+          <div className="pt-2 border-t-2 border-sky-100 flex justify-between items-center text-[10.5px] text-gray-600 font-medium">
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-gray-900 uppercase">TRAVEL TO UTTARAKHAND (reg.)</span>
               <span>·</span>
               <a 
                 href="https://traveltouttrakhand.com" 
@@ -1842,10 +1881,10 @@ export default function HotelVouchersPage() {
                 data-pdf-link="https://traveltouttrakhand.com" 
                 className="font-bold text-[#0369a1] hover:underline"
               >
-                traveltouttrakhand.com
+                www.traveltouttrakhand.com
               </a>
               <span>·</span>
-              <span>Helpline: {groupData.contactPhones}</span>
+              <span>Haridwar Booking Office</span>
             </div>
             <div className="flex items-center gap-2">
               <span className="font-serif font-bold text-gray-700">Page 1 of 1</span>
