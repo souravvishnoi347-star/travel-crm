@@ -491,7 +491,7 @@ export default function TransportVouchers() {
                   Travel to Uttarakhand
                 </h2>
                 <p className="text-[11px] font-semibold text-gray-500 tracking-wider mt-0.5 whitespace-nowrap">
-                  Devbhoomi Pilgrimage & Spiritual Fleet
+                  Travel to Uttarakhand - Pilgrimage & Spiritual Fleet
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#dc2626] bg-red-50 border border-red-200 px-1.5 py-0.5 rounded shrink-0">
@@ -655,7 +655,7 @@ export default function TransportVouchers() {
           <div className="flex items-center gap-2">
             <span className="text-gray-800 font-bold">Travel to Uttarakhand</span>
             <span>·</span>
-            <span>Devbhoomi Pilgrimage Transport Fleet</span>
+            <span>Pilgrimage Transport Fleet</span>
           </div>
           <div className="text-center font-serif font-bold text-[#0369a1]">
             ॐ नमः शिवाय
@@ -692,7 +692,7 @@ export default function TransportVouchers() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-900 leading-tight">Transport Studio</h1>
-                <p className="text-xs text-gray-500">Devbhoomi Edition • 100% Editable</p>
+                <p className="text-xs text-gray-500">Travel to Uttarakhand • 100% Editable</p>
               </div>
             </div>
             <button

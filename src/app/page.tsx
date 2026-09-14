@@ -172,7 +172,7 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <span>Devbhoomi Yatra Operations</span>
+            <span>Travel to Uttarakhand Operations</span>
             <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
               Spiritual Travel Edition
             </span>

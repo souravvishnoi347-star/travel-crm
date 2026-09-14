@@ -139,31 +139,31 @@ export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
   {
     id: "hp-1",
     url: "/gallery/chardham_10d_img_31.jpg",
-    hotelName: "Hotel Himalayan Comfort / Similar",
+    hotelName: "Standard Clean Stay",
     location: "Barkot / Uttarkashi",
-    roomType: "Deluxe Double Room",
-    caption: "Well-sanitised clean deluxe rooms with attached bath & hot geyser"
+    roomType: "Standard Room",
+    caption: "Well-sanitised clean standard rooms with attached bath & hot geyser"
   },
   {
     id: "hp-2",
     url: "/gallery/chardham_10d_img_29.jpg",
-    hotelName: "Kedar Valley Resort / Similar",
+    hotelName: "Standard Mountain View Stay",
     location: "Guptkashi / Sitapur",
-    roomType: "Deluxe Mountain View Room",
-    caption: "Spacious wooden-panelled comfort rooms with hot water facility"
+    roomType: "Standard Room",
+    caption: "Spacious comfort rooms with hot water facility and mountain view"
   },
   {
     id: "hp-3",
     url: "/gallery/chardham_10d_img_30.jpg",
-    hotelName: "Badri Vishal Inn / Similar",
+    hotelName: "Standard Family Stay",
     location: "Badrinath / Pipalkoti",
-    roomType: "Family Triple / Quad Sharing",
-    caption: "Hygienic family room with warm blankets and Himalayan hospitality"
+    roomType: "Standard Family Room",
+    caption: "Hygienic family room with warm blankets and mountain hospitality"
   },
   {
     id: "hp-4",
     url: "/gallery/chardham_10d_img_32.jpg",
-    hotelName: "Kedarnath Base Camp / GMVN",
+    hotelName: "Kedarnath Base Camp / Alpine Stay",
     location: "Kedarnath Dham",
     roomType: "Tent Only (Without Food)",
     caption: "High-altitude mountain alpine camp / tent near shrine perimeter"
@@ -313,7 +313,7 @@ const CHARDHAM_PRESET: ItineraryData = {
         "Post breakfast, departure drive towards Haridwar / Dehradun along the scenic Ganga valley.",
         "Rishikesh local sightseeing (Ram Jhula, Laxman Jhula & Triveni Ghat) is optional & subject to time/traffic; possible only if arriving before 06:00 PM.",
         "Timely transfer to Haridwar Railway Station or Dehradun Jolly Grant Airport for onward journey.",
-        "Tour concludes with divine memories of Devbhoomi Chardham Yatra."
+        "Tour concludes with divine memories of Char Dham Yatra."
       ],
       overnightStay: "Tour Concludes (Drop Off)"
     }
@@ -321,7 +321,7 @@ const CHARDHAM_PRESET: ItineraryData = {
 
   pricingSubtitle: "Confirmed Standard Package covering the full 10-day itinerary with dedicated mountain transport and experienced pilgrimage team.",
   pricingTiers: [
-    { package: "Standard Package", price: "₹ 28,500 / Pax", hotelCategory: "Deluxe Rooms / Standard Clean Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Covered Sightseeing & Dedicated Vehicle" }
+    { package: "Standard Package", price: "₹ 28,500 / Pax", hotelCategory: "Standard Clean Rooms / Verified Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Covered Sightseeing & Dedicated Vehicle" }
   ],
   pricingNote: "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
 
@@ -399,7 +399,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
   duration: "10 Days / 09 Nights",
   startingPoint: "Haridwar / Rishikesh / Dehradun Airport",
   routeCovered: "Haridwar – Barkot – Yamunotri – Uttarkashi – Gangotri – Phata – Sonprayag – Kedarnath – Chopta – Badrinath – Pipalkoti – Haridwar",
-  overviewSummary: "The Char Dham Yatra is a sacred pilgrimage in India that encompasses a journey to four significant religious sites (Yamunotri, Gangotri, Kedarnath, & Badrinath) in the Himalayas. This is a total journey of 10 days in Tempo Traveller with family basis deluxe rooms, MAP meals and complete sightseeing en-route.",
+  overviewSummary: "The Char Dham Yatra is a sacred pilgrimage in India that encompasses a journey to four significant religious sites (Yamunotri, Gangotri, Kedarnath, & Badrinath) in the Himalayas. This is a total journey of 10 days in Tempo Traveller with family basis standard clean rooms, MAP meals and complete sightseeing en-route.",
   
   glanceDuration: "10 Days / 09 Nights",
   glanceDhams: "Yamunotri · Gangotri · Kedarnath · Badrinath",
@@ -532,20 +532,20 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special Standard Package with dedicated Tempo Traveller, confirmed deluxe hotels and MAP meals.",
+  pricingSubtitle: "Special Standard Package with dedicated Tempo Traveller, confirmed standard clean stays and MAP meals.",
   pricingTiers: [
-    { package: "Standard Package", price: "₹ 32,500 / Pax", hotelCategory: "Deluxe Rooms (Family Basis)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Tempo Traveller Included" }
+    { package: "Standard Package", price: "₹ 32,500 / Pax", hotelCategory: "Standard Clean Rooms (Family Basis)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Tempo Traveller Included" }
   ],
   pricingNote: "Note: Total package cost for 12 Persons = ₹ 3,90,000/- (at ₹ 32,500 per person). All tolls, parking, and driver charges included.",
 
   inclusions: [
     "Personal Taxi / Tempo Traveller Haridwar To Haridwar (Assistance On Arrival)",
-    "2 Night Stay At Barkot (Deluxe Rooms)",
-    "2 Night Stay At Uttarkashi (Deluxe Rooms)",
-    "2 Night Stay At Sitapur / Phata / Guptkashi / Rampur (Deluxe Rooms)",
+    "2 Night Stay At Barkot (Standard Clean Rooms)",
+    "2 Night Stay At Uttarkashi (Standard Clean Rooms)",
+    "2 Night Stay At Sitapur / Phata / Guptkashi / Rampur (Standard Clean Rooms)",
     "1 Night Stay At Shri Kedarnath Dham (Tent Only)",
-    "1 Night Stay At Shri Badrinath Dham (Deluxe Rooms)",
-    "1 Night Stay At Pipalkoti / Karanprayag / Rudraprayag (Deluxe Rooms)",
+    "1 Night Stay At Shri Badrinath Dham (Standard Clean Rooms)",
+    "1 Night Stay At Pipalkoti / Karanprayag / Rudraprayag (Standard Clean Rooms)",
     "Meal As Per Plan: Breakfast & Dinner (At Hotels Only)",
     "All Interstate Taxes, Tolls, Driver Allowance and Parking Etc.",
     "Sightseeing: Kashi Vishwanath Temple (Day 3 evening), Chopta, Mana Gaon, Saraswati Mukh, Vyas Gufa, Bhim Pul, Panch Prayag, Maa Dhari Devi Temple (Rishikesh optional if reached before 6 PM)"
@@ -714,16 +714,16 @@ export const DODHAM_6D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special Do Dham (Kedarnath + Badrinath) 6D/5N Standard Package with dedicated mountain vehicle and confirmed stays.",
   pricingTiers: [
-    { package: "Standard Package", price: "₹ 19,500 / Pax", hotelCategory: "Deluxe Rooms / Alpine Camp", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle" }
+    { package: "Standard Package", price: "₹ 19,500 / Pax", hotelCategory: "Standard Clean Rooms / Alpine Camp", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle" }
   ],
   pricingNote: "Note: Rates are per person on twin/triple sharing basis. All mountain tolls, parking, and driver allowances included.",
 
   inclusions: [
     "Personal Hill Vehicle (Innova / Swift Dzire / Tempo Traveller as per group size) Haridwar to Haridwar",
-    "2 Nights Stay at Guptkashi / Sitapur (Deluxe Rooms)",
+    "2 Nights Stay at Guptkashi / Sitapur (Standard Clean Rooms)",
     "1 Night Stay at Shri Kedarnath Dham (Tent Only)",
-    "1 Night Stay at Shri Badrinath Dham (Deluxe Rooms)",
-    "1 Night Stay at Pipalkoti / Joshimath (Deluxe Rooms)",
+    "1 Night Stay at Shri Badrinath Dham (Standard Clean Rooms)",
+    "1 Night Stay at Pipalkoti / Joshimath (Standard Clean Rooms)",
     "Meals as per plan: Breakfast & Dinner (At hotels only)",
     "All Interstate Taxes, Tolls, Driver Allowance and Parking charges",
     "Sightseeing: Chopta, Mana Gaon, Saraswati Mukh, Vyas Gufa, Bhim Pul, Panch Prayag confluences, Maa Dhari Devi Temple (Rishikesh optional if reached before 6 PM)"
@@ -743,7 +743,7 @@ export const DODHAM_6D_PRESET: ItineraryData = {
   ],
   bookingPayment: [
     "Booking confirmed against advance deposit; balance payable before start of journey.",
-    "All payments are processed securely with valid GST and bank remittance receipts."
+    "All payments are processed securely with valid booking confirmation and bank remittance receipts."
   ],
 
   contactAgency: "Travel to Uttarakhand",
@@ -981,7 +981,7 @@ export default function ItineraryBuilder() {
                 {
                   package: "Standard Package",
                   price: parsed.pricingTiers[0].price || "₹ 28,500 / Pax",
-                  hotelCategory: parsed.pricingTiers[0].hotelCategory || "Deluxe Rooms / Standard Stays",
+                  hotelCategory: parsed.pricingTiers[0].hotelCategory || "Standard Clean Rooms / Mountain Stays",
                   meals: parsed.pricingTiers[0].meals || "Breakfast & Dinner (MAP)",
                   specialFeature: parsed.pricingTiers[0].specialFeature || "Dedicated Hill Vehicle Included"
                 }
@@ -1012,7 +1012,7 @@ export default function ItineraryBuilder() {
                   {
                     package: "Standard Package",
                     price: cloudData.pricingTiers[0].price || "₹ 28,500 / Pax",
-                    hotelCategory: cloudData.pricingTiers[0].hotelCategory || "Deluxe Rooms / Standard Stays",
+                    hotelCategory: cloudData.pricingTiers[0].hotelCategory || "Standard Clean Rooms / Mountain Stays",
                     meals: cloudData.pricingTiers[0].meals || "Breakfast & Dinner (MAP)",
                     specialFeature: cloudData.pricingTiers[0].specialFeature || "Dedicated Hill Vehicle Included"
                   }
@@ -1119,6 +1119,7 @@ CRITICAL RULES:
 7. SINGLE PACKAGE ONLY: In "pricingTiers", generate strictly ONE package tier titled "Standard Package". Never generate 3 packages or multiple package tiers.
 8. BLESSING MOTTO: "motto" must strictly be in Hindi: "जय श्री केदार · जय बद्री विशाल". Only this blessing tagline must be used.
 9. VEHICLE & NON-AC IN HILLS: In Uttarakhand mountain and hill areas, vehicle AC does NOT work due to steep mountain gradients and engine safety norms. In inclusions, transport details, and goodToKnow, strictly write "Dedicated Hill Vehicle (Innova Crysta / Tempo Traveller - Non-AC in hill areas)". NEVER write "AC vehicle" or "sanitised AC vehicle". All hill transport and hill hotel rooms must be strictly designated as Non-AC.
+10. STANDARD PACKAGE BY DEFAULT & NO SPECIFIC HOTEL NAMES: 95% of guests choose Standard Package. Default hotelCategory strictly to "Standard Clean Rooms / Mountain Stays". Never use Deluxe by default. In hotel stays and itinerary description, never write specific private hotel names; always use generic verified stay descriptions like "Standard Clean Room at [Location]". In goodToKnow or booking terms, NEVER mention GST.
 
 SCHEMA:
 {
@@ -1150,9 +1151,9 @@ SCHEMA:
       "overnightStay": "Guptkashi"
     }
   ],
-  "pricingSubtitle": "Confirmed Standard Package with dedicated mountain transport and deluxe accommodations.",
+  "pricingSubtitle": "Confirmed Standard Package with dedicated mountain transport and standard clean accommodations.",
   "pricingTiers": [
-    { "package": "Standard Package", "price": "₹ 24,500 / Pax", "hotelCategory": "Standard / Deluxe Clean Hotels", "meals": "Breakfast & Dinner (MAP)", "specialFeature": "Dedicated Vehicle & Sightseeing" }
+    { "package": "Standard Package", "price": "₹ 24,500 / Pax", "hotelCategory": "Standard Clean Rooms / Mountain Stays", "meals": "Breakfast & Dinner (MAP)", "specialFeature": "Dedicated Vehicle & Sightseeing" }
   ],
   "pricingNote": "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
   "inclusions": [
@@ -1335,13 +1336,13 @@ SCHEMA:
           glancePackages: "Standard Package",
           days: newDays.length > 0 ? newDays : prev.days,
           photos: matchedPhotos.length > 0 ? matchedPhotos : prev.photos,
-          pricingSubtitle: cleanText(parsed.pricingSubtitle) || "Confirmed Standard Package with dedicated mountain transport and deluxe stays.",
+          pricingSubtitle: cleanText(parsed.pricingSubtitle) || "Confirmed Standard Package with dedicated mountain transport and standard clean stays.",
           pricingTiers: Array.isArray(parsed.pricingTiers) && parsed.pricingTiers.length > 0 
             ? [
                 {
                   package: "Standard Package",
                   price: cleanText(parsed.pricingTiers[0].price) || "₹ 24,500 / Pax",
-                  hotelCategory: cleanText(parsed.pricingTiers[0].hotelCategory) || "Standard / Deluxe Clean Hotels",
+                  hotelCategory: cleanText(parsed.pricingTiers[0].hotelCategory) || "Standard Clean Rooms / Mountain Stays",
                   meals: cleanText(parsed.pricingTiers[0].meals) || "Breakfast & Dinner (MAP)",
                   specialFeature: cleanText(parsed.pricingTiers[0].specialFeature) || "Dedicated Vehicle & Sightseeing"
                 }
@@ -1632,9 +1633,9 @@ SCHEMA:
     const newHp: HotelPhoto = {
       id: `hp-${Date.now()}`,
       url: "/gallery/chardham_10d_img_31.jpg",
-      hotelName: "New Hotel / Resort",
+      hotelName: "Standard Clean Stay",
       location: "Uttarakhand",
-      roomType: "Deluxe Double Room",
+      roomType: "Standard Room",
       caption: "Clean sanitized room with attached bathroom and hot water",
       fit: "cover"
     };
@@ -1709,9 +1710,9 @@ SCHEMA:
         const newHp: HotelPhoto = {
           id: `hp-${Date.now()}`,
           url: base64,
-          hotelName: hotelName || "Deluxe Hotel / Stay",
+          hotelName: hotelName || "Standard Clean Stay",
           location: "Uttarakhand Sector",
-          roomType: "Deluxe Double Room",
+          roomType: "Standard Room",
           caption: "Clean sanitized room with attached bathroom and hot water",
           fit: "cover"
         };
@@ -2164,31 +2165,62 @@ ${data.motto}`;
           ))}
         </div>
 
-        {/* If fewer than 7 days, fill empty bottom space with yatra assurances */}
-        {data.days.length <= 6 && (
-          <div className="mt-4 p-3.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200 space-y-2">
-            <div className="flex items-center justify-between text-xs font-bold text-[#0369a1]">
-              <span>✦ Pilgrimage Yatra Highlights & Comfort Standards</span>
-              <span className="text-[10px] font-semibold text-gray-500">Devbhoomi Uttarakhand</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2.5 text-[10px] text-gray-700">
-              <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
-                <p className="font-bold text-gray-900">Dedicated Hill Vehicle</p>
-                <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
-                  Experienced mountain chauffeur, sanitised vehicle (Non-AC in hills), all tolls & permits included.
-                </p>
+        {/* If fewer than 8 days, fill empty bottom space with holy sightseeing photos & yatra assurances */}
+        {data.days.length <= 7 && (
+          <div className="mt-3 space-y-2">
+            {/* Sacred Sightseeing Highlights Strip */}
+            {data.photos && data.photos.length > 0 && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-bold text-[#0369a1]">
+                  <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
+                  <span className="text-[9.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {data.photos.slice(0, 3).map((photo, pIdx) => (
+                    <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white">
+                      <div className="h-20 overflow-hidden bg-gray-100">
+                        <img 
+                          src={photo.url} 
+                          alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      {photo.caption && (
+                        <p className="text-[8.5px] font-semibold text-gray-800 p-1 text-center truncate bg-sky-50/50">
+                          {photo.caption}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
-                <p className="font-bold text-gray-900">Confirmed Clean Stays</p>
-                <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
-                  Pre-verified deluxe hotels & camps with hot water and hygienic pure veg meals.
-                </p>
+            )}
+
+            {/* Comfort Standards & Assurances */}
+            <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
+              <div className="flex items-center justify-between text-[10.5px] font-bold text-[#0369a1] mb-1.5">
+                <span>✦ Pilgrimage Yatra Highlights & Comfort Standards</span>
+                <span className="text-[9.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
               </div>
-              <div className="bg-white/90 p-2.5 rounded-lg border border-sky-100 shadow-2xs">
-                <p className="font-bold text-gray-900">24/7 Yatra Support</p>
-                <p className="text-[9.5px] text-gray-500 mt-0.5 leading-snug">
-                  Dedicated tour coordinator assistance for darshan slip, registration & emergency aid.
-                </p>
+              <div className="grid grid-cols-3 gap-2 text-[9.5px] text-gray-700">
+                <div className="bg-white/90 p-2 rounded-lg border border-sky-100 shadow-2xs">
+                  <p className="font-bold text-gray-900">Dedicated Hill Vehicle</p>
+                  <p className="text-[9px] text-gray-500 mt-0.5 leading-snug">
+                    Experienced mountain chauffeur, sanitised vehicle (Non-AC in hills), all tolls & permits included.
+                  </p>
+                </div>
+                <div className="bg-white/90 p-2 rounded-lg border border-sky-100 shadow-2xs">
+                  <p className="font-bold text-gray-900">Confirmed Clean Stays</p>
+                  <p className="text-[9px] text-gray-500 mt-0.5 leading-snug">
+                    Pre-verified standard clean hotels & alpine camps with hot water and hygienic pure veg meals.
+                  </p>
+                </div>
+                <div className="bg-white/90 p-2 rounded-lg border border-sky-100 shadow-2xs">
+                  <p className="font-bold text-gray-900">24/7 Yatra Support</p>
+                  <p className="text-[9px] text-gray-500 mt-0.5 leading-snug">
+                    Dedicated tour coordinator assistance for darshan slip, registration & emergency aid.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -2298,17 +2330,17 @@ ${data.motto}`;
           </p>
         </div>
 
-        {/* Confirmed Accommodations & Hotel Stays Showcase */}
+        {/* Confirmed Accommodation Standards Showcase */}
         {data.showHotelPhotos !== false && data.hotelPhotos && data.hotelPhotos.length > 0 && (
           <div className="pt-2 border-t border-gray-200 space-y-1.5">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-1.5">
-                <span>🏨 Confirmed Accommodations & Hotel Stays</span>
+                <span>🏨 Confirmed Accommodation Standards & Clean Stays</span>
                 <span className="text-[9px] font-normal px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
                   Pre-inspected & Verified
                 </span>
               </h4>
-              <span className="text-[9.5px] text-gray-500 font-medium">Standard / Deluxe Category</span>
+              <span className="text-[9.5px] text-gray-500 font-medium">Standard Clean Stays & Camps</span>
             </div>
             <div className={`grid gap-2 ${data.hotelPhotos.length === 1 ? 'grid-cols-1' : data.hotelPhotos.length === 2 ? 'grid-cols-2' : data.hotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
               {data.hotelPhotos.slice(0, 4).map((hp, hIdx) => {
@@ -2318,17 +2350,17 @@ ${data.motto}`;
                     <div className="h-24 relative overflow-hidden bg-gray-100">
                       <img 
                         src={hp.url} 
-                        alt={hp.hotelName} 
+                        alt={hp.roomType || 'Accommodation'} 
                         className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain bg-slate-900' : 'object-cover'}`}
                       />
                       <span className={`absolute top-1 right-1 text-[8px] font-bold px-1.5 py-0.5 rounded shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
-                        {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Deluxe Room')}
+                        {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Standard Room')}
                       </span>
                     </div>
                     <div className="p-1.5 bg-sky-50/40 flex-1 flex flex-col justify-between">
                       <div>
                         <p className="text-[10px] font-bold text-gray-900 leading-tight truncate">
-                          {hp.hotelName}
+                          {isTent ? 'Alpine Camp / Tent Stay' : (hp.roomType || 'Standard Clean Room')}
                         </p>
                         <p className="text-[9px] text-[#0369a1] font-semibold flex items-center gap-1 mt-0.5">
                           📍 {hp.location}
@@ -2347,23 +2379,23 @@ ${data.motto}`;
           </div>
         )}
 
-        {/* Page 3 Destinations Gallery - High-Res Uncropped Showcase */}
+        {/* Page 3 Destinations Gallery - Sacred Yatra Landmarks Showcase */}
         {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
           <div className="pt-2 border-t border-gray-200 space-y-1.5">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-serif font-bold text-[#0369a1]">
                 Sacred Yatra Destinations & Sightseeing Highlights
               </h4>
-              <span className="text-[9.5px] text-gray-500 font-medium">Spiritual Landmarks</span>
+              <span className="text-[9.5px] text-gray-500 font-medium">Travel to Uttarakhand</span>
             </div>
-            <div className={`grid gap-2.5 ${data.photos.length === 1 ? 'grid-cols-1' : data.photos.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {(data.photos.length > 3 ? data.photos.slice(3, 6) : data.photos).map((photo, pIdx) => {
+            <div className={`grid gap-2 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+              {data.photos.slice(0, 6).map((photo, pIdx) => {
                 const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
                 const fitClass = photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover";
 
                 return (
-                  <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border-2 border-[#0369a1]/25 shadow-xs bg-gray-50 flex flex-col">
-                    <div className={`${data.hotelPhotos && data.hotelPhotos.length > 0 ? 'h-24' : 'h-32'} relative overflow-hidden bg-gray-100`}>
+                  <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/25 shadow-2xs bg-gray-50 flex flex-col">
+                    <div className={`${data.hotelPhotos && data.hotelPhotos.length > 0 ? 'h-20' : 'h-28'} relative overflow-hidden bg-gray-100`}>
                       <img 
                         src={photo.url} 
                         alt={photo.caption || `Landmark ${pIdx + 1}`} 
@@ -2371,8 +2403,8 @@ ${data.motto}`;
                       />
                     </div>
                     {photo.caption && (
-                      <div className="p-1.5 bg-white border-t border-gray-100 text-center min-h-[30px] flex items-center justify-center">
-                        <p className="text-[9.5px] font-semibold text-gray-800 line-clamp-2 px-1 leading-tight">
+                      <div className="p-1 bg-white border-t border-gray-100 text-center min-h-[24px] flex items-center justify-center">
+                        <p className="text-[9px] font-semibold text-gray-800 line-clamp-1 px-1 leading-tight">
                           {photo.caption}
                         </p>
                       </div>
@@ -2549,9 +2581,9 @@ ${data.motto}`;
               type="button"
               onClick={() => setData(CHARDHAM_12P_10D_PRESET)}
               className="px-2.5 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs"
-              title="10 Days / 9 Nights Chardham Package for 12 Pax (Tempo Traveller & Deluxe Stays)"
+              title="10 Days / 9 Nights Chardham Package for 12 Pax (Tempo Traveller & Standard Clean Stays)"
             >
-              10D Chardham (12 Pax Deluxe)
+              10D Chardham (12 Pax Standard)
             </button>
             <button
               type="button"
@@ -3247,7 +3279,7 @@ ${data.motto}`;
                       type="button"
                       onClick={loadCuratedHotelPhotos}
                       className="px-2.5 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs"
-                      title="Load curated deluxe room & Kedarnath alpine camp photos"
+                      title="Load curated standard room & Kedarnath alpine camp photos"
                     >
                       ★ Curated Preset
                     </button>
@@ -3271,10 +3303,10 @@ ${data.motto}`;
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold text-xs text-gray-900">
-                              Stay {hIdx + 1}: {hp.hotelName || "Hotel"}
+                              Stay {hIdx + 1}: {hp.hotelName || "Stay"}
                             </span>
                             <span className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${isTent ? 'bg-amber-100 text-amber-900 border border-amber-300' : 'bg-sky-100 text-sky-800'}`}>
-                              {isTent ? '⛺ Tent Only' : '🏨 Hotel'}
+                              {isTent ? '⛺ Tent Only' : '🏨 Standard Stay'}
                             </span>
                           </div>
                           <button
@@ -3289,12 +3321,13 @@ ${data.motto}`;
 
                         <div className="grid grid-cols-2 gap-2">
                           <div>
-                            <label className="block text-[10px] font-medium text-gray-500 mb-0.5">Hotel / Property Name</label>
+                            <label className="block text-[10px] font-medium text-gray-500 mb-0.5">Stay / Category Title (Internal)</label>
                             <input
                               type="text"
                               value={hp.hotelName}
                               onChange={e => updateHotelPhoto(hp.id, "hotelName", e.target.value)}
                               className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs font-semibold"
+                              placeholder="e.g. Standard Clean Stay"
                             />
                           </div>
                           <div>
@@ -3316,29 +3349,37 @@ ${data.motto}`;
                               value={hp.roomType || ""}
                               onChange={e => updateHotelPhoto(hp.id, "roomType", e.target.value)}
                               className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
-                              placeholder="e.g. Deluxe Room / Tent Only"
+                              placeholder="e.g. Standard Room / Tent Only"
                             />
-                            <div className="flex gap-1 mt-1">
+                            <div className="flex gap-1 mt-1 flex-wrap">
                               <button
                                 type="button"
-                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Deluxe Double Room")}
-                                className="text-[9px] px-1.5 py-0.2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
+                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Standard Room")}
+                                className="text-[9px] px-2 py-0.5 bg-sky-100 hover:bg-sky-200 text-sky-900 font-bold rounded"
                               >
-                                Deluxe
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Family Triple Sharing")}
-                                className="text-[9px] px-1.5 py-0.2 bg-gray-100 hover:bg-gray-200 rounded text-gray-700"
-                              >
-                                Triple
+                                Standard
                               </button>
                               <button
                                 type="button"
                                 onClick={() => updateHotelPhoto(hp.id, "roomType", "Tent Only (Without Food)")}
-                                className="text-[9px] px-1.5 py-0.2 bg-amber-100 hover:bg-amber-200 rounded text-amber-900 font-bold"
+                                className="text-[9px] px-2 py-0.5 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded"
                               >
                                 Tent Only
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Family Triple / Quad")}
+                                className="text-[9px] px-1.5 py-0.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded"
+                              >
+                                Family
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Deluxe Double Room")}
+                                className="text-[9px] px-1.5 py-0.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded"
+                                title="Optional for guests requesting deluxe"
+                              >
+                                Deluxe (Opt)
                               </button>
                             </div>
                           </div>

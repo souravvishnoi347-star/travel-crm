@@ -200,7 +200,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       checkIn: "14/05/2026 (12:00 PM)",
       checkOut: "16/05/2026 (08:00 AM)",
       nights: 2,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-SAR-604",
@@ -216,7 +216,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       checkIn: "16/05/2026 (01:00 PM)",
       checkOut: "18/05/2026 (07:30 AM)",
       nights: 2,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-SKY-604",
@@ -232,7 +232,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       checkIn: "18/05/2026 (02:00 PM)",
       checkOut: "19/05/2026 (06:00 AM)",
       nights: 1,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-MP-604",
@@ -264,7 +264,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       checkIn: "20/05/2026 (02:00 PM)",
       checkOut: "21/05/2026 (08:00 AM)",
       nights: 1,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-MP-604B",
@@ -280,7 +280,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       checkIn: "21/05/2026 (02:00 PM)",
       checkOut: "22/05/2026 (08:30 AM)",
       nights: 1,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-DHAN-604",
@@ -296,7 +296,7 @@ const PRESET_CHARDHAM_ACTUAL_VOUCHER: HotelVoucherData = {
       checkIn: "22/05/2026 (03:00 PM)",
       checkOut: "23/05/2026 (08:00 AM)",
       nights: 1,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-DAB-604",
@@ -397,23 +397,23 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
   guestPhone: "+91 97190 38278",
   guestEmail: "amitchandra104@gmail.com",
   totalPax: "12 Persons",
-  totalRooms: "Family Basis Deluxe Rooms",
+  totalRooms: "Family Basis Standard Rooms",
   tripDuration: "10 Days / 09 Nights Chardham Tour",
   emergencyContact: "Amit Chandra · +91 9719038278, 7818952740 (24x7 Helpline)",
   specialInstructions: "• Please present this original voucher with government photo ID at check-in.\n• Kedarnath Night Stay is Tent Only without food (as per yatra norms).\n• Food arrangements are done at hotel; please reach dining hall on time.\n• Non-AC rooms in all hill areas as per mountain terrain norms.\n• Room sharing is on 2 / 3 / 4 / 6 bed family basis as confirmed.",
-  inclusions: "• Confirmed Deluxe Hotel Accommodation across Barkot, Uttarkashi, Phata, Badrinath & Pipalkoti.\n• Meal Plan: MAP (Breakfast and Dinner at hotels only).\n• Dedicated 12-Pax Tempo Traveller Haridwar to Haridwar.\n• All Interstate Taxes, Tolls, Driver Allowance and Parking included.",
+  inclusions: "• Confirmed Standard Clean Hotel Accommodation across Barkot, Uttarkashi, Phata, Badrinath & Pipalkoti.\n• Meal Plan: MAP (Breakfast and Dinner at hotels only).\n• Dedicated 12-Pax Tempo Traveller Haridwar to Haridwar.\n• All Interstate Taxes, Tolls, Driver Allowance and Parking included.",
   stays: [
     {
       id: "stay-1",
       nightsLabel: "Night 1 & 2",
       city: "Barkot / Yamunotri Sector",
-      hotelName: "Hotel / Camp Deluxe Resort",
+      hotelName: "Hotel / Camp Standard Clean Resort",
       hotelAddress: "Barkot - Kharadi, Yamunotri Highway",
       contactNo: "+91 97190 38278",
       checkIn: "Day 1 (12:00 PM)",
       checkOut: "Day 3 (08:00 AM)",
       nights: 2,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Basis Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-BR-12P",
@@ -423,13 +423,13 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
       id: "stay-2",
       nightsLabel: "Night 3 & 4",
       city: "Uttarkashi / Gangotri Sector",
-      hotelName: "Hotel Bhagirathi Deluxe",
+      hotelName: "Hotel Bhagirathi Standard Clean",
       hotelAddress: "Gangotri Road, Uttarkashi",
       contactNo: "+91 97190 38278",
       checkIn: "Day 3 (01:00 PM)",
       checkOut: "Day 5 (07:30 AM)",
       nights: 2,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Basis Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-UK-12P",
@@ -439,13 +439,13 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
       id: "stay-3",
       nightsLabel: "Night 5 & 7",
       city: "Phata / Rampur / Guptkashi",
-      hotelName: "Kedar Valley Deluxe Resort",
+      hotelName: "Kedar Valley Standard Comfort Resort",
       hotelAddress: "Phata / Sitapur / Guptkashi Road",
       contactNo: "+91 97190 38278",
       checkIn: "Day 5 (02:00 PM)",
       checkOut: "Day 8 (07:00 AM)",
       nights: 2,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Basis Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-PH-12P",
@@ -471,13 +471,13 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
       id: "stay-5",
       nightsLabel: "Night 8",
       city: "Shri Badrinath Dham",
-      hotelName: "Hotel Badri Kedar Deluxe",
+      hotelName: "Hotel Badri Kedar Standard Clean",
       hotelAddress: "Near Badrinath Temple & Alaknanda River",
       contactNo: "+91 97190 38278",
       checkIn: "Day 8 (02:00 PM)",
       checkOut: "Day 9 (09:00 AM)",
       nights: 1,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Basis Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-BD-12P",
@@ -487,13 +487,13 @@ const PRESET_CHARDHAM_12P_10D: HotelVoucherData = {
       id: "stay-6",
       nightsLabel: "Night 9",
       city: "Pipalkoti / Karanprayag / Rudraprayag",
-      hotelName: "Hotel Alaknanda / Similar Deluxe",
+      hotelName: "Hotel Alaknanda / Similar Standard Clean",
       hotelAddress: "Badrinath - Rishikesh Highway, Pipalkoti",
       contactNo: "+91 97190 38278",
       checkIn: "Day 9 (03:00 PM)",
       checkOut: "Day 10 (07:30 AM)",
       nights: 1,
-      roomType: "Deluxe Rooms",
+      roomType: "Standard Rooms",
       noOfRooms: "Family Basis Rooms",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "CONF-PK-12P",
@@ -1102,7 +1102,7 @@ export default function HotelVouchersPage() {
       checkIn: "",
       checkOut: "",
       nights: 1,
-      roomType: "Deluxe Room",
+      roomType: "Standard Room",
       noOfRooms: "01 Room",
       mealPlan: "MAP (Breakfast + Dinner)",
       confirmationNo: "",
@@ -1313,7 +1313,7 @@ export default function HotelVouchersPage() {
       handleShareGroupWhatsApp();
     } else {
       let message = `*🏨 HOTEL & STAY SERVICE VOUCHER*\n`;
-      message += `*Travel to Uttarakhand - Devbhoomi Hospitality*\n`;
+      message += `*Travel to Uttarakhand*\n`;
       message += `━━━━━━━━━━━━━━━━━━━━━\n`;
       message += `📋 *Voucher No:* ${data.voucherNo || "N/A"}\n`;
       message += `👤 *Guest Name:* ${data.guestName || "Guest"}\n`;
@@ -1365,7 +1365,7 @@ export default function HotelVouchersPage() {
                   Travel to Uttarakhand
                 </h2>
                 <p className="text-[11px] font-semibold text-gray-500 tracking-wider mt-0.5 whitespace-nowrap">
-                  Devbhoomi Pilgrimage & Spiritual Stays
+                  Travel to Uttarakhand - Spiritual Pilgrimage Stays
                 </p>
                 <div className="flex flex-wrap items-center gap-2 mt-1">
                   <span className="text-[10px] font-bold uppercase tracking-widest text-[#dc2626] bg-red-50 border border-red-200 px-1.5 py-0.5 rounded shrink-0">
@@ -2219,7 +2219,7 @@ export default function HotelVouchersPage() {
                 className="px-2 py-1 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-300 rounded text-xs font-semibold transition cursor-pointer"
                 title="10 Days / 9 Nights Chardham for 12 Pax Tempo Traveller"
               >
-                10D Chardham (12 Pax Deluxe)
+                10D Chardham (12 Pax Standard)
               </button>
               <button
                 onClick={() => updateData(PRESET_CHARDHAM_10D)}
@@ -2454,7 +2454,7 @@ export default function HotelVouchersPage() {
                       <input 
                         type="text" 
                         className="w-full px-2 py-1.5 bg-white border border-gray-200 rounded text-xs" 
-                        placeholder="Deluxe Room" 
+                        placeholder="Standard Room" 
                         value={stay.roomType} 
                         onChange={e => updateStay(idx, { roomType: e.target.value })} 
                       />
@@ -2487,7 +2487,7 @@ export default function HotelVouchersPage() {
                   {/* Quick Category Chips with Tent Only */}
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <span className="text-[10px] text-gray-400 font-medium">Category:</span>
-                    {["Deluxe Room", "Tent Only", "Super Deluxe", "Family Quad", "Hall / Group Rooms"].map((cat) => (
+                    {["Standard Room", "Tent Only", "Deluxe Room", "Family Quad", "Hall / Group Rooms"].map((cat) => (
                       <button
                         key={cat}
                         type="button"

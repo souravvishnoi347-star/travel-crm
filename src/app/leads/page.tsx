@@ -395,7 +395,7 @@ export default function LeadPipeline() {
       `• Keep your Char Dham Biometric Registration Pass ready.\n\n` +
       `📞 *24x7 Helpline:* +91 9719038278 (Mr. Amit Kumar)\n` +
       `🌐 https://traveltouttrakhand.com\n\n` +
-      `Wishing you a divine and blessed Devbhoomi Darshan! 🌸🛕`;
+      `Wishing you a divine and blessed Char Dham Darshan! 🌸🛕`;
 
     const cleanPhone = waPhone.replace(/[^0-9]/g, "");
     const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
@@ -596,7 +596,7 @@ export default function LeadPipeline() {
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-gray-900">{editLead ? "Edit Yatra Lead" : "Add Spiritual Yatra Lead"}</h2>
-                  <p className="text-xs text-gray-500">Devbhoomi Uttarakhand Pilgrimage Inquiries</p>
+                  <p className="text-xs text-gray-500">Travel to Uttarakhand Pilgrimage Inquiries</p>
                 </div>
               </div>
               <button onClick={() => setShowForm(false)} className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"><X size={18} /></button>

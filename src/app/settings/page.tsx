@@ -500,7 +500,7 @@ export default function SettingsPage() {
                 </span>
               </h2>
               <p className="text-xs text-gray-500">
-                Send official Devbhoomi booking confirmation messages directly to customer WhatsApp
+                Send official Travel to Uttarakhand booking confirmation messages directly to customer WhatsApp
               </p>
             </div>
           </div>

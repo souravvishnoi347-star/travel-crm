@@ -113,7 +113,7 @@ export function AuthScreen() {
               CRM & Operations Portal
             </p>
             <p className="text-[11px] text-amber-300 font-serif font-semibold mt-1 tracking-wider">
-              ॐ नमः शिवाय · Devbhoomi Edition
+              ॐ नमः शिवाय · Travel to Uttarakhand
             </p>
           </div>
 

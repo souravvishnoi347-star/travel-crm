@@ -609,7 +609,7 @@ export default function InvoicesPage() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-900 leading-tight">Tax Invoice Studio</h1>
-                <p className="text-xs text-gray-500">Devbhoomi Edition • 100% Editable</p>
+                <p className="text-xs text-gray-500">Travel to Uttarakhand • 100% Editable</p>
               </div>
             </div>
             <button

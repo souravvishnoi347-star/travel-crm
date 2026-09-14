@@ -714,7 +714,7 @@ export default function WhatsAppDeskPage() {
             {/* Spiritual Date separator */}
             <div className="text-center my-2">
               <span className="bg-white/90 border border-gray-200 text-gray-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-2xs">
-                🙏 ॐ नमः शिवाय · Official Devbhoomi WhatsApp
+                🙏 ॐ नमः शिवाय · Official Travel to Uttarakhand WhatsApp
               </span>
             </div>
 
