@@ -135,18 +135,32 @@ export interface ItineraryData {
   hotelPhotos?: HotelPhoto[];
   showHotelPhotos?: boolean;
 
-  // Trust & Credentials (Owner Photo, Certificate, Office Image)
+  // Trust & Credentials (Owner Photo, Certificates, Office Image)
   trustPhotos?: {
     ownerPhoto?: string;
     ownerName?: string;
     ownerTitle?: string;
     certificatePhoto?: string;
     certificateCaption?: string;
+    certificate2Photo?: string;
+    certificate2Caption?: string;
     officePhoto?: string;
     officeCaption?: string;
   };
   showTrustSection?: boolean;
 }
+
+export const DEFAULT_TRUST_PHOTOS = {
+  ownerPhoto: "/certificates/owner.jpeg",
+  ownerName: "Amit Chandra",
+  ownerTitle: "Founder & Managing Director",
+  certificatePhoto: "/certificates/uttrakhand_tourism.jpeg",
+  certificateCaption: "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176",
+  certificate2Photo: "/certificates/certificate.jpeg",
+  certificate2Caption: "Dehradun Transport Authority License: 44/RT/2025",
+  officePhoto: "/certificates/office_front.jpeg",
+  officeCaption: "Shop 38, Pursharthi Market, Haridwar"
+};
 
 export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
   {
@@ -399,15 +413,7 @@ const CHARDHAM_PRESET: ItineraryData = {
   showPhotosPage1: true,
   showPhotosPage3: true,
   showHotelPhotos: true,
-  trustPhotos: {
-    ownerPhoto: "/gallery/chardham_10d_img_7.jpg",
-    ownerName: "Amit Chandra",
-    ownerTitle: "Founder & Managing Director",
-    certificatePhoto: "",
-    certificateCaption: "Govt. Registered Tour Operator",
-    officePhoto: "/gallery/chardham_10d_img_27.jpg",
-    officeCaption: "Our Booking Office — Haridwar"
-  },
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
   showTrustSection: true
 };
 
@@ -637,7 +643,9 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
   hotelPhotos: CURATED_HOTEL_PHOTO_PRESETS,
   showPhotosPage1: true,
   showPhotosPage3: true,
-  showHotelPhotos: true
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
 };
 
 // Dedicated 6 Days / 5 Nights Do Dham Yatra (Kedarnath + Badrinath) Preset
@@ -794,7 +802,9 @@ export const DODHAM_6D_PRESET: ItineraryData = {
   hotelPhotos: CURATED_HOTEL_PHOTO_PRESETS,
   showPhotosPage1: true,
   showPhotosPage3: true,
-  showHotelPhotos: true
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
 };
 
 const CURATED_PHOTO_PRESETS = [
@@ -1024,16 +1034,24 @@ export default function ItineraryBuilder() {
                 return hp;
               });
             }
-            // Auto-migrate trust & credentials photos
-            if (!parsed.trustPhotos || !parsed.trustPhotos.ownerPhoto || parsed.trustPhotos.ownerPhoto.includes("img_7")) {
+            // Auto-migrate trust & credentials photos with all 4 items
+            if (
+              !parsed.trustPhotos || 
+              !parsed.trustPhotos.certificatePhoto || 
+              !parsed.trustPhotos.certificatePhoto.trim() ||
+              !parsed.trustPhotos.certificate2Photo ||
+              parsed.trustPhotos.ownerPhoto?.includes("img_7")
+            ) {
               parsed.trustPhotos = {
-                ownerPhoto: "/certificates/owner.jpeg",
-                ownerName: "Amit Chandra",
-                ownerTitle: "Founder & Managing Director",
-                certificatePhoto: "/certificates/uttrakhand_tourism.jpeg",
-                certificateCaption: "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176",
-                officePhoto: "/certificates/office_front.jpeg",
-                officeCaption: "Booking Office: Pursharthi Market, Haridwar"
+                ownerPhoto: parsed.trustPhotos?.ownerPhoto || "/certificates/owner.jpeg",
+                ownerName: parsed.trustPhotos?.ownerName || "Amit Chandra",
+                ownerTitle: parsed.trustPhotos?.ownerTitle || "Founder & Managing Director",
+                certificatePhoto: parsed.trustPhotos?.certificatePhoto?.trim() || "/certificates/uttrakhand_tourism.jpeg",
+                certificateCaption: parsed.trustPhotos?.certificateCaption?.trim() || "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176",
+                certificate2Photo: parsed.trustPhotos?.certificate2Photo?.trim() || "/certificates/certificate.jpeg",
+                certificate2Caption: parsed.trustPhotos?.certificate2Caption?.trim() || "Dehradun Transport Authority License: 44/RT/2025",
+                officePhoto: parsed.trustPhotos?.officePhoto || "/certificates/office_front.jpeg",
+                officeCaption: parsed.trustPhotos?.officeCaption || "Booking Office: Pursharthi Market, Haridwar"
               };
               parsed.showTrustSection = true;
             }
@@ -1074,6 +1092,25 @@ export default function ItineraryBuilder() {
                   }
                   return hp;
                 });
+              }
+              if (
+                !cloudData.trustPhotos || 
+                !cloudData.trustPhotos.certificatePhoto || 
+                !cloudData.trustPhotos.certificatePhoto.trim() ||
+                !cloudData.trustPhotos.certificate2Photo
+              ) {
+                cloudData.trustPhotos = {
+                  ownerPhoto: cloudData.trustPhotos?.ownerPhoto || "/certificates/owner.jpeg",
+                  ownerName: cloudData.trustPhotos?.ownerName || "Amit Chandra",
+                  ownerTitle: cloudData.trustPhotos?.ownerTitle || "Founder & Managing Director",
+                  certificatePhoto: cloudData.trustPhotos?.certificatePhoto?.trim() || "/certificates/uttrakhand_tourism.jpeg",
+                  certificateCaption: cloudData.trustPhotos?.certificateCaption?.trim() || "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176",
+                  certificate2Photo: cloudData.trustPhotos?.certificate2Photo?.trim() || "/certificates/certificate.jpeg",
+                  certificate2Caption: cloudData.trustPhotos?.certificate2Caption?.trim() || "Dehradun Transport Authority License: 44/RT/2025",
+                  officePhoto: cloudData.trustPhotos?.officePhoto || "/certificates/office_front.jpeg",
+                  officeCaption: cloudData.trustPhotos?.officeCaption || "Booking Office: Pursharthi Market, Haridwar"
+                };
+                cloudData.showTrustSection = true;
               }
               setData(cloudData);
               localStorage.setItem("triloki_current_itinerary", JSON.stringify(cloudData));
@@ -2224,12 +2261,12 @@ ${data.motto}`;
           ))}
         </div>
 
-        {/* If fewer than 8 days, fill empty bottom space with holy sightseeing photos & yatra assurances */}
-        {data.days.length <= 7 && data.photos && data.photos.length > 0 && (
-          <div className="mt-2 space-y-1">
-            <div className="flex items-center justify-between text-[10.5px] font-bold text-[#0369a1]">
+        {/* Holy Sightseeing Highlights & Darshan Landmark Highlights to fill bottom space */}
+        {data.photos && data.photos.length > 0 && (
+          <div className="mt-1 space-y-1">
+            <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1]">
               <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
-              <span className="text-[9px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+              <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
             </div>
             <div className="grid grid-cols-3 gap-2">
               {data.photos.slice(0, 3).map((photo, pIdx) => {
@@ -2237,7 +2274,7 @@ ${data.motto}`;
                 const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
                 return (
                   <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white">
-                    <div className="h-16 overflow-hidden bg-gray-100 flex items-center justify-center">
+                    <div className="h-14 overflow-hidden bg-gray-100 flex items-center justify-center">
                       <img 
                         src={photo.url} 
                         alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
@@ -2245,7 +2282,7 @@ ${data.motto}`;
                       />
                     </div>
                     {photo.caption && (
-                      <p className="text-[8px] font-semibold text-gray-800 p-0.5 text-center truncate bg-sky-50/50">
+                      <p className="text-[7.5px] font-semibold text-gray-800 p-0.5 text-center truncate bg-sky-50/50">
                         {photo.caption}
                       </p>
                     )}
@@ -2574,73 +2611,102 @@ ${data.motto}`;
           </ul>
         </div>
 
-        {/* Trust & Credentials Section — Owner, Certificate, Office */}
-        {data.showTrustSection !== false && data.trustPhotos && (data.trustPhotos.ownerPhoto || data.trustPhotos.certificatePhoto || data.trustPhotos.officePhoto) && (
+        {/* Trust & Credentials Section — All 4 Items: Tourism Certificate, Transport License, Owner, Office */}
+        {data.showTrustSection !== false && (
           <div className="pt-2 border-t border-gray-200 space-y-1.5">
-            <h3 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-2">
-              <span>🏆 Why Trust Us — Our Credentials</span>
-              <span className="text-[9px] font-normal px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
-                Govt. Registered & Verified
-              </span>
-            </h3>
-            <div className={`grid gap-3 ${[data.trustPhotos.ownerPhoto, data.trustPhotos.certificatePhoto, data.trustPhotos.officePhoto].filter(Boolean).length === 1 ? 'grid-cols-1' : [data.trustPhotos.ownerPhoto, data.trustPhotos.certificatePhoto, data.trustPhotos.officePhoto].filter(Boolean).length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-2">
+                <span>🏆 Why Trust Us — Official Credentials & Registration</span>
+                <span className="text-[9px] font-normal px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                  Govt. Registered & 100% Verified
+                </span>
+              </h3>
+              <span className="text-[9px] text-gray-500 font-semibold">Travel to Uttarakhand</span>
+            </div>
+            
+            <div className="grid grid-cols-4 gap-2.5">
               
-              {/* Owner Photo */}
-              {data.trustPhotos.ownerPhoto && (
-                <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                  <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center">
-                    <img 
-                      src={data.trustPhotos.ownerPhoto} 
-                      alt={data.trustPhotos.ownerName || "Owner"} 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="p-1.5 bg-sky-50/40 text-center">
+              {/* 1. Uttarakhand Tourism Development Board Certificate */}
+              <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                  <img 
+                    src={data.trustPhotos?.certificatePhoto || "/certificates/uttrakhand_tourism.jpeg"} 
+                    alt="Tourism Reg Certificate" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="p-1.5 bg-sky-50/40 text-center flex-1 flex flex-col justify-between">
+                  <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                    {data.trustPhotos?.certificateCaption || "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176"}
+                  </p>
+                  <p className="text-[8px] text-emerald-700 font-semibold mt-0.5">
+                    ✓ Govt. Registered Tour Operator
+                  </p>
+                </div>
+              </div>
+
+              {/* 2. Transport Authority Dehradun License */}
+              <div className="rounded-xl overflow-hidden border border-purple-200 shadow-2xs bg-white flex flex-col">
+                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                  <img 
+                    src={data.trustPhotos?.certificate2Photo || "/certificates/certificate.jpeg"} 
+                    alt="Transport Authority License" 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="p-1.5 bg-purple-50/40 text-center flex-1 flex flex-col justify-between">
+                  <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                    {data.trustPhotos?.certificate2Caption || "Transport Authority Reg: 44/RT/2025"}
+                  </p>
+                  <p className="text-[8px] text-purple-700 font-semibold mt-0.5">
+                    ✓ Dehradun RTA Registered
+                  </p>
+                </div>
+              </div>
+
+              {/* 3. Owner Photo */}
+              <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                  <img 
+                    src={data.trustPhotos?.ownerPhoto || "/certificates/owner.jpeg"} 
+                    alt={data.trustPhotos?.ownerName || "Amit Chandra"} 
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+                <div className="p-1.5 bg-sky-50/40 text-center flex-1 flex flex-col justify-between">
+                  <div>
                     <p className="text-[10px] font-bold text-gray-900 leading-tight">
-                      {data.trustPhotos.ownerName || "Owner"}
+                      {data.trustPhotos?.ownerName || "Amit Chandra"}
                     </p>
                     <p className="text-[8.5px] text-[#0369a1] font-semibold">
-                      {data.trustPhotos.ownerTitle || "Founder & Director"}
+                      {data.trustPhotos?.ownerTitle || "Founder & Managing Director"}
                     </p>
                   </div>
+                  <p className="text-[8px] text-gray-500 mt-0.5">
+                    12+ Yrs Yatra Management
+                  </p>
                 </div>
-              )}
+              </div>
 
-              {/* Certificate Photo */}
-              {data.trustPhotos.certificatePhoto && (
-                <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                  <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center">
-                    <img 
-                      src={data.trustPhotos.certificatePhoto} 
-                      alt="Certificate" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="p-1.5 bg-sky-50/40 text-center">
-                    <p className="text-[9px] font-bold text-gray-800 leading-tight">
-                      {data.trustPhotos.certificateCaption || "Govt. Registered Tour Operator"}
-                    </p>
-                  </div>
+              {/* 4. Booking Office Photo */}
+              <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                  <img 
+                    src={data.trustPhotos?.officePhoto || "/certificates/office_front.jpeg"} 
+                    alt="Booking Office" 
+                    className="w-full h-full object-contain"
+                  />
                 </div>
-              )}
+                <div className="p-1.5 bg-sky-50/40 text-center flex-1 flex flex-col justify-between">
+                  <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                    {data.trustPhotos?.officeCaption || "Shop 38, Pursharthi Market, Haridwar"}
+                  </p>
+                  <p className="text-[8px] text-sky-700 font-semibold mt-0.5">
+                    📍 Direct Booking & Help Desk
+                  </p>
+                </div>
+              </div>
 
-              {/* Office Photo */}
-              {data.trustPhotos.officePhoto && (
-                <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                  <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center">
-                    <img 
-                      src={data.trustPhotos.officePhoto} 
-                      alt="Office" 
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div className="p-1.5 bg-sky-50/40 text-center">
-                    <p className="text-[9px] font-bold text-gray-800 leading-tight">
-                      {data.trustPhotos.officeCaption || "Our Booking Office"}
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -3580,7 +3646,7 @@ ${data.motto}`;
 
                             {/* Quick Select from Uploaded Hotel Stays */}
                             <div className="mt-1">
-                              <span className="text-[9px] text-gray-400 block mb-0.5">Quick pick uploaded stay photo:</span>
+                              <span className="text-[9px] text-gray-500 font-semibold block mb-0.5">Quick pick stay photo (11 hotel pics & tent):</span>
                               <div className="flex gap-1 overflow-x-auto py-0.5 custom-scrollbar">
                                 {[
                                   { url: "/hotels_custom/hotel_stay_2.jpeg", label: "Quad Room" },
@@ -3589,13 +3655,18 @@ ${data.motto}`;
                                   { url: "/hotels_custom/hotel_stay_6.jpeg", label: "Twin Room" },
                                   { url: "/hotels_custom/hotel_stay_7.jpeg", label: "Deluxe Bed" },
                                   { url: "/hotels_custom/hotel_stay_1.jpeg", label: "Bath/Geyser" },
-                                  { url: "/gallery/kedarnath_alpine_tent.jpg", label: "Alpine Tent" }
+                                  { url: "/hotels_custom/hotel_stay_5.jpeg", label: "Luxury Triple" },
+                                  { url: "/hotels_custom/hotel_stay_8.jpeg", label: "Cozy Double" },
+                                  { url: "/hotels_custom/hotel_stay_9.jpeg", label: "Valley View" },
+                                  { url: "/hotels_custom/hotel_stay_10.jpeg", label: "Family Suite" },
+                                  { url: "/hotels_custom/hotel_stay_11.jpeg", label: "Camp/Resort" },
+                                  { url: "/gallery/kedarnath_alpine_tent.jpg", label: "⛺ Alpine Tent" }
                                 ].map((pic, pIdx) => (
                                   <button
                                     key={pIdx}
                                     type="button"
                                     onClick={() => updateHotelPhoto(hp.id, "url", pic.url)}
-                                    className={`text-[8.5px] px-1.5 py-0.5 rounded shrink-0 border transition ${hp.url === pic.url ? 'bg-sky-100 text-sky-800 border-sky-300 font-bold' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
+                                    className={`text-[8.5px] px-2 py-0.5 rounded shrink-0 border transition ${hp.url === pic.url ? 'bg-emerald-100 text-emerald-800 border-emerald-300 font-bold' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
                                   >
                                     {pic.label}
                                   </button>
@@ -3621,126 +3692,55 @@ ${data.motto}`;
                 </div>
               </div>
 
-              {/* Trust & Credentials Editor — Owner, Certificate, Office */}
-              <div className="bg-gradient-to-br from-emerald-50/60 via-teal-50/40 to-white border-2 border-emerald-200 rounded-2xl p-4 space-y-3 shadow-xs">
-                <div className="flex items-center justify-between">
+              {/* Trust & Credentials Editor — 4 Cards: Tourism Certificate, Transport License, Owner, Office */}
+              <div className="bg-gradient-to-br from-emerald-50/70 via-teal-50/50 to-white border-2 border-emerald-300 rounded-2xl p-4 space-y-3.5 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-xl">🏆</span>
                     <div>
-                      <h3 className="font-bold text-emerald-950 text-xs">Trust & Credentials (Page 4)</h3>
-                      <p className="text-[10px] text-emerald-800">Owner photo, registration certificate & office image</p>
+                      <h3 className="font-bold text-emerald-950 text-xs">
+                        Official Certificates & Credentials (Page 4)
+                      </h3>
+                      <p className="text-[10px] text-emerald-800">
+                        Edit, swap or upload official registration certificates, owner and office photos.
+                      </p>
                     </div>
                   </div>
-                  <label className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded-lg border border-emerald-200">
-                    <input
-                      type="checkbox"
-                      checked={data.showTrustSection !== false}
-                      onChange={e => setData({ ...data, showTrustSection: e.target.checked })}
-                      className="rounded"
-                    />
-                    Show in PDF
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setData(prev => ({
+                        ...prev,
+                        trustPhotos: { ...DEFAULT_TRUST_PHOTOS },
+                        showTrustSection: true
+                      }))}
+                      className="text-[9.5px] px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg transition shadow-2xs cursor-pointer"
+                      title="Reset all 4 credentials to verified government records"
+                    >
+                      ★ Reset to Official Presets
+                    </button>
+                    <label className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-lg border border-emerald-200 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={data.showTrustSection !== false}
+                        onChange={e => setData({ ...data, showTrustSection: e.target.checked })}
+                        className="rounded"
+                      />
+                      Show on Page 4
+                    </label>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-3 gap-3">
-                  {/* Owner Photo */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-gray-700">👤 Owner Photo</label>
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setData(prev => ({
-                          ...prev,
-                          trustPhotos: {
-                            ...prev.trustPhotos,
-                            ownerPhoto: "/certificates/owner.jpeg",
-                            ownerName: "Amit Chandra",
-                            ownerTitle: "Founder & Managing Director"
-                          }
-                        }))}
-                        className="text-[9px] px-1.5 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 text-center"
-                      >
-                        Office Desk
-                      </button>
-                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2 py-1 rounded border border-emerald-200">
-                        📤 Upload
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={e => {
-                            const file = e.target.files?.[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onload = () => {
-                                setData(prev => ({
-                                  ...prev,
-                                  trustPhotos: { ...prev.trustPhotos, ownerPhoto: reader.result as string }
-                                }));
-                              };
-                              reader.readAsDataURL(file);
-                            }
-                          }}
-                          className="hidden"
-                        />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                  
+                  {/* Card 1: Uttarakhand Tourism Certificate */}
+                  <div className="bg-white p-2.5 rounded-xl border border-sky-200 space-y-2 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10.5px] font-bold text-sky-900">
+                        📜 1. Tourism Board Certificate
                       </label>
-                    </div>
-                    {data.trustPhotos?.ownerPhoto && (
-                      <div className="h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                        <img src={data.trustPhotos.ownerPhoto} alt="Owner" className="w-full h-full object-contain" />
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      value={data.trustPhotos?.ownerName || ""}
-                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, ownerName: e.target.value } }))}
-                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
-                      placeholder="Owner Name"
-                    />
-                    <input
-                      type="text"
-                      value={data.trustPhotos?.ownerTitle || ""}
-                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, ownerTitle: e.target.value } }))}
-                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
-                      placeholder="Title e.g. Founder & Director"
-                    />
-                  </div>
-
-                  {/* Certificate Photo */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-gray-700">📜 Certificate</label>
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => setData(prev => ({
-                          ...prev,
-                          trustPhotos: {
-                            ...prev.trustPhotos,
-                            certificatePhoto: "/certificates/uttrakhand_tourism.jpeg",
-                            certificateCaption: "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176"
-                          }
-                        }))}
-                        className="text-[9px] px-1 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 truncate"
-                        title="Tourism Development Board Certificate"
-                      >
-                        Tourism Reg.
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setData(prev => ({
-                          ...prev,
-                          trustPhotos: {
-                            ...prev.trustPhotos,
-                            certificatePhoto: "/certificates/certificate.jpeg",
-                            certificateCaption: "Transport Authority Reg: 44/आरटीए/2025"
-                          }
-                        }))}
-                        className="text-[9px] px-1 py-1 bg-purple-50 hover:bg-purple-100 text-purple-800 rounded font-semibold border border-purple-200 flex-1 truncate"
-                        title="Transport Authority License"
-                      >
-                        RTA License
-                      </button>
-                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded border border-emerald-200">
-                        📤
+                      <label className="text-[9px] text-sky-700 hover:text-sky-900 font-bold flex items-center gap-0.5 cursor-pointer bg-sky-50 hover:bg-sky-100 px-2 py-0.5 rounded border border-sky-200">
+                        📤 Upload Custom
                         <input
                           type="file"
                           accept="image/*"
@@ -3761,37 +3761,166 @@ ${data.motto}`;
                         />
                       </label>
                     </div>
-                    {data.trustPhotos?.certificatePhoto && (
-                      <div className="h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                        <img src={data.trustPhotos.certificatePhoto} alt="Certificate" className="w-full h-full object-contain" />
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      value={data.trustPhotos?.certificateCaption || ""}
-                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, certificateCaption: e.target.value } }))}
-                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
-                      placeholder="e.g. Govt. Registered Tour Operator"
-                    />
+
+                    <div className="flex gap-1.5 items-center">
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            certificatePhoto: "/certificates/uttrakhand_tourism.jpeg",
+                            certificateCaption: "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176"
+                          }
+                        }))}
+                        className={`text-[9px] px-2 py-1 rounded font-semibold border flex-1 text-center transition ${
+                          data.trustPhotos?.certificatePhoto === "/certificates/uttrakhand_tourism.jpeg"
+                            ? "bg-sky-600 text-white border-sky-700 font-bold"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        }`}
+                      >
+                        Uttarakhand Tourism Reg.
+                      </button>
+                    </div>
+
+                    <div className="h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center p-1">
+                      <img 
+                        src={data.trustPhotos?.certificatePhoto || "/certificates/uttrakhand_tourism.jpeg"} 
+                        alt="Tourism Certificate" 
+                        className="w-full h-full object-contain" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[9.5px] text-gray-500 font-medium mb-0.5">Certificate Caption / Reg Number</label>
+                      <input
+                        type="text"
+                        value={data.trustPhotos?.certificateCaption || ""}
+                        onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, certificateCaption: e.target.value } }))}
+                        className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                        placeholder="Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176"
+                      />
+                    </div>
                   </div>
 
-                  {/* Office Photo */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-gray-700">🏢 Office Photo</label>
-                    <div className="flex gap-1">
+                  {/* Card 2: Transport Authority License */}
+                  <div className="bg-white p-2.5 rounded-xl border border-purple-200 space-y-2 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10.5px] font-bold text-purple-900">
+                        🚗 2. Transport Authority License
+                      </label>
+                      <label className="text-[9px] text-purple-700 hover:text-purple-900 font-bold flex items-center gap-0.5 cursor-pointer bg-purple-50 hover:bg-purple-100 px-2 py-0.5 rounded border border-purple-200">
+                        📤 Upload Custom
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                setData(prev => ({
+                                  ...prev,
+                                  trustPhotos: { ...prev.trustPhotos, certificate2Photo: reader.result as string }
+                                }));
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="flex gap-1.5 items-center">
                       <button
                         type="button"
                         onClick={() => setData(prev => ({
                           ...prev,
                           trustPhotos: {
                             ...prev.trustPhotos,
-                            officePhoto: "/certificates/office_front.jpeg",
-                            officeCaption: "Booking Office: Pursharthi Market, Haridwar"
+                            certificate2Photo: "/certificates/certificate.jpeg",
+                            certificate2Caption: "Dehradun Transport Authority License: 44/RT/2025"
                           }
                         }))}
-                        className="text-[9px] px-1 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 truncate"
+                        className={`text-[9px] px-2 py-1 rounded font-semibold border flex-1 text-center transition ${
+                          data.trustPhotos?.certificate2Photo === "/certificates/certificate.jpeg"
+                            ? "bg-purple-600 text-white border-purple-700 font-bold"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        }`}
                       >
-                        Front Board
+                        Dehradun RTA Reg.
+                      </button>
+                    </div>
+
+                    <div className="h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center p-1">
+                      <img 
+                        src={data.trustPhotos?.certificate2Photo || "/certificates/certificate.jpeg"} 
+                        alt="RTA License" 
+                        className="w-full h-full object-contain" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[9.5px] text-gray-500 font-medium mb-0.5">License Caption / RTA Reg Number</label>
+                      <input
+                        type="text"
+                        value={data.trustPhotos?.certificate2Caption || ""}
+                        onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, certificate2Caption: e.target.value } }))}
+                        className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                        placeholder="Dehradun Transport Authority License: 44/RT/2025"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Card 3: Owner Photo */}
+                  <div className="bg-white p-2.5 rounded-xl border border-sky-200 space-y-2 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10.5px] font-bold text-gray-800">
+                        👤 3. Owner Photo (Amit Chandra)
+                      </label>
+                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
+                        📤 Upload Custom
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => {
+                                setData(prev => ({
+                                  ...prev,
+                                  trustPhotos: { ...prev.trustPhotos, ownerPhoto: reader.result as string }
+                                }));
+                              };
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    </div>
+
+                    <div className="flex gap-1.5 items-center">
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            ownerPhoto: "/certificates/owner.jpeg",
+                            ownerName: "Amit Chandra",
+                            ownerTitle: "Founder & Managing Director"
+                          }
+                        }))}
+                        className={`text-[9px] px-2 py-1 rounded font-semibold border flex-1 text-center transition ${
+                          data.trustPhotos?.ownerPhoto === "/certificates/owner.jpeg"
+                            ? "bg-sky-600 text-white border-sky-700 font-bold"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        }`}
+                      >
+                        Office Desk Picture
                       </button>
                       <button
                         type="button"
@@ -3799,16 +3928,61 @@ ${data.motto}`;
                           ...prev,
                           trustPhotos: {
                             ...prev.trustPhotos,
-                            officePhoto: "/gallery/chardham_10d_img_27.jpg",
-                            officeCaption: "Booking Desk — Haridwar"
+                            ownerPhoto: "/gallery/chardham_10d_img_28.jpg",
+                            ownerName: "Amit Chandra",
+                            ownerTitle: "Founder & Managing Director"
                           }
                         }))}
-                        className="text-[9px] px-1 py-1 bg-sky-50 hover:bg-sky-100 text-sky-800 rounded font-semibold border border-sky-200 flex-1 truncate"
+                        className={`text-[9px] px-2 py-1 rounded font-semibold border flex-1 text-center transition ${
+                          data.trustPhotos?.ownerPhoto === "/gallery/chardham_10d_img_28.jpg"
+                            ? "bg-sky-600 text-white border-sky-700 font-bold"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        }`}
                       >
-                        Inner Desk
+                        Mountain View Picture
                       </button>
-                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-1.5 py-1 rounded border border-emerald-200">
-                        📤
+                    </div>
+
+                    <div className="h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center p-1">
+                      <img 
+                        src={data.trustPhotos?.ownerPhoto || "/certificates/owner.jpeg"} 
+                        alt="Owner" 
+                        className="w-full h-full object-contain" 
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      <div>
+                        <label className="block text-[9px] text-gray-500 font-medium mb-0.5">Name</label>
+                        <input
+                          type="text"
+                          value={data.trustPhotos?.ownerName || ""}
+                          onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, ownerName: e.target.value } }))}
+                          className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs font-semibold"
+                          placeholder="Amit Chandra"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[9px] text-gray-500 font-medium mb-0.5">Designation</label>
+                        <input
+                          type="text"
+                          value={data.trustPhotos?.ownerTitle || ""}
+                          onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, ownerTitle: e.target.value } }))}
+                          className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                          placeholder="Founder & Managing Director"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Card 4: Office Photo */}
+                  <div className="bg-white p-2.5 rounded-xl border border-sky-200 space-y-2 shadow-2xs">
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[10.5px] font-bold text-gray-800">
+                        🏢 4. Haridwar Booking Office
+                      </label>
+                      <label className="text-[9px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-0.5 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded border border-emerald-200">
+                        📤 Upload Custom
                         <input
                           type="file"
                           accept="image/*"
@@ -3829,19 +4003,66 @@ ${data.motto}`;
                         />
                       </label>
                     </div>
-                    {data.trustPhotos?.officePhoto && (
-                      <div className="h-16 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
-                        <img src={data.trustPhotos.officePhoto} alt="Office" className="w-full h-full object-contain" />
-                      </div>
-                    )}
-                    <input
-                      type="text"
-                      value={data.trustPhotos?.officeCaption || ""}
-                      onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, officeCaption: e.target.value } }))}
-                      className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
-                      placeholder="e.g. Our Booking Office — Haridwar"
-                    />
+
+                    <div className="flex gap-1.5 items-center">
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            officePhoto: "/certificates/office_front.jpeg",
+                            officeCaption: "Shop 38, Pursharthi Market, Haridwar"
+                          }
+                        }))}
+                        className={`text-[9px] px-2 py-1 rounded font-semibold border flex-1 text-center transition ${
+                          data.trustPhotos?.officePhoto === "/certificates/office_front.jpeg"
+                            ? "bg-sky-600 text-white border-sky-700 font-bold"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        }`}
+                      >
+                        Front Signboard
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setData(prev => ({
+                          ...prev,
+                          trustPhotos: {
+                            ...prev.trustPhotos,
+                            officePhoto: "/gallery/chardham_10d_img_27.jpg",
+                            officeCaption: "Booking Desk — Haridwar"
+                          }
+                        }))}
+                        className={`text-[9px] px-2 py-1 rounded font-semibold border flex-1 text-center transition ${
+                          data.trustPhotos?.officePhoto === "/gallery/chardham_10d_img_27.jpg"
+                            ? "bg-sky-600 text-white border-sky-700 font-bold"
+                            : "bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100"
+                        }`}
+                      >
+                        Inner Desk
+                      </button>
+                    </div>
+
+                    <div className="h-20 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center p-1">
+                      <img 
+                        src={data.trustPhotos?.officePhoto || "/certificates/office_front.jpeg"} 
+                        alt="Office" 
+                        className="w-full h-full object-contain" 
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[9.5px] text-gray-500 font-medium mb-0.5">Office Address / Caption</label>
+                      <input
+                        type="text"
+                        value={data.trustPhotos?.officeCaption || ""}
+                        onChange={e => setData(prev => ({ ...prev, trustPhotos: { ...prev.trustPhotos, officeCaption: e.target.value } }))}
+                        className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs"
+                        placeholder="Shop 38, Pursharthi Market, Haridwar"
+                      />
+                    </div>
                   </div>
+
                 </div>
               </div>
 
