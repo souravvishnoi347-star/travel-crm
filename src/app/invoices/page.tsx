@@ -81,6 +81,7 @@ export default function InvoicesPage() {
   const [autoScale, setAutoScale] = useState<number>(0.55);
   const [manualZoom, setManualZoom] = useState<number | null>(null);
   const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
+  const [showQrModal, setShowQrModal] = useState(false);
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-fit screen and fit-width scaling
@@ -524,10 +525,14 @@ export default function InvoicesPage() {
 
             {/* Right: Scannable UPI QR Code */}
             {data.showUpiQr !== false && (
-              <div className="shrink-0 flex flex-col items-center bg-white p-1.5 rounded-xl border border-sky-200 shadow-2xs">
+              <div 
+                onClick={() => setShowQrModal(true)}
+                className="shrink-0 flex flex-col items-center bg-white p-1.5 rounded-xl border border-sky-200 shadow-2xs cursor-pointer hover:border-sky-400 hover:shadow-md transition"
+                title="Click to enlarge QR Code"
+              >
                 <div className="w-[96px] h-[96px] relative overflow-hidden rounded-lg bg-white flex items-center justify-center p-0.5">
                   <img
-                    src={data.customQrUrl || "/qr_clean.png"}
+                    src={`${data.customQrUrl || "/qr_clean.png"}?v=5`}
                     alt="Official UPI Payment QR Code"
                     className="w-full h-full object-contain"
                     style={{ imageRendering: "pixelated" }}
@@ -941,6 +946,59 @@ export default function InvoicesPage() {
       <div className="fixed -left-[99999px] top-0 pointer-events-none opacity-100 z-[-100]">
         {renderInvoiceContent("print")}
       </div>
+
+      {/* Full-Size QR Scanner Modal for Instant Screen Scanning */}
+      {showQrModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowQrModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center space-y-4 animate-in fade-in zoom-in duration-150"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center w-full pb-2 border-b border-gray-100">
+              <div className="text-left">
+                <h3 className="font-bold text-gray-900 text-sm">Official UPI Payment QR</h3>
+                <p className="text-xs text-[#0369a1] font-semibold">Travel to Uttarakhand</p>
+              </div>
+              <button 
+                onClick={() => setShowQrModal(false)}
+                className="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center text-base font-bold cursor-pointer transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="p-3 bg-white border-2 border-sky-200 rounded-2xl shadow-inner flex items-center justify-center">
+              <img
+                src={`${data.customQrUrl || "/qr_clean.png"}?v=5`}
+                alt="Full Size UPI QR Code"
+                className="w-64 h-64 object-contain"
+                style={{ imageRendering: "pixelated" }}
+              />
+            </div>
+
+            <div className="space-y-1.5 text-xs text-gray-600 w-full bg-sky-50/50 p-3 rounded-xl border border-sky-100">
+              <p className="font-bold text-gray-900">Scan using any UPI App</p>
+              <p className="text-[11px] text-sky-700 font-medium">Google Pay · PhonePe · Paytm · BHIM · Cred</p>
+              <div className="pt-2 text-[11px] text-left border-t border-sky-100 mt-2 space-y-0.5">
+                <p><span className="text-gray-500 font-medium">Merchant UPI:</span> <span className="font-mono font-bold text-[#0369a1] select-all">20251232406374-iservuqrsbrp@cbin</span></p>
+                <p><span className="text-gray-500 font-medium">Bank Name:</span> <strong className="text-gray-900 font-semibold">Central Bank of India</strong></p>
+                <p><span className="text-gray-500 font-medium">Account No:</span> <strong className="font-mono text-gray-900 font-bold">5242273759</strong></p>
+                <p><span className="text-gray-500 font-medium">IFSC Code:</span> <strong className="font-mono text-gray-900 font-bold">CBIN0280274</strong></p>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setShowQrModal(false)}
+              className="w-full py-2 bg-[#0369a1] hover:bg-[#0284c7] text-white font-semibold rounded-xl text-xs transition cursor-pointer"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );
