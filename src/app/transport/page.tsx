@@ -459,9 +459,21 @@ export default function TransportVouchers() {
   };
 
   const handleShareWhatsApp = () => {
+    const rawPhone = (data as any).guestMobile || (data as any).guestPhone || "";
+    let cleanPhone = rawPhone.replace(/[^0-9]/g, "");
+    if (cleanPhone.length === 10) cleanPhone = `91${cleanPhone}`;
+    else if (cleanPhone.startsWith("0") && cleanPhone.length === 11) cleanPhone = `91${cleanPhone.slice(1)}`;
+    
+    if (!cleanPhone) {
+      const input = prompt("Enter Customer WhatsApp 10-digit Mobile Number:", "");
+      if (!input) return;
+      cleanPhone = input.replace(/[^0-9]/g, "");
+      if (cleanPhone.length === 10) cleanPhone = `91${cleanPhone}`;
+    }
+
     const message = `*TRANSPORT SERVICE VOUCHER - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName},\n\nPlease find your transport booking voucher.\n• Vehicle: ${data.vehicleType}\n• Fleet Helpline: ${data.managerMobile}\n• Arrival: ${data.arrivalDate}\n• Departure: ${data.departureDate}\n\nThank you for choosing Travel to Uttarakhand!`;
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
+    window.open(`https://wa.me/${cleanPhone}?text=${encodedMessage}`, "_blank");
   };
 
   // Modular Page Renderer - Exactly 1 A4 Page (1122px height) matching Hotel Voucher

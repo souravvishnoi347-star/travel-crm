@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
+import QRCode from "qrcode";
 
 export type InvoiceType = "advance" | "receipt";
 
@@ -125,6 +126,9 @@ export default function InvoicesPage() {
   const [manualZoom, setManualZoom] = useState<number | null>(null);
   const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
   const [showQrModal, setShowQrModal] = useState(false);
+  const [generatedQr, setGeneratedQr] = useState<string>("");
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [waPhoneInput, setWaPhoneInput] = useState("");
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
   // Auto-fit screen and fit-width scaling
@@ -298,6 +302,32 @@ export default function InvoicesPage() {
     };
   }, [data.packages, data.discount, data.amountPaid, data.advanceRequired]);
 
+  // Generate dynamic amount-encoded UPI QR code for Stage 1 Advance Demand
+  useEffect(() => {
+    if (data.invoiceType === "advance" && calculations.advanceRequired > 0) {
+      const payeeVpa = data.upiId?.trim() || "20251232406374-iservuqrsbrp@cbin";
+      const payeeName = encodeURIComponent(data.accountHolder || "Travel to Uttarakhand");
+      const note = encodeURIComponent(`Advance ${data.invoiceNumber || ""}`.trim());
+      const upiUri = `upi://pay?pa=${payeeVpa}&pn=${payeeName}&am=${calculations.advanceRequired}&cu=INR&tn=${note}`;
+      QRCode.toDataURL(upiUri, {
+        width: 300,
+        margin: 1,
+        errorCorrectionLevel: "M",
+        color: {
+          dark: "#000000",
+          light: "#ffffff",
+        },
+      })
+        .then((url) => setGeneratedQr(url))
+        .catch((err) => {
+          console.warn("Dynamic UPI QR generation fallback:", err);
+          setGeneratedQr("");
+        });
+    } else {
+      setGeneratedQr("");
+    }
+  }, [data.invoiceType, calculations.advanceRequired, data.invoiceNumber, data.upiId, data.accountHolder]);
+
   const handleDownload = async () => {
     try {
       setIsDownloading(true);
@@ -407,10 +437,22 @@ export default function InvoicesPage() {
     }
   };
 
-  const handleShareWhatsApp = () => {
-    let text = "";
+  const cleanWaPhone = (phoneStr: string) => {
+    if (!phoneStr) return "";
+    let digits = phoneStr.replace(/[^0-9]/g, "");
+    if (digits.length === 10) {
+      return `91${digits}`;
+    } else if (digits.startsWith("0") && digits.length === 11) {
+      return `91${digits.slice(1)}`;
+    } else if (digits.startsWith("91") && digits.length === 12) {
+      return digits;
+    }
+    return digits;
+  };
+
+  const getWhatsAppMessage = () => {
     if (data.invoiceType === "advance") {
-      text = `*📋 BOOKING ADVANCE INVOICE - TRAVEL TO UTTARAKHAND*\n\n` +
+      return `*📋 BOOKING ADVANCE INVOICE - TRAVEL TO UTTARAKHAND*\n\n` +
         `Dear ${data.guestName || "Honourable Guest"},\n\n` +
         `Thank you for confirming your Uttarakhand tour itinerary! Kindly find your Booking Advance Invoice:\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -432,7 +474,7 @@ export default function InvoicesPage() {
         `🌐 https://traveltouttrakhand.com\n\n` +
         `Wishing you a divine and blessed journey! 🙏🛕`;
     } else {
-      text = `*🧾 PAYMENT RECEIPT & INVOICE - TRAVEL TO UTTARAKHAND*\n\n` +
+      return `*🧾 PAYMENT RECEIPT & INVOICE - TRAVEL TO UTTARAKHAND*\n\n` +
         `Dear ${data.guestName || "Honourable Guest"},\n\n` +
         `We have received your advance payment with thanks! Here is your official Payment Receipt & Invoice:\n` +
         `━━━━━━━━━━━━━━━━━━━━━\n` +
@@ -449,10 +491,30 @@ export default function InvoicesPage() {
         `🌐 https://traveltouttrakhand.com\n\n` +
         `Jai Shree Kedar · Jai Badri Vishal! 🙏🛕`;
     }
+  };
+
+  const handleShareWhatsApp = (customPhone?: string, alsoDownloadPdf: boolean = false) => {
+    const rawPhone = (typeof customPhone === "string" ? customPhone : null) ?? data.guestPhone ?? "";
+    const cleanPhone = cleanWaPhone(rawPhone);
+
+    if (!cleanPhone) {
+      setWaPhoneInput(rawPhone);
+      setShowWhatsAppModal(true);
+      return;
+    }
+
+    if (alsoDownloadPdf) {
+      handleDownload();
+    }
+
+    const text = getWhatsAppMessage();
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(text).catch(() => {});
+    }
 
     const encoded = encodeURIComponent(text);
-    const phone = data.guestPhone ? data.guestPhone.replace(/[^0-9]/g, "") : "";
-    window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
+    window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, "_blank");
+    setShowWhatsAppModal(false);
   };
 
   // Modular Page Renderer - Perfectly proportioned to fit exactly inside 1122px with zero cutoff
@@ -718,26 +780,57 @@ export default function InvoicesPage() {
               </div>
             </div>
 
-            {/* Right: Scannable UPI QR Code */}
-            {data.showUpiQr !== false && (
-              <div 
-                onClick={() => setShowQrModal(true)}
-                className="shrink-0 flex flex-col items-center bg-white p-1.5 rounded-xl border border-sky-200 shadow-2xs cursor-pointer hover:border-sky-400 hover:shadow-md transition"
-                title="Click to enlarge QR Code"
-              >
-                <div className="w-[96px] h-[96px] relative overflow-hidden rounded-lg bg-white flex items-center justify-center p-0.5">
-                  <img
-                    src={`${data.customQrUrl || "/qr_clean.png"}?v=5`}
-                    alt="Official UPI Payment QR Code"
-                    className="w-full h-full object-contain"
-                    style={{ imageRendering: "pixelated" }}
-                  />
+            {/* Right: Dynamic Advance QR Code OR Payment Receipt Stamp */}
+            {data.invoiceType === "advance" ? (
+              data.showUpiQr !== false && (
+                <div 
+                  onClick={() => setShowQrModal(true)}
+                  className="shrink-0 flex flex-col items-center bg-white p-1.5 rounded-xl border-2 border-amber-400 shadow-2xs cursor-pointer hover:border-amber-600 hover:shadow-md transition"
+                  title="Click to enlarge QR Code (Pre-filled with advance amount)"
+                >
+                  <div className="w-[96px] h-[96px] relative overflow-hidden rounded-lg bg-white flex items-center justify-center p-0.5">
+                    <img
+                      src={generatedQr || `${data.customQrUrl || "/qr_clean.png"}?v=5`}
+                      alt="Official Advance Payment QR Code"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
+                  <div className="mt-1 text-center">
+                    <p className="text-[9px] font-mono font-bold text-amber-900 leading-none">
+                      ₹{calculations.advanceRequired.toLocaleString("en-IN")}
+                    </p>
+                    <p className="text-[7.5px] text-amber-700 font-bold mt-0.5">Scan to Pay Advance</p>
+                    <p className="text-[6.5px] text-gray-400 font-medium">Auto-Filled in UPI</p>
+                  </div>
                 </div>
-                <div className="mt-1 text-center">
-                  <p className="text-[8.5px] font-bold text-gray-800 leading-none">
-                    {data.invoiceType === "advance" ? "Scan to Pay Advance" : "Scan to Pay via UPI"}
-                  </p>
-                  <p className="text-[7px] text-sky-600 font-semibold mt-0.5">GPay · PhonePe · Paytm · BHIM</p>
+              )
+            ) : (
+              /* In Stage 2 (Receipt): QR code is NOT shown ("dusre Wale mai nhi aaye advance wale mai aaye bss") */
+              <div className="shrink-0 flex flex-col justify-center items-center bg-emerald-50/90 p-2 rounded-xl border border-emerald-300 min-w-[130px] text-center shadow-2xs">
+                <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs mb-1 shadow-xs">
+                  ✓
+                </div>
+                <span className="text-[9.5px] font-black text-emerald-950 uppercase tracking-wider">
+                  Payment Receipt
+                </span>
+                <span className="text-[7.5px] text-emerald-700 font-bold">
+                  Advance Settled & Recorded
+                </span>
+                <div className="mt-1 pt-1 border-t border-emerald-200/80 w-full text-left space-y-0.5">
+                  <div className="text-[7.5px] text-emerald-900">
+                    <span className="text-gray-500">Mode: </span>
+                    <strong className="font-semibold">{data.paymentMode || "UPI / Online"}</strong>
+                  </div>
+                  {data.paymentRef && (
+                    <div className="text-[7px] text-emerald-900 font-mono truncate max-w-[120px]">
+                      <span className="text-gray-500">Ref: </span>
+                      <strong>{data.paymentRef}</strong>
+                    </div>
+                  )}
+                  <div className="text-[7.5px] text-rose-700 font-bold">
+                    <span>Balance: </span>
+                    <strong className="font-mono">₹{calculations.pending.toLocaleString("en-IN")}</strong>
+                  </div>
                 </div>
               </div>
             )}
@@ -1181,17 +1274,27 @@ export default function InvoicesPage() {
               </div>
 
               <div>
-                <label className="block text-[10px] text-gray-500 mb-0.5">QR Code Image Path / URL</label>
-                <input
-                  type="text"
-                  className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono"
-                  placeholder="/qr_clean.png"
-                  value={data.customQrUrl ?? "/qr_clean.png"}
-                  onChange={e => setData({ ...data, customQrUrl: e.target.value })}
-                />
-                <p className="text-[9px] text-gray-400 mt-0.5">
-                  Official high-resolution UPI QR code (/qr_clean.png) loaded from your project folder.
-                </p>
+                <label className="block text-[10px] text-gray-500 mb-0.5">UPI QR Code Configuration</label>
+                {data.invoiceType === "advance" ? (
+                  <div className="bg-amber-50/80 p-2.5 rounded-lg border border-amber-200 space-y-1">
+                    <div className="flex items-center justify-between text-[10px]">
+                      <span className="font-bold text-amber-900">⚡ Dynamic Advance UPI QR:</span>
+                      <span className="font-mono font-bold text-amber-800">₹{calculations.advanceRequired.toLocaleString("en-IN")}</span>
+                    </div>
+                    <p className="text-[9px] text-amber-800 leading-tight">
+                      Yeh QR code automatic aapke advance demand ₹{calculations.advanceRequired.toLocaleString("en-IN")} ke sath generate ho raha hai. Customer scan karte hi amount pre-filled pay karega.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="bg-emerald-50/80 p-2.5 rounded-lg border border-emerald-200 space-y-1">
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-emerald-900">
+                      <span>✓</span> QR Code Hidden on Receipt
+                    </div>
+                    <p className="text-[9px] text-emerald-800 leading-tight">
+                      Kyunki customer advance pehle hi de chuka hai, Stage 2 (Receipt) par QR code hide rehta hai aur official verified receipt stamp show hoti hai.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -1299,7 +1402,7 @@ export default function InvoicesPage() {
           {/* Right: Actions */}
           <div className="flex items-center gap-2">
             <button
-              onClick={handleShareWhatsApp}
+              onClick={() => handleShareWhatsApp()}
               className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
             >
               <MessageCircle className="w-3.5 h-3.5" />
@@ -1362,20 +1465,20 @@ export default function InvoicesPage() {
         {renderInvoiceContent("print")}
       </div>
 
-      {/* Full-Size QR Scanner Modal for Instant Screen Scanning */}
-      {showQrModal && (
+      {/* Full-Size QR Scanner Modal for Instant Screen Scanning (Advance Stage Only) */}
+      {showQrModal && data.invoiceType === "advance" && (
         <div 
           className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
           onClick={() => setShowQrModal(false)}
         >
           <div 
-            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center space-y-4 animate-in fade-in zoom-in duration-150"
+            className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center text-center space-y-4 animate-in fade-in zoom-in duration-150 border-2 border-amber-300"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex justify-between items-center w-full pb-2 border-b border-gray-100">
               <div className="text-left">
-                <h3 className="font-bold text-gray-900 text-sm">Official UPI Payment QR</h3>
-                <p className="text-xs text-[#0369a1] font-semibold">Travel to Uttarakhand</p>
+                <h3 className="font-bold text-gray-900 text-sm">Official Advance Payment QR</h3>
+                <p className="text-xs text-amber-700 font-bold">Travel to Uttarakhand</p>
               </div>
               <button 
                 onClick={() => setShowQrModal(false)}
@@ -1385,20 +1488,22 @@ export default function InvoicesPage() {
               </button>
             </div>
 
-            <div className="p-3 bg-white border-2 border-sky-200 rounded-2xl shadow-inner flex items-center justify-center">
+            <div className="p-3 bg-white border-2 border-amber-300 rounded-2xl shadow-inner flex items-center justify-center">
               <img
-                src={`${data.customQrUrl || "/qr_clean.png"}?v=5`}
-                alt="Full Size UPI QR Code"
+                src={generatedQr || `${data.customQrUrl || "/qr_clean.png"}?v=5`}
+                alt="Full Size Advance UPI QR Code"
                 className="w-64 h-64 object-contain"
-                style={{ imageRendering: "pixelated" }}
               />
             </div>
 
-            <div className="space-y-1.5 text-xs text-gray-600 w-full bg-sky-50/50 p-3 rounded-xl border border-sky-100">
-              <p className="font-bold text-gray-900">Scan using any UPI App</p>
-              <p className="text-[11px] text-sky-700 font-medium">Google Pay · PhonePe · Paytm · BHIM · Cred</p>
-              <div className="pt-2 text-[11px] text-left border-t border-sky-100 mt-2 space-y-0.5">
-                <p><span className="text-gray-500 font-medium">Merchant UPI:</span> <span className="font-mono font-bold text-[#0369a1] select-all">20251232406374-iservuqrsbrp@cbin</span></p>
+            <div className="space-y-1.5 text-xs text-gray-600 w-full bg-amber-50/70 p-3 rounded-xl border border-amber-200">
+              <div className="flex justify-between items-center text-amber-950 font-bold text-sm">
+                <span>Advance Required:</span>
+                <span className="font-mono text-base text-amber-900">₹{calculations.advanceRequired.toLocaleString("en-IN")}</span>
+              </div>
+              <p className="text-[11px] text-amber-800 font-medium">Exact amount pre-filled automatically on scan!</p>
+              <div className="pt-2 text-[11px] text-left border-t border-amber-200 mt-2 space-y-0.5 text-gray-700">
+                <p><span className="text-gray-500 font-medium">Payee VPA:</span> <span className="font-mono font-bold text-[#0369a1] select-all">{data.upiId || "20251232406374-iservuqrsbrp@cbin"}</span></p>
                 <p><span className="text-gray-500 font-medium">Bank Name:</span> <strong className="text-gray-900 font-semibold">Central Bank of India</strong></p>
                 <p><span className="text-gray-500 font-medium">Account No:</span> <strong className="font-mono text-gray-900 font-bold">5242273759</strong></p>
                 <p><span className="text-gray-500 font-medium">IFSC Code:</span> <strong className="font-mono text-gray-900 font-bold">CBIN0280274</strong></p>
@@ -1407,10 +1512,92 @@ export default function InvoicesPage() {
 
             <button
               onClick={() => setShowQrModal(false)}
-              className="w-full py-2 bg-[#0369a1] hover:bg-[#0284c7] text-white font-semibold rounded-xl text-xs transition cursor-pointer"
+              className="w-full py-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl text-xs transition cursor-pointer"
             >
               Close
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* WhatsApp Share & Direct Delivery Modal */}
+      {showWhatsAppModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowWhatsAppModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in duration-150 border border-emerald-100"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center pb-2.5 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {data.invoiceType === "advance" ? "Share Advance Invoice on WhatsApp" : "Share Payment Receipt on WhatsApp"}
+                  </h3>
+                  <p className="text-[11px] text-gray-500">
+                    Direct chat with customer (no search needed)
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowWhatsAppModal(false)}
+                className="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center text-sm font-bold cursor-pointer transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-gray-700">
+                Customer WhatsApp Phone Number:
+              </label>
+              <div className="flex gap-2">
+                <span className="px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-xs font-mono font-bold text-gray-600 flex items-center">
+                  +91
+                </span>
+                <input
+                  type="text"
+                  placeholder="Enter 10-digit mobile number"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs font-mono font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  value={waPhoneInput}
+                  onChange={e => {
+                    setWaPhoneInput(e.target.value);
+                    setData(prev => ({ ...prev, guestPhone: e.target.value }));
+                  }}
+                />
+              </div>
+              <p className="text-[10px] text-gray-500">
+                Customer ka chat direct khulega, search karne ki koi problem nahi aayegi.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <button
+                onClick={() => handleShareWhatsApp(waPhoneInput, true)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>📥 Download PDF & Open Customer WhatsApp (Recommended)</span>
+              </button>
+
+              <button
+                onClick={() => handleShareWhatsApp(waPhoneInput, false)}
+                className="w-full flex items-center justify-center gap-2 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <span>Open WhatsApp Chat with Text Summary</span>
+              </button>
+            </div>
+
+            <div className="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[10px] text-amber-900 leading-snug">
+              💡 <strong>Tip:</strong> Download button par click karte hi PDF aapke system me save ho jayegi aur customer ki WhatsApp chat khul jayegi. Aap downloaded PDF ko seedha chat me attach/drag karke bhej dein.
+            </div>
           </div>
         </div>
       )}

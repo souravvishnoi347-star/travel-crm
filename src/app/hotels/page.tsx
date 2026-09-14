@@ -723,6 +723,9 @@ export default function HotelVouchersPage() {
   const [autoScale, setAutoScale] = useState<number>(0.55);
   const [manualZoom, setManualZoom] = useState<number | null>(null);
   const [fitMode, setFitMode] = useState<"screen" | "width">("screen");
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [waPhoneInput, setWaPhoneInput] = useState("");
+  const [waRecipientName, setWaRecipientName] = useState("");
   const previewContainerRef = useRef<HTMLDivElement>(null);
 
   // Load saved voucher from localStorage
@@ -1278,39 +1281,45 @@ export default function HotelVouchersPage() {
     }
   };
 
-  // WhatsApp formatted share message
-  const handleShareGroupWhatsApp = () => {
-    let message = `*TRAVEL TO UTTARAKHAND (reg.)*\n`;
-    message += `*GROUP HOTEL & ROOM ALLOCATION VOUCHER*\n`;
-    message += `━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `📋 *Tour:* ${groupData.subTitle}\n`;
-    message += `🚌 *Vehicle:* ${groupData.transportType}\n`;
-    message += `🗓 *Yatra Dates:* ${groupData.yatraDates}\n`;
-    message += `🚗 *Car No:* ${groupData.carNumber || "To be assigned"}\n`;
-    message += `👤 *Chauffeur:* ${groupData.driverName || "Assigned Driver"} (${groupData.driverMobile || "Will be shared"})\n\n`;
-
-    message += `*🏨 CONFIRMED HOTEL STAYS:*\n`;
-    groupData.hotelSchedules.forEach(h => {
-      message += `• ${h.date} (${h.place}): *${h.hotelName}* | Ph: ${h.hotelMobile || "—"}\n`;
-    });
-
-    message += `\n*👥 ROOM ALLOCATIONS (${groupData.allocations.length} Rooms / ${totalGroupMembers} Pax):*\n`;
-    groupData.allocations.forEach(a => {
-      message += `${a.sNo}. ${a.billNo} - *${a.name}* (${a.member}) → ${a.bedroom}${a.mobileNo ? ` [Ph: ${a.mobileNo}]` : ""}\n`;
-    });
-
-    message += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
-    message += `📞 *Operations Helpline:* ${groupData.contactPhones}\n`;
-    message += `🌐 *Website:* https://traveltouttrakhand.com\n\n`;
-    message += `Wishing everyone a safe, comfortable and divine yatra! 🙏`;
-
-    const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
+  const cleanWaPhone = (phoneStr: string) => {
+    if (!phoneStr) return "";
+    let digits = phoneStr.replace(/[^0-9]/g, "");
+    if (digits.length === 10) {
+      return `91${digits}`;
+    } else if (digits.startsWith("0") && digits.length === 11) {
+      return `91${digits.slice(1)}`;
+    } else if (digits.startsWith("91") && digits.length === 12) {
+      return digits;
+    }
+    return digits;
   };
 
-  const handleShareWhatsApp = () => {
+  const getVoucherWhatsAppMessage = () => {
     if (activeTab === "group") {
-      handleShareGroupWhatsApp();
+      let message = `*TRAVEL TO UTTARAKHAND (reg.)*\n`;
+      message += `*GROUP HOTEL & ROOM ALLOCATION VOUCHER*\n`;
+      message += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `📋 *Tour:* ${groupData.subTitle}\n`;
+      message += `🚌 *Vehicle:* ${groupData.transportType}\n`;
+      message += `🗓 *Yatra Dates:* ${groupData.yatraDates}\n`;
+      message += `🚗 *Car No:* ${groupData.carNumber || "To be assigned"}\n`;
+      message += `👤 *Chauffeur:* ${groupData.driverName || "Assigned Driver"} (${groupData.driverMobile || "Will be shared"})\n\n`;
+
+      message += `*🏨 CONFIRMED HOTEL STAYS:*\n`;
+      groupData.hotelSchedules.forEach(h => {
+        message += `• ${h.date} (${h.place}): *${h.hotelName}* | Ph: ${h.hotelMobile || "—"}\n`;
+      });
+
+      message += `\n*👥 ROOM ALLOCATIONS (${groupData.allocations.length} Rooms / ${totalGroupMembers} Pax):*\n`;
+      groupData.allocations.forEach(a => {
+        message += `${a.sNo}. ${a.billNo} - *${a.name}* (${a.member}) → ${a.bedroom}${a.mobileNo ? ` [Ph: ${a.mobileNo}]` : ""}\n`;
+      });
+
+      message += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
+      message += `📞 *Operations Helpline:* ${groupData.contactPhones}\n`;
+      message += `🌐 *Website:* https://traveltouttrakhand.com\n\n`;
+      message += `Wishing everyone a safe, comfortable and divine yatra! 🙏`;
+      return message;
     } else {
       let message = `*🏨 HOTEL & STAY SERVICE VOUCHER*\n`;
       message += `*Travel to Uttarakhand*\n`;
@@ -1333,10 +1342,40 @@ export default function HotelVouchersPage() {
       message += `📞 *24x7 Operations Helpline:* ${data.emergencyContact}\n`;
       message += `🌐 *Website:* https://traveltouttrakhand.com\n\n`;
       message += `Wishing you a spiritually enriching and pleasant pilgrimage! 🙏`;
-
-      const encodedMessage = encodeURIComponent(message);
-      window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
+      return message;
     }
+  };
+
+  const executeWhatsAppSend = (targetPhone: string, alsoDownloadPdf: boolean = false) => {
+    const cleanPhone = cleanWaPhone(targetPhone);
+    if (!cleanPhone) {
+      alert("Please enter a valid 10-digit mobile number.");
+      return;
+    }
+
+    if (alsoDownloadPdf) {
+      handleDownloadPdf();
+    }
+
+    const message = getVoucherWhatsAppMessage();
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(message).catch(() => {});
+    }
+
+    const encoded = encodeURIComponent(message);
+    window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, "_blank");
+    setShowWhatsAppModal(false);
+  };
+
+  const handleShareWhatsApp = () => {
+    if (activeTab === "group") {
+      setWaPhoneInput(groupData.driverMobile || groupData.allocations[0]?.mobileNo || "");
+      setWaRecipientName(groupData.driverName ? `Driver: ${groupData.driverName}` : "Group Members");
+    } else {
+      setWaPhoneInput(data.guestPhone || "");
+      setWaRecipientName(data.guestName || "Guest");
+    }
+    setShowWhatsAppModal(true);
   };
 
   // Render the voucher document - Exactly 1 A4 Page (1122px height) with Zero Cutoff
@@ -2708,6 +2747,124 @@ export default function HotelVouchersPage() {
         {renderVoucherContent("print")}
         {renderGroupVoucherContent("print")}
       </div>
+
+      {/* WhatsApp Direct Share Modal */}
+      {showWhatsAppModal && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4"
+          onClick={() => setShowWhatsAppModal(false)}
+        >
+          <div 
+            className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl space-y-4 animate-in fade-in zoom-in duration-150 border border-emerald-100"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center pb-2.5 border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                  <MessageCircle className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm">
+                    {activeTab === "group" ? "Share Group Hotel Voucher on WhatsApp" : "Share Hotel Stay Voucher on WhatsApp"}
+                  </h3>
+                  <p className="text-[11px] text-gray-500">
+                    Direct chat with customer / driver (no searching needed)
+                  </p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setShowWhatsAppModal(false)}
+                className="w-7 h-7 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-800 flex items-center justify-center text-sm font-bold cursor-pointer transition"
+              >
+                ✕
+              </button>
+            </div>
+
+            {activeTab === "group" && (
+              <div className="space-y-1.5">
+                <label className="block text-xs font-bold text-gray-700">Quick Select Recipient:</label>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWaPhoneInput(groupData.driverMobile || "");
+                      setWaRecipientName(`Driver: ${groupData.driverName || "Driver"}`);
+                    }}
+                    className="p-2 rounded-lg border border-sky-200 bg-sky-50/70 hover:bg-sky-100 text-left transition cursor-pointer"
+                  >
+                    <span className="font-bold text-sky-900 block truncate">🚗 Chauffeur / Driver</span>
+                    <span className="text-[11px] text-gray-600 font-mono">{groupData.driverMobile || "No mobile"}</span>
+                  </button>
+
+                  {groupData.allocations.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const m = groupData.allocations[0];
+                        setWaPhoneInput(m.mobileNo || "");
+                        setWaRecipientName(`Guest: ${m.name}`);
+                      }}
+                      className="p-2 rounded-lg border border-emerald-200 bg-emerald-50/70 hover:bg-emerald-100 text-left transition cursor-pointer"
+                    >
+                      <span className="font-bold text-emerald-900 block truncate">👤 {groupData.allocations[0].name || "Lead Guest"}</span>
+                      <span className="text-[11px] text-gray-600 font-mono">{groupData.allocations[0].mobileNo || "No mobile"}</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label className="block text-xs font-bold text-gray-700">
+                WhatsApp Mobile Number:
+              </label>
+              <div className="flex gap-2">
+                <span className="px-3 py-2 bg-gray-100 border border-gray-200 rounded-lg text-xs font-mono font-bold text-gray-600 flex items-center">
+                  +91
+                </span>
+                <input
+                  type="text"
+                  placeholder="Enter 10-digit mobile number"
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-xs font-mono font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  value={waPhoneInput}
+                  onChange={e => {
+                    setWaPhoneInput(e.target.value);
+                    if (activeTab === "single") {
+                      updateData({ ...data, guestPhone: e.target.value });
+                    }
+                  }}
+                />
+              </div>
+              <p className="text-[10px] text-gray-500">
+                Direct WhatsApp link banega jisse contact search karne ki zaroorat nahi hogi.
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="space-y-2 pt-2 border-t border-gray-100">
+              <button
+                onClick={() => executeWhatsAppSend(waPhoneInput, true)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition cursor-pointer"
+              >
+                <Download className="w-4 h-4" />
+                <span>📥 Download PDF Voucher & Open WhatsApp (Recommended)</span>
+              </button>
+
+              <button
+                onClick={() => executeWhatsAppSend(waPhoneInput, false)}
+                className="w-full flex items-center justify-center gap-2 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+              >
+                <MessageCircle className="w-4 h-4 text-emerald-600" />
+                <span>Open WhatsApp Chat with Text Summary</span>
+              </button>
+            </div>
+
+            <div className="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[10px] text-amber-900 leading-snug">
+              💡 <strong>Tip:</strong> Download button par click karte hi PDF aapke laptop/mobile me save ho jayegi aur customer ki WhatsApp chat khul jayegi. Aap downloaded PDF file ko chat me drag karke bhej dein.
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );
