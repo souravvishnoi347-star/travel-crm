@@ -70,7 +70,7 @@ const DEFAULT_INVOICE_DATA = {
   branchName: "Haridwar Branch",
   upiId: "",
   showUpiQr: true,
-  customQrUrl: "/QR.jpg",
+  customQrUrl: "/qr_clean.png",
   notes: `Bank Details for Remittance:\n• Beneficiary: Travel to Uttarakhand\n• Bank Name: Central Bank of India\n• Account No: 5242273759\n• IFSC Code: CBIN0280274\n\nTerms & Payment Conditions:\n• Advance payment required prior to trip commencement.\n• Rates include all applicable toll taxes, parking fees, and driver allowances.\n• Cancellation and rescheduling are governed by partner hotel & transport policies.`
 };
 
@@ -136,7 +136,9 @@ export default function InvoicesPage() {
               parsed.accountNumber = "5242273759";
               parsed.ifscCode = "CBIN0280274";
               parsed.upiId = "";
-              parsed.customQrUrl = "/QR.jpg";
+            }
+            if (!parsed.customQrUrl || parsed.customQrUrl === "/QR.jpg") {
+              parsed.customQrUrl = "/qr_clean.png";
             }
             setData({ ...DEFAULT_INVOICE_DATA, ...parsed });
             return;
@@ -161,7 +163,9 @@ export default function InvoicesPage() {
                 cloudData.accountNumber = "5242273759";
                 cloudData.ifscCode = "CBIN0280274";
                 cloudData.upiId = "";
-                cloudData.customQrUrl = "/QR.jpg";
+              }
+              if (!cloudData.customQrUrl || cloudData.customQrUrl === "/QR.jpg") {
+                cloudData.customQrUrl = "/qr_clean.png";
               }
               setData({ ...DEFAULT_INVOICE_DATA, ...cloudData });
               localStorage.setItem("triloki_invoice_data", JSON.stringify(cloudData));
@@ -521,16 +525,17 @@ export default function InvoicesPage() {
             {/* Right: Scannable UPI QR Code */}
             {data.showUpiQr !== false && (
               <div className="shrink-0 flex flex-col items-center bg-white p-1.5 rounded-xl border border-sky-200 shadow-2xs">
-                <div className="w-[82px] h-[82px] relative overflow-hidden rounded-lg bg-gray-50 flex items-center justify-center">
+                <div className="w-[96px] h-[96px] relative overflow-hidden rounded-lg bg-white flex items-center justify-center p-0.5">
                   <img
-                    src={data.customQrUrl || "/QR.jpg"}
+                    src={data.customQrUrl || "/qr_clean.png"}
                     alt="Official UPI Payment QR Code"
                     className="w-full h-full object-contain"
+                    style={{ imageRendering: "pixelated" }}
                   />
                 </div>
                 <div className="mt-1 text-center">
-                  <p className="text-[8px] font-bold text-gray-800 leading-none">Scan to Pay via UPI</p>
-                  <p className="text-[7px] text-sky-600 font-semibold mt-0.5">GPay · PhonePe · Paytm</p>
+                  <p className="text-[8.5px] font-bold text-gray-800 leading-none">Scan to Pay via UPI</p>
+                  <p className="text-[7px] text-sky-600 font-semibold mt-0.5">GPay · PhonePe · Paytm · BHIM</p>
                 </div>
               </div>
             )}
@@ -792,12 +797,12 @@ export default function InvoicesPage() {
                 <input
                   type="text"
                   className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono"
-                  placeholder="/QR.jpg"
-                  value={data.customQrUrl ?? "/QR.jpg"}
+                  placeholder="/qr_clean.png"
+                  value={data.customQrUrl ?? "/qr_clean.png"}
                   onChange={e => setData({ ...data, customQrUrl: e.target.value })}
                 />
                 <p className="text-[9px] text-gray-400 mt-0.5">
-                  Official QR image (/QR.jpg) loaded from your project folder.
+                  Official high-resolution UPI QR code (/qr_clean.png) loaded from your project folder.
                 </p>
               </div>
             </div>
