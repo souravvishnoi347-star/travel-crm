@@ -31,14 +31,6 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dhamLabel: "Kedarnath Dham",
     isDefault: true
   },
-  {
-    id: "dham-kedarnath-1",
-    url: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=1200&q=80",
-    caption: "Shri Kedarnath Dham Temple & Snow Himalayan Peaks",
-    dham: "kedarnath",
-    dhamLabel: "Kedarnath Dham",
-    isDefault: true
-  },
 
   // Badrinath Dham (Authentic Tour Photos)
   {
@@ -57,14 +49,6 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dhamLabel: "Badrinath Dham",
     isDefault: true
   },
-  {
-    id: "dham-badrinath-1",
-    url: "https://images.unsplash.com/photo-1609766857329-a1789c09935f?auto=format&fit=crop&w=1200&q=80",
-    caption: "Holy Shri Badrinath Ji Temple & Sacred Alaknanda River",
-    dham: "badrinath",
-    dhamLabel: "Badrinath Dham",
-    isDefault: true
-  },
 
   // Gangotri Dham (Authentic Tour Photos)
   {
@@ -75,20 +59,12 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dhamLabel: "Gangotri Dham",
     isDefault: true
   },
-  {
-    id: "dham-gangotri-1",
-    url: "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=80",
-    caption: "Holy Shri Gangotri Dham & Sacred Bhagirathi Valley",
-    dham: "gangotri",
-    dhamLabel: "Gangotri Dham",
-    isDefault: true
-  },
 
-  // Yamunotri Dham & Foothills
+  // Yamunotri Dham & Foothills (Authentic Tour Photos)
   {
-    id: "dham-yamunotri-1",
-    url: "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
-    caption: "Sacred Shri Yamunotri Dham & Divya Shila Glacier",
+    id: "dham-yamunotri-auth-1",
+    url: "/gallery/chardham_10d_img_7.jpg",
+    caption: "Sacred Shri Yamunotri Dham Foothills & Scenic Himalayan Ridge",
     dham: "yamunotri",
     dhamLabel: "Yamunotri Dham",
     isDefault: true
@@ -142,9 +118,9 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     isDefault: true
   },
   {
-    id: "dham-haridwar-1",
-    url: "https://images.unsplash.com/photo-1596766141386-f13ce38bb172?auto=format&fit=crop&w=1200&q=80",
-    caption: "Har Ki Pauri World-Famous Maha Ganga Aarti",
+    id: "dham-haridwar-auth-2",
+    url: "/gallery/chardham_10d_img_19.jpg",
+    caption: "Sacred Devprayag Sangam & Himalayan Confluence",
     dham: "haridwar_rishikesh",
     dhamLabel: "Haridwar & Rishikesh",
     isDefault: true
@@ -191,7 +167,11 @@ export function getStoredDhamGallery(): DhamGalleryPhoto[] {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
+        const cleaned = parsed.filter((p: any) => !p.url?.includes("unsplash.com"));
+        if (cleaned.length !== parsed.length) {
+          localStorage.setItem("triloki_dham_gallery", JSON.stringify(cleaned));
+        }
+        return cleaned.length > 0 ? cleaned : INITIAL_DHAM_GALLERY;
       }
     }
   } catch (e) {

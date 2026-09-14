@@ -29,66 +29,6 @@ import {
 import { supabase } from "@/lib/supabase";
 import { getSavedDocuments, deleteDocumentFromHub, SavedDocument, saveDocumentToHub } from "@/lib/documentsHub";
 
-const SAMPLE_INITIAL_DOCS: SavedDocument[] = [
-  {
-    id: "sample-hotel-1",
-    type: "hotel_voucher",
-    title: "Hotel Service Voucher - Do Dham 5D/4N",
-    docNumber: "TV-2026-DD01",
-    guestName: "Mr. Rajesh Sharma & Family",
-    guestPhone: "+91 98765 43210",
-    travelDates: "15 May 2026 – 20 May 2026",
-    paxCount: "04 Adults",
-    createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
-    detailsSummary: "3 Stays: Hotel Ganga Heritage (Haridwar), Kedar Valley Resort (Sitapur), Hotel Alaknanda View (Pipalkoti)",
-    studioUrl: "/hotels",
-    rawPayload: {}
-  },
-  {
-    id: "sample-transport-1",
-    type: "transport_voucher",
-    title: "Transport Service Voucher - Chardham Circuit",
-    docNumber: "UK-TR-2026/01",
-    guestName: "Mr. Amit Verma & Group",
-    guestPhone: "+91 94120 12345",
-    travelDates: "18 May 2026 – 27 May 2026",
-    paxCount: "06 Adults",
-    createdAt: new Date(Date.now() - 3600000 * 48).toISOString(),
-    detailsSummary: "Vehicle: 01 Toyota Innova Crysta A/C | 10 Days Yatra Fleet with All Interstate Permits & Tolls",
-    studioUrl: "/transport",
-    rawPayload: {}
-  },
-  {
-    id: "sample-itinerary-1",
-    type: "itinerary",
-    title: "10 DAYS MAHA CHAR DHAM YATRA",
-    docNumber: "ITIN-10D9N",
-    guestName: "Honourable Devotees",
-    travelDates: "10 May – 19 May 2026 (10 Days / 9 Nights)",
-    amount: 34500,
-    createdAt: new Date(Date.now() - 3600000 * 72).toISOString(),
-    detailsSummary: "Route: Haridwar – Barkot – Yamunotri – Uttarkashi – Gangotri – Guptkashi – Kedarnath – Badrinath – Rishikesh",
-    studioUrl: "/itinerary-builder",
-    rawPayload: {}
-  },
-  {
-    id: "sample-invoice-1",
-    type: "invoice",
-    title: "Tax Invoice - Chardham Yatra Pilgrimage",
-    docNumber: "INV-2026-0104",
-    guestName: "Smt. Sunita Patel",
-    guestPhone: "+91 98250 88990",
-    travelDates: "22 May 2026",
-    amount: 142000,
-    paidAmount: 50000,
-    pendingAmount: 92000,
-    createdAt: new Date(Date.now() - 3600000 * 96).toISOString(),
-    detailsSummary: "Total: ₹1,42,000 | Advance Received: ₹50,000 | Balance Due: ₹92,000",
-    studioUrl: "/invoices",
-    rawPayload: {}
-  }
-];
-
 export default function DocumentsHubPage() {
   const [documents, setDocuments] = useState<SavedDocument[]>([]);
   const [selectedType, setSelectedType] = useState<"all" | "hotel_voucher" | "transport_voucher" | "itinerary" | "invoice">("all");
@@ -98,15 +38,35 @@ export default function DocumentsHubPage() {
   const [loading, setLoading] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Load from local hub + merge with sample if empty
+  // Load from local hub without any mock/sample data
   const loadDocs = () => {
-    let docs = getSavedDocuments();
-    if (docs.length === 0) {
-      // Pre-seed sample docs for immediate utility
-      SAMPLE_INITIAL_DOCS.forEach(d => saveDocumentToHub(d));
-      docs = SAMPLE_INITIAL_DOCS;
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("triloki_saved_documents_hub");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            // Permanently purge any sample/demo documents from local storage
+            const cleaned = parsed.filter((d: any) => !d.id?.startsWith("sample-"));
+            if (cleaned.length !== parsed.length) {
+              localStorage.setItem("triloki_saved_documents_hub", JSON.stringify(cleaned));
+            }
+          }
+        }
+      } catch {}
     }
+    const docs = getSavedDocuments().filter(d => !d.id.startsWith("sample-"));
     setDocuments(docs);
+  };
+
+  const handleClearAllDocuments = () => {
+    if (confirm("Are you sure you want to clear all documents from the Doc Hub?")) {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("triloki_saved_documents_hub");
+      }
+      setDocuments([]);
+      showToast("✓ All documents cleared successfully from Doc Hub.");
+    }
   };
 
   useEffect(() => {
@@ -355,6 +315,18 @@ export default function DocumentsHubPage() {
             <Download className="w-3.5 h-3.5" />
             <span>Export CSV</span>
           </button>
+
+          {documents.length > 0 && (
+            <button
+              type="button"
+              onClick={handleClearAllDocuments}
+              className="flex items-center gap-1.5 px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold rounded-xl transition cursor-pointer"
+              title="Clear all saved records from Hub"
+            >
+              <Trash2 className="w-3.5 h-3.5 text-rose-600" />
+              <span>Clear Hub</span>
+            </button>
+          )}
         </div>
       </div>
 

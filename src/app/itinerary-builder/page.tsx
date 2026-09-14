@@ -162,7 +162,7 @@ export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
   },
   {
     id: "hp-4",
-    url: "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800&q=80",
+    url: "/gallery/chardham_10d_img_32.jpg",
     hotelName: "Kedarnath Base Camp / GMVN",
     location: "Kedarnath Dham",
     roomType: "Tent Only (Without Food)",
@@ -187,7 +187,7 @@ const CHARDHAM_PRESET: ItineraryData = {
   glanceDhams: "Yamunotri · Gangotri · Kedarnath · Badrinath",
   glanceSector: "Haridwar ⇄ Complete Chardham Circuit",
   glanceStartEnd: "Haridwar / Dehradun (both ways)",
-  glancePackages: "Standard · Deluxe · Luxury",
+  glancePackages: "Standard Package",
 
   days: [
     {
@@ -319,11 +319,9 @@ const CHARDHAM_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Choose the package that best fits your comfort and budget. All packages cover the same 10-day itinerary with dedicated mountain transport and experienced pilgrimage staff.",
+  pricingSubtitle: "Confirmed Standard Package covering the full 10-day itinerary with dedicated mountain transport and experienced pilgrimage team.",
   pricingTiers: [
-    { package: "Standard", price: "₹ 28,500", hotelCategory: "Budget Clean Hotels", meals: "As per plan", specialFeature: "Included" },
-    { package: "Deluxe", price: "₹ 38,500", hotelCategory: "3-Star Deluxe Hotels", meals: "Included (MAP)", specialFeature: "Included" },
-    { package: "Luxury", price: "₹ 54,500", hotelCategory: "Luxury Resorts & Hotels", meals: "All Meals Included", specialFeature: "Included" }
+    { package: "Standard Package", price: "₹ 28,500 / Pax", hotelCategory: "Deluxe Rooms / Standard Clean Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Covered Sightseeing & Dedicated Vehicle" }
   ],
   pricingNote: "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
 
@@ -365,7 +363,7 @@ const CHARDHAM_PRESET: ItineraryData = {
   contactAgency: "Travel to Uttarakhand",
   contactPerson: "Mr. Amit kumar",
   contactPhone: "+91 9719038278",
-  motto: "ॐ नमः शिवाय",
+  motto: "जय श्री केदार · जय बद्री विशाल",
 
   photos: [
     {
@@ -407,7 +405,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
   glanceDhams: "Yamunotri · Gangotri · Kedarnath · Badrinath",
   glanceSector: "Haridwar to Haridwar (Tempo Traveller)",
   glanceStartEnd: "Haridwar / Rishikesh / Dehradun Airport",
-  glancePackages: "12 Pax Deluxe Group Package",
+  glancePackages: "Standard Package",
 
   days: [
     {
@@ -534,11 +532,9 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special Group Package for 12 Pax with dedicated Tempo Traveller, confirmed deluxe hotels and MAP meals.",
+  pricingSubtitle: "Special Standard Package with dedicated Tempo Traveller, confirmed deluxe hotels and MAP meals.",
   pricingTiers: [
-    { package: "12 Pax Deluxe Group", price: "₹ 32,500 / Pax", hotelCategory: "Deluxe Rooms (Family Basis)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Tempo Traveller Included" },
-    { package: "6 Pax Crysta Tour", price: "₹ 38,500 / Pax", hotelCategory: "Deluxe Rooms (Twin/Triple)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Innova Crysta AC" },
-    { package: "VIP Heli Chardham", price: "₹ 62,500 / Pax", hotelCategory: "Deluxe / 4-Star Hotels", meals: "All Meals Included", specialFeature: "Kedarnath Heli Included" }
+    { package: "Standard Package", price: "₹ 32,500 / Pax", hotelCategory: "Deluxe Rooms (Family Basis)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Tempo Traveller Included" }
   ],
   pricingNote: "Note: Total package cost for 12 Persons = ₹ 3,90,000/- (at ₹ 32,500 per person). All tolls, parking, and driver charges included.",
 
@@ -581,7 +577,7 @@ const CHARDHAM_12P_10D_PRESET: ItineraryData = {
   contactAgency: "Travel to Uttarakhand with Amit",
   contactPerson: "Amit Chandra",
   contactPhone: "+91 9719038278 · 7818952740",
-  motto: "!! HAR HAR MAHADEV !!",
+  motto: "जय श्री केदार · जय बद्री विशाल",
 
   photos: [
     {
@@ -638,7 +634,7 @@ export const DODHAM_6D_PRESET: ItineraryData = {
   glanceDhams: "Kedarnath · Badrinath",
   glanceSector: "Haridwar ⇄ Do Dham Circuit",
   glanceStartEnd: "Haridwar / Rishikesh (both ways)",
-  glancePackages: "Standard · Deluxe · Luxury",
+  glancePackages: "Standard Package",
 
   days: [
     {
@@ -716,11 +712,9 @@ export const DODHAM_6D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special Do Dham (Kedarnath + Badrinath) 6D/5N package with dedicated mountain vehicle and confirmed stays.",
+  pricingSubtitle: "Special Do Dham (Kedarnath + Badrinath) 6D/5N Standard Package with dedicated mountain vehicle and confirmed stays.",
   pricingTiers: [
-    { package: "Standard", price: "₹ 19,500 / Pax", hotelCategory: "Budget Clean Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Covered Stays" },
-    { package: "Deluxe", price: "₹ 26,500 / Pax", hotelCategory: "3-Star Deluxe Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Innova / Tempo" },
-    { package: "Luxury / Heli", price: "₹ 44,500 / Pax", hotelCategory: "Luxury Resorts & Hotels", meals: "All Meals Included", specialFeature: "Kedarnath Heli Included" }
+    { package: "Standard Package", price: "₹ 19,500 / Pax", hotelCategory: "Deluxe Rooms / Alpine Camp", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle" }
   ],
   pricingNote: "Note: Rates are per person on twin/triple sharing basis. All mountain tolls, parking, and driver allowances included.",
 
@@ -755,7 +749,7 @@ export const DODHAM_6D_PRESET: ItineraryData = {
   contactAgency: "Travel to Uttarakhand",
   contactPerson: "Mr. Amit kumar",
   contactPhone: "+91 9719038278",
-  motto: "ॐ नमः शिवाय",
+  motto: "जय श्री केदार · जय बद्री विशाल",
 
   photos: [
     {
@@ -818,8 +812,8 @@ const CURATED_PHOTO_PRESETS = [
   },
   {
     id: "preset-aarti",
-    url: "https://images.unsplash.com/photo-1596766141386-f13ce38bb172?auto=format&fit=crop&w=800&q=80",
-    caption: "Har Ki Pauri Holy Ganga Aarti"
+    url: "/gallery/chardham_10d_img_19.jpg",
+    caption: "Sacred Devprayag Sangam & Himalayan Confluence"
   },
   {
     id: "preset-group",
@@ -974,10 +968,34 @@ export default function ItineraryBuilder() {
         // silent fallback
       }
     }
-    // 4. Fetch latest itinerary from cloud if not present locally
+    // 4. Fetch latest itinerary from local cache or cloud
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("triloki_current_itinerary");
-      if (!stored) {
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          if (parsed && Array.isArray(parsed.days)) {
+            // Auto-migrate legacy 3-tier pricing to single Standard Package
+            if (Array.isArray(parsed.pricingTiers) && parsed.pricingTiers.length > 1) {
+              parsed.pricingTiers = [
+                {
+                  package: "Standard Package",
+                  price: parsed.pricingTiers[0].price || "₹ 28,500 / Pax",
+                  hotelCategory: parsed.pricingTiers[0].hotelCategory || "Deluxe Rooms / Standard Stays",
+                  meals: parsed.pricingTiers[0].meals || "Breakfast & Dinner (MAP)",
+                  specialFeature: parsed.pricingTiers[0].specialFeature || "Dedicated Hill Vehicle Included"
+                }
+              ];
+              parsed.glancePackages = "Standard Package";
+            }
+            // Auto-migrate to Hindi blessing motto
+            if (!parsed.motto || parsed.motto === "ॐ नमः शिवाय" || parsed.motto === "!! HAR HAR MAHADEV !!") {
+              parsed.motto = "जय श्री केदार · जय बद्री विशाल";
+            }
+            setData(parsed);
+          }
+        } catch {}
+      } else {
         const fetchCloudItin = async () => {
           try {
             const { data: cloudItin } = await supabase
@@ -988,8 +1006,24 @@ export default function ItineraryBuilder() {
               .single();
 
             if (cloudItin && cloudItin.document_data && Array.isArray((cloudItin.document_data as any).days)) {
-              setData(cloudItin.document_data as any);
-              localStorage.setItem("triloki_current_itinerary", JSON.stringify(cloudItin.document_data));
+              const cloudData = cloudItin.document_data as any;
+              if (Array.isArray(cloudData.pricingTiers) && cloudData.pricingTiers.length > 1) {
+                cloudData.pricingTiers = [
+                  {
+                    package: "Standard Package",
+                    price: cloudData.pricingTiers[0].price || "₹ 28,500 / Pax",
+                    hotelCategory: cloudData.pricingTiers[0].hotelCategory || "Deluxe Rooms / Standard Stays",
+                    meals: cloudData.pricingTiers[0].meals || "Breakfast & Dinner (MAP)",
+                    specialFeature: cloudData.pricingTiers[0].specialFeature || "Dedicated Hill Vehicle Included"
+                  }
+                ];
+                cloudData.glancePackages = "Standard Package";
+              }
+              if (!cloudData.motto || cloudData.motto === "ॐ नमः शिवाय" || cloudData.motto === "!! HAR HAR MAHADEV !!") {
+                cloudData.motto = "जय श्री केदार · जय बद्री विशाल";
+              }
+              setData(cloudData);
+              localStorage.setItem("triloki_current_itinerary", JSON.stringify(cloudData));
             }
           } catch {}
         };
@@ -1082,6 +1116,8 @@ CRITICAL RULES:
 4. ACTIVITIES: Each activity bullet must be a clean, well-formed sentence describing sightseeing, temple darshan, scenic drives, or night halts.
 5. SIGHTSEEING ROUTE: Use clean arrow formatting like "Haridwar → Guptkashi → Kedarnath".
 6. RETURN ONLY valid, raw JSON (strictly no markdown wrappers, no \`\`\`json).
+7. SINGLE PACKAGE ONLY: In "pricingTiers", generate strictly ONE package tier titled "Standard Package". Never generate 3 packages or multiple package tiers.
+8. BLESSING MOTTO: "motto" must strictly be in Hindi: "जय श्री केदार · जय बद्री विशाल". Only this blessing tagline must be used.
 
 SCHEMA:
 {
@@ -1099,7 +1135,7 @@ SCHEMA:
   "glanceDhams": "Kedarnath · Badrinath",
   "glanceSector": "By Helicopter or Trek",
   "glanceStartEnd": "Haridwar, Uttarakhand",
-  "glancePackages": "Standard · Deluxe · Luxury",
+  "glancePackages": "Standard Package",
   "days": [
     {
       "dayNumber": 1,
@@ -1113,11 +1149,9 @@ SCHEMA:
       "overnightStay": "Guptkashi"
     }
   ],
-  "pricingSubtitle": "Choose the package that best fits your comfort and budget. All packages cover the same itinerary.",
+  "pricingSubtitle": "Confirmed Standard Package with dedicated mountain transport and deluxe accommodations.",
   "pricingTiers": [
-    { "package": "Standard", "price": "₹ 24,500", "hotelCategory": "Budget Hotels", "meals": "Breakfast & Dinner", "specialFeature": "Included" },
-    { "package": "Deluxe", "price": "₹ 34,500", "hotelCategory": "3-Star Deluxe", "meals": "All Meals Included", "specialFeature": "Included" },
-    { "package": "Luxury", "price": "₹ 48,500", "hotelCategory": "Luxury Resorts", "meals": "All Meals Included", "specialFeature": "Priority Darshan" }
+    { "package": "Standard Package", "price": "₹ 24,500 / Pax", "hotelCategory": "Standard / Deluxe Clean Hotels", "meals": "Breakfast & Dinner (MAP)", "specialFeature": "Dedicated Vehicle & Sightseeing" }
   ],
   "pricingNote": "Note: Rates are per person on twin/triple sharing basis. All tolls, parking, and driver allowances included.",
   "inclusions": [
@@ -1143,7 +1177,7 @@ SCHEMA:
   "contactAgency": "Travel to Uttarakhand",
   "contactPerson": "Mr. Amit kumar",
   "contactPhone": "+91 9719038278",
-  "motto": "ॐ नमः शिवाय"
+  "motto": "जय श्री केदार · जय बद्री विशाल"
 }`;
 
       // Call Gemini API by discovering available models or trying supported model list
@@ -1297,24 +1331,27 @@ SCHEMA:
           glanceDhams: cleanText(parsed.glanceDhams) || prev.glanceDhams,
           glanceSector: cleanText(parsed.glanceSector) || prev.glanceSector,
           glanceStartEnd: cleanText(parsed.glanceStartEnd) || prev.glanceStartEnd,
-          glancePackages: cleanText(parsed.glancePackages) || prev.glancePackages,
+          glancePackages: "Standard Package",
           days: newDays.length > 0 ? newDays : prev.days,
           photos: matchedPhotos.length > 0 ? matchedPhotos : prev.photos,
-          pricingSubtitle: cleanText(parsed.pricingSubtitle) || prev.pricingSubtitle,
+          pricingSubtitle: cleanText(parsed.pricingSubtitle) || "Confirmed Standard Package with dedicated mountain transport and deluxe stays.",
           pricingTiers: Array.isArray(parsed.pricingTiers) && parsed.pricingTiers.length > 0 
-            ? parsed.pricingTiers.map((t: any) => ({
-                package: cleanText(t.package) || "Standard",
-                price: cleanText(t.price) || "₹ 0",
-                hotelCategory: cleanText(t.hotelCategory) || "Standard",
-                meals: cleanText(t.meals) || "As per plan",
-                specialFeature: cleanText(t.specialFeature) || "Included"
-              })) 
+            ? [
+                {
+                  package: "Standard Package",
+                  price: cleanText(parsed.pricingTiers[0].price) || "₹ 24,500 / Pax",
+                  hotelCategory: cleanText(parsed.pricingTiers[0].hotelCategory) || "Standard / Deluxe Clean Hotels",
+                  meals: cleanText(parsed.pricingTiers[0].meals) || "Breakfast & Dinner (MAP)",
+                  specialFeature: cleanText(parsed.pricingTiers[0].specialFeature) || "Dedicated Vehicle & Sightseeing"
+                }
+              ]
             : prev.pricingTiers,
           pricingNote: cleanText(parsed.pricingNote) || prev.pricingNote,
           inclusions: cleanArray(parsed.inclusions).length > 0 ? cleanArray(parsed.inclusions) : prev.inclusions,
           exclusions: cleanArray(parsed.exclusions).length > 0 ? cleanArray(parsed.exclusions) : prev.exclusions,
           goodToKnow: cleanArray(parsed.goodToKnow).length > 0 ? cleanArray(parsed.goodToKnow) : prev.goodToKnow,
-          bookingPayment: cleanArray(parsed.bookingPayment).length > 0 ? cleanArray(parsed.bookingPayment) : prev.bookingPayment
+          bookingPayment: cleanArray(parsed.bookingPayment).length > 0 ? cleanArray(parsed.bookingPayment) : prev.bookingPayment,
+          motto: "जय श्री केदार · जय बद्री विशाल"
         };
 
         // Automatically store the latest active itinerary into localStorage
@@ -1629,6 +1666,78 @@ SCHEMA:
     }));
     setAiPhotoNotification("✓ Loaded verified hotel & camp photos preset!");
     setTimeout(() => setAiPhotoNotification(null), 4000);
+  };
+
+  const handleHotelFileUpload = (id: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        updateHotelPhoto(id, "url", base64);
+        // Also save to custom uploads library in dhamGallery
+        const newPhoto: DhamGalleryPhoto = {
+          id: `custom-hotel-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          url: base64,
+          caption: file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " "),
+          dham: "custom",
+          dhamLabel: "Custom Uploads",
+          isCustom: true,
+          createdAt: new Date().toISOString()
+        };
+        const updated = [newPhoto, ...dhamGallery];
+        setDhamGallery(updated);
+        saveStoredDhamGallery(updated);
+        setAiPhotoNotification("✓ Hotel photo uploaded and applied to stay!");
+        setTimeout(() => setAiPhotoNotification(null), 3500);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const handleUploadNewStayPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !file.type.startsWith("image/")) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const base64 = event.target?.result as string;
+      if (base64) {
+        const hotelName = file.name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ");
+        const newHp: HotelPhoto = {
+          id: `hp-${Date.now()}`,
+          url: base64,
+          hotelName: hotelName || "Deluxe Hotel / Stay",
+          location: "Uttarakhand Sector",
+          roomType: "Deluxe Double Room",
+          caption: "Clean sanitized room with attached bathroom and hot water",
+          fit: "cover"
+        };
+        setData(prev => ({
+          ...prev,
+          hotelPhotos: [...(prev.hotelPhotos || []), newHp],
+          showHotelPhotos: true
+        }));
+        // Also save to custom uploads library in dhamGallery
+        const newPhoto: DhamGalleryPhoto = {
+          id: `custom-hotel-${Date.now()}`,
+          url: base64,
+          caption: hotelName,
+          dham: "custom",
+          dhamLabel: "Custom Uploads",
+          isCustom: true,
+          createdAt: new Date().toISOString()
+        };
+        const updated = [newPhoto, ...dhamGallery];
+        setDhamGallery(updated);
+        saveStoredDhamGallery(updated);
+        setAiPhotoNotification(`✓ Added new stay with uploaded photo "${hotelName}"!`);
+        setTimeout(() => setAiPhotoNotification(null), 3500);
+      }
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const handleUpdatePhotoSetting = (id: string, field: "position" | "fit", val: any) => {
@@ -3122,7 +3231,17 @@ ${data.motto}`;
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
+                    <label className="flex items-center gap-1 px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold text-xs cursor-pointer shadow-xs transition">
+                      <Upload className="w-3.5 h-3.5" />
+                      <span>Upload Hotel Photo</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleUploadNewStayPhoto}
+                        className="hidden"
+                      />
+                    </label>
                     <button
                       type="button"
                       onClick={loadCuratedHotelPhotos}
@@ -3223,16 +3342,31 @@ ${data.motto}`;
                             </div>
                           </div>
                           <div>
-                            <label className="block text-[10px] font-medium text-gray-500 mb-0.5">Image URL / Path</label>
+                            <div className="flex items-center justify-between mb-0.5">
+                              <label className="block text-[10px] font-medium text-gray-500">Image URL or Upload</label>
+                              <label className="text-[9.5px] text-emerald-700 hover:text-emerald-900 font-bold flex items-center gap-1 cursor-pointer bg-emerald-50 hover:bg-emerald-100 px-1.5 py-0.5 rounded border border-emerald-200">
+                                📤 Upload Photo
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={e => handleHotelFileUpload(hp.id, e)}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
                             <input
                               type="text"
                               value={hp.url}
                               onChange={e => updateHotelPhoto(hp.id, "url", e.target.value)}
                               className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs font-mono"
+                              placeholder="/gallery/... or upload above"
                             />
                             {hp.url && (
-                              <div className="mt-1 h-9 rounded overflow-hidden border border-gray-200 w-16">
-                                <img src={hp.url} alt={hp.hotelName} className="w-full h-full object-cover" />
+                              <div className="mt-1 flex items-center gap-2">
+                                <div className="h-10 w-16 rounded overflow-hidden border border-gray-200 shrink-0">
+                                  <img src={hp.url} alt={hp.hotelName} className="w-full h-full object-cover" />
+                                </div>
+                                <span className="text-[9px] text-gray-400 font-mono truncate max-w-[180px]">{hp.url}</span>
                               </div>
                             )}
                           </div>
