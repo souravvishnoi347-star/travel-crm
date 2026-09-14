@@ -1346,22 +1346,69 @@ export default function HotelVouchersPage() {
     }
   };
 
-  const executeWhatsAppSend = (targetPhone: string, alsoDownloadPdf: boolean = false) => {
+  const copyVoucherAsImage = async (): Promise<boolean> => {
+    try {
+      const elementId = activeTab === "group" ? "print-group-hotel-voucher" : "print-multi-hotel-voucher";
+      const element = document.getElementById(elementId);
+      if (!element) return false;
+
+      const html2canvasModule = await import("html2canvas-pro");
+      const html2canvas = html2canvasModule.default || html2canvasModule;
+
+      const canvas = await html2canvas(element, { scale: 2, useCORS: true, logging: false });
+      return new Promise<boolean>((resolve) => {
+        canvas.toBlob(async (blob) => {
+          if (blob && typeof navigator !== "undefined" && navigator.clipboard && typeof ClipboardItem !== "undefined") {
+            try {
+              await navigator.clipboard.write([
+                new ClipboardItem({ "image/png": blob })
+              ]);
+              resolve(true);
+            } catch (clipErr) {
+              console.warn("Clipboard write error:", clipErr);
+              resolve(false);
+            }
+          } else {
+            resolve(false);
+          }
+        }, "image/png");
+      });
+    } catch (err) {
+      console.warn("copyVoucherAsImage error:", err);
+      return false;
+    }
+  };
+
+  const executeWhatsAppSend = async (targetPhone: string, mode: "pdf" | "image" | "text" = "image") => {
     const cleanPhone = cleanWaPhone(targetPhone);
     if (!cleanPhone) {
       alert("Please enter a valid 10-digit mobile number.");
       return;
     }
 
-    if (alsoDownloadPdf) {
+    if (mode === "image") {
+      const copied = await copyVoucherAsImage();
+      const caption = encodeURIComponent(
+        `*🏨 CONFIRMED HOTEL STAY VOUCHER*\n*Travel to Uttarakhand*\n\nDear Guest, please find your confirmed hotel stay voucher.\n\nHelpline: +91 9719038278\n🌐 https://traveltouttrakhand.com`
+      );
+      window.open(`https://wa.me/${cleanPhone}?text=${caption}`, "_blank");
+      setShowWhatsAppModal(false);
+      if (copied) {
+        alert("✓ Voucher image clipboard me copy ho gayi hai!\n\nWhatsApp chat khulte hi sirf 'Ctrl + V' (Paste) dabayein — poori original voucher image aa jayegi aur Send daba dein!");
+      }
+      return;
+    }
+
+    if (mode === "pdf") {
       handleDownloadPdf();
+      const briefMessage = `*🏨 HOTEL SERVICE VOUCHER - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName || "Guest"},\n\nPlease find your official confirmed Hotel Stay Voucher attached (PDF has been downloaded to attach here).\n\n📞 Operations Helpline: ${data.emergencyContact || "+91 9719038278"}\n🌐 https://traveltouttrakhand.com\n\nWishing you a divine and pleasant pilgrimage! 🙏`;
+      const encoded = encodeURIComponent(briefMessage);
+      window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, "_blank");
+      setShowWhatsAppModal(false);
+      return;
     }
 
     const message = getVoucherWhatsAppMessage();
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(message).catch(() => {});
-    }
-
     const encoded = encodeURIComponent(message);
     window.open(`https://wa.me/${cleanPhone}?text=${encoded}`, "_blank");
     setShowWhatsAppModal(false);
@@ -2843,24 +2890,32 @@ export default function HotelVouchersPage() {
             {/* Action Buttons */}
             <div className="space-y-2 pt-2 border-t border-gray-100">
               <button
-                onClick={() => executeWhatsAppSend(waPhoneInput, true)}
+                onClick={() => executeWhatsAppSend(waPhoneInput, "image")}
                 className="w-full flex items-center justify-center gap-2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm transition cursor-pointer"
               >
-                <Download className="w-4 h-4" />
-                <span>📥 Download PDF Voucher & Open WhatsApp (Recommended)</span>
+                <span>🖼️</span>
+                <span>Send as Full Voucher Image (Paste with Ctrl+V)</span>
               </button>
 
               <button
-                onClick={() => executeWhatsAppSend(waPhoneInput, false)}
-                className="w-full flex items-center justify-center gap-2 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl text-xs font-semibold transition cursor-pointer"
+                onClick={() => executeWhatsAppSend(waPhoneInput, "pdf")}
+                className="w-full flex items-center justify-center gap-2 py-2 bg-sky-50 hover:bg-sky-100 border border-sky-300 text-sky-800 rounded-xl text-xs font-bold transition cursor-pointer"
               >
-                <MessageCircle className="w-4 h-4 text-emerald-600" />
-                <span>Open WhatsApp Chat with Text Summary</span>
+                <Download className="w-4 h-4 text-sky-700" />
+                <span>📥 Download PDF Voucher & Open WhatsApp</span>
+              </button>
+
+              <button
+                onClick={() => executeWhatsAppSend(waPhoneInput, "text")}
+                className="w-full flex items-center justify-center gap-2 py-1.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 rounded-xl text-[11px] font-medium transition cursor-pointer"
+              >
+                <MessageCircle className="w-3.5 h-3.5 text-gray-500" />
+                <span>Open WhatsApp with Text Details Only</span>
               </button>
             </div>
 
             <div className="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[10px] text-amber-900 leading-snug">
-              💡 <strong>Tip:</strong> Download button par click karte hi PDF aapke laptop/mobile me save ho jayegi aur customer ki WhatsApp chat khul jayegi. Aap downloaded PDF file ko chat me drag karke bhej dein.
+              💡 <strong>Instant Image Tip:</strong> First button par click karein, WhatsApp chat khulte hi <strong>Ctrl + V</strong> dabayein — poori original color voucher photo automatically paste ho jayegi!
             </div>
           </div>
         </div>
