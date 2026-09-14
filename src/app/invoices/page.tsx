@@ -18,11 +18,50 @@ import {
   Phone,
   Mail,
   ShieldCheck,
+  CheckCircle2,
+  Clock,
   ZoomIn,
   ZoomOut
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
+
+export type InvoiceType = "advance" | "receipt";
+
+export interface InvoiceData {
+  companySettings: string;
+  invoiceType: InvoiceType;
+  invoiceNumber: string;
+  guestName: string;
+  guestPhone: string;
+  guestEmail: string;
+  guestGst: string;
+  dateType: string;
+  travelDate: string;
+  bookingDate: string;
+  packages: Array<{ 
+    detail: string; 
+    person: number; 
+    rate: number; 
+    amount: number; 
+  }>;
+  taxPercent: string;
+  discount: string;
+  amountPaid: string;
+  advanceRequired: string;
+  paymentMode: string;
+  paymentRef: string;
+  bankName: string;
+  accountHolder: string;
+  accountNumber: string;
+  ifscCode: string;
+  accountType: string;
+  branchName: string;
+  upiId: string;
+  showUpiQr: boolean;
+  customQrUrl: string;
+  notes: string;
+}
 
 function numberToWords(num: number): string {
   if (num === 0) return "Zero Rupees Only";
@@ -41,8 +80,9 @@ function numberToWords(num: number): string {
   return str;
 }
 
-const DEFAULT_INVOICE_DATA = {
+const DEFAULT_INVOICE_DATA: InvoiceData = {
   companySettings: "Travel to Uttarakhand",
+  invoiceType: "advance",
   invoiceNumber: "INV-2026-0001",
   guestName: "",
   guestPhone: "",
@@ -62,6 +102,9 @@ const DEFAULT_INVOICE_DATA = {
   taxPercent: "5",
   discount: "0",
   amountPaid: "0",
+  advanceRequired: "0",
+  paymentMode: "UPI / Bank Transfer",
+  paymentRef: "",
   bankName: "Central Bank of India",
   accountHolder: "Travel to Uttarakhand",
   accountNumber: "5242273759",
@@ -229,10 +272,31 @@ export default function InvoicesPage() {
     const discount = Number(data.discount) || 0;
     const afterDiscount = Math.max(0, subTotal - discount);
     const total = Math.round(afterDiscount);
+
+    // If advanceRequired was entered as a string/number
+    let advReq = Number(data.advanceRequired) || 0;
+    if (advReq === 0 && total > 0) {
+      advReq = Math.round(total * 0.25); // default 25% if zero
+    }
+    const balanceAfterAdvance = Math.max(0, total - advReq);
+
     const paid = Number(data.amountPaid) || 0;
-    const pending = total - paid;
-    return { subTotal, discount, taxAmount: 0, total, paid, pending, totalWords: numberToWords(total) };
-  }, [data.packages, data.discount, data.amountPaid]);
+    const pending = Math.max(0, total - paid);
+
+    return { 
+      subTotal, 
+      discount, 
+      taxAmount: 0, 
+      total, 
+      paid, 
+      pending, 
+      advanceRequired: advReq,
+      balanceAfterAdvance,
+      totalWords: numberToWords(total),
+      advanceWords: numberToWords(advReq),
+      paidWords: numberToWords(paid)
+    };
+  }, [data.packages, data.discount, data.amountPaid, data.advanceRequired]);
 
   const handleDownload = async () => {
     try {
@@ -273,18 +337,21 @@ export default function InvoicesPage() {
 
       // Record in local Document Hub
       try {
+        const isAdv = data.invoiceType === "advance";
         saveDocumentToHub({
           id: `inv-${data.invoiceNumber || Date.now()}`,
           type: "invoice",
-          title: `Tax Invoice - ${data.guestName || "Billing"}`,
+          title: isAdv ? `Advance Invoice - ${data.guestName || "Billing"}` : `Payment Receipt - ${data.guestName || "Billing"}`,
           docNumber: data.invoiceNumber,
           guestName: data.guestName || "Valued Guest",
           guestPhone: data.guestPhone || "",
           travelDates: data.travelDate || data.bookingDate,
           amount: calculations.total,
-          paidAmount: calculations.paid,
-          pendingAmount: calculations.pending,
-          detailsSummary: `Total: ₹${calculations.total.toLocaleString("en-IN")} | Advance: ₹${calculations.paid.toLocaleString("en-IN")} | Due: ₹${calculations.pending.toLocaleString("en-IN")}`,
+          paidAmount: isAdv ? calculations.advanceRequired : calculations.paid,
+          pendingAmount: isAdv ? calculations.balanceAfterAdvance : calculations.pending,
+          detailsSummary: isAdv 
+            ? `Total: ₹${calculations.total.toLocaleString("en-IN")} | Advance Req: ₹${calculations.advanceRequired.toLocaleString("en-IN")} | Balance: ₹${calculations.balanceAfterAdvance.toLocaleString("en-IN")}`
+            : `Total: ₹${calculations.total.toLocaleString("en-IN")} | Advance Recd: ₹${calculations.paid.toLocaleString("en-IN")} | Due: ₹${calculations.pending.toLocaleString("en-IN")}`,
           studioUrl: "/invoices",
           rawPayload: data
         });
@@ -300,7 +367,7 @@ export default function InvoicesPage() {
 
       const canvas = await html2canvas(element, { 
         scale: 2, 
-        useCORS: true,
+        useCORS: true, 
         logging: false 
       });
       const imgData = canvas.toDataURL("image/jpeg", 0.98);
@@ -330,7 +397,8 @@ export default function InvoicesPage() {
         console.warn("Could not attach PDF link annotations:", linkErr);
       }
 
-      pdf.save(`Invoice_${data.invoiceNumber.replace(/[^a-zA-Z0-9-]/g, "_")}_${data.guestName.replace(/\s+/g, "_")}.pdf`);
+      const prefix = data.invoiceType === "advance" ? "Advance_Invoice" : "Payment_Receipt";
+      pdf.save(`${prefix}_${data.invoiceNumber.replace(/[^a-zA-Z0-9-]/g, "_")}_${data.guestName.replace(/\s+/g, "_")}.pdf`);
     } catch (error: any) {
       console.error("PDF generation failed:", error);
       alert(`Failed to generate PDF: ${error.message || error}`);
@@ -340,7 +408,48 @@ export default function InvoicesPage() {
   };
 
   const handleShareWhatsApp = () => {
-    const text = `*TAX INVOICE - TRAVEL TO UTTARAKHAND*\n\nDear ${data.guestName},\n\nPlease find your invoice details:\n• Invoice No: ${data.invoiceNumber}\n• Date: ${data.bookingDate}\n• Total Amount: ₹${calculations.total.toLocaleString("en-IN")}\n• Advance Received: ₹${calculations.paid.toLocaleString("en-IN")}\n• Balance Due: ₹${calculations.pending.toLocaleString("en-IN")}\n\nBank: ${data.bankName || "Central Bank of India"} | A/C: ${data.accountNumber || "5242273759"} | IFSC: ${data.ifscCode || "CBIN0280274"}${data.upiId ? ` | UPI: ${data.upiId}` : ""}\n\nThank you for choosing Travel to Uttarakhand!`;
+    let text = "";
+    if (data.invoiceType === "advance") {
+      text = `*📋 BOOKING ADVANCE INVOICE - TRAVEL TO UTTARAKHAND*\n\n` +
+        `Dear ${data.guestName || "Honourable Guest"},\n\n` +
+        `Thank you for confirming your Uttarakhand tour itinerary! Kindly find your Booking Advance Invoice:\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `• *Invoice No:* ${data.invoiceNumber}\n` +
+        `• *Invoice Date:* ${data.bookingDate}\n` +
+        (data.travelDate ? `• *Travel Date:* ${data.travelDate}\n` : "") +
+        `• *Total Package Cost:* ₹${calculations.total.toLocaleString("en-IN")}\n` +
+        `• *👉 ADVANCE REQUIRED TO CONFIRM:* ₹${calculations.advanceRequired.toLocaleString("en-IN")}\n` +
+        `• *Balance Payable on Tour:* ₹${calculations.balanceAfterAdvance.toLocaleString("en-IN")}\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `*OFFICIAL BANK & UPI DETAILS FOR PAYMENT:*\n` +
+        `• Beneficiary: Travel to Uttarakhand\n` +
+        `• Bank: ${data.bankName || "Central Bank of India"}\n` +
+        `• Account No: ${data.accountNumber || "5242273759"}\n` +
+        `• IFSC Code: ${data.ifscCode || "CBIN0280274"}\n` +
+        (data.upiId ? `• UPI ID: ${data.upiId}\n` : "") +
+        `\n⚠️ *Note:* Please share screenshot after transferring the advance. Confirmed Payment Receipt and Hotel/Vehicle Vouchers will be issued immediately upon credit.\n\n` +
+        `📞 *24x7 Helpline:* +91 9719038278 (Mr. Amit Kumar)\n` +
+        `🌐 https://traveltouttrakhand.com\n\n` +
+        `Wishing you a divine and blessed journey! 🙏🛕`;
+    } else {
+      text = `*🧾 PAYMENT RECEIPT & INVOICE - TRAVEL TO UTTARAKHAND*\n\n` +
+        `Dear ${data.guestName || "Honourable Guest"},\n\n` +
+        `We have received your advance payment with thanks! Here is your official Payment Receipt & Invoice:\n` +
+        `━━━━━━━━━━━━━━━━━━━━━\n` +
+        `• *Invoice / Receipt No:* ${data.invoiceNumber}\n` +
+        `• *Receipt Date:* ${data.bookingDate}\n` +
+        (data.travelDate ? `• *Travel Date:* ${data.travelDate}\n` : "") +
+        `• *Total Tour Package:* ₹${calculations.total.toLocaleString("en-IN")}\n` +
+        `• *✓ ADVANCE RECEIVED:* ₹${calculations.paid.toLocaleString("en-IN")} (Received with thanks ✓)\n` +
+        `• *⏳ BALANCE PENDING:* ₹${calculations.pending.toLocaleString("en-IN")} (Payable before departure)\n` +
+        (data.paymentMode ? `• *Payment Mode:* ${data.paymentMode}\n` : "") +
+        `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+        `Your booking is confirmed. Your hotel & vehicle service vouchers will be dispatched prior to travel.\n\n` +
+        `📞 *24x7 Helpline:* +91 9719038278 (Mr. Amit Kumar)\n` +
+        `🌐 https://traveltouttrakhand.com\n\n` +
+        `Jai Shree Kedar · Jai Badri Vishal! 🙏🛕`;
+    }
+
     const encoded = encodeURIComponent(text);
     const phone = data.guestPhone ? data.guestPhone.replace(/[^0-9]/g, "") : "";
     window.open(`https://wa.me/${phone}?text=${encoded}`, "_blank");
@@ -367,10 +476,16 @@ export default function InvoicesPage() {
             <img src="/logo.png" alt="Logo" className="h-24 w-auto object-contain mb-1.5 drop-shadow-xs" />
             <p className="text-[11px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
             <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-0.5 uppercase">
-              TOUR INVOICE
+              {data.invoiceType === "advance" ? "BOOKING ADVANCE INVOICE" : "TAX INVOICE & PAYMENT RECEIPT"}
             </h1>
-            <p className="text-xs font-bold tracking-widest text-[#dc2626] uppercase mt-0.5">
-              BILL OF SUPPLY & SERVICE VOUCHER
+            <p className={`text-xs font-bold tracking-widest uppercase mt-0.5 px-2 py-0.5 rounded border ${
+              data.invoiceType === "advance"
+                ? "text-amber-800 bg-amber-50 border-amber-200"
+                : "text-emerald-800 bg-emerald-50 border-emerald-200"
+            }`}>
+              {data.invoiceType === "advance" 
+                ? "PROFORMA INVOICE & BOOKING ADVANCE DEMAND" 
+                : "BOOKING CONFIRMATION & PAYMENT RECEIPT"}
             </p>
             <div className="text-[10px] text-gray-500 mt-1 flex flex-wrap justify-center gap-2">
               <span>Contact: <strong className="text-gray-700">+91 9719038278</strong></span>
@@ -383,16 +498,29 @@ export default function InvoicesPage() {
 
           {/* Metadata Line */}
           <div className="bg-sky-50/70 border border-sky-200 rounded-lg py-1 px-3.5 text-center text-[11px] font-semibold text-gray-800 flex justify-between items-center">
-            <span>Invoice No: <strong className="text-[#0369a1] font-mono">{data.invoiceNumber}</strong></span>
-            <span>Invoice Date: <strong className="text-gray-900">{data.bookingDate}</strong></span>
-            <span>{data.dateType}: <strong className="text-gray-900">{data.travelDate}</strong></span>
+            <span>{data.invoiceType === "advance" ? "Proforma No:" : "Invoice No:"} <strong className="text-[#0369a1] font-mono">{data.invoiceNumber}</strong></span>
+            <span>Date: <strong className="text-gray-900">{data.bookingDate}</strong></span>
+            <span>{data.dateType}: <strong className="text-gray-900">{data.travelDate || "As Confirmed"}</strong></span>
+            <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${
+              data.invoiceType === "advance"
+                ? "bg-amber-100 text-amber-900 border-amber-300"
+                : calculations.pending === 0
+                ? "bg-emerald-100 text-emerald-900 border-emerald-300"
+                : "bg-blue-100 text-blue-900 border-blue-300"
+            }`}>
+              {data.invoiceType === "advance" 
+                ? "⏳ ADVANCE PAYMENT DEMAND" 
+                : calculations.pending === 0 
+                ? "✓ FULLY SETTLED" 
+                : "✓ ADVANCE RECEIVED / PARTIALLY PAID"}
+            </span>
           </div>
 
           {/* Dual Billed To / Billed By Cards */}
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div className="border border-gray-200 rounded-lg p-2.5 bg-gray-50/60 space-y-0.5">
               <span className="text-[9px] uppercase font-bold text-gray-400 tracking-wider block">Billed To (Client Particulars)</span>
-              <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.guestName}</h3>
+              <h3 className="text-xs font-serif font-bold text-[#0369a1]">{data.guestName || "Honourable Guest"}</h3>
               {data.guestPhone && <p className="text-gray-700 text-[10px]">Phone: <strong className="text-gray-900">{data.guestPhone}</strong></p>}
               {data.guestEmail && <p className="text-gray-700 text-[10px]">Email: {data.guestEmail}</p>}
             </div>
@@ -438,16 +566,33 @@ export default function InvoicesPage() {
                 <p className="font-serif font-bold text-[#0369a1] text-[11px] italic mt-0.5 leading-snug">{calculations.totalWords}</p>
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2">
-                  <span className="text-[9px] uppercase font-bold text-emerald-800 tracking-wider block">Advance Received</span>
-                  <p className="text-xs font-bold text-emerald-700 font-mono mt-0.5">₹{calculations.paid.toLocaleString("en-IN")}</p>
+              {data.invoiceType === "advance" ? (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-2 shadow-2xs">
+                    <span className="text-[9px] uppercase font-bold text-amber-900 tracking-wider block">👉 Advance Required</span>
+                    <p className="text-sm font-black text-amber-800 font-mono mt-0.5">₹{calculations.advanceRequired.toLocaleString("en-IN")}</p>
+                    <p className="text-[8.5px] text-amber-700 font-medium">Pay to lock dates & stays</p>
+                  </div>
+                  <div className="bg-sky-50 border border-sky-200 rounded-lg p-2">
+                    <span className="text-[9px] uppercase font-bold text-sky-800 tracking-wider block">Balance on Tour Start</span>
+                    <p className="text-xs font-bold text-sky-700 font-mono mt-0.5">₹{calculations.balanceAfterAdvance.toLocaleString("en-IN")}</p>
+                    <p className="text-[8.5px] text-gray-500">Payable before journey</p>
+                  </div>
                 </div>
-                <div className="bg-rose-50 border border-rose-200 rounded-lg p-2">
-                  <span className="text-[9px] uppercase font-bold text-rose-800 tracking-wider block">Balance Pending</span>
-                  <p className="text-xs font-bold text-rose-700 font-mono mt-0.5">₹{calculations.pending.toLocaleString("en-IN")}</p>
+              ) : (
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-emerald-50 border-2 border-emerald-300 rounded-lg p-2 shadow-2xs">
+                    <span className="text-[9px] uppercase font-bold text-emerald-900 tracking-wider block">✓ Advance Received</span>
+                    <p className="text-sm font-black text-emerald-700 font-mono mt-0.5">₹{calculations.paid.toLocaleString("en-IN")}</p>
+                    <p className="text-[8.5px] text-emerald-700 font-medium">Received with thanks</p>
+                  </div>
+                  <div className="bg-rose-50 border-2 border-rose-300 rounded-lg p-2 shadow-2xs">
+                    <span className="text-[9px] uppercase font-bold text-rose-900 tracking-wider block">⏳ Balance Pending</span>
+                    <p className="text-sm font-black text-rose-700 font-mono mt-0.5">₹{calculations.pending.toLocaleString("en-IN")}</p>
+                    <p className="text-[8.5px] text-rose-700 font-medium">Payable before departure</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Right: Calculations Table */}
@@ -465,13 +610,59 @@ export default function InvoicesPage() {
                     </tr>
                   )}
                   <tr className="bg-[#0369a1] text-white">
-                    <td className="px-2.5 py-1.5 font-bold uppercase tracking-wider text-[11px]">Grand Total:</td>
+                    <td className="px-2.5 py-1.5 font-bold uppercase tracking-wider text-[11px]">Total Package Cost:</td>
                     <td className="px-2.5 py-1.5 text-right font-bold text-xs font-mono">₹{calculations.total.toLocaleString("en-IN")}</td>
                   </tr>
+                  {data.invoiceType === "advance" ? (
+                    <>
+                      <tr className="bg-amber-50 text-amber-950 font-bold border-t border-amber-200">
+                        <td className="px-2.5 py-1.5 uppercase text-[10.5px]">Booking Advance Required:</td>
+                        <td className="px-2.5 py-1.5 text-right font-mono text-xs text-amber-900">₹{calculations.advanceRequired.toLocaleString("en-IN")}</td>
+                      </tr>
+                      <tr className="bg-slate-50 text-gray-700 border-t border-gray-200">
+                        <td className="px-2.5 py-1 text-[10px]">Remaining Balance on Tour:</td>
+                        <td className="px-2.5 py-1 text-right font-mono font-bold text-gray-800 text-[11px]">₹{calculations.balanceAfterAdvance.toLocaleString("en-IN")}</td>
+                      </tr>
+                    </>
+                  ) : (
+                    <>
+                      <tr className="bg-emerald-50 text-emerald-900 font-bold border-t border-emerald-200">
+                        <td className="px-2.5 py-1.5 uppercase text-[10.5px]">Less: Advance Received:</td>
+                        <td className="px-2.5 py-1.5 text-right font-mono text-xs text-emerald-700">₹{calculations.paid.toLocaleString("en-IN")}</td>
+                      </tr>
+                      <tr className="bg-rose-50 text-rose-950 font-bold border-t border-rose-200">
+                        <td className="px-2.5 py-1.5 uppercase text-[10.5px]">Net Balance Pending:</td>
+                        <td className="px-2.5 py-1.5 text-right font-mono text-xs text-rose-700">₹{calculations.pending.toLocaleString("en-IN")}</td>
+                      </tr>
+                    </>
+                  )}
                 </tbody>
               </table>
             </div>
           </div>
+
+          {/* Action Notice Strip */}
+          {data.invoiceType === "advance" ? (
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-300 rounded-lg py-1.5 px-3 flex items-center justify-between text-[10px] text-amber-950">
+              <span className="font-bold flex items-center gap-1.5">
+                <span className="text-amber-600 font-black">📢 ACTION REQUIRED:</span>
+                <span>Please transfer booking advance of <strong>₹{calculations.advanceRequired.toLocaleString("en-IN")}</strong> to lock your vehicle & hotel reservations.</span>
+              </span>
+              <span className="font-semibold text-amber-800 text-[9px] bg-white px-2 py-0.5 rounded border border-amber-200 shrink-0">
+                Receipt issued upon credit
+              </span>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-300 rounded-lg py-1.5 px-3 flex items-center justify-between text-[10px] text-emerald-950">
+              <span className="font-bold flex items-center gap-1.5">
+                <span className="text-emerald-600 font-black">✓ PAYMENT ACKNOWLEDGED:</span>
+                <span>Booking advance of <strong>₹{calculations.paid.toLocaleString("en-IN")}</strong> received with thanks. Confirmed booking receipt.</span>
+              </span>
+              <span className="font-semibold text-rose-800 text-[9px] bg-white px-2 py-0.5 rounded border border-rose-200 shrink-0">
+                Pending: ₹{calculations.pending.toLocaleString("en-IN")}
+              </span>
+            </div>
+          )}
 
           {/* Bank Particulars & UPI QR Code Box */}
           <div className="bg-gradient-to-r from-sky-50/60 via-blue-50/40 to-slate-50 border border-[#0369a1]/30 rounded-xl p-2.5 text-[10px] text-gray-800 flex items-center justify-between gap-3 shadow-2xs">
@@ -519,7 +710,11 @@ export default function InvoicesPage() {
                     UPI ID: <span className="text-gray-400 italic font-mono">______________</span>
                   </span>
                 )}
-                <span className="text-[8.5px] text-gray-400 italic ml-auto">• 100% full settlement required before start of travel</span>
+                <span className="text-[8.5px] text-gray-400 italic ml-auto">
+                  {data.invoiceType === "advance" 
+                    ? "• Advance deposit required to lock hotel & vehicle bookings" 
+                    : "• Balance settlement required before start of travel"}
+                </span>
               </div>
             </div>
 
@@ -539,7 +734,9 @@ export default function InvoicesPage() {
                   />
                 </div>
                 <div className="mt-1 text-center">
-                  <p className="text-[8.5px] font-bold text-gray-800 leading-none">Scan to Pay via UPI</p>
+                  <p className="text-[8.5px] font-bold text-gray-800 leading-none">
+                    {data.invoiceType === "advance" ? "Scan to Pay Advance" : "Scan to Pay via UPI"}
+                  </p>
                   <p className="text-[7px] text-sky-600 font-semibold mt-0.5">GPay · PhonePe · Paytm · BHIM</p>
                 </div>
               </div>
@@ -586,7 +783,7 @@ export default function InvoicesPage() {
             >
               🌐 www.traveltouttrakhand.com
             </a>
-            <span>Tax Invoice · Page 1 of 1</span>
+            <span>{data.invoiceType === "advance" ? "Booking Advance Invoice · Page 1 of 1" : "Tax Invoice & Payment Receipt · Page 1 of 1"}</span>
           </div>
         </div>
 
@@ -623,6 +820,65 @@ export default function InvoicesPage() {
           </div>
 
           <div className="space-y-4 text-xs">
+            {/* INVOICE STAGE / TYPE SELECTOR */}
+            <div className="bg-gradient-to-r from-sky-50 to-indigo-50 p-3 rounded-xl border border-sky-200 shadow-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-sky-950 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>📑</span> Invoice Stage / Type
+                </span>
+                <span className="text-[10px] bg-sky-200/80 text-sky-800 font-bold px-2 py-0.5 rounded-full">
+                  {data.invoiceType === "advance" ? "Stage 1: Advance Demand" : "Stage 2: Payment Receipt"}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setData({ ...data, invoiceType: "advance" })}
+                  className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+                    data.invoiceType === "advance"
+                      ? "bg-white border-amber-500 shadow-sm ring-2 ring-amber-400/30"
+                      : "bg-white/70 border-gray-200 hover:bg-white text-gray-600"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-900 flex items-center gap-1">
+                      <span className="w-4 h-4 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center text-[10px] font-bold">1</span>
+                      Advance Demand
+                    </span>
+                    {data.invoiceType === "advance" && (
+                      <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-gray-500 leading-tight">
+                    Demand advance to confirm booking & block vehicle/hotel.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setData({ ...data, invoiceType: "receipt" })}
+                  className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col gap-0.5 ${
+                    data.invoiceType === "receipt"
+                      ? "bg-white border-emerald-600 shadow-sm ring-2 ring-emerald-500/30"
+                      : "bg-white/70 border-gray-200 hover:bg-white text-gray-600"
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-gray-900 flex items-center gap-1">
+                      <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">2</span>
+                      Payment Receipt
+                    </span>
+                    {data.invoiceType === "receipt" && (
+                      <span className="w-2 h-2 rounded-full bg-emerald-600"></span>
+                    )}
+                  </div>
+                  <p className="text-[10px] text-gray-500 leading-tight">
+                    Official receipt showing advance received & balance pending.
+                  </p>
+                </button>
+              </div>
+            </div>
+
             {/* 1. Invoice Particulars */}
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
               <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Invoice Particulars</span>
@@ -701,19 +957,146 @@ export default function InvoicesPage() {
               </div>
             </div>
 
-            {/* 4. Discount & Advance Settlement */}
-            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-2.5">
-              <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">Discount & Advance Settlement</span>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Discount (₹)</label>
-                  <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono" value={data.discount} onChange={e => setData({ ...data, discount: e.target.value })} />
-                </div>
-                <div>
-                  <label className="block text-[10px] text-gray-500 mb-0.5">Advance Paid (₹)</label>
-                  <input type="number" className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono font-bold text-emerald-600" value={data.amountPaid} onChange={e => setData({ ...data, amountPaid: e.target.value })} />
-                </div>
+            {/* 4. Pricing, Advance & Settlement */}
+            <div className="bg-gray-50 p-3 rounded-xl border border-gray-200 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider block">
+                  {data.invoiceType === "advance" ? "Advance Demand Settlement" : "Payment Receipt Settlement"}
+                </span>
+                <span className="text-[10px] font-bold text-gray-700 font-mono">
+                  Total: ₹{calculations.total.toLocaleString("en-IN")}
+                </span>
               </div>
+
+              <div>
+                <label className="block text-[10px] text-gray-500 mb-0.5">Discount on Package (₹)</label>
+                <input
+                  type="number"
+                  className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-mono"
+                  value={data.discount}
+                  onChange={e => setData({ ...data, discount: e.target.value })}
+                  placeholder="0"
+                />
+              </div>
+
+              {data.invoiceType === "advance" ? (
+                <div className="space-y-2 bg-amber-50/70 p-2.5 rounded-lg border border-amber-200">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[10px] font-bold text-amber-900">
+                      Advance Required to Book (₹)
+                    </label>
+                    <div className="flex gap-1">
+                      {[
+                        { label: "25%", pct: 0.25 },
+                        { label: "30%", pct: 0.30 },
+                        { label: "50%", pct: 0.50 },
+                        { label: "Full", pct: 1.0 },
+                      ].map(item => (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => {
+                            const val = Math.round(calculations.total * item.pct);
+                            setData({ ...data, advanceRequired: String(val) });
+                          }}
+                          className="px-1.5 py-0.5 text-[9px] font-bold bg-white border border-amber-300 text-amber-800 rounded hover:bg-amber-100 transition cursor-pointer"
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <input
+                    type="number"
+                    className="w-full px-2 py-1 bg-white border border-amber-300 rounded text-xs font-mono font-bold text-amber-900"
+                    value={data.advanceRequired || calculations.advanceRequired}
+                    onChange={e => setData({ ...data, advanceRequired: e.target.value })}
+                    placeholder="Enter advance required"
+                  />
+                  <div className="grid grid-cols-2 gap-2 text-[10px] pt-1.5 border-t border-amber-200/80 text-amber-950 font-medium">
+                    <div>
+                      <span className="text-amber-700">Advance Demand: </span>
+                      <span className="font-bold font-mono">₹{calculations.advanceRequired.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div>
+                      <span className="text-amber-700">Remaining on Tour: </span>
+                      <span className="font-bold font-mono">₹{calculations.balanceAfterAdvance.toLocaleString("en-IN")}</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2 bg-emerald-50/70 p-2.5 rounded-lg border border-emerald-200">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-[10px] font-bold text-emerald-900">
+                      Advance Received / Paid Amount (₹)
+                    </label>
+                    <div className="flex gap-1">
+                      {[
+                        { label: "25%", pct: 0.25 },
+                        { label: "30%", pct: 0.30 },
+                        { label: "50%", pct: 0.50 },
+                        { label: "Full", pct: 1.0 },
+                      ].map(item => (
+                        <button
+                          key={item.label}
+                          type="button"
+                          onClick={() => {
+                            const val = Math.round(calculations.total * item.pct);
+                            setData({ ...data, amountPaid: String(val) });
+                          }}
+                          className="px-1.5 py-0.5 text-[9px] font-bold bg-white border border-emerald-300 text-emerald-800 rounded hover:bg-emerald-100 transition cursor-pointer"
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <input
+                    type="number"
+                    className="w-full px-2 py-1 bg-white border border-emerald-300 rounded text-xs font-mono font-bold text-emerald-700"
+                    value={data.amountPaid}
+                    onChange={e => setData({ ...data, amountPaid: e.target.value })}
+                    placeholder="Enter received amount"
+                  />
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <div>
+                      <label className="block text-[10px] text-gray-600 mb-0.5">Payment Mode</label>
+                      <select
+                        className="w-full px-2 py-1 bg-white border border-emerald-200 rounded text-xs font-medium"
+                        value={data.paymentMode ?? "UPI / Online"}
+                        onChange={e => setData({ ...data, paymentMode: e.target.value })}
+                      >
+                        <option value="UPI / Online">UPI / Online Transfer</option>
+                        <option value="Bank Transfer / NEFT">Bank Transfer / NEFT</option>
+                        <option value="GPay / PhonePe / Paytm">GPay / PhonePe / Paytm</option>
+                        <option value="Cash Deposit / Cash">Cash Deposit / Cash</option>
+                        <option value="Credit / Debit Card">Credit / Debit Card</option>
+                        <option value="Cheque">Cheque</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] text-gray-600 mb-0.5">UTR / Txn Ref No.</label>
+                      <input
+                        type="text"
+                        className="w-full px-2 py-1 bg-white border border-emerald-200 rounded text-xs font-mono"
+                        placeholder="e.g. UTR129840294"
+                        value={data.paymentRef ?? ""}
+                        onChange={e => setData({ ...data, paymentRef: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-[10px] pt-1.5 border-t border-emerald-200/80 text-emerald-950 font-medium">
+                    <div>
+                      <span className="text-emerald-700">Received: </span>
+                      <span className="font-bold font-mono">₹{calculations.paid.toLocaleString("en-IN")}</span>
+                    </div>
+                    <div>
+                      <span className="text-emerald-700">Balance Pending: </span>
+                      <span className="font-bold font-mono text-rose-600">₹{calculations.pending.toLocaleString("en-IN")}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 5. Bank Account & UPI Payment Settings */}
@@ -879,6 +1262,38 @@ export default function InvoicesPage() {
             >
               Fit Page
             </button>
+
+            <div className="h-4 w-px bg-gray-200 mx-1 hidden md:block"></div>
+
+            {/* Quick Stage Switcher */}
+            <div className="flex items-center bg-gray-100 p-0.5 rounded-xl text-xs font-medium">
+              <button
+                type="button"
+                onClick={() => setData(prev => ({ ...prev, invoiceType: "advance" }))}
+                className={`px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  data.invoiceType === "advance"
+                    ? "bg-amber-500 text-white font-bold shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                title="Stage 1: Advance Demand Invoice to lock booking"
+              >
+                <span>📋</span>
+                <span>1. Advance Demand</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setData(prev => ({ ...prev, invoiceType: "receipt" }))}
+                className={`px-2.5 py-1 rounded-lg transition cursor-pointer flex items-center gap-1.5 ${
+                  data.invoiceType === "receipt"
+                    ? "bg-emerald-600 text-white font-bold shadow-xs"
+                    : "text-gray-600 hover:text-gray-900"
+                }`}
+                title="Stage 2: Payment Receipt & Balance Pending Invoice"
+              >
+                <span>🧾</span>
+                <span>2. Payment Receipt</span>
+              </button>
+            </div>
           </div>
 
           {/* Right: Actions */}
