@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { matchBotResponse } from "@/lib/botRules";
+import { supabase } from "@/lib/supabase";
 
 // Webhook Verification (GET request from Meta when configuring Webhook URL)
 export async function GET(req: NextRequest) {
@@ -43,8 +44,26 @@ export async function POST(req: NextRequest) {
         console.log(`Matched Rule: ${matched.title} (${matched.ruleId})`);
 
         // Send automated response back via Meta Graph API
-        const phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
-        const accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN;
+        let phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
+        let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN;
+
+        // Try reading latest active token and phone ID from Supabase
+        try {
+          const { data: dbSettings } = await supabase
+            .from("settings")
+            .select("meta_access_token, meta_phone_number_id")
+            .limit(1)
+            .single();
+
+          if (dbSettings?.meta_access_token?.trim()) {
+            accessToken = dbSettings.meta_access_token.trim();
+          }
+          if (dbSettings?.meta_phone_number_id?.trim()) {
+            phoneNumberId = dbSettings.meta_phone_number_id.trim();
+          }
+        } catch (dbErr) {
+          console.warn("DB settings fetch error:", dbErr);
+        }
 
         if (phoneNumberId && accessToken && senderPhone) {
           const metaApiUrl = `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`;

@@ -204,6 +204,10 @@ export default function SettingsPage() {
       website: settings.website,
       logo_url: settings.logo_url,
       openai_key: settings.openai_key,
+      meta_phone_number_id: settings.meta_phone_number_id,
+      meta_waba_id: settings.meta_waba_id,
+      meta_access_token: settings.meta_access_token,
+      meta_default_motto: settings.meta_default_motto,
     };
 
     if (typeof window !== "undefined") {
