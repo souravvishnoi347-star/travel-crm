@@ -195,8 +195,8 @@ export default function WhatsAppDeskPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const pId = localStorage.getItem("triloki_meta_phone_number_id") || "";
-        const token = localStorage.getItem("triloki_meta_access_token") || "";
+        const pId = localStorage.getItem("triloki_meta_phone_number_id") || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
+        const token = localStorage.getItem("triloki_meta_access_token") || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "";
         setMetaConfig({ phoneNumberId: pId, accessToken: token });
 
         const savedChats = localStorage.getItem("triloki_whatsapp_desk_chats");
