@@ -33,6 +33,7 @@ export async function POST(req: NextRequest) {
       customMessage,
       phoneNumberId,
       accessToken,
+      templateName,
     } = body;
 
     if (!phone) {
@@ -48,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Retrieve Meta Cloud API Credentials from env or request override
-    const metaPhoneNumberId = phoneNumberId?.trim() || process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID;
+    const metaPhoneNumberId = phoneNumberId?.trim() || process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
     const metaAccessToken = accessToken?.trim() || process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN;
 
     if (!metaPhoneNumberId || !metaAccessToken) {
@@ -87,16 +88,29 @@ export async function POST(req: NextRequest) {
     // Call Meta Graph API v22.0
     const metaApiUrl = `https://graph.facebook.com/v22.0/${metaPhoneNumberId}/messages`;
 
-    const payload = {
-      messaging_product: "whatsapp",
-      recipient_type: "individual",
-      to: cleanPhone,
-      type: "text",
-      text: {
-        preview_url: true,
-        body: formattedText
-      }
-    };
+    // Support hello_world or custom template
+    const isTemplate = templateName === "hello_world";
+    const payload = isTemplate
+      ? {
+          messaging_product: "whatsapp",
+          recipient_type: "individual",
+          to: cleanPhone,
+          type: "template",
+          template: {
+            name: "hello_world",
+            language: { code: "en_US" }
+          }
+        }
+      : {
+          messaging_product: "whatsapp",
+          recipient_type: "individual",
+          to: cleanPhone,
+          type: "text",
+          text: {
+            preview_url: true,
+            body: formattedText
+          }
+        };
 
     const metaRes = await fetch(metaApiUrl, {
       method: "POST",
@@ -110,11 +124,21 @@ export async function POST(req: NextRequest) {
     const resJson = await metaRes.json();
 
     if (!metaRes.ok) {
+      const code = resJson?.error?.code;
       const errorMsg = resJson?.error?.message || "Failed to send message via Meta Cloud API";
-      const errorDetails = resJson?.error?.error_data?.details || resJson?.error?.error_user_msg || "";
+      let userFriendlyError = errorMsg;
+
+      if (code === 131047 || errorMsg.includes("24 hours") || errorMsg.includes("re-engage")) {
+        userFriendlyError = "⚠️ 24-Hour Window Rule: Recipient ne pichle 24 ghante me WhatsApp par reply nahi kiya hai. Meta policy ke mutabiq pehle '👋 Send Hello World' dabayein ya customer se +1 (555) 192-0464 par 'Hi' karwayein.";
+      } else if (code === 131030 || errorMsg.includes("allowed list") || errorMsg.includes("not in allowed")) {
+        userFriendlyError = `⚠️ Recipient Not Allowed: Meta Test Account se message sirf unhi numbers par jata hai jo Meta Developer Portal me 'To' (Recipient list) me added hain. Please Meta portal me jakar ${cleanPhone} add karein.`;
+      } else if (code === 190 || errorMsg.includes("expired") || errorMsg.includes("OAuthException")) {
+        userFriendlyError = "⚠️ Meta Access Token Expired: Meta Developer Portal se naya token lekar Settings ya Meta API Keys me save karein.";
+      }
+
       return NextResponse.json({
         success: false,
-        error: `${errorMsg} ${errorDetails ? `(${errorDetails})` : ""}`,
+        error: userFriendlyError,
         metaError: resJson?.error
       }, { status: metaRes.status });
     }
@@ -123,7 +147,7 @@ export async function POST(req: NextRequest) {
       success: true,
       messageId: resJson?.messages?.[0]?.id,
       cleanPhone,
-      textSent: formattedText
+      textSent: isTemplate ? "[Template: hello_world]" : formattedText
     });
   } catch (err: any) {
     console.error("WhatsApp Cloud API error:", err);

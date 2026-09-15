@@ -334,6 +334,47 @@ export default function WhatsAppDeskPage() {
     }
   };
 
+  // Send Official Hello World Template to re-open 24h conversation window
+  const handleSendHelloWorldTemplate = async () => {
+    if (!activeChat) return;
+    setIsSending(true);
+    try {
+      const res = await fetch("/api/whatsapp/send-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: activeChat.phone,
+          customerName: activeChat.customerName,
+          yatraName: activeChat.destination,
+          templateName: "hello_world",
+          phoneNumberId: metaConfig.phoneNumberId || "1323440530852624",
+          accessToken: metaConfig.accessToken || undefined
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        showToast(`✓ Hello World Template sent to ${activeChat.phone}!`);
+        const templateMsg: WhatsAppMessage = {
+          id: `msg-${Date.now()}`,
+          sender: "agent",
+          text: "👋 [Official Template Delivered]: Hello World! (Customer can reply to open 24h chat window)",
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: "delivered"
+        };
+        saveChats(chats.map(c => c.id === activeChat.id ? { ...c, messages: [...c.messages, templateMsg] } : c));
+      } else {
+        showToast(`⚠️ Meta Error: ${data.error}`);
+        if (data.error?.includes("Token") || data.error?.includes("expired")) {
+          setIsTokenModalOpen(true);
+        }
+      }
+    } catch (e: any) {
+      showToast(`Network error: ${e.message}`);
+    } finally {
+      setIsSending(false);
+    }
+  };
+
   // Send 1-Click Booking Confirmation Template
   const handleSendBookingConfirmation = async () => {
     if (!activeChat) return;
@@ -922,6 +963,18 @@ export default function WhatsAppDeskPage() {
             >
               <CheckCircle2 className="w-3 h-3 text-teal-600" />
               <span>Booking Confirm</span>
+            </button>
+
+            {/* Send Hello World Template (Opens 24-hr session) */}
+            <button
+              type="button"
+              onClick={handleSendHelloWorldTemplate}
+              disabled={isSending}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold transition cursor-pointer shadow-2xs disabled:opacity-50"
+              title="Send Meta-approved Hello World template to start/open the 24-hour customer conversation window"
+            >
+              <Send className="w-3 h-3" />
+              <span>👋 Hello World (Start Chat)</span>
             </button>
           </div>
 
