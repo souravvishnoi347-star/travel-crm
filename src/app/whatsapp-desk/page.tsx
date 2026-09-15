@@ -56,127 +56,11 @@ interface WhatsAppChat {
   status: "inquiry" | "quoted" | "confirmed" | "completed";
 }
 
-const INITIAL_CHATS: WhatsAppChat[] = [
-  {
-    id: "chat-1",
-    customerName: "Sanjay Singhania",
-    phone: "+91 98190 23456",
-    destination: "Char Dham Yatra (10D/9N Luxury)",
-    bookingId: "BK-CD-891",
-    totalAmount: 138000,
-    advancePaid: 45000,
-    travelDates: "15 May – 24 May 2026",
-    paxCount: "04 Adults",
-    humanTakeover: false,
-    unreadCount: 1,
-    lastMessageTime: "10:45 AM",
-    status: "confirmed",
-    messages: [
-      {
-        id: "m1",
-        sender: "customer",
-        text: "Namaste, we have transferred the ₹45,000 token advance. Can you please confirm the booking and send vouchers?",
-        timestamp: "10:30 AM"
-      },
-      {
-        id: "m2",
-        sender: "bot",
-        text: "🙏 ॐ नमः शिवाय! Warm greetings Sanjay ji. We have received your advance token of ₹45,000. Your Char Dham Yatra 2026 booking has been officially confirmed! Our team is preparing your stay & fleet vouchers.",
-        timestamp: "10:31 AM",
-        status: "read",
-        isBookingConfirmation: true
-      },
-      {
-        id: "m3",
-        sender: "customer",
-        text: "Thank you! Also, will the vehicle be Innova Crysta throughout from Haridwar?",
-        timestamp: "10:45 AM"
-      }
-    ]
-  },
-  {
-    id: "chat-2",
-    customerName: "Pooja Hegde & Family",
-    phone: "+91 98451 11223",
-    destination: "VIP Kedarnath Helicopter Tour",
-    bookingId: "BK-KED-402",
-    totalAmount: 85000,
-    advancePaid: 30000,
-    travelDates: "18 May – 21 May 2026",
-    paxCount: "02 Adults",
-    humanTakeover: true,
-    unreadCount: 0,
-    lastMessageTime: "Yesterday",
-    status: "confirmed",
-    messages: [
-      {
-        id: "m4",
-        sender: "customer",
-        text: "Hello, my parents are senior citizens. Do they need special medical certificates for the Phata to Kedarnath helipad?",
-        timestamp: "Yesterday, 4:15 PM"
-      },
-      {
-        id: "m5",
-        sender: "agent",
-        text: "Namaste Pooja ji, this is Amit from operations. For helicopter darshan, standard biometric registration is required. High-altitude fitness certificate is only asked for trekking route. Rest assured, our local manager will assist them at the helipad.",
-        timestamp: "Yesterday, 4:20 PM",
-        status: "read"
-      }
-    ]
-  },
-  {
-    id: "chat-3",
-    customerName: "Dr. Arvind Kulkarni",
-    phone: "+91 94220 56789",
-    destination: "Do Dham Yatra (Kedarnath + Badrinath)",
-    bookingId: "BK-DD-205",
-    totalAmount: 64000,
-    advancePaid: 20000,
-    travelDates: "22 May – 27 May 2026",
-    paxCount: "03 Adults",
-    humanTakeover: false,
-    unreadCount: 0,
-    lastMessageTime: "Yesterday",
-    status: "quoted",
-    messages: [
-      {
-        id: "m6",
-        sender: "customer",
-        text: "Can you share the price breakdown for 3 persons in a dedicated Sedan vs Innova?",
-        timestamp: "Yesterday, 11:20 AM"
-      },
-      {
-        id: "m7",
-        sender: "bot",
-        text: "Namaste Arvind ji 🙏 For mountain terrain comfort, we recommend Innova Crysta for 3 persons with luggage at ₹64,000 (MAP food plan included). Sedan package is ₹52,000. Would you like me to reserve the Innova Crysta?",
-        timestamp: "Yesterday, 11:21 AM",
-        status: "read"
-      }
-    ]
-  },
-  {
-    id: "chat-4",
-    customerName: "Vikas Malhotra",
-    phone: "+91 98100 87654",
-    destination: "Chardham Yatra 2026 Group",
-    humanTakeover: false,
-    unreadCount: 0,
-    lastMessageTime: "2 days ago",
-    status: "inquiry",
-    messages: [
-      {
-        id: "m8",
-        sender: "customer",
-        text: "Planning Chardham with 12 persons in early June. Can we book 1 Tempo Traveller?",
-        timestamp: "2 days ago, 03:00 PM"
-      }
-    ]
-  }
-];
+const INITIAL_CHATS: WhatsAppChat[] = [];
 
 export default function WhatsAppDeskPage() {
-  const [chats, setChats] = useState<WhatsAppChat[]>(INITIAL_CHATS);
-  const [selectedChatId, setSelectedChatId] = useState<string>("chat-1");
+  const [chats, setChats] = useState<WhatsAppChat[]>([]);
+  const [selectedChatId, setSelectedChatId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
   const [filterMode, setFilterMode] = useState<"all" | "bot" | "human" | "confirmed">("all");
   const [replyText, setReplyText] = useState("");
@@ -202,8 +86,22 @@ export default function WhatsAppDeskPage() {
         const savedChats = localStorage.getItem("triloki_whatsapp_desk_chats");
         if (savedChats) {
           const parsed = JSON.parse(savedChats);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setChats(parsed);
+          if (Array.isArray(parsed)) {
+            // Purge dummy mock data like Sanjay Singhania or chat-1..4
+            const cleanChats = parsed.filter((c: any) => 
+              !["chat-1", "chat-2", "chat-3", "chat-4"].includes(c.id) &&
+              c.customerName !== "Sanjay Singhania" &&
+              c.customerName !== "Pooja Hegde & Family" &&
+              c.customerName !== "Dr. Arvind Kulkarni" &&
+              c.customerName !== "Vikas Malhotra"
+            );
+            if (cleanChats.length !== parsed.length) {
+              localStorage.setItem("triloki_whatsapp_desk_chats", JSON.stringify(cleanChats));
+            }
+            setChats(cleanChats);
+            if (cleanChats.length > 0) {
+              setSelectedChatId(cleanChats[0].id);
+            }
           }
         }
       } catch (e) {}
@@ -246,7 +144,7 @@ export default function WhatsAppDeskPage() {
     // Daily conversation messages sent today (Tier limit: 250/day)
     const todaySentCount = chats.reduce((acc, c) => {
       return acc + c.messages.filter(m => m.sender === "bot" || m.sender === "agent").length;
-    }, 18); // Base realistic activity
+    }, 0);
 
     const dailyLimit = 250;
     const remainingQuota = Math.max(0, dailyLimit - todaySentCount);
@@ -508,38 +406,93 @@ export default function WhatsAppDeskPage() {
           
           {/* Search & Filter Header */}
           <div className="p-3.5 border-b border-gray-100 space-y-2.5 bg-gray-50/60 shrink-0">
-            {/* Search */}
-            <div className="relative">
-              <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search chats by devotee name or phone..."
-                className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
-              />
+            {/* Search + New Chat Button */}
+            <div className="flex items-center gap-1.5">
+              <div className="relative flex-1">
+                <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search chats or phone..."
+                  className="w-full pl-9 pr-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const phoneInput = prompt("Enter 10-digit WhatsApp number (e.g. 9719038278):");
+                  if (!phoneInput) return;
+                  const nameInput = prompt("Enter Customer / Devotee Name:", "Valued Devotee") || "Valued Devotee";
+                  const cleanPhone = phoneInput.replace(/[^0-9]/g, "");
+                  const newChat: WhatsAppChat = {
+                    id: `chat-${Date.now()}`,
+                    customerName: nameInput,
+                    phone: cleanPhone.startsWith("91") ? `+${cleanPhone}` : `+91 ${cleanPhone}`,
+                    destination: "Chardham Yatra 2026",
+                    humanTakeover: true,
+                    unreadCount: 0,
+                    lastMessageTime: "Just now",
+                    status: "inquiry",
+                    messages: [
+                      {
+                        id: `msg-${Date.now()}`,
+                        sender: "agent",
+                        text: `Namaste ${nameInput} ji! Warm greetings from Travel to Uttarakhand. How may we assist your holy yatra today?`,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      }
+                    ]
+                  };
+                  const updated = [newChat, ...chats.filter(c => c.phone !== newChat.phone)];
+                  saveChats(updated);
+                  setSelectedChatId(newChat.id);
+                  showToast(`✓ Started new WhatsApp conversation with ${newChat.customerName} (${newChat.phone})`);
+                }}
+                className="px-2.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shrink-0 transition flex items-center gap-1 shadow-2xs cursor-pointer"
+                title="Start a new WhatsApp chat with any phone number"
+              >
+                <span>+ New</span>
+              </button>
             </div>
 
-            {/* Filter Pills */}
-            <div className="flex items-center gap-1">
-              {[
-                { id: "all", label: "All" },
-                { id: "bot", label: "Bot" },
-                { id: "human", label: "Human" },
-                { id: "confirmed", label: "Confirmed" }
-              ].map((f) => (
+            {/* Filter Pills + Clear Dummy button */}
+            <div className="flex items-center justify-between gap-1">
+              <div className="flex items-center gap-1 flex-1">
+                {[
+                  { id: "all", label: "All" },
+                  { id: "bot", label: "Bot" },
+                  { id: "human", label: "Human" },
+                  { id: "confirmed", label: "Confirmed" }
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setFilterMode(f.id as any)}
+                    className={`flex-1 py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
+                      filterMode === f.id
+                        ? "bg-emerald-600 text-white shadow-2xs"
+                        : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+              {chats.length > 0 && (
                 <button
-                  key={f.id}
-                  onClick={() => setFilterMode(f.id as any)}
-                  className={`flex-1 py-1 text-[11px] font-bold rounded-lg transition cursor-pointer ${
-                    filterMode === f.id
-                      ? "bg-emerald-600 text-white shadow-2xs"
-                      : "bg-white text-gray-600 hover:bg-gray-100 border border-gray-200"
-                  }`}
+                  type="button"
+                  onClick={() => {
+                    if (confirm("Erase all WhatsApp chat logs and start fresh?")) {
+                      saveChats([]);
+                      setSelectedChatId("");
+                      showToast("✓ All WhatsApp chat logs erased.");
+                    }
+                  }}
+                  className="px-2 py-1 text-[10px] font-bold text-rose-600 hover:bg-rose-50 rounded-lg border border-rose-200 shrink-0 cursor-pointer"
+                  title="Clear all chat history"
                 >
-                  {f.label}
+                  Clear All
                 </button>
-              ))}
+              )}
             </div>
           </div>
 
@@ -617,54 +570,99 @@ export default function WhatsAppDeskPage() {
         {/* RIGHT PANE: Live Active Conversation Stream (8 cols) */}
         <div className="lg:col-span-8 bg-white rounded-2xl border border-gray-200 shadow-xs flex flex-col overflow-hidden h-full">
           
-          {/* Chat Header with Human Takeover Switch */}
-          <div className="px-5 py-3.5 border-b border-gray-200 bg-white flex flex-wrap items-center justify-between gap-3 shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm shadow-xs">
-                {activeChat.customerName.charAt(0)}
+          {!activeChat ? (
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center bg-gray-50/50">
+              <div className="w-16 h-16 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3 shadow-xs">
+                <MessageSquare className="w-8 h-8" />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-gray-900">
-                    {activeChat.customerName}
-                  </h2>
-                  <span className="text-[10px] font-mono text-gray-500 font-bold bg-gray-100 px-2 py-0.5 rounded">
-                    {activeChat.phone}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] text-gray-600 mt-0.5">
-                  <span className="text-sky-700 font-semibold">{activeChat.destination}</span>
-                  {activeChat.travelDates && <span>• 📅 {activeChat.travelDates}</span>}
-                </div>
-              </div>
-            </div>
-
-            {/* Human Takeover Toggle Button */}
-            <div className="flex items-center gap-2">
+              <h3 className="text-sm font-bold text-gray-900 mb-1">No Active Chat Selected</h3>
+              <p className="text-xs text-gray-500 max-w-sm mb-4">
+                Click <b>"+ New"</b> in the left panel to start a fresh WhatsApp conversation with any devotee, or select an existing chat.
+              </p>
               <button
                 type="button"
-                onClick={() => toggleHumanTakeover(activeChat.id)}
-                className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer border ${
-                  activeChat.humanTakeover
-                    ? "bg-amber-500 text-white border-amber-600 hover:bg-amber-600"
-                    : "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
-                }`}
-                title="Toggle between Automated AI Bot and Manual Human Takeover"
+                onClick={() => {
+                  const phoneInput = prompt("Enter 10-digit WhatsApp number (e.g. 9719038278):");
+                  if (!phoneInput) return;
+                  const nameInput = prompt("Enter Customer / Devotee Name:", "Valued Devotee") || "Valued Devotee";
+                  const cleanPhone = phoneInput.replace(/[^0-9]/g, "");
+                  const newChat: WhatsAppChat = {
+                    id: `chat-${Date.now()}`,
+                    customerName: nameInput,
+                    phone: cleanPhone.startsWith("91") ? `+${cleanPhone}` : `+91 ${cleanPhone}`,
+                    destination: "Chardham Yatra 2026",
+                    humanTakeover: true,
+                    unreadCount: 0,
+                    lastMessageTime: "Just now",
+                    status: "inquiry",
+                    messages: [
+                      {
+                        id: `msg-${Date.now()}`,
+                        sender: "agent",
+                        text: `Namaste ${nameInput} ji! Warm greetings from Travel to Uttarakhand. How may we assist your holy yatra today?`,
+                        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                      }
+                    ]
+                  };
+                  saveChats([newChat, ...chats]);
+                  setSelectedChatId(newChat.id);
+                  showToast(`✓ Started conversation with ${newChat.customerName}`);
+                }}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer"
               >
-                {activeChat.humanTakeover ? (
-                  <>
-                    <UserCheck className="w-4 h-4" />
-                    <span>Human Takeover Active</span>
-                  </>
-                ) : (
-                  <>
-                    <Bot className="w-4 h-4 text-purple-600" />
-                    <span>AI Bot Handling (Click to Take Over)</span>
-                  </>
-                )}
+                <span>+ Start New Chat</span>
               </button>
             </div>
-          </div>
+          ) : (
+            <>
+              {/* Chat Header with Human Takeover Switch */}
+              <div className="px-5 py-3.5 border-b border-gray-200 bg-white flex flex-wrap items-center justify-between gap-3 shrink-0">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-sm shadow-xs">
+                    {activeChat.customerName.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-sm font-bold text-gray-900">
+                        {activeChat.customerName}
+                      </h2>
+                      <span className="text-[10px] font-mono text-gray-500 font-bold bg-gray-100 px-2 py-0.5 rounded">
+                        {activeChat.phone}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] text-gray-600 mt-0.5">
+                      <span className="text-sky-700 font-semibold">{activeChat.destination}</span>
+                      {activeChat.travelDates && <span>• 📅 {activeChat.travelDates}</span>}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Human Takeover Toggle Button */}
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleHumanTakeover(activeChat.id)}
+                    className={`flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition shadow-xs cursor-pointer border ${
+                      activeChat.humanTakeover
+                        ? "bg-amber-500 text-white border-amber-600 hover:bg-amber-600"
+                        : "bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100"
+                    }`}
+                    title="Toggle between Automated AI Bot and Manual Human Takeover"
+                  >
+                    {activeChat.humanTakeover ? (
+                      <>
+                        <UserCheck className="w-4 h-4" />
+                        <span>Human Takeover Active</span>
+                      </>
+                    ) : (
+                      <>
+                        <Bot className="w-4 h-4 text-purple-600" />
+                        <span>AI Bot Handling (Click to Take Over)</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
 
           {/* Quick Pre-Actions Bar */}
           <div className="px-5 py-2 bg-slate-50 border-b border-gray-100 flex flex-wrap items-center gap-2 text-xs shrink-0">
@@ -816,6 +814,8 @@ export default function WhatsAppDeskPage() {
             </div>
           </div>
 
+          </>
+          )}
         </div>
 
       </div>
