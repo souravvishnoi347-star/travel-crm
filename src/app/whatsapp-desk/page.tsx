@@ -226,29 +226,32 @@ export default function WhatsAppDeskPage() {
     setReplyText("");
     setIsSending(true);
 
-    // Call backend API if Meta credentials configured
-    if (metaConfig.phoneNumberId && metaConfig.accessToken) {
-      try {
-        const res = await fetch("/api/whatsapp/send-confirmation", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            phone: activeChat.phone,
-            customerName: activeChat.customerName,
-            yatraName: activeChat.destination,
-            customMessage: currentText,
-            phoneNumberId: metaConfig.phoneNumberId,
-            accessToken: metaConfig.accessToken
-          })
-        });
-        const resJson = await res.json();
-        if (resJson.success) {
-          newMsg.status = "delivered";
-          showToast(`✓ Message delivered to ${activeChat.phone} via Meta Cloud API.`);
-        }
-      } catch (e) {
-        console.warn("Meta send notice:", e);
+    // Call backend API (backend will use its env vars if not passed)
+    try {
+      const res = await fetch("/api/whatsapp/send-confirmation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: activeChat.phone,
+          customerName: activeChat.customerName,
+          yatraName: activeChat.destination,
+          customMessage: currentText,
+          phoneNumberId: metaConfig.phoneNumberId || undefined,
+          accessToken: metaConfig.accessToken || undefined
+        })
+      });
+      const resJson = await res.json();
+      if (resJson.success) {
+        newMsg.status = "delivered";
+        showToast(`✓ Message delivered to ${activeChat.phone} via Meta Cloud API!`);
+      } else {
+        newMsg.status = "sent";
+        showToast(`⚠️ Meta API Error: ${resJson.error || "Could not deliver message"}`);
+        console.error("Meta API error response:", resJson);
       }
+    } catch (e: any) {
+      console.error("Meta send request failed:", e);
+      showToast(`⚠️ Network error: ${e.message || "Failed to reach WhatsApp API"}`);
     }
 
     const updated = chats.map(c => {
