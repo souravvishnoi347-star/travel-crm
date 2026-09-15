@@ -2195,15 +2195,28 @@ ${data.motto}`;
       {/* Page 1 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <a 
-          href="https://traveltouttrakhand.com" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttrakhand.com" 
-          className="font-bold text-[#0369a1] hover:underline"
-        >
-          🌐 www.traveltouttrakhand.com
-        </a>
+        <div className="flex items-center gap-3">
+          <a 
+            href="https://traveltouttrakhand.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://traveltouttrakhand.com" 
+            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
+          >
+            <span>🌐 www.traveltouttrakhand.com</span>
+          </a>
+          <span className="text-gray-300">•</span>
+          <a 
+            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            className="font-bold text-red-600 hover:underline flex items-center gap-1 bg-red-50/70 px-2 py-0.5 rounded border border-red-200/80 shadow-2xs"
+          >
+            <span className="text-[11px] leading-none">▶️</span>
+            <span>YouTube: @traveltouttarakhand</span>
+          </a>
+        </div>
         <span>Page 1 of 4</span>
       </div>
     </div>
@@ -2327,15 +2340,28 @@ ${data.motto}`;
       {/* Page 2 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <a 
-          href="https://traveltouttrakhand.com" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttrakhand.com" 
-          className="font-bold text-[#0369a1] hover:underline"
-        >
-          🌐 www.traveltouttrakhand.com
-        </a>
+        <div className="flex items-center gap-3">
+          <a 
+            href="https://traveltouttrakhand.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://traveltouttrakhand.com" 
+            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
+          >
+            <span>🌐 www.traveltouttrakhand.com</span>
+          </a>
+          <span className="text-gray-300">•</span>
+          <a 
+            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            className="font-bold text-red-600 hover:underline flex items-center gap-1 bg-red-50/70 px-2 py-0.5 rounded border border-red-200/80 shadow-2xs"
+          >
+            <span className="text-[11px] leading-none">▶️</span>
+            <span>YouTube: @traveltouttarakhand</span>
+          </a>
+        </div>
         <span>Page 2 of 4</span>
       </div>
     </div>
@@ -2523,15 +2549,28 @@ ${data.motto}`;
       {/* Page 3 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <a 
-          href="https://traveltouttrakhand.com" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttrakhand.com" 
-          className="font-bold text-[#0369a1] hover:underline"
-        >
-          🌐 www.traveltouttrakhand.com
-        </a>
+        <div className="flex items-center gap-3">
+          <a 
+            href="https://traveltouttrakhand.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://traveltouttrakhand.com" 
+            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
+          >
+            <span>🌐 www.traveltouttrakhand.com</span>
+          </a>
+          <span className="text-gray-300">•</span>
+          <a 
+            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            className="font-bold text-red-600 hover:underline flex items-center gap-1 bg-red-50/70 px-2 py-0.5 rounded border border-red-200/80 shadow-2xs"
+          >
+            <span className="text-[11px] leading-none">▶️</span>
+            <span>YouTube: @traveltouttarakhand</span>
+          </a>
+        </div>
         <span>Page 3 of 4</span>
       </div>
     </div>
@@ -2718,15 +2757,28 @@ ${data.motto}`;
           <h4 className="text-sm font-serif font-bold text-[#0369a1]">{data.contactAgency}</h4>
           <p className="text-[11px] text-gray-800 font-semibold">{data.contactPerson}</p>
           <p className="text-[11px] text-gray-900 font-bold tracking-wider">{data.contactPhone}</p>
-          <a 
-            href="https://traveltouttrakhand.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://traveltouttrakhand.com" 
-            className="text-[11px] text-[#0369a1] font-bold tracking-wider hover:underline block mt-0.5"
-          >
-            🌐 www.traveltouttrakhand.com
-          </a>
+          <div className="flex items-center justify-center gap-3 mt-1">
+            <a 
+              href="https://traveltouttrakhand.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              data-pdf-link="https://traveltouttrakhand.com" 
+              className="text-[11px] text-[#0369a1] font-bold tracking-wider hover:underline"
+            >
+              🌐 www.traveltouttrakhand.com
+            </a>
+            <span className="text-gray-300">•</span>
+            <a 
+              href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+              className="text-[11px] text-red-600 font-bold hover:underline flex items-center gap-1 bg-red-50/80 px-2 py-0.5 rounded border border-red-200"
+            >
+              <span className="text-xs leading-none">▶️</span>
+              <span>YouTube: @traveltouttarakhand</span>
+            </a>
+          </div>
           <p className="text-[11px] text-[#0369a1] font-serif font-bold mt-0.5 tracking-widest">{data.motto}</p>
         </div>
 
@@ -2735,15 +2787,28 @@ ${data.motto}`;
       {/* Page 4 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <a 
-          href="https://traveltouttrakhand.com" 
-          target="_blank" 
-          rel="noopener noreferrer" 
-          data-pdf-link="https://traveltouttrakhand.com" 
-          className="font-bold text-[#0369a1] hover:underline"
-        >
-          🌐 www.traveltouttrakhand.com
-        </a>
+        <div className="flex items-center gap-3">
+          <a 
+            href="https://traveltouttrakhand.com" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://traveltouttrakhand.com" 
+            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
+          >
+            <span>🌐 www.traveltouttrakhand.com</span>
+          </a>
+          <span className="text-gray-300">•</span>
+          <a 
+            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+            className="font-bold text-red-600 hover:underline flex items-center gap-1 bg-red-50/70 px-2 py-0.5 rounded border border-red-200/80 shadow-2xs"
+          >
+            <span className="text-[11px] leading-none">▶️</span>
+            <span>YouTube: @traveltouttarakhand</span>
+          </a>
+        </div>
         <span>Page 4 of 4</span>
       </div>
     </div>
