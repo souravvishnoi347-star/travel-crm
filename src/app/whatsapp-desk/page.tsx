@@ -26,9 +26,14 @@ import {
   ShieldCheck,
   Building2,
   ChevronRight,
-  ChevronDown
+  ChevronDown,
+  FileText,
+  Compass,
+  AlertTriangle,
+  HelpCircle
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { BOT_RESPONSES, SALES_TEAM, matchBotResponse, MatchedRule } from "@/lib/botRules";
 
 interface WhatsAppMessage {
   id: string;
@@ -66,6 +71,7 @@ export default function WhatsAppDeskPage() {
   const [replyText, setReplyText] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [matchedRuleInfo, setMatchedRuleInfo] = useState<MatchedRule | null>(null);
   
   // Custom API configuration cache
   const [metaConfig, setMetaConfig] = useState<{ phoneNumberId: string; accessToken: string }>({
@@ -291,6 +297,99 @@ export default function WhatsAppDeskPage() {
 
     setReplyText(confirmText);
     showToast("Template loaded in input box! Click 'Send' or edit before sending.");
+  };
+
+  // Auto Match Bot Rule on customer inquiry
+  const handleAutoSuggestReply = () => {
+    if (!activeChat) return;
+    const lastCustomerMsg = [...activeChat.messages].reverse().find(m => m.sender === "customer");
+    const query = lastCustomerMsg ? lastCustomerMsg.text : (replyText || activeChat.destination || "");
+    const rule = matchBotResponse(query);
+    setMatchedRuleInfo(rule);
+    setReplyText(rule.response);
+    showToast(`🤖 Rule Matched: ${rule.title}`);
+  };
+
+  // Preset Rule Loaders
+  const handleLoadRule = (type: "sales" | "helicopter" | "gst" | "package" | "season") => {
+    let rule: MatchedRule;
+    if (type === "sales") {
+      rule = {
+        ruleId: "sales",
+        title: "Sales Team Direct Contacts",
+        description: "Official contacts for Rishi Chourasia, Kuldeep Bhaudula, Amit Chandra",
+        response: BOT_RESPONSES.salesHandoff
+      };
+    } else if (type === "helicopter") {
+      rule = {
+        ruleId: "helicopter",
+        title: "Helicopter Fraud Warning & IRCTC Portal",
+        description: "Multilingual advisory: Agency does not book copters, use official IRCTC",
+        response: BOT_RESPONSES.helicopterAdvisory
+      };
+    } else if (type === "gst") {
+      rule = {
+        ruleId: "gst",
+        title: "GST / Billing Sales Policy",
+        description: "Strict sales handoff: GST details handled by sales team only",
+        response: BOT_RESPONSES.gstPolicy
+      };
+    } else if (type === "package") {
+      rule = {
+        ruleId: "payment_package",
+        title: "Package Range & Payment Security",
+        description: "Indicative ballpark estimate; no direct account details shared",
+        response: BOT_RESPONSES.packageAndPayment
+      };
+    } else {
+      rule = {
+        ruleId: "seasonality",
+        title: "Seasonality & Tours Calendar",
+        description: "Chardham season (May-July & Sept-Nov) + Leisure/Hill stations",
+        response: BOT_RESPONSES.seasonalityAndDestinations
+      };
+    }
+    setMatchedRuleInfo(rule);
+    setReplyText(rule.response);
+    showToast(`📋 Loaded template: ${rule.title}`);
+  };
+
+  // Simulate incoming test message to test bot rules
+  const handleSimulateIncomingMessage = (text: string) => {
+    if (!activeChat) return;
+    const customerMsg: WhatsAppMessage = {
+      id: `msg-${Date.now()}`,
+      sender: "customer",
+      text,
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    let autoBotMsg: WhatsAppMessage | null = null;
+    if (!activeChat.humanTakeover) {
+      const rule = matchBotResponse(text);
+      autoBotMsg = {
+        id: `msg-${Date.now() + 1}`,
+        sender: "bot",
+        text: rule.response,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        status: "delivered"
+      };
+    }
+
+    const updated = chats.map(c => {
+      if (c.id === activeChat.id) {
+        const msgs = autoBotMsg ? [...c.messages, customerMsg, autoBotMsg] : [...c.messages, customerMsg];
+        return {
+          ...c,
+          lastMessageTime: "Just now",
+          messages: msgs
+        };
+      }
+      return c;
+    });
+
+    saveChats(updated);
+    showToast(`Inquiry simulated: "${text}"`);
   };
 
   // Open Direct in WhatsApp Web
@@ -668,38 +767,123 @@ export default function WhatsAppDeskPage() {
               </div>
 
           {/* Quick Pre-Actions Bar */}
-          <div className="px-5 py-2 bg-slate-50 border-b border-gray-100 flex flex-wrap items-center gap-2 text-xs shrink-0">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Quick Actions:</span>
+          <div className="px-5 py-2 bg-slate-50 border-b border-gray-200 flex flex-wrap items-center gap-1.5 text-xs shrink-0">
+            <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Bot Rules & Actions:</span>
             
+            {/* AI Auto-Suggest / Rule Matcher */}
+            <button
+              type="button"
+              onClick={handleAutoSuggestReply}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-[11px] font-bold transition cursor-pointer shadow-2xs"
+              title="Auto-detect customer inquiry and match the exact bot rule response"
+            >
+              <Sparkles className="w-3 h-3" />
+              <span>AI Match & Reply</span>
+            </button>
+
+            {/* Helicopter IRCTC Advisory */}
+            <button
+              type="button"
+              onClick={() => handleLoadRule("helicopter")}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-200 text-[11px] font-bold transition cursor-pointer"
+              title="Multilingual warning: No copter booking, fraud alert, official IRCTC link"
+            >
+              <AlertTriangle className="w-3 h-3 text-rose-600" />
+              <span>Helicopter IRCTC Alert</span>
+            </button>
+
+            {/* GST Policy */}
+            <button
+              type="button"
+              onClick={() => handleLoadRule("gst")}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-bold transition cursor-pointer"
+              title="No GST chat on bot: sales team direct handoff"
+            >
+              <FileText className="w-3 h-3 text-amber-600" />
+              <span>GST Sales Handoff</span>
+            </button>
+
+            {/* Package Range & Payment */}
+            <button
+              type="button"
+              onClick={() => handleLoadRule("package")}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 text-[11px] font-bold transition cursor-pointer"
+              title="Indicative package ballpark range, no bank/UPI shared, sales handoff"
+            >
+              <IndianRupee className="w-3 h-3 text-emerald-600" />
+              <span>Package & Payment Range</span>
+            </button>
+
+            {/* Seasonality & Destinations */}
+            <button
+              type="button"
+              onClick={() => handleLoadRule("season")}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-900 border border-sky-200 text-[11px] font-bold transition cursor-pointer"
+              title="Chardham (May-July & Sept-Nov) and leisure trips (Nainital, Corbett, Mussoorie, Chopta, Auli)"
+            >
+              <Compass className="w-3 h-3 text-sky-600" />
+              <span>Season & Tours</span>
+            </button>
+
+            {/* Sales Team Contacts */}
+            <button
+              type="button"
+              onClick={() => handleLoadRule("sales")}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-900 border border-indigo-200 text-[11px] font-bold transition cursor-pointer"
+              title="Forward official contacts for Rishi Chourasia, Kuldeep Bhaudula, Amit Chandra"
+            >
+              <Phone className="w-3 h-3 text-indigo-600" />
+              <span>Sales Contacts</span>
+            </button>
+
+            {/* 1-Click Booking Confirmation */}
             <button
               type="button"
               onClick={handleSendBookingConfirmation}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-bold transition cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-900 border border-teal-200 text-[11px] font-bold transition cursor-pointer"
             >
-              <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-              <span>1-Click Booking Confirmation</span>
+              <CheckCircle2 className="w-3 h-3 text-teal-600" />
+              <span>Booking Confirm</span>
             </button>
+          </div>
 
+          {/* Test Customer Inquiries Simulator */}
+          <div className="px-5 py-1.5 bg-gray-100/70 border-b border-gray-200 flex flex-wrap items-center gap-1.5 text-[10px] shrink-0">
+            <span className="text-gray-500 font-semibold">Test Inquiries:</span>
             <button
               type="button"
-              onClick={() => {
-                setReplyText(`🙏 Namaste ${activeChat.customerName} ji, gentle reminder regarding the token advance of ₹${((activeChat.totalAmount || 50000) - (activeChat.advancePaid || 15000)).toLocaleString("en-IN")} for your ${activeChat.destination}. Please find our account details below to confirm the helicopter / vehicle allocation.`);
-              }}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200 text-[11px] font-bold transition cursor-pointer"
+              onClick={() => handleSimulateIncomingMessage("GST bill milega kya package par?")}
+              className="px-2 py-0.5 bg-white hover:bg-amber-50 text-gray-700 hover:text-amber-900 rounded border border-gray-300 font-medium transition cursor-pointer"
             >
-              <IndianRupee className="w-3 h-3 text-sky-600" />
-              <span>Payment Reminder</span>
+              🧪 &quot;GST bill milega?&quot;
             </button>
-
             <button
               type="button"
-              onClick={() => {
-                setReplyText(`✨ Char Dham Advisory: Please ensure you have completed the mandatory Biometric Registration. Bring along original Aadhaar cards, valid ID, and warm woolens as night temperatures in Kedarnath & Badrinath drop near freezing.`);
-              }}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-[11px] font-bold transition cursor-pointer"
+              onClick={() => handleSimulateIncomingMessage("Kedarnath helicopter ticket book karni hai")}
+              className="px-2 py-0.5 bg-white hover:bg-rose-50 text-gray-700 hover:text-rose-900 rounded border border-gray-300 font-medium transition cursor-pointer"
             >
-              <ShieldCheck className="w-3 h-3 text-amber-600" />
-              <span>Yatra Guidelines Advisory</span>
+              🧪 &quot;Helicopter ticket?&quot;
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSimulateIncomingMessage("Package ka price kitna hai aur payment account bhejo")}
+              className="px-2 py-0.5 bg-white hover:bg-emerald-50 text-gray-700 hover:text-emerald-900 rounded border border-gray-300 font-medium transition cursor-pointer"
+            >
+              🧪 &quot;Package price &amp; payment?&quot;
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSimulateIncomingMessage("Nainital aur Jim Corbett tour package kab available hai?")}
+              className="px-2 py-0.5 bg-white hover:bg-sky-50 text-gray-700 hover:text-sky-900 rounded border border-gray-300 font-medium transition cursor-pointer"
+            >
+              🧪 &quot;Nainital / Corbett trip?&quot;
+            </button>
+            <button
+              type="button"
+              onClick={() => handleSimulateIncomingMessage("Sales person ka contact number de dijiye")}
+              className="px-2 py-0.5 bg-white hover:bg-indigo-50 text-gray-700 hover:text-indigo-900 rounded border border-gray-300 font-medium transition cursor-pointer"
+            >
+              🧪 &quot;Sales person number?&quot;
             </button>
           </div>
 
@@ -766,6 +950,24 @@ export default function WhatsAppDeskPage() {
 
           {/* Bottom Message Input Box */}
           <div className="p-3.5 border-t border-gray-200 bg-white space-y-2 shrink-0">
+            {/* Matched Rule Banner */}
+            {matchedRuleInfo && (
+              <div className="flex items-center justify-between px-3 py-1.5 bg-purple-50 border border-purple-200 rounded-xl text-xs text-purple-900">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-purple-600 animate-pulse" />
+                  <span className="font-bold">{matchedRuleInfo.title}:</span>
+                  <span className="text-[11px] text-purple-700 hidden sm:inline">{matchedRuleInfo.description}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setMatchedRuleInfo(null)}
+                  className="text-purple-400 hover:text-purple-700 text-xs font-bold px-1 cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             <div className="flex items-center gap-2">
               <textarea
                 rows={2}
