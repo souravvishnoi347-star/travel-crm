@@ -30,7 +30,10 @@ import {
   FileText,
   Compass,
   AlertTriangle,
-  HelpCircle
+  HelpCircle,
+  Settings,
+  Key,
+  X
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { BOT_RESPONSES, SALES_TEAM, matchBotResponse, MatchedRule } from "@/lib/botRules";
@@ -78,6 +81,13 @@ export default function WhatsAppDeskPage() {
     phoneNumberId: "",
     accessToken: ""
   });
+
+  // Meta Token Configuration Modal States
+  const [isTokenModalOpen, setIsTokenModalOpen] = useState(false);
+  const [modalPhoneId, setModalPhoneId] = useState("");
+  const [modalToken, setModalToken] = useState("");
+  const [isTestingToken, setIsTestingToken] = useState(false);
+  const [tokenTestResult, setTokenTestResult] = useState<{ success?: boolean; message?: string } | null>(null);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
@@ -252,8 +262,16 @@ export default function WhatsAppDeskPage() {
         showToast(`✓ Message delivered to ${activeChat.phone} via Meta Cloud API!`);
       } else {
         newMsg.status = "sent";
-        showToast(`⚠️ Meta API Error: ${resJson.error || "Could not deliver message"}`);
+        const errMsg = resJson.error || "Could not deliver message";
+        showToast(`⚠️ Meta API Error: ${errMsg}`);
         console.error("Meta API error response:", resJson);
+        const lower = errMsg.toLowerCase();
+        if (lower.includes("token") || lower.includes("session") || lower.includes("expired") || lower.includes("oauth") || lower.includes("190")) {
+          setModalPhoneId(metaConfig.phoneNumberId || "1323440530852624");
+          setModalToken(metaConfig.accessToken || "");
+          setTokenTestResult({ success: false, message: "Your Meta Access Token has expired (24-hour limit). Please generate a fresh token from developers.facebook.com and paste it below." });
+          setIsTokenModalOpen(true);
+        }
       }
     } catch (e: any) {
       console.error("Meta send request failed:", e);
@@ -273,6 +291,47 @@ export default function WhatsAppDeskPage() {
 
     saveChats(updated);
     setIsSending(false);
+  };
+
+  // Test and Save Token from Modal
+  const handleTestAndSaveToken = async () => {
+    if (!modalPhoneId.trim() || !modalToken.trim()) {
+      setTokenTestResult({ success: false, message: "Phone Number ID and Access Token are required." });
+      return;
+    }
+    setIsTestingToken(true);
+    setTokenTestResult(null);
+    try {
+      const res = await fetch("/api/whatsapp/test-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phoneNumberId: modalPhoneId.trim(),
+          accessToken: modalToken.trim()
+        })
+      });
+      const data = await res.json();
+      if (data.valid) {
+        setTokenTestResult({ 
+          success: true, 
+          message: `✓ Token Verified! Phone: ${data.data?.display_phone_number || data.data?.verified_name || "Active"}` 
+        });
+        localStorage.setItem("triloki_meta_phone_number_id", modalPhoneId.trim());
+        localStorage.setItem("triloki_meta_access_token", modalToken.trim());
+        setMetaConfig({ phoneNumberId: modalPhoneId.trim(), accessToken: modalToken.trim() });
+        showToast("✓ Meta API credentials saved & verified!");
+        setTimeout(() => setIsTokenModalOpen(false), 1400);
+      } else {
+        setTokenTestResult({ 
+          success: false, 
+          message: `❌ ${data.error || "Token verification failed"}` 
+        });
+      }
+    } catch (e: any) {
+      setTokenTestResult({ success: false, message: `Network error: ${e.message}` });
+    } finally {
+      setIsTestingToken(false);
+    }
   };
 
   // Send 1-Click Booking Confirmation Template
@@ -431,28 +490,47 @@ export default function WhatsAppDeskPage() {
           </div>
         </div>
 
-        {/* 250 / Per Day Quota Gauge Pill */}
-        <div className="bg-gradient-to-br from-emerald-50 via-teal-50/60 to-sky-50 border border-emerald-200 rounded-2xl p-3.5 flex items-center gap-4 shadow-2xs">
-          <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
-            <Flame className="w-5 h-5" />
-          </div>
-          <div className="min-w-[170px]">
-            <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-emerald-950">Daily Quota:</span>
-              <span className="font-mono font-extrabold text-emerald-700 text-[11.5px]">
-                {stats.todaySentCount} / {stats.dailyLimit} per day
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Meta API Settings Button */}
+          <button
+            type="button"
+            onClick={() => {
+              setModalPhoneId(metaConfig.phoneNumberId || "1323440530852624");
+              setModalToken(metaConfig.accessToken || "");
+              setTokenTestResult(null);
+              setIsTokenModalOpen(true);
+            }}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl border border-gray-200 bg-gray-50 hover:bg-emerald-50 hover:border-emerald-300 text-gray-700 hover:text-emerald-900 text-xs font-bold transition shadow-2xs cursor-pointer"
+            title="Configure or refresh Meta WhatsApp Cloud API credentials"
+          >
+            <Settings className="w-4 h-4 text-emerald-600" />
+            <span>Meta API Keys</span>
+            <span className={`w-2 h-2 rounded-full ${metaConfig.accessToken ? "bg-emerald-500" : "bg-amber-500"}`} />
+          </button>
+
+          {/* 250 / Per Day Quota Gauge Pill */}
+          <div className="bg-gradient-to-br from-emerald-50 via-teal-50/60 to-sky-50 border border-emerald-200 rounded-2xl p-3.5 flex items-center gap-4 shadow-2xs">
+            <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
+              <Flame className="w-5 h-5" />
+            </div>
+            <div className="min-w-[170px]">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-bold text-emerald-950">Daily Quota:</span>
+                <span className="font-mono font-extrabold text-emerald-700 text-[11.5px]">
+                  {stats.todaySentCount} / {stats.dailyLimit} per day
+                </span>
+              </div>
+              {/* Progress Bar */}
+              <div className="w-full bg-emerald-200/60 rounded-full h-2 mt-1.5 overflow-hidden">
+                <div 
+                  className="bg-emerald-600 h-2 rounded-full transition-all duration-500"
+                  style={{ width: `${stats.usagePercent}%` }}
+                />
+              </div>
+              <span className="text-[10px] text-emerald-800 font-semibold block mt-1">
+                {stats.remainingQuota} free conversations remaining today
               </span>
             </div>
-            {/* Progress Bar */}
-            <div className="w-full bg-emerald-200/60 rounded-full h-2 mt-1.5 overflow-hidden">
-              <div 
-                className="bg-emerald-600 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${stats.usagePercent}%` }}
-              />
-            </div>
-            <span className="text-[10px] text-emerald-800 font-semibold block mt-1">
-              {stats.remainingQuota} free conversations remaining today
-            </span>
           </div>
         </div>
       </div>
@@ -1024,6 +1102,119 @@ export default function WhatsAppDeskPage() {
         </div>
 
       </div>
+
+      {/* Meta API Token Configuration Modal */}
+      {isTokenModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-lg overflow-hidden animate-fade-in">
+            {/* Modal Header */}
+            <div className="p-4 bg-gradient-to-r from-emerald-600 to-teal-700 text-white flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <Key className="w-5 h-5 text-emerald-200" />
+                <div>
+                  <h3 className="font-bold text-sm">Meta WhatsApp API Credentials</h3>
+                  <p className="text-[11px] text-emerald-100">Update Temporary or Permanent Access Token</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsTokenModalOpen(false)}
+                className="text-emerald-100 hover:text-white p-1 rounded-lg hover:bg-white/10 transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 space-y-4 text-xs">
+              {/* Alert / Result */}
+              {tokenTestResult && (
+                <div className={`p-3 rounded-xl border flex items-start gap-2 ${
+                  tokenTestResult.success 
+                    ? "bg-emerald-50 border-emerald-200 text-emerald-900" 
+                    : "bg-rose-50 border-rose-200 text-rose-900"
+                }`}>
+                  {tokenTestResult.success ? (
+                    <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                  ) : (
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
+                  )}
+                  <span className="leading-relaxed font-medium">{tokenTestResult.message}</span>
+                </div>
+              )}
+
+              <div>
+                <label className="block font-bold text-gray-700 mb-1">
+                  Phone Number ID
+                </label>
+                <input
+                  type="text"
+                  value={modalPhoneId}
+                  onChange={(e) => setModalPhoneId(e.target.value)}
+                  placeholder="e.g. 1323440530852624"
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="font-bold text-gray-700">
+                    Access Token (Temporary or Permanent)
+                  </label>
+                  <a
+                    href="https://developers.facebook.com/apps"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[10.5px] text-emerald-700 hover:underline font-semibold flex items-center gap-0.5"
+                  >
+                    <span>Open Meta Portal</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+                <textarea
+                  rows={4}
+                  value={modalToken}
+                  onChange={(e) => setModalToken(e.target.value)}
+                  placeholder="Paste your fresh token starting with EAAT..."
+                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none"
+                />
+                <p className="text-[10.5px] text-gray-500 mt-1.5 leading-relaxed">
+                  💡 <strong>Note:</strong> Meta Developer Portal ka <em>Temporary Access Token</em> har 24 ghante me expire ho jata hai. Agar token expire ho gaya ho, to Meta Portal se naya token copy karke yahan paste karein aur <strong>Verify &amp; Save Token</strong> dabayein.
+                </p>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
+                <button
+                  type="button"
+                  onClick={() => setIsTokenModalOpen(false)}
+                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleTestAndSaveToken}
+                  disabled={isTestingToken}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs cursor-pointer disabled:opacity-60"
+                >
+                  {isTestingToken ? (
+                    <>
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      <span>Verifying with Meta...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>Verify &amp; Save Token</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
