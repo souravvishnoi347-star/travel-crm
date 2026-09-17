@@ -165,27 +165,27 @@ export const DEFAULT_TRUST_PHOTOS = {
 export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
   {
     id: "hp-1",
-    url: "/gallery/chardham_10d_img_31.jpg",
+    url: "/hotels_custom/hotel_stay_2.jpeg",
     hotelName: "Standard Clean Stay",
     location: "Barkot / Uttarkashi",
-    roomType: "Standard Room",
-    caption: "Well-sanitised clean standard rooms with attached bath & hot geyser"
+    roomType: "Standard Triple / Quad Room",
+    caption: "Spacious clean rooms with comfortable beds, attached washroom & 24/7 hot water"
   },
   {
     id: "hp-2",
-    url: "/gallery/chardham_10d_img_29.jpg",
+    url: "/hotels_custom/hotel_stay_4.jpeg",
     hotelName: "Standard Mountain View Stay",
     location: "Guptkashi / Sitapur",
-    roomType: "Standard Room",
-    caption: "Spacious comfort rooms with hot water facility and mountain view"
+    roomType: "Standard Double Room",
+    caption: "Cozy rooms with valley views, fresh clean linen, geyser & peaceful mountain ambiance"
   },
   {
     id: "hp-3",
-    url: "/gallery/chardham_10d_img_30.jpg",
+    url: "/hotels_custom/hotel_stay_3.jpeg",
     hotelName: "Standard Family Stay",
     location: "Badrinath / Pipalkoti",
     roomType: "Standard Family Room",
-    caption: "Hygienic family room with warm blankets and mountain hospitality"
+    caption: "Hygienic verified family rooms with warm blankets and personalized hill hospitality"
   },
   {
     id: "hp-4",
@@ -407,6 +407,21 @@ const CHARDHAM_PRESET: ItineraryData = {
       id: "ph-3",
       url: "/gallery/chardham_10d_img_15.jpg",
       caption: "Holy Shri Badrinath Ji Temple"
+    },
+    {
+      id: "ph-4",
+      url: "/gallery/chardham_10d_img_8.jpg",
+      caption: "Holy Shri Gangotri Dham Temple"
+    },
+    {
+      id: "ph-5",
+      url: "/gallery/chardham_10d_img_14.jpg",
+      caption: "Chopta Tungnath Himalayan Ridge"
+    },
+    {
+      id: "ph-6",
+      url: "/gallery/chardham_10d_img_18.jpg",
+      caption: "Maa Dhari Devi Sacred Shrine"
     }
   ],
   hotelPhotos: CURATED_HOTEL_PHOTO_PRESETS,
@@ -1025,11 +1040,20 @@ export default function ItineraryBuilder() {
             if (!parsed.motto || parsed.motto === "ॐ नमः शिवाय" || parsed.motto === "!! HAR HAR MAHADEV !!") {
               parsed.motto = "जय श्री केदार · जय बद्री विशाल";
             }
-            // Auto-migrate tent stay photo away from car image
+            // Auto-migrate hotel photos to real verified hotel photos
             if (Array.isArray(parsed.hotelPhotos)) {
               parsed.hotelPhotos = parsed.hotelPhotos.map((hp: any) => {
                 if (hp.url === "/gallery/chardham_10d_img_32.jpg" || (hp.roomType?.toLowerCase().includes("tent") && hp.url?.includes("img_32"))) {
                   return { ...hp, url: "/gallery/kedarnath_alpine_tent.jpg" };
+                }
+                if (hp.url === "/gallery/chardham_10d_img_31.jpg") {
+                  return { ...hp, url: "/hotels_custom/hotel_stay_2.jpeg", roomType: hp.roomType || "Standard Triple / Quad Room" };
+                }
+                if (hp.url === "/gallery/chardham_10d_img_29.jpg") {
+                  return { ...hp, url: "/hotels_custom/hotel_stay_4.jpeg", roomType: hp.roomType || "Standard Double Room" };
+                }
+                if (hp.url === "/gallery/chardham_10d_img_30.jpg") {
+                  return { ...hp, url: "/hotels_custom/hotel_stay_3.jpeg", roomType: hp.roomType || "Standard Family Room" };
                 }
                 return hp;
               });
@@ -1089,6 +1113,15 @@ export default function ItineraryBuilder() {
                 cloudData.hotelPhotos = cloudData.hotelPhotos.map((hp: any) => {
                   if (hp.url === "/gallery/chardham_10d_img_32.jpg" || (hp.roomType?.toLowerCase().includes("tent") && hp.url?.includes("img_32"))) {
                     return { ...hp, url: "/gallery/kedarnath_alpine_tent.jpg" };
+                  }
+                  if (hp.url === "/gallery/chardham_10d_img_31.jpg") {
+                    return { ...hp, url: "/hotels_custom/hotel_stay_2.jpeg", roomType: hp.roomType || "Standard Triple / Quad Room" };
+                  }
+                  if (hp.url === "/gallery/chardham_10d_img_29.jpg") {
+                    return { ...hp, url: "/hotels_custom/hotel_stay_4.jpeg", roomType: hp.roomType || "Standard Double Room" };
+                  }
+                  if (hp.url === "/gallery/chardham_10d_img_30.jpg") {
+                    return { ...hp, url: "/hotels_custom/hotel_stay_3.jpeg", roomType: hp.roomType || "Standard Family Room" };
                   }
                   return hp;
                 });
@@ -2289,7 +2322,7 @@ ${data.motto}`;
                 const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
                 return (
                   <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white">
-                    <div className="h-14 overflow-hidden bg-gray-100 flex items-center justify-center">
+                    <div className="h-26 overflow-hidden bg-gray-100 flex items-center justify-center">
                       <img 
                         src={photo.url} 
                         alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
@@ -2297,7 +2330,7 @@ ${data.motto}`;
                       />
                     </div>
                     {photo.caption && (
-                      <p className="text-[7.5px] font-semibold text-gray-800 p-0.5 text-center truncate bg-sky-50/50">
+                      <p className="text-[8.5px] font-bold text-gray-800 py-1 px-1 text-center truncate bg-sky-50/80 border-t border-sky-100">
                         {photo.caption}
                       </p>
                     )}
@@ -2462,17 +2495,17 @@ ${data.motto}`;
 
         {/* Confirmed Accommodation Standards Showcase */}
         {data.showHotelPhotos !== false && data.hotelPhotos && data.hotelPhotos.length > 0 && (
-          <div className="pt-2 border-t border-gray-200 space-y-1.5">
+          <div className="pt-3 border-t border-gray-200 space-y-2">
             <div className="flex items-center justify-between">
               <h4 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-1.5">
                 <span>🏨 Confirmed Accommodation Standards & Clean Stays</span>
-                <span className="text-[9px] font-normal px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                <span className="text-[9px] font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
                   Pre-inspected & Verified
                 </span>
               </h4>
               <span className="text-[9.5px] text-gray-500 font-medium">Standard Clean Stays & Camps</span>
             </div>
-            <div className={`grid gap-2 ${data.hotelPhotos.length === 1 ? 'grid-cols-1' : data.hotelPhotos.length === 2 ? 'grid-cols-2' : data.hotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+            <div className={`grid gap-2.5 ${data.hotelPhotos.length === 1 ? 'grid-cols-1' : data.hotelPhotos.length === 2 ? 'grid-cols-2' : data.hotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
               {data.hotelPhotos.slice(0, 4).map((hp, hIdx) => {
                 const isTent = hp.roomType?.toLowerCase().includes("tent");
                 const safeUrl = (isTent && (hp.url?.includes("32") || !hp.url)) || hp.url === "/gallery/chardham_10d_img_32.jpg"
@@ -2480,19 +2513,19 @@ ${data.motto}`;
                   : hp.url;
                 return (
                   <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                    <div className="h-28 relative overflow-hidden bg-slate-50 flex items-center justify-center">
+                    <div className="h-36 relative overflow-hidden bg-slate-50 flex items-center justify-center">
                       <img 
                         src={safeUrl} 
                         alt={hp.roomType || 'Accommodation'} 
                         className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain bg-slate-50' : 'object-cover'} ${hp.position || 'object-center'}`}
                       />
-                      <span className={`absolute top-1 right-1 text-[8px] font-bold px-1.5 py-0.5 rounded shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
+                      <span className={`absolute top-1.5 right-1.5 text-[8.5px] font-bold px-2 py-0.5 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
                         {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Standard Room')}
                       </span>
                     </div>
-                    <div className="p-1.5 bg-sky-50/40 flex-1 flex flex-col justify-between">
+                    <div className="p-2 bg-sky-50/50 flex-1 flex flex-col justify-between">
                       <div>
-                        <p className="text-[10px] font-bold text-gray-900 leading-tight truncate">
+                        <p className="text-[10.5px] font-bold text-gray-900 leading-tight truncate">
                           {isTent ? 'Alpine Camp / Tent Stay' : (hp.roomType || 'Standard Clean Room')}
                         </p>
                         <p className="text-[9px] text-[#0369a1] font-semibold flex items-center gap-1 mt-0.5">
@@ -2500,7 +2533,7 @@ ${data.motto}`;
                         </p>
                       </div>
                       {hp.caption && (
-                        <p className="text-[8.5px] text-gray-500 mt-0.5 leading-snug line-clamp-1">
+                        <p className="text-[8.5px] text-gray-600 mt-1 leading-snug line-clamp-2">
                           {hp.caption}
                         </p>
                       )}
@@ -2514,21 +2547,25 @@ ${data.motto}`;
 
         {/* Page 3 Destinations Gallery - Sacred Yatra Landmarks Showcase */}
         {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
-          <div className="pt-2 border-t border-gray-200 space-y-1.5">
+          <div className="pt-3 border-t border-gray-200 space-y-2">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-serif font-bold text-[#0369a1]">
-                Sacred Yatra Destinations & Sightseeing Highlights
+              <h4 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-1.5">
+                <span>🛕 Sacred Yatra Destinations & Sightseeing Highlights</span>
+                <span className="text-[9px] font-semibold px-2 py-0.5 bg-sky-50 text-sky-700 rounded-full border border-sky-200">
+                  Visual Tour Guide
+                </span>
               </h4>
               <span className="text-[9.5px] text-gray-500 font-medium">Travel to Uttarakhand</span>
             </div>
-            <div className={`grid gap-2 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+            <div className={`grid gap-2.5 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
               {data.photos.slice(0, 6).map((photo, pIdx) => {
                 const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
                 const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
+                const landmarkHeightClass = (data.photos?.length || 0) <= 3 ? "h-44" : "h-34";
 
                 return (
-                  <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/25 shadow-2xs bg-gray-50 flex flex-col">
-                    <div className={`${data.hotelPhotos && data.hotelPhotos.length > 0 ? 'h-24' : 'h-32'} relative overflow-hidden bg-slate-50 flex items-center justify-center`}>
+                  <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/30 shadow-2xs bg-gray-50 flex flex-col">
+                    <div className={`${landmarkHeightClass} relative overflow-hidden bg-slate-50 flex items-center justify-center`}>
                       <img 
                         src={photo.url} 
                         alt={photo.caption || `Landmark ${pIdx + 1}`} 
@@ -2536,8 +2573,8 @@ ${data.motto}`;
                       />
                     </div>
                     {photo.caption && (
-                      <div className="p-1 bg-white border-t border-gray-100 text-center min-h-[24px] flex items-center justify-center">
-                        <p className="text-[9px] font-semibold text-gray-800 line-clamp-1 px-1 leading-tight">
+                      <div className="py-1 px-1.5 bg-white border-t border-gray-100 text-center min-h-[26px] flex items-center justify-center">
+                        <p className="text-[9.5px] font-bold text-gray-800 line-clamp-1 px-1 leading-tight">
                           {photo.caption}
                         </p>
                       </div>
