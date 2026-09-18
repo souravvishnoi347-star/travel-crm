@@ -1312,11 +1312,12 @@ SCHEMA:
       // Provider 1: OpenRouter (sk-or-... or sk-...)
       if (cleanKey.startsWith("sk-or-") || cleanKey.startsWith("sk-")) {
         const openRouterModels = [
-          "google/gemini-2.0-flash-exp:free",
           "meta-llama/llama-3.3-70b-instruct:free",
           "deepseek/deepseek-chat:free",
           "mistralai/mistral-small-24b-instruct-2501:free",
-          "google/gemini-flash-1.5:free"
+          "google/gemini-2.0-flash-exp:free",
+          "deepseek/deepseek-r1:free",
+          "openrouter/auto"
         ];
 
         let openRouterSuccess = false;
@@ -1404,24 +1405,34 @@ SCHEMA:
                 .filter((m: any) => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes("generateContent"))
                 .map((m: any) => m.name.replace(/^models\//, ""))
                 .sort((a: string, b: string) => {
-                  const aScore = a.includes("flash") ? 2 : a.includes("pro") ? 1 : 0;
-                  const bScore = b.includes("flash") ? 2 : b.includes("pro") ? 1 : 0;
-                  return bScore - aScore;
+                  const getScore = (name: string) => {
+                    let score = 0;
+                    if (name.includes("flash")) score += 20;
+                    if (name.includes("3.8")) score += 9;
+                    else if (name.includes("3.7")) score += 8;
+                    else if (name.includes("3.6")) score += 7;
+                    else if (name.includes("3.5")) score += 6;
+                    else if (name.includes("3.1")) score += 5;
+                    else if (name.includes("2.5")) score += 4;
+                    else if (name.includes("2.0")) score += 2;
+                    return score;
+                  };
+                  return getScore(b) - getScore(a);
                 });
             }
           }
         } catch {}
 
         const fallbackList = [
+          "gemini-3.8-flash",
+          "gemini-3.7-flash",
+          "gemini-3.5-flash",
+          "gemini-3.5-flash-lite",
+          "gemini-3.1-flash-lite",
           "gemini-2.5-flash",
           "gemini-2.5-flash-lite",
-          "gemini-2.0-flash",
-          "gemini-2.0-flash-lite",
-          "gemini-3.5-flash",
           "gemini-2.5-pro",
-          "gemini-2.0-pro-exp-02-05",
-          "gemini-1.5-flash-latest",
-          "gemini-1.5-pro-latest"
+          "gemini-2.0-flash"
         ];
 
         const modelsToTry = Array.from(new Set([...candidateModels, ...fallbackList]));
