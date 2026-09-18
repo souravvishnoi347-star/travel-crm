@@ -1305,83 +1305,166 @@ SCHEMA:
   "motto": "जय श्री केदार · जय बद्री विशाल"
 }`;
 
-      // Call Gemini API by discovering available models or trying supported model list
       const cleanKey = apiKey.trim();
-      let response: Response | null = null;
+      let textResponse = "";
       let lastErrorMessage = "";
 
-      // 1. First, attempt to discover exact models supported by this specific user API key
-      let candidateModels: string[] = [];
-      try {
-        const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
-        if (listRes.ok) {
-          const listJson = await listRes.json();
-          if (Array.isArray(listJson?.models)) {
-            candidateModels = listJson.models
-              .filter((m: any) => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes("generateContent"))
-              .map((m: any) => m.name.replace(/^models\//, ""))
-              // Sort to prioritize flash and newer models
-              .sort((a: string, b: string) => {
-                const aScore = a.includes("flash") ? 2 : a.includes("pro") ? 1 : 0;
-                const bScore = b.includes("flash") ? 2 : b.includes("pro") ? 1 : 0;
-                return bScore - aScore;
-              });
+      // Provider 1: OpenRouter (sk-or-... or sk-...)
+      if (cleanKey.startsWith("sk-or-") || cleanKey.startsWith("sk-")) {
+        const openRouterModels = [
+          "google/gemini-2.0-flash-exp:free",
+          "meta-llama/llama-3.3-70b-instruct:free",
+          "deepseek/deepseek-chat:free",
+          "mistralai/mistral-small-24b-instruct-2501:free",
+          "google/gemini-flash-1.5:free"
+        ];
+
+        let openRouterSuccess = false;
+        for (const orModel of openRouterModels) {
+          try {
+            const orRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${cleanKey}`,
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://traveltouttrakhand-crm.vercel.app",
+                "X-Title": "Travel to Uttarakhand CRM"
+              },
+              body: JSON.stringify({
+                model: orModel,
+                messages: [
+                  { role: "system", content: systemPrompt },
+                  { role: "user", content: `Generate a complete itinerary package for: ${prompt}` }
+                ],
+                response_format: { type: "json_object" },
+                temperature: 0.7
+              })
+            });
+
+            if (orRes.ok) {
+              const orJson = await orRes.json();
+              textResponse = orJson.choices?.[0]?.message?.content?.trim() || "";
+              if (textResponse) {
+                openRouterSuccess = true;
+                break;
+              }
+            } else {
+              const errData = await orRes.json().catch(() => null);
+              lastErrorMessage = errData?.error?.message || `OpenRouter error status ${orRes.status}`;
+            }
+          } catch (e: any) {
+            lastErrorMessage = e?.message || "OpenRouter network request failed";
           }
         }
-      } catch {}
 
-      // Fallback model list if listing is restricted or empty
-      const fallbackList = [
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
-        "gemini-3.5-flash",
-        "gemini-2.5-pro",
-        "gemini-2.0-pro-exp-02-05",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro-latest"
-      ];
-
-      const modelsToTry = Array.from(new Set([...candidateModels, ...fallbackList]));
-
-      for (const model of modelsToTry) {
+        if (!openRouterSuccess || !textResponse) {
+          throw new Error(lastErrorMessage || "OpenRouter API request failed across available models.");
+        }
+      } 
+      // Provider 2: Hugging Face (hf_...)
+      else if (cleanKey.startsWith("hf_")) {
         try {
-          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanKey}`;
-          const res = await fetch(apiUrl, {
+          const hfRes = await fetch("https://api-inference.huggingface.co/models/Qwen/Qwen2.5-72B-Instruct/v1/chat/completions", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Authorization": `Bearer ${cleanKey}`,
+              "Content-Type": "application/json",
+            },
             body: JSON.stringify({
-              systemInstruction: { parts: [{ text: systemPrompt }] },
-              contents: [{ parts: [{ text: `Generate a complete itinerary package for: ${prompt}` }] }],
-              generationConfig: {
-                temperature: 0.7,
-                responseMimeType: "application/json"
-              }
+              model: "Qwen/Qwen2.5-72B-Instruct",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: `Generate a complete itinerary package for: ${prompt}` }
+              ],
+              response_format: { type: "json_object" },
+              temperature: 0.7
             })
           });
 
-          if (res.ok) {
-            response = res;
-            break;
+          if (hfRes.ok) {
+            const hfJson = await hfRes.json();
+            textResponse = hfJson.choices?.[0]?.message?.content?.trim() || "";
           } else {
-            const errData = await res.json().catch(() => null);
-            lastErrorMessage = errData?.error?.message || `Status ${res.status}`;
+            const errData = await hfRes.json().catch(() => null);
+            throw new Error(errData?.error || `Hugging Face error status ${hfRes.status}`);
           }
         } catch (e: any) {
-          lastErrorMessage = e?.message || "Network request failed";
+          throw new Error(e?.message || "Hugging Face request failed");
         }
-      }
+      } 
+      // Provider 3: Google Gemini API (Standard)
+      else {
+        let candidateModels: string[] = [];
+        try {
+          const listRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${cleanKey}`);
+          if (listRes.ok) {
+            const listJson = await listRes.json();
+            if (Array.isArray(listJson?.models)) {
+              candidateModels = listJson.models
+                .filter((m: any) => Array.isArray(m.supportedGenerationMethods) && m.supportedGenerationMethods.includes("generateContent"))
+                .map((m: any) => m.name.replace(/^models\//, ""))
+                .sort((a: string, b: string) => {
+                  const aScore = a.includes("flash") ? 2 : a.includes("pro") ? 1 : 0;
+                  const bScore = b.includes("flash") ? 2 : b.includes("pro") ? 1 : 0;
+                  return bScore - aScore;
+                });
+            }
+          }
+        } catch {}
 
-      if (!response || !response.ok) {
-        throw new Error(lastErrorMessage || "Gemini API request failed across available models.");
-      }
+        const fallbackList = [
+          "gemini-2.5-flash",
+          "gemini-2.5-flash-lite",
+          "gemini-2.0-flash",
+          "gemini-2.0-flash-lite",
+          "gemini-3.5-flash",
+          "gemini-2.5-pro",
+          "gemini-2.0-pro-exp-02-05",
+          "gemini-1.5-flash-latest",
+          "gemini-1.5-pro-latest"
+        ];
 
-      const resJson = await response.json();
-      const textResponse = resJson.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        const modelsToTry = Array.from(new Set([...candidateModels, ...fallbackList]));
+        let geminiResponse: Response | null = null;
+
+        for (const model of modelsToTry) {
+          try {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${cleanKey}`;
+            const res = await fetch(apiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: [{ parts: [{ text: `Generate a complete itinerary package for: ${prompt}` }] }],
+                generationConfig: {
+                  temperature: 0.7,
+                  responseMimeType: "application/json"
+                }
+              })
+            });
+
+            if (res.ok) {
+              geminiResponse = res;
+              break;
+            } else {
+              const errData = await res.json().catch(() => null);
+              lastErrorMessage = errData?.error?.message || `Status ${res.status}`;
+            }
+          } catch (e: any) {
+            lastErrorMessage = e?.message || "Network request failed";
+          }
+        }
+
+        if (!geminiResponse || !geminiResponse.ok) {
+          throw new Error(lastErrorMessage || "Gemini API request failed across available models.");
+        }
+
+        const resJson = await geminiResponse.json();
+        textResponse = resJson.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+      }
 
       if (!textResponse) {
-        throw new Error("No response generated from Gemini API.");
+        throw new Error("No response generated from AI API. Please verify your API key and quota.");
       }
 
       // Sanitize JSON text
@@ -2972,7 +3055,7 @@ ${data.motto}`;
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-purple-900 uppercase tracking-wider flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-purple-600" />
-                AI Itinerary Generator (Gemini)
+                AI Itinerary Generator (OpenRouter / Gemini / HF)
               </span>
               <div className="flex items-center gap-1.5">
                 {apiKey ? (
@@ -2995,7 +3078,7 @@ ${data.motto}`;
             {showKeyInput && (
               <div className="bg-white p-3 rounded-xl border border-purple-200 text-xs space-y-2 animate-in fade-in">
                 <div className="flex items-center justify-between">
-                  <label className="block text-[10.5px] font-bold text-gray-700">Google Gemini API Key</label>
+                  <label className="block text-[10.5px] font-bold text-gray-700">API Key (OpenRouter, Gemini, or Hugging Face)</label>
                   {apiKey && (
                     <span className="text-[9.5px] text-emerald-600 font-bold">✓ Saved on this device</span>
                   )}
@@ -3003,7 +3086,7 @@ ${data.motto}`;
                 <div className="flex gap-1.5">
                   <input
                     type="password"
-                    placeholder="AIzaSy..."
+                    placeholder="sk-or-v1-... (OpenRouter) or AIzaSy... (Gemini) or hf_..."
                     value={apiKey}
                     onChange={e => setApiKey(e.target.value)}
                     className="flex-1 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:bg-white focus:outline-none focus:ring-1 focus:ring-purple-500 font-mono"

@@ -456,15 +456,18 @@ export default function SettingsPage() {
 
         <div className="p-6 space-y-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium text-gray-500">
-              Gemini API Key
+            <label className="text-sm font-medium text-gray-700 flex items-center justify-between">
+              <span>AI API Key (Gemini / OpenRouter / Hugging Face)</span>
+              <span className="text-[11px] font-normal text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                Auto-detects provider
+              </span>
             </label>
             <div className="relative">
               <input
                 type={showKey ? "text" : "password"}
                 value={settings.openai_key}
                 onChange={(e) => update("openai_key", e.target.value)}
-                placeholder="sk-••••••••••••••••••••••••••••••••"
+                placeholder="sk-or-v1-... (OpenRouter) or AIzaSy... (Gemini) or hf_... (HuggingFace)"
                 className="w-full px-4 py-2.5 pr-12 rounded-xl border border-gray-200 text-gray-900 placeholder:text-gray-300 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-transparent transition font-mono text-sm"
               />
               <button
@@ -479,12 +482,14 @@ export default function SettingsPage() {
                 )}
               </button>
             </div>
-            <p className="text-xs text-gray-400 mt-1">
-              This key is used for AI-powered itinerary generation. Your key is
-              stored securely and never shared. Get your free key from{" "}
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-sky-600 underline">
-                Google AI Studio
-              </a>
+            <p className="text-xs text-gray-500 mt-1 leading-relaxed">
+              This key powers instant 10-day pilgrimage itinerary generation. Works with:
+              <br />
+              • <a href="https://openrouter.ai/keys" target="_blank" rel="noopener noreferrer" className="text-sky-600 underline font-medium">OpenRouter.ai</a> (Recommended — free models like Llama 3.3 70B & Gemini 2.0 Flash)
+              <br />
+              • <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="text-sky-600 underline font-medium">Google AI Studio</a> (Free Gemini 2.0/1.5 Flash key)
+              <br />
+              • <a href="https://huggingface.co/settings/tokens" target="_blank" rel="noopener noreferrer" className="text-sky-600 underline font-medium">Hugging Face</a> (Access Token with Qwen 2.5 72B)
             </p>
           </div>
         </div>
