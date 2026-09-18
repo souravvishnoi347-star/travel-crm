@@ -1312,11 +1312,11 @@ SCHEMA:
       // Provider 1: OpenRouter (sk-or-... or sk-...)
       if (cleanKey.startsWith("sk-or-") || cleanKey.startsWith("sk-")) {
         const openRouterModels = [
-          "meta-llama/llama-3.3-70b-instruct:free",
-          "deepseek/deepseek-chat:free",
-          "mistralai/mistral-small-24b-instruct-2501:free",
-          "google/gemini-2.0-flash-exp:free",
-          "deepseek/deepseek-r1:free",
+          "openrouter/free",
+          "nex-agi/nex-n2.5-pro:free",
+          "inclusionai/ling-3.0-flash-vl:free",
+          "nvidia/nemotron-3.5-lightning:free",
+          "qwen/qwen3.8-27b:free",
           "openrouter/auto"
         ];
 
@@ -1337,7 +1337,6 @@ SCHEMA:
                   { role: "system", content: systemPrompt },
                   { role: "user", content: `Generate a complete itinerary package for: ${prompt}` }
                 ],
-                response_format: { type: "json_object" },
                 temperature: 0.7
               })
             });
