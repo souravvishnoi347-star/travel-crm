@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     // Retrieve Meta Cloud API Credentials from env or request override
     const metaPhoneNumberId = phoneNumberId?.trim() || process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
-    const metaAccessToken = accessToken?.trim() || process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "EAAT7x0bHdhABSlxA9C6hTHBcCICieIZBqL8rLEqvj4m7huVQjmVFFQ2J5RZCHhVeApW3Lscpatw60SHerYNU3fsSeZC6tjd4Uv3F5MJmrarPLY2GZAhgZB59SVCBPgAkoFUenQV3xQIcQMoFNcbMXPz4wZCoi4qetFWxELbMVDhs7UMRg0fqOQXvPpwDGsWQZDZD";
+    const metaAccessToken = accessToken?.trim() || process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
 
     if (!metaPhoneNumberId || !metaAccessToken) {
       return NextResponse.json({
