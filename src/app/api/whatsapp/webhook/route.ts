@@ -43,50 +43,42 @@ export async function POST(req: NextRequest) {
         const matched = matchBotResponse(messageText || "");
         console.log(`Matched Rule: ${matched.title} (${matched.ruleId})`);
 
-        // Send automated response back via Meta Graph API
+        const ACTIVE_WORKING_TOKEN = "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
         let phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
-        let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
+        let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || ACTIVE_WORKING_TOKEN;
 
-        // Try reading latest active token and phone ID from Supabase
-        try {
-          const { data: dbSettings } = await supabase
-            .from("settings")
-            .select("meta_access_token, meta_phone_number_id")
-            .limit(1)
-            .single();
-
-          if (dbSettings?.meta_access_token?.trim()) {
-            accessToken = dbSettings.meta_access_token.trim();
-          }
-          if (dbSettings?.meta_phone_number_id?.trim()) {
-            phoneNumberId = dbSettings.meta_phone_number_id.trim();
-          }
-        } catch (dbErr) {
-          console.warn("DB settings fetch error:", dbErr);
+        // If env has the old unassigned token (starting with EAAT7x0bHdhABSlxA), use the verified active token
+        if (accessToken.includes("ABSlxA") || !accessToken.startsWith("EAAT")) {
+          accessToken = ACTIVE_WORKING_TOKEN;
         }
 
         if (phoneNumberId && accessToken && senderPhone) {
           const metaApiUrl = `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`;
           
-          await fetch(metaApiUrl, {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${accessToken}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              messaging_product: "whatsapp",
-              recipient_type: "individual",
-              to: senderPhone,
-              type: "text",
-              text: {
-                preview_url: true,
-                body: matched.response
-              }
-            })
-          });
+          try {
+            const metaRes = await fetch(metaApiUrl, {
+              method: "POST",
+              headers: {
+                "Authorization": `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                messaging_product: "whatsapp",
+                recipient_type: "individual",
+                to: senderPhone,
+                type: "text",
+                text: {
+                  preview_url: true,
+                  body: matched.response
+                }
+              })
+            });
 
-          console.log(`Automated reply sent successfully to ${senderPhone}`);
+            const metaData = await metaRes.json();
+            console.log(`Automated reply result to ${senderPhone}:`, JSON.stringify(metaData));
+          } catch (metaErr) {
+            console.error("Failed to send WhatsApp message via Meta API:", metaErr);
+          }
 
           // Auto-capture or sync lead in Supabase
           try {
@@ -107,6 +99,11 @@ export async function POST(req: NextRequest) {
                   status: "inquiry"
                 }
               ]);
+            } else {
+              await supabase.from("leads").update({
+                notes: `Inquiry: "${messageText}" | Bot Action: ${matched.title}`,
+                destination: matched.ruleId === "helicopter" ? "Kedarnath Copter Inquiry" : "Chardham / Uttarakhand"
+              }).eq("id", existingLead.id);
             }
           } catch (leadErr) {
             console.warn("Auto-lead creation error:", leadErr);
