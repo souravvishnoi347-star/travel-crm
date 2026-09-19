@@ -96,7 +96,7 @@ export default function WhatsAppDeskPage() {
     if (typeof window !== "undefined") {
       try {
         const pId = localStorage.getItem("triloki_meta_phone_number_id") || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
-        const token = localStorage.getItem("triloki_meta_access_token") || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "";
+        const token = localStorage.getItem("triloki_meta_access_token") || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "EAAT7x0bHdhABSlxA9C6hTHBcCICieIZBqL8rLEqvj4m7huVQjmVFFQ2J5RZCHhVeApW3Lscpatw60SHerYNU3fsSeZC6tjd4Uv3F5MJmrarPLY2GZAhgZB59SVCBPgAkoFUenQV3xQIcQMoFNcbMXPz4wZCoi4qetFWxELbMVDhs7UMRg0fqOQXvPpwDGsWQZDZD";
         setMetaConfig({ phoneNumberId: pId, accessToken: token });
 
         const savedChats = localStorage.getItem("triloki_whatsapp_desk_chats");

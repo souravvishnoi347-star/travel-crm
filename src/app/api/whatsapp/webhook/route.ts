@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
 
         // Send automated response back via Meta Graph API
         let phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
-        let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN;
+        let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "EAAT7x0bHdhABSlxA9C6hTHBcCICieIZBqL8rLEqvj4m7huVQjmVFFQ2J5RZCHhVeApW3Lscpatw60SHerYNU3fsSeZC6tjd4Uv3F5MJmrarPLY2GZAhgZB59SVCBPgAkoFUenQV3xQIcQMoFNcbMXPz4wZCoi4qetFWxELbMVDhs7UMRg0fqOQXvPpwDGsWQZDZD";
 
         // Try reading latest active token and phone ID from Supabase
         try {
