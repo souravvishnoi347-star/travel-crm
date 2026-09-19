@@ -87,6 +87,30 @@ export async function POST(req: NextRequest) {
           });
 
           console.log(`Automated reply sent successfully to ${senderPhone}`);
+
+          // Auto-capture or sync lead in Supabase
+          try {
+            const { data: existingLead } = await supabase
+              .from("leads")
+              .select("id")
+              .eq("phone", senderPhone)
+              .limit(1)
+              .maybeSingle();
+
+            if (!existingLead) {
+              await supabase.from("leads").insert([
+                {
+                  name: `WhatsApp Lead (+${senderPhone.slice(-4)})`,
+                  phone: senderPhone,
+                  destination: matched.ruleId === "helicopter" ? "Kedarnath Copter Inquiry" : "Chardham / Uttarakhand",
+                  notes: `Inquiry: "${messageText}" | Bot Action: ${matched.title}`,
+                  status: "inquiry"
+                }
+              ]);
+            }
+          } catch (leadErr) {
+            console.warn("Auto-lead creation error:", leadErr);
+          }
         }
       }
     }
