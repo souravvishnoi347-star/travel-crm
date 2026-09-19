@@ -18,12 +18,14 @@ import {
   LogOut, 
   Image as ImageIcon,
   FolderArchive,
-  MessageSquare
+  MessageSquare,
+  Calculator
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 const navigation = [
   { name: "Yatra Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Trip Cost Calculator", href: "/quotation-calculator", icon: Calculator },
   { name: "Documents & Vouchers Hub", href: "/documents", icon: FolderArchive },
   { name: "WhatsApp Live Desk", href: "/whatsapp-desk", icon: MessageSquare },
   { name: "Yatra Invoices & Billing", href: "/invoices", icon: FileText },
