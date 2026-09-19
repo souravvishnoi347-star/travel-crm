@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
         console.log(`Matched Rule: ${matched.title} (${matched.ruleId})`);
 
         // Send automated response back via Meta Graph API
-        let phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
+        let phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
         let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN;
 
         // Try reading latest active token and phone ID from Supabase

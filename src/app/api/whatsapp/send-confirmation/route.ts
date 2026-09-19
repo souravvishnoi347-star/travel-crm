@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Retrieve Meta Cloud API Credentials from env or request override
-    const metaPhoneNumberId = phoneNumberId?.trim() || process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
+    const metaPhoneNumberId = phoneNumberId?.trim() || process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
     const metaAccessToken = accessToken?.trim() || process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN;
 
     if (!metaPhoneNumberId || !metaAccessToken) {

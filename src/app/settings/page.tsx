@@ -47,8 +47,8 @@ const defaultSettings: Omit<SettingsData, "id"> = {
   website: "https://traveltouttrakhand.com",
   logo_url: "/logo.png",
   openai_key: "",
-  meta_phone_number_id: "1323440530852624",
-  meta_waba_id: "",
+  meta_phone_number_id: "1291621467367556",
+  meta_waba_id: "1776498666879701",
   meta_access_token: "",
   meta_default_motto: "ॐ नमः शिवाय | जय बद्री विशाल",
 };
@@ -66,8 +66,8 @@ export default function SettingsPage() {
             ...defaultSettings,
             ...parsed,
             openai_key: parsed.openai_key || key,
-            meta_phone_number_id: parsed.meta_phone_number_id || localStorage.getItem("triloki_meta_phone_number_id") || "1323440530852624",
-            meta_waba_id: parsed.meta_waba_id || localStorage.getItem("triloki_meta_waba_id") || "",
+            meta_phone_number_id: parsed.meta_phone_number_id || localStorage.getItem("triloki_meta_phone_number_id") || "1291621467367556",
+            meta_waba_id: parsed.meta_waba_id || localStorage.getItem("triloki_meta_waba_id") || "1776498666879701",
             meta_access_token: parsed.meta_access_token || localStorage.getItem("triloki_meta_access_token") || "",
             meta_default_motto: parsed.meta_default_motto || "ॐ नमः शिवाय | जय बद्री विशाल"
           };
@@ -261,7 +261,7 @@ export default function SettingsPage() {
   }
 
   const handleTestWhatsApp = async () => {
-    const pId = settings.meta_phone_number_id?.trim() || "1323440530852624";
+    const pId = settings.meta_phone_number_id?.trim() || "1291621467367556";
     if (!settings.meta_access_token?.trim()) {
       setTestResult({ success: false, message: "Please paste your Meta Access Token before testing." });
       return;

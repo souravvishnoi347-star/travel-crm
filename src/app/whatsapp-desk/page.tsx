@@ -95,7 +95,7 @@ export default function WhatsAppDeskPage() {
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
-        const pId = localStorage.getItem("triloki_meta_phone_number_id") || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1323440530852624";
+        const pId = localStorage.getItem("triloki_meta_phone_number_id") || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
         const token = localStorage.getItem("triloki_meta_access_token") || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "";
         setMetaConfig({ phoneNumberId: pId, accessToken: token });
 
@@ -267,7 +267,7 @@ export default function WhatsAppDeskPage() {
         console.error("Meta API error response:", resJson);
         const lower = errMsg.toLowerCase();
         if (lower.includes("token") || lower.includes("session") || lower.includes("expired") || lower.includes("oauth") || lower.includes("190")) {
-          setModalPhoneId(metaConfig.phoneNumberId || "1323440530852624");
+          setModalPhoneId(metaConfig.phoneNumberId || "1291621467367556");
           setModalToken(metaConfig.accessToken || "");
           setTokenTestResult({ success: false, message: "Your Meta Access Token has expired (24-hour limit). Please generate a fresh token from developers.facebook.com and paste it below." });
           setIsTokenModalOpen(true);
@@ -347,7 +347,7 @@ export default function WhatsAppDeskPage() {
           customerName: activeChat.customerName,
           yatraName: activeChat.destination,
           templateName: "hello_world",
-          phoneNumberId: metaConfig.phoneNumberId || "1323440530852624",
+          phoneNumberId: metaConfig.phoneNumberId || "1291621467367556",
           accessToken: metaConfig.accessToken || undefined
         })
       });
@@ -536,7 +536,7 @@ export default function WhatsAppDeskPage() {
           <button
             type="button"
             onClick={() => {
-              setModalPhoneId(metaConfig.phoneNumberId || "1323440530852624");
+              setModalPhoneId(metaConfig.phoneNumberId || "1291621467367556");
               setModalToken(metaConfig.accessToken || "");
               setTokenTestResult(null);
               setIsTokenModalOpen(true);
@@ -1204,7 +1204,7 @@ export default function WhatsAppDeskPage() {
                   type="text"
                   value={modalPhoneId}
                   onChange={(e) => setModalPhoneId(e.target.value)}
-                  placeholder="e.g. 1323440530852624"
+                  placeholder="e.g. 1291621467367556"
                   className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-mono text-gray-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
