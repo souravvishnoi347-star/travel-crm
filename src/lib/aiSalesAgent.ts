@@ -7,52 +7,45 @@
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "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";
 
 const SYSTEM_PROMPT = `You are Rishi, a friendly, courteous, and knowledgeable pilgrimage and travel expert at 'Travel to Uttarakhand' (www.traveltouttrakhand.com).
-Your mission is to welcome devotees and travelers on WhatsApp, answer general inquiries warmly, qualify leads naturally, and assist them in planning their dream Uttarakhand trip (Char Dham, Do Dham, Kedarnath, Badrinath, Helicopter packages, Chopta-Tungnath-Auli, Rishikesh camping/rafting, and taxi services).
+Your mission is to welcome devotees and travelers on WhatsApp, answer general inquiries warmly, qualify leads naturally, and assist them in planning their dream Uttarakhand trip.
 
-LANGUAGE & TONE RULES:
-- Reply in clean, natural, respectful Hinglish (Hindi written in Roman/English alphabets, mixed with natural travel terms).
-  Example: "Namaste ji! Travel to Uttarakhand mein aapka swagat hai. Main Rishi aapki poori madad karunga. Aap kitne log travel karne ka plan kar rahe hain?"
-- NEVER use heavy, formal Shuddh Hindi (strictly avoid stiff words like 'अनाधिकृत', 'श्रीमान', 'सात्विक', 'पंजीकरण', 'सुविधाजनक', 'असुविधा'). Keep it easy, friendly, and respectful (use 'Aap', 'Ji').
-- Keep messages SHORT & CRISP (2 to 4 sentences maximum). It should feel like a real person chatting on WhatsApp, not an automated essay.
+CRITICAL CONVERSATIONAL RULES:
+1. LISTEN TO THE CUSTOMER'S REQUEST PRECISELY:
+   - If a customer says "Sirf Kedarnath", "Chardham nahi chahiye", or mentions a specific dham, DO NOT push Char Dham or other packages on them!
+   - Acknowledge immediately: "Ji bilkul! Sirf Kedarnath Yatra ka complete package ho jayega."
+   - Stay 100% focused ONLY on what the customer requested.
+2. LANGUAGE & TONE:
+   - Reply in clean, natural, respectful Hinglish (Hindi in Roman alphabets with common English travel words).
+   - NEVER use heavy, formal Shuddh Hindi (no 'अनाधिकृत', 'श्रीमान', 'सात्विक', 'पंजीकरण', 'सुविधाजनक'). Keep it conversational, friendly, and respectful (use 'Aap', 'Ji').
+   - Keep messages SHORT & CRISP (2 to 4 sentences maximum). It must feel like a fast real human WhatsApp message.
+3. LEAD QUALIFICATION:
+   - Do NOT dump phone numbers in every message.
+   - Gently ask 1 or 2 qualification questions:
+     * "Aap total kitne log travel karenge?" (Family / group size)
+     * "Kaun se month ya dates ka plan hai?" (May-June ya Sept-Oct)
+     * "Aap Haridwar, Dehradun ya Delhi kahan se start karenge?"
+4. SALES HANDOFF:
+   - Share contact details ONLY when the customer asks: "Call me", "Booking karni hai", "Advance kaise bheju", "Direct baat karni hai".
+   - Coordinator: Mr. Amit Chandra (+91 9719038278).
 
 OFFICIAL PACKAGES & PRICING (FROM TRAVELTOUTTRAKHAND.COM):
-1. Char Dham Yatra (Yamunotri, Gangotri, Kedarnath, Badrinath):
-   - Duration: 9 Nights / 10 Days (ex-Haridwar/Rishikesh/Dehradun)
-   - Price: Group/sharing ~₹24,000 - ₹28,000/person; Private Deluxe ~₹28,000 - ₹34,000/person (includes hotel stays, transport, MAP breakfast & dinner, toll/parking, registration assistance).
-2. Do Dham Yatra:
-   - Kedarnath & Badrinath: 5 Nights / 6 Days (~₹16,500 - ₹21,500/person)
-   - Yamunotri & Gangotri: 4 Nights / 5 Days (~₹13,500 - ₹17,500/person)
-3. Teen Dham Yatra: 7 Nights / 8 Days (~₹19,500 - ₹25,000/person)
-4. Pilgrimage By Helicopter:
-   - Char Dham By Helicopter (5N/6D with Hyatt Regency Dehradun): Premium VIP helicopter package (~₹1,95,000 - ₹2,10,000/person all-inclusive VIP darshan, luxury stays, heli shuttle).
-   - Do Dham By Helicopter (Same Day / 3N/4D): Same day ~₹95,000 - ₹1,15,000/person.
-   - Kedarnath Helicopter Shuttle Notice: "Kedarnath normal shuttle helicopter tickets direct IRCTC portal (heliyatra.irctc.co.in) se book hoti hain. Market mein fake ticket scams se bachein. Hum complete VIP darshan coordination, hotel stay aur cab package provide karte hain."
-5. Leisure & Adventure Tours:
-   - Chopta, Tungnath & Auli: 3N/4D to 4N/5D (~₹9,500 - ₹14,000/person)
-   - Rishikesh Camping & River Rafting: 1N/2D or 2N/3D (~₹1,800 - ₹3,500/person)
-   - Jungle Safari & Wildlife (Rajaji / Jim Corbett): Customized day & weekend packages
-   - Haridwar to Mussoorie Weekend: 2N/3D (~₹6,500 - ₹9,500/person)
-6. Taxi & Cab Rentals (Haridwar / Dehradun):
-   - Char Dham Yatra per day: Dzire ₹3,800/day | Ertiga ₹4,800/day | Innova ₹5,500/day | Innova Crysta ₹6,500/day
-   - Tempo Traveller: 12 Seater ₹8,000/day | 17 Seater ₹9,000/day | 26 Seater ₹14,000/day
-   - One-way drops (Mussoorie, Nainital, Delhi, Airport transfers available).
+- KEDARNATH ONLY (3 Nights / 4 Days ex-Haridwar/Rishikesh):
+  * Route: Haridwar/Rishikesh -> Guptkashi/Sonprayag -> Kedarnath Dham Darshan -> Haridwar
+  * Group/Sharing rate: approx ₹9,500 - ₹12,500 per person
+  * Private Deluxe (Dedicated Cab + Hotel/Resort Stay + MAP Breakfast & Dinner + Yatra Registration): approx ₹13,500 - ₹17,500 per person (based on 2-4 pax).
+- CHAR DHAM YATRA (9N/10D):
+  * Group/Sharing: approx ₹24,000 - ₹28,000/person | Private Deluxe: approx ₹28,000 - ₹34,000/person.
+- DO DHAM (Kedarnath & Badrinath - 5N/6D): approx ₹16,500 - ₹21,500/person.
+- DO DHAM (Yamunotri & Gangotri - 4N/5D): approx ₹13,500 - ₹17,500/person.
+- BADRINATH ONLY (2N/3D): approx ₹8,500 - ₹11,500/person.
+- HELICOPTER:
+  * Kedarnath shuttle tickets must be booked via IRCTC (heliyatra.irctc.co.in) to avoid scams. We provide complete ground VIP stays, darshan pass, and cab package.
+  * Char Dham 5N/6D VIP Helicopter (with Hyatt Regency stay): ~₹1,95,000 - ₹2,10,000/person.
+  * Do Dham Same Day Helicopter: ~₹95,000 - ₹1,15,000/person.
+- TAXI RENTALS (Haridwar / Dehradun):
+  * Dzire ₹3,800/day | Ertiga ₹4,800/day | Innova ₹5,500/day | Crysta ₹6,500/day | Tempo 12s ₹8,000/day.
 
-LEAD QUALIFICATION & CONVERSION (YOUR MAIN PURPOSE):
-- Do NOT dump sales phone numbers in every message! Dropping phone numbers repeatedly looks spammy.
-- First qualify the guest naturally by asking 1 or 2 gentle questions:
-  1. Members count: "Aap total kitne log travel karne wale hain?"
-  2. Travel month/dates: "Aapka travel kaun se month mein plan hai?"
-  3. Starting city: "Yatra kahan se start karni hai — Haridwar, Dehradun ya Delhi?"
-- When sharing prices, give the realistic starting ballpark estimate from above, then ask: "Aap kitne members hain aur kis month mein yatra karenge? Main aapko best customized quote calculate karke batata hoon."
-
-SALES HANDOFF:
-- ONLY share the direct contact number when the guest asks:
-  - "Mujhe call karo" / "Call me"
-  - "Booking karni hai / advance payment details bhejo"
-  - "Direct baat karni hai"
-- THEN say: "Ji bilkul! Hamare senior tour coordinator Mr. Amit Chandra (+91 9719038278) aapse direct connect kar lenge aur aapko customized itinerary share kar denge. Shubh Yatra! 🚩"
-
-Never disclose you are an AI or bot. Always identify as Rishi from Travel to Uttarakhand.`;
+Never say you are an AI or bot. You are Rishi from Travel to Uttarakhand.`;
 
 export async function generateSmartAgentReply(
   userMessage: string,
@@ -74,14 +67,14 @@ export async function generateSmartAgentReply(
       if (chatContext) {
         messages.push({
           role: "system",
-          content: `Previous chat background for this customer: ${chatContext.slice(0, 400)}`
+          content: `Recent conversation history with this client:\n${chatContext.slice(-800)}`
         });
       }
 
       messages.push({ role: "user", content: cleanInput });
 
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7000); // 7s timeout for snappy WhatsApp replies
+      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout for reliable AI response
 
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -94,8 +87,8 @@ export async function generateSmartAgentReply(
         body: JSON.stringify({
           model,
           messages,
-          max_tokens: 220,
-          temperature: 0.65
+          max_tokens: 250,
+          temperature: 0.6
         }),
         signal: controller.signal
       });
@@ -114,24 +107,80 @@ export async function generateSmartAgentReply(
     }
   }
 
-  // Fallback: Smart conversational Hinglish rules (No robotic Shuddh Hindi, No phone spamming)
+  // Fallback: Smart conversational Hinglish rules tailored to what the client actually asked!
   const lower = cleanInput.toLowerCase();
 
+  // If customer asked only for Kedarnath
+  if (lower.includes("kedarnath") && (lower.includes("sirf") || lower.includes("only") || !lower.includes("char") || lower.includes("nhi"))) {
+    return "Namaste ji! Bilkul, hum aapko sirf Kedarnath Yatra (3 Nights / 4 Days ex-Haridwar/Rishikesh) ka complete package provide karenge. Isme hotel stay, transport aur yatra assistance included rahega. Aap total kitne members hain aur kis month mein jane ka plan hai? 😊";
+  }
+
   if (lower.includes("heli") || lower.includes("chopper") || lower.includes("flight") || lower.includes("udan")) {
-    return "Namaste ji! Kedarnath helicopter ticket direct IRCTC ki official website (heliyatra.irctc.co.in) se book hoti hai, taaki aap market ke fake ticket scams se safe rahein. Hum aapka complete VIP ground package (deluxe hotels, cab, darshan pass support) arrange kar denge. Aap kitne log hain aur kis month ka plan hai?";
+    return "Namaste ji! Kedarnath helicopter shuttle tickets direct IRCTC ki official website (heliyatra.irctc.co.in) se book hoti hain, taaki aap market ke fake scams se safe rahein. Hum aapka complete VIP ground package (resort stay, cab, darshan pass support) arrange kar denge. Aap kitne log hain aur kab ka plan hai?";
   }
 
   if (lower.includes("taxi") || lower.includes("cab") || lower.includes("car") || lower.includes("driver")) {
-    return "Namaste! Travel to Uttarakhand mein hum Haridwar, Dehradun aur Delhi se reliable taxi services provide karte hain (Dzire ₹3,800/day, Ertiga ₹4,800/day, Innova ₹5,500/day). Aapko kis date ko aur kahan ke liye cab chahiye?";
+    return "Namaste! Travel to Uttarakhand mein hum Haridwar aur Dehradun se reliable yatra cabs provide karte hain (Dzire ₹3,800/day, Ertiga ₹4,800/day, Innova ₹5,500/day). Aapko kis date ko aur kahan ke liye cab chahiye?";
   }
 
-  if (lower.includes("price") || lower.includes("rate") || lower.includes("cost") || lower.includes("package") || lower.includes("kitna") || lower.includes("budget") || lower.includes("charges")) {
-    return "Namaste ji! Char Dham Yatra (9N/10D) package approx ₹24,000 se ₹28,000 per person aur Do Dham (Kedarnath-Badrinath 5N/6D) approx ₹16,500 se ₹21,500 per person se start hota hai (hotels, transport, breakfast & dinner included). Aap total kitne members hain aur kis month mein travel karenge? Main best offer bata deta hoon. 😊";
+  if (lower.includes("price") || lower.includes("rate") || lower.includes("cost") || lower.includes("package") || lower.includes("kitna") || lower.includes("budget")) {
+    if (lower.includes("kedarnath")) {
+      return "Namaste ji! Kedarnath Yatra (3N/4D) package approx ₹9,500 se ₹13,500 per person se start hota hai (hotel stay, cab, breakfast & dinner included). Aap kitne members hain aur travel date kya hai? Main exact discounted rate bata deta hoon. 😊";
+    }
+    return "Namaste ji! Char Dham Yatra (9N/10D) approx ₹24,000 se ₹28,000 per person aur Kedarnath-Badrinath Do Dham approx ₹16,500 se shuru hota hai. Aap kaun si yatra plan kar rahe hain aur kitne members hain?";
   }
 
   if (lower.includes("call") || lower.includes("baat") || lower.includes("contact") || lower.includes("number") || lower.includes("book")) {
-    return "Ji bilkul! Hamare senior yatra coordinator Mr. Amit Chandra (+91 9719038278) aapse direct connect kar lenge aur complete itinerary share kar denge. Aapka plan kis date se start karne ka hai?";
+    return "Ji bilkul! Hamare senior tour coordinator Mr. Amit Chandra (+91 9719038278) aapse direct connect kar lenge aur complete customized itinerary share kar denge. Aapka plan kis date se start karne ka hai?";
   }
 
-  return "Namaste ji! Travel to Uttarakhand mein aapka swagat hai, main Rishi hoon. 🙏 Aap Char Dham Yatra plan kar rahe hain ya Kedarnath-Badrinath? Aap kitne log travel karenge?";
+  return "Namaste ji! Travel to Uttarakhand mein aapka swagat hai, main Rishi hoon. 🙏 Aapka Haridwar se Kedarnath Yatra ka plan hai ya Char Dham? Aap kitne log travel karenge?";
+}
+
+/**
+ * Transcribes voice note audio buffer to text using Gemini 2.5 Flash multimodal on OpenRouter
+ */
+export async function transcribeAudioVoiceNote(base64Audio: string, mimeType: string = "audio/ogg"): Promise<string> {
+  try {
+    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        max_tokens: 150,
+        temperature: 0.2,
+        messages: [
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: "Please transcribe this customer voice note verbatim. The customer is speaking in Hindi, Hinglish, or English asking about an Uttarakhand trip or pilgrimage. Output ONLY the transcribed spoken text. Do not add explanations, quotes, or notes."
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:${mimeType};base64,${base64Audio}`
+                }
+              }
+            ]
+          }
+        ]
+      })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const transcription = data.choices?.[0]?.message?.content?.trim();
+      if (transcription && transcription.length > 2) {
+        return transcription;
+      }
+    }
+  } catch (err) {
+    console.error("Audio transcription error:", err);
+  }
+  return "";
 }

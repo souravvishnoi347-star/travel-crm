@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase } from "@/lib/supabase";
-import { generateSmartAgentReply } from "@/lib/aiSalesAgent";
+import { generateSmartAgentReply, transcribeAudioVoiceNote } from "@/lib/aiSalesAgent";
 
 // Webhook Verification (GET request from Meta when configuring Webhook URL)
 export async function GET(req: NextRequest) {
@@ -33,111 +33,196 @@ export async function POST(req: NextRequest) {
 
       if (messages && messages.length > 0) {
         const message = messages[0];
-        const senderPhone = message.from; // e.g. "919719038278"
+        const senderPhone = message.from; // e.g. "919410560099"
         const messageType = message.type;
-        const messageText = messageType === "text" ? message.text?.body : "";
+        let messageText = messageType === "text" ? (message.text?.body || "") : "";
+
+        const phoneNumberId = "1291621467367556";
+        const accessToken = "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
+
+        // Voice Note (Audio) handling
+        if (messageType === "audio" && message.audio?.id) {
+          try {
+            console.log(`Processing voice note ${message.audio.id} from ${senderPhone}...`);
+            const mediaRes = await fetch(`https://graph.facebook.com/v22.0/${message.audio.id}`, {
+              headers: { "Authorization": `Bearer ${accessToken}` }
+            });
+            const mediaData = await mediaRes.json();
+            if (mediaData.url) {
+              const audioRes = await fetch(mediaData.url, {
+                headers: { "Authorization": `Bearer ${accessToken}`, "User-Agent": "curl/7.64.1" }
+              });
+              const arrayBuf = await audioRes.arrayBuffer();
+              const base64Audio = Buffer.from(arrayBuf).toString("base64");
+              const mime = mediaData.mime_type || message.audio.mime_type || "audio/ogg";
+              const transcription = await transcribeAudioVoiceNote(base64Audio, mime);
+              if (transcription) {
+                messageText = `[Voice Note]: ${transcription}`;
+                console.log(`Transcribed voice note: "${transcription}"`);
+              } else {
+                messageText = "[Voice Note received - inaudible]";
+              }
+            }
+          } catch (audioErr) {
+            console.error("Failed to process voice note:", audioErr);
+            messageText = "[Voice Note received]";
+          }
+        }
 
         console.log(`INCOMING WA MESSAGE from ${senderPhone}: ${messageText}`);
 
-        // Fetch recent context from CRM lead
-        let previousContext = "";
+        // Fetch existing lead & full chat history from Supabase
         let existingLeadId: string | null = null;
+        let chatHistory: any[] = [];
+        let humanTakeover = false;
+        let previousDestination = "";
+
         try {
           const { data: existingLead } = await supabase
             .from("leads")
-            .select("id, destination, notes")
+            .select("id, name, destination, notes")
             .eq("phone", senderPhone)
             .limit(1)
             .maybeSingle();
 
           if (existingLead) {
             existingLeadId = existingLead.id;
-            previousContext = `${existingLead.destination || ""}: ${existingLead.notes || ""}`;
+            previousDestination = existingLead.destination || "";
+            if (existingLead.notes) {
+              try {
+                const parsed = JSON.parse(existingLead.notes);
+                if (Array.isArray(parsed.chatHistory)) {
+                  chatHistory = parsed.chatHistory;
+                }
+                if (parsed.humanTakeover !== undefined) {
+                  humanTakeover = parsed.humanTakeover;
+                }
+              } catch {
+                // If old plain text format, convert into first history entry
+                chatHistory = [
+                  {
+                    id: "msg-prev",
+                    sender: "customer",
+                    text: existingLead.notes,
+                    timestamp: "Earlier"
+                  }
+                ];
+              }
+            }
           }
         } catch (ctxErr) {
           console.warn("Context fetch error:", ctxErr);
         }
 
-        // Generate intelligent, friendly, natural Hinglish reply with qualification questions
-        const agentReply = await generateSmartAgentReply(messageText, senderPhone, previousContext);
-        console.log(`AI AGENT REPLY to ${senderPhone}: ${agentReply}`);
+        // Add incoming customer message to history
+        const customerMsgObj = {
+          id: message.id || `msg-${Date.now()}`,
+          sender: "customer",
+          text: messageText,
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          status: "read"
+        };
+        chatHistory.push(customerMsgObj);
 
-        const phoneNumberId = "1291621467367556";
-        const accessToken = "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
+        // Intelligent Destination Tagging
+        const lowerMsg = (messageText || "").toLowerCase();
+        let destinationTag = previousDestination || "Char Dham Yatra 2026";
+        if (lowerMsg.includes("kedarnath") && (lowerMsg.includes("sirf") || !lowerMsg.includes("char") || lowerMsg.includes("nhi"))) {
+          destinationTag = "Kedarnath Yatra (Solo/Single Dham)";
+        } else if (lowerMsg.includes("heli") || lowerMsg.includes("chopper")) {
+          destinationTag = "Kedarnath Helicopter Inquiry";
+        } else if (lowerMsg.includes("do dham") || (lowerMsg.includes("kedarnath") && lowerMsg.includes("badrinath"))) {
+          destinationTag = "Do Dham (Kedarnath - Badrinath)";
+        } else if (lowerMsg.includes("teen dham")) {
+          destinationTag = "Teen Dham Yatra";
+        } else if (lowerMsg.includes("char dham") || lowerMsg.includes("chardham")) {
+          destinationTag = "Char Dham Yatra 2026";
+        }
 
-        let metaResultLog = "pending";
+        let agentReply = "";
 
-        if (phoneNumberId && accessToken && senderPhone) {
-          const metaApiUrl = `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`;
-          
-          try {
-            const metaRes = await fetch(metaApiUrl, {
-              method: "POST",
-              headers: {
-                "Authorization": `Bearer ${accessToken}`,
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                messaging_product: "whatsapp",
-                recipient_type: "individual",
-                to: senderPhone,
-                type: "text",
-                text: {
-                  preview_url: false,
-                  body: agentReply
-                }
-              })
-            });
+        // If Human Takeover is active, AI bot stays silent and leaves it to the human
+        if (!humanTakeover) {
+          // Build rich multi-turn conversation context
+          const conversationContext = chatHistory
+            .slice(-8)
+            .map(m => `${m.sender === "customer" ? "Customer" : "Rishi"}: ${m.text}`)
+            .join("\n");
 
-            const metaData = await metaRes.json();
-            metaResultLog = JSON.stringify(metaData);
-            console.log(`Automated reply result to ${senderPhone}:`, metaResultLog);
-          } catch (metaErr: any) {
-            metaResultLog = `ERR: ${metaErr.message}`;
-            console.error("Failed to send WhatsApp message via Meta API:", metaErr);
-          }
+          agentReply = await generateSmartAgentReply(messageText, senderPhone, conversationContext);
+          console.log(`AI AGENT REPLY to ${senderPhone}: ${agentReply}`);
 
-          // Auto-capture or sync lead in Supabase with inquiry & AI qualification details
-          try {
-            const lowerMsg = (messageText || "").toLowerCase();
-            const destinationTag = lowerMsg.includes("heli") || lowerMsg.includes("chopper")
-              ? "Kedarnath Helicopter Inquiry"
-              : lowerMsg.includes("kedarnath")
-              ? "Kedarnath Yatra"
-              : lowerMsg.includes("badrinath")
-              ? "Badrinath / Do Dham"
-              : "Char Dham Yatra 2026";
-
-            const leadNote = `Last Msg: "${messageText}" | AI Reply: "${agentReply.slice(0, 100)}..." | Meta: ${metaResultLog}`;
-
-            if (!existingLeadId) {
-              await supabase.from("leads").insert([
-                {
-                  name: `WhatsApp Lead (+${senderPhone.slice(-4)})`,
-                  phone: senderPhone,
-                  destination: destinationTag,
-                  notes: leadNote,
-                  status: "inquiry"
-                }
-              ]);
-            } else {
-              await supabase.from("leads").update({
-                notes: leadNote,
-                destination: destinationTag
-              }).eq("id", existingLeadId);
+          if (phoneNumberId && accessToken && senderPhone && agentReply) {
+            const metaApiUrl = `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`;
+            try {
+              const metaRes = await fetch(metaApiUrl, {
+                method: "POST",
+                headers: {
+                  "Authorization": `Bearer ${accessToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  messaging_product: "whatsapp",
+                  recipient_type: "individual",
+                  to: senderPhone,
+                  type: "text",
+                  text: {
+                    preview_url: false,
+                    body: agentReply
+                  }
+                })
+              });
+              const metaData = await metaRes.json();
+              console.log(`Reply sent to ${senderPhone}:`, metaData);
+            } catch (metaErr) {
+              console.error("Failed to send WhatsApp message via Meta API:", metaErr);
             }
-          } catch (leadErr) {
-            console.warn("Auto-lead creation error:", leadErr);
+
+            // Append bot reply to chat history
+            chatHistory.push({
+              id: `reply-${Date.now()}`,
+              sender: "bot",
+              text: agentReply,
+              timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+              status: "delivered"
+            });
           }
+        }
+
+        // Save updated chat thread and lead in Supabase
+        try {
+          const notesPayload = JSON.stringify({
+            humanTakeover,
+            chatHistory: chatHistory.slice(-30), // keep last 30 messages
+            lastMsg: messageText,
+            lastReply: agentReply
+          });
+
+          if (!existingLeadId) {
+            await supabase.from("leads").insert([
+              {
+                name: `WhatsApp Lead (+${senderPhone.slice(-4)})`,
+                phone: senderPhone,
+                destination: destinationTag,
+                notes: notesPayload,
+                status: "inquiry"
+              }
+            ]);
+          } else {
+            await supabase.from("leads").update({
+              notes: notesPayload,
+              destination: destinationTag
+            }).eq("id", existingLeadId);
+          }
+        } catch (leadErr) {
+          console.warn("Auto-lead sync error:", leadErr);
         }
       }
     }
 
-    // Meta expects 200 OK immediately for all webhook callbacks
     return NextResponse.json({ status: "EVENT_RECEIVED" }, { status: 200 });
   } catch (error: any) {
     console.error("Webhook processing error:", error);
-    // Still return 200 to prevent Meta from disabling webhook endpoint
     return NextResponse.json({ status: "ERROR", error: error.message }, { status: 200 });
   }
 }

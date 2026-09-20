@@ -88,40 +88,97 @@ export default function WhatsAppDeskPage() {
   const [modalToken, setModalToken] = useState("");
   const [isTestingToken, setIsTestingToken] = useState(false);
   const [tokenTestResult, setTokenTestResult] = useState<{ success?: boolean; message?: string } | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const chatScrollRef = useRef<HTMLDivElement>(null);
 
-  // Load WhatsApp credentials and synced CRM leads
+  // Load chats live from Supabase leads table
+  const loadChatsFromSupabase = async (isManual = false) => {
+    if (isManual) setIsRefreshing(true);
+    try {
+      const { data: dbLeads, error } = await supabase
+        .from("leads")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error || !dbLeads) {
+        if (isManual) setIsRefreshing(false);
+        return;
+      }
+
+      const syncedChats: WhatsAppChat[] = dbLeads
+        .filter((lead: any) => lead.phone) // only leads with phone
+        .map((lead: any) => {
+          let chatMessages: WhatsAppMessage[] = [];
+          let humanTakeover = false;
+
+          if (lead.notes) {
+            try {
+              const parsed = JSON.parse(lead.notes);
+              if (Array.isArray(parsed.chatHistory)) {
+                chatMessages = parsed.chatHistory;
+              }
+              if (parsed.humanTakeover !== undefined) {
+                humanTakeover = parsed.humanTakeover;
+              }
+            } catch {
+              // Legacy plain text note format
+              if (typeof lead.notes === "string" && lead.notes.trim()) {
+                chatMessages = [
+                  {
+                    id: `msg-${lead.id}`,
+                    sender: "customer",
+                    text: lead.notes,
+                    timestamp: new Date(lead.created_at || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  }
+                ];
+              }
+            }
+          }
+
+          return {
+            id: lead.id,
+            customerName: lead.name || `Devotee (+${(lead.phone || '').slice(-4)})`,
+            phone: lead.phone,
+            destination: lead.destination || "Uttarakhand Yatra",
+            humanTakeover,
+            unreadCount: 0,
+            lastMessageTime: chatMessages.length > 0 ? chatMessages[chatMessages.length - 1].timestamp : "Recent",
+            messages: chatMessages,
+            status: (lead.status as any) || "inquiry"
+          };
+        });
+
+      if (syncedChats.length > 0) {
+        setChats(syncedChats);
+        setSelectedChatId(prev => (prev && syncedChats.some(c => c.id === prev) ? prev : syncedChats[0].id));
+      }
+    } catch (err) {
+      console.warn("Failed to load chats from Supabase:", err);
+    } finally {
+      if (isManual) setIsRefreshing(false);
+    }
+  };
+
+  // Load WhatsApp credentials & start real-time sync
   useEffect(() => {
     if (typeof window !== "undefined") {
       try {
         const pId = localStorage.getItem("triloki_meta_phone_number_id") || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
         const token = localStorage.getItem("triloki_meta_access_token") || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
         setMetaConfig({ phoneNumberId: pId, accessToken: token });
-
-        const savedChats = localStorage.getItem("triloki_whatsapp_desk_chats");
-        if (savedChats) {
-          const parsed = JSON.parse(savedChats);
-          if (Array.isArray(parsed)) {
-            // Purge dummy mock data like Sanjay Singhania or chat-1..4
-            const cleanChats = parsed.filter((c: any) => 
-              !["chat-1", "chat-2", "chat-3", "chat-4"].includes(c.id) &&
-              c.customerName !== "Sanjay Singhania" &&
-              c.customerName !== "Pooja Hegde & Family" &&
-              c.customerName !== "Dr. Arvind Kulkarni" &&
-              c.customerName !== "Vikas Malhotra"
-            );
-            if (cleanChats.length !== parsed.length) {
-              localStorage.setItem("triloki_whatsapp_desk_chats", JSON.stringify(cleanChats));
-            }
-            setChats(cleanChats);
-            if (cleanChats.length > 0) {
-              setSelectedChatId(cleanChats[0].id);
-            }
-          }
-        }
       } catch (e) {}
     }
+
+    // Initial load from Supabase
+    loadChatsFromSupabase();
+
+    // Auto-poll every 5 seconds for new customer WhatsApp messages
+    const pollTimer = setInterval(() => {
+      loadChatsFromSupabase();
+    }, 5000);
+
+    return () => clearInterval(pollTimer);
   }, []);
 
   const saveChats = (updated: WhatsAppChat[]) => {
@@ -198,18 +255,22 @@ export default function WhatsAppDeskPage() {
   }, [chats, filterMode, searchQuery]);
 
   // Toggle Human Takeover
-  const toggleHumanTakeover = (chatId: string) => {
+  const toggleHumanTakeover = async (chatId: string) => {
+    const targetChat = chats.find(c => c.id === chatId);
+    if (!targetChat) return;
+    const nextState = !targetChat.humanTakeover;
+
+    const systemMessage: WhatsAppMessage = {
+      id: `sys-${Date.now()}`,
+      sender: "agent",
+      text: nextState 
+        ? "⚠️ Human Takeover Enabled: AI Bot paused. You can now chat manually with this customer." 
+        : "🤖 AI Bot Resumed: Automated responses re-enabled.",
+      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
     const updated = chats.map(c => {
       if (c.id === chatId) {
-        const nextState = !c.humanTakeover;
-        const systemMessage: WhatsAppMessage = {
-          id: `sys-${Date.now()}`,
-          sender: "agent",
-          text: nextState 
-            ? "⚠️ Human Takeover Enabled: AI Bot paused. You can now chat manually with this customer." 
-            : "🤖 AI Bot Resumed: Automated responses re-enabled.",
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-        };
         return {
           ...c,
           humanTakeover: nextState,
@@ -218,9 +279,26 @@ export default function WhatsAppDeskPage() {
       }
       return c;
     });
+
     saveChats(updated);
+
+    // Persist to Supabase
+    try {
+      const chatToSave = updated.find(c => c.id === chatId);
+      if (chatToSave) {
+        await supabase.from("leads").update({
+          notes: JSON.stringify({
+            humanTakeover: nextState,
+            chatHistory: chatToSave.messages
+          })
+        }).eq("id", chatId);
+      }
+    } catch (e) {
+      console.warn("Failed to persist human takeover to Supabase:", e);
+    }
+
     showToast(
-      updated.find(c => c.id === chatId)?.humanTakeover 
+      nextState 
         ? "👤 Human Takeover Activated: AI Bot is paused for this chat." 
         : "🤖 AI Bot Re-activated for this chat."
     );
@@ -290,6 +368,22 @@ export default function WhatsAppDeskPage() {
     });
 
     saveChats(updated);
+
+    // Persist to Supabase
+    try {
+      const targetChat = updated.find(c => c.id === activeChat.id);
+      if (targetChat) {
+        await supabase.from("leads").update({
+          notes: JSON.stringify({
+            humanTakeover: targetChat.humanTakeover,
+            chatHistory: targetChat.messages
+          })
+        }).eq("id", activeChat.id);
+      }
+    } catch (e) {
+      console.warn("Failed to persist sent message to Supabase:", e);
+    }
+
     setIsSending(false);
   };
 
@@ -532,6 +626,18 @@ export default function WhatsAppDeskPage() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
+          {/* Refresh / Sync Chats Button */}
+          <button
+            type="button"
+            onClick={() => loadChatsFromSupabase(true)}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 px-3.5 py-2.5 rounded-2xl border border-emerald-200 bg-emerald-50/90 hover:bg-emerald-100 text-emerald-800 text-xs font-bold transition shadow-2xs cursor-pointer disabled:opacity-60"
+            title="Fetch latest WhatsApp messages and leads from cloud database"
+          >
+            <RefreshCw className={`w-4 h-4 text-emerald-700 ${isRefreshing ? "animate-spin" : ""}`} />
+            <span>{isRefreshing ? "Syncing..." : "Sync Chats"}</span>
+          </button>
+
           {/* Meta API Settings Button */}
           <button
             type="button"
