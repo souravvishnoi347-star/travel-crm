@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { matchBotResponse } from "@/lib/botRules";
 import { supabase } from "@/lib/supabase";
+import { generateSmartAgentReply } from "@/lib/aiSalesAgent";
 
 // Webhook Verification (GET request from Meta when configuring Webhook URL)
 export async function GET(req: NextRequest) {
@@ -39,9 +39,28 @@ export async function POST(req: NextRequest) {
 
         console.log(`INCOMING WA MESSAGE from ${senderPhone}: ${messageText}`);
 
-        // Match bot rules
-        const matched = matchBotResponse(messageText || "");
-        console.log(`Matched Rule: ${matched.title} (${matched.ruleId})`);
+        // Fetch recent context from CRM lead
+        let previousContext = "";
+        let existingLeadId: string | null = null;
+        try {
+          const { data: existingLead } = await supabase
+            .from("leads")
+            .select("id, destination, notes")
+            .eq("phone", senderPhone)
+            .limit(1)
+            .maybeSingle();
+
+          if (existingLead) {
+            existingLeadId = existingLead.id;
+            previousContext = `${existingLead.destination || ""}: ${existingLead.notes || ""}`;
+          }
+        } catch (ctxErr) {
+          console.warn("Context fetch error:", ctxErr);
+        }
+
+        // Generate intelligent, friendly, natural Hinglish reply with qualification questions
+        const agentReply = await generateSmartAgentReply(messageText, senderPhone, previousContext);
+        console.log(`AI AGENT REPLY to ${senderPhone}: ${agentReply}`);
 
         const phoneNumberId = "1291621467367556";
         const accessToken = "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
@@ -64,8 +83,8 @@ export async function POST(req: NextRequest) {
                 to: senderPhone,
                 type: "text",
                 text: {
-                  preview_url: true,
-                  body: matched.response
+                  preview_url: false,
+                  body: agentReply
                 }
               })
             });
@@ -78,23 +97,25 @@ export async function POST(req: NextRequest) {
             console.error("Failed to send WhatsApp message via Meta API:", metaErr);
           }
 
-          // Auto-capture or sync lead in Supabase with Meta delivery confirmation
+          // Auto-capture or sync lead in Supabase with inquiry & AI qualification details
           try {
-            const { data: existingLead } = await supabase
-              .from("leads")
-              .select("id")
-              .eq("phone", senderPhone)
-              .limit(1)
-              .maybeSingle();
+            const lowerMsg = (messageText || "").toLowerCase();
+            const destinationTag = lowerMsg.includes("heli") || lowerMsg.includes("chopper")
+              ? "Kedarnath Helicopter Inquiry"
+              : lowerMsg.includes("kedarnath")
+              ? "Kedarnath Yatra"
+              : lowerMsg.includes("badrinath")
+              ? "Badrinath / Do Dham"
+              : "Char Dham Yatra 2026";
 
-            const leadNote = `Inquiry: "${messageText}" | Bot: ${matched.title} | Meta API: ${metaResultLog}`;
+            const leadNote = `Last Msg: "${messageText}" | AI Reply: "${agentReply.slice(0, 100)}..." | Meta: ${metaResultLog}`;
 
-            if (!existingLead) {
+            if (!existingLeadId) {
               await supabase.from("leads").insert([
                 {
                   name: `WhatsApp Lead (+${senderPhone.slice(-4)})`,
                   phone: senderPhone,
-                  destination: matched.ruleId === "helicopter" ? "Kedarnath Copter Inquiry" : "Chardham / Uttarakhand",
+                  destination: destinationTag,
                   notes: leadNote,
                   status: "inquiry"
                 }
@@ -102,8 +123,8 @@ export async function POST(req: NextRequest) {
             } else {
               await supabase.from("leads").update({
                 notes: leadNote,
-                destination: matched.ruleId === "helicopter" ? "Kedarnath Copter Inquiry" : "Chardham / Uttarakhand"
-              }).eq("id", existingLead.id);
+                destination: destinationTag
+              }).eq("id", existingLeadId);
             }
           } catch (leadErr) {
             console.warn("Auto-lead creation error:", leadErr);
