@@ -43,14 +43,10 @@ export async function POST(req: NextRequest) {
         const matched = matchBotResponse(messageText || "");
         console.log(`Matched Rule: ${matched.title} (${matched.ruleId})`);
 
-        const ACTIVE_WORKING_TOKEN = "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
-        let phoneNumberId = process.env.META_WA_PHONE_NUMBER_ID || process.env.NEXT_PUBLIC_META_WA_PHONE_NUMBER_ID || "1291621467367556";
-        let accessToken = process.env.META_WA_ACCESS_TOKEN || process.env.NEXT_PUBLIC_META_WA_ACCESS_TOKEN || ACTIVE_WORKING_TOKEN;
+        const phoneNumberId = "1291621467367556";
+        const accessToken = "EAAT7x0bHdhABShqV9ZAc3gsn4ABlXvNXHwzcm2xi9x9hiILpwEaU2cb2r3h7dY7atZAgyKP88bLGgNwxSZAFCYtnJQiXmykP4TvsiugubZCf4YGqqG1lNH9g8oj4ZBmpfB9NfTISzbxAujSZBZBN9Wan1O0QXiQ0nyZBrt1dUtYFxXZB6JEHhZB7yb0FpS63ZCklgZDZD";
 
-        // If env has the old unassigned token (starting with EAAT7x0bHdhABSlxA), use the verified active token
-        if (accessToken.includes("ABSlxA") || !accessToken.startsWith("EAAT")) {
-          accessToken = ACTIVE_WORKING_TOKEN;
-        }
+        let metaResultLog = "pending";
 
         if (phoneNumberId && accessToken && senderPhone) {
           const metaApiUrl = `https://graph.facebook.com/v22.0/${phoneNumberId}/messages`;
@@ -75,12 +71,14 @@ export async function POST(req: NextRequest) {
             });
 
             const metaData = await metaRes.json();
-            console.log(`Automated reply result to ${senderPhone}:`, JSON.stringify(metaData));
-          } catch (metaErr) {
+            metaResultLog = JSON.stringify(metaData);
+            console.log(`Automated reply result to ${senderPhone}:`, metaResultLog);
+          } catch (metaErr: any) {
+            metaResultLog = `ERR: ${metaErr.message}`;
             console.error("Failed to send WhatsApp message via Meta API:", metaErr);
           }
 
-          // Auto-capture or sync lead in Supabase
+          // Auto-capture or sync lead in Supabase with Meta delivery confirmation
           try {
             const { data: existingLead } = await supabase
               .from("leads")
@@ -89,19 +87,21 @@ export async function POST(req: NextRequest) {
               .limit(1)
               .maybeSingle();
 
+            const leadNote = `Inquiry: "${messageText}" | Bot: ${matched.title} | Meta API: ${metaResultLog}`;
+
             if (!existingLead) {
               await supabase.from("leads").insert([
                 {
                   name: `WhatsApp Lead (+${senderPhone.slice(-4)})`,
                   phone: senderPhone,
                   destination: matched.ruleId === "helicopter" ? "Kedarnath Copter Inquiry" : "Chardham / Uttarakhand",
-                  notes: `Inquiry: "${messageText}" | Bot Action: ${matched.title}`,
+                  notes: leadNote,
                   status: "inquiry"
                 }
               ]);
             } else {
               await supabase.from("leads").update({
-                notes: `Inquiry: "${messageText}" | Bot Action: ${matched.title}`,
+                notes: leadNote,
                 destination: matched.ruleId === "helicopter" ? "Kedarnath Copter Inquiry" : "Chardham / Uttarakhand"
               }).eq("id", existingLead.id);
             }
