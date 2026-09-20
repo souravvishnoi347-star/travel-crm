@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { CrmLayout } from "@/components/CrmLayout";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Travel to Uttarakhand - Tourism CRM & Operations",
@@ -18,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased bg-slate-100 text-slate-900 min-h-screen`}>
+      <body className="font-sans antialiased bg-slate-100 text-slate-900 min-h-screen">
         <AuthProvider>
           <CrmLayout>
             {children}
