@@ -76,6 +76,8 @@ export async function POST(req: NextRequest) {
         let chatHistory: any[] = [];
         let humanTakeover = false;
         let previousDestination = "";
+        let paxCount = "";
+        let travelDates = "";
 
         try {
           const { data: existingLead } = await supabase
@@ -97,6 +99,8 @@ export async function POST(req: NextRequest) {
                 if (parsed.humanTakeover !== undefined) {
                   humanTakeover = parsed.humanTakeover;
                 }
+                paxCount = parsed.paxCount || "";
+                travelDates = parsed.travelDates || "";
               } catch {
                 // If old plain text format, convert into first history entry
                 chatHistory = [
@@ -124,10 +128,28 @@ export async function POST(req: NextRequest) {
         };
         chatHistory.push(customerMsgObj);
 
-        // Intelligent Destination Tagging
+        // Intelligent Destination & Info Extraction
         const lowerMsg = (messageText || "").toLowerCase();
+
+        // Extract Pax Count if mentioned
+        const paxMatch = lowerMsg.match(/(\d+)\s*(people|pax|persons?|members?|log|aadmi|admi)/i);
+        if (paxMatch) {
+          paxCount = `${paxMatch[1]} members`;
+        }
+
+        // Extract Dates if mentioned
+        const dateKeywords = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", "दिसंबर", "अक्टूबर", "नवंबर", "मई", "जून"];
+        for (const mon of dateKeywords) {
+          if (lowerMsg.includes(mon)) {
+            travelDates = messageText.replace(/^\[Voice Note\]:\s*/i, "").trim().slice(0, 50);
+            break;
+          }
+        }
+
         let destinationTag = previousDestination || "Char Dham Yatra 2026";
-        if (lowerMsg.includes("kedarnath") && (lowerMsg.includes("sirf") || !lowerMsg.includes("char") || lowerMsg.includes("nhi"))) {
+        if (lowerMsg.includes("auli") || lowerMsg.includes("chopta")) {
+          destinationTag = "Auli Chopta Winter Package";
+        } else if (lowerMsg.includes("kedarnath") && (lowerMsg.includes("sirf") || !lowerMsg.includes("char") || lowerMsg.includes("nhi"))) {
           destinationTag = "Kedarnath Yatra (Solo/Single Dham)";
         } else if (lowerMsg.includes("heli") || lowerMsg.includes("chopper")) {
           destinationTag = "Kedarnath Helicopter Inquiry";
@@ -143,13 +165,13 @@ export async function POST(req: NextRequest) {
 
         // If Human Takeover is active, AI bot stays silent and leaves it to the human
         if (!humanTakeover) {
-          // Build rich multi-turn conversation context
-          const conversationContext = chatHistory
-            .slice(-8)
-            .map(m => `${m.sender === "customer" ? "Customer" : "Rishi"}: ${m.text}`)
-            .join("\n");
-
-          agentReply = await generateSmartAgentReply(messageText, senderPhone, conversationContext);
+          // Pass the structured history array directly for true native multi-turn memory
+          agentReply = await generateSmartAgentReply(
+            messageText, 
+            senderPhone, 
+            chatHistory, 
+            { pax: paxCount, dates: travelDates, destination: destinationTag }
+          );
           console.log(`AI AGENT REPLY to ${senderPhone}: ${agentReply}`);
 
           if (phoneNumberId && accessToken && senderPhone && agentReply) {
@@ -189,11 +211,13 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        // Save updated chat thread and lead in Supabase
+        // Save updated chat thread, pax count, dates and lead in Supabase
         try {
           const notesPayload = JSON.stringify({
+            paxCount,
+            travelDates,
             humanTakeover,
-            chatHistory: chatHistory.slice(-30), // keep last 30 messages
+            chatHistory: chatHistory.slice(-35), // keep last 35 messages
             lastMsg: messageText,
             lastReply: agentReply
           });

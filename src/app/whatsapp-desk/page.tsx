@@ -111,6 +111,8 @@ export default function WhatsAppDeskPage() {
         .map((lead: any) => {
           let chatMessages: WhatsAppMessage[] = [];
           let humanTakeover = false;
+          let paxCount = "";
+          let travelDates = "";
 
           if (lead.notes) {
             try {
@@ -121,6 +123,8 @@ export default function WhatsAppDeskPage() {
               if (parsed.humanTakeover !== undefined) {
                 humanTakeover = parsed.humanTakeover;
               }
+              paxCount = parsed.paxCount || "";
+              travelDates = parsed.travelDates || "";
             } catch {
               // Legacy plain text note format
               if (typeof lead.notes === "string" && lead.notes.trim()) {
@@ -141,6 +145,8 @@ export default function WhatsAppDeskPage() {
             customerName: lead.name || `Devotee (+${(lead.phone || '').slice(-4)})`,
             phone: lead.phone,
             destination: lead.destination || "Uttarakhand Yatra",
+            travelDates: travelDates || undefined,
+            paxCount: paxCount || undefined,
             humanTakeover,
             unreadCount: 0,
             lastMessageTime: chatMessages.length > 0 ? chatMessages[chatMessages.length - 1].timestamp : "Recent",
@@ -150,7 +156,13 @@ export default function WhatsAppDeskPage() {
         });
 
       if (syncedChats.length > 0) {
-        setChats(syncedChats);
+        setChats(prev => {
+          const hasChanged = prev.length !== syncedChats.length || syncedChats.some((c, i) => {
+            const old = prev[i];
+            return !old || old.id !== c.id || old.messages.length !== c.messages.length || old.humanTakeover !== c.humanTakeover;
+          });
+          return hasChanged ? syncedChats : prev;
+        });
         setSelectedChatId(prev => (prev && syncedChats.some(c => c.id === prev) ? prev : syncedChats[0].id));
       }
     } catch (err) {
@@ -873,13 +885,31 @@ export default function WhatsAppDeskPage() {
                       </div>
 
                       <p className="text-[11px] text-gray-600 truncate mt-1">
-                        {lastMsg ? lastMsg.text : "New conversation started"}
+                        {lastMsg ? (
+                          lastMsg.text.startsWith("[Voice Note]:") ? (
+                            <span className="text-emerald-700 font-medium">
+                              🎤 {lastMsg.text.replace(/^\[Voice Note\]:\s*/i, "")}
+                            </span>
+                          ) : (
+                            lastMsg.text
+                          )
+                        ) : "New conversation started"}
                       </p>
 
-                      <div className="flex items-center gap-1.5 mt-1.5">
+                      <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
                         <span className="text-[9.5px] px-1.5 py-0.2 rounded font-bold bg-sky-50 text-sky-700 border border-sky-200 truncate max-w-[140px]">
                           {chat.destination}
                         </span>
+                        {chat.travelDates && (
+                          <span className="text-[9.5px] px-1.5 py-0.2 rounded font-bold bg-amber-50 text-amber-800 border border-amber-200 truncate max-w-[110px]">
+                            📅 {chat.travelDates}
+                          </span>
+                        )}
+                        {chat.paxCount && (
+                          <span className="text-[9.5px] px-1.5 py-0.2 rounded font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                            👥 {chat.paxCount}
+                          </span>
+                        )}
                         {chat.status === "confirmed" && (
                           <span className="text-[9.5px] px-1.5 py-0.2 rounded font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
                             ✓ Confirmed
@@ -957,9 +987,18 @@ export default function WhatsAppDeskPage() {
                         {activeChat.phone}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 text-[11px] text-gray-600 mt-0.5">
+                    <div className="flex items-center gap-2 text-[11px] text-gray-600 mt-0.5 flex-wrap">
                       <span className="text-sky-700 font-semibold">{activeChat.destination}</span>
-                      {activeChat.travelDates && <span>• 📅 {activeChat.travelDates}</span>}
+                      {activeChat.travelDates && (
+                        <span className="bg-amber-50 text-amber-800 px-2 py-0.5 rounded border border-amber-200 font-bold text-[10.5px]">
+                          📅 {activeChat.travelDates}
+                        </span>
+                      )}
+                      {activeChat.paxCount && (
+                        <span className="bg-emerald-50 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200 font-bold text-[10.5px]">
+                          👥 {activeChat.paxCount}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1171,7 +1210,18 @@ export default function WhatsAppDeskPage() {
                       </div>
                     )}
 
-                    <p>{msg.text}</p>
+                    {msg.text.startsWith("[Voice Note]:") ? (
+                      <div className="space-y-1">
+                        <div className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md">
+                          <span>🎤 Voice Note Transcribed</span>
+                        </div>
+                        <p className="text-gray-900 italic">
+                          &ldquo;{msg.text.replace(/^\[Voice Note\]:\s*/i, "")}&rdquo;
+                        </p>
+                      </div>
+                    ) : (
+                      <p>{msg.text}</p>
+                    )}
 
                     <div className="flex items-center justify-end gap-1 mt-1 text-[9.5px] text-gray-400">
                       <span>{msg.timestamp}</span>

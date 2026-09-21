@@ -9,72 +9,127 @@ const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || "sk-or-v1-abd3e74bd
 const SYSTEM_PROMPT = `You are Rishi, a friendly, courteous, and knowledgeable pilgrimage and travel expert at 'Travel to Uttarakhand' (www.traveltouttrakhand.com).
 Your mission is to welcome devotees and travelers on WhatsApp, answer general inquiries warmly, qualify leads naturally, and assist them in planning their dream Uttarakhand trip.
 
-CRITICAL CONVERSATIONAL RULES:
-1. LISTEN TO THE CUSTOMER'S REQUEST PRECISELY:
-   - If a customer says "Sirf Kedarnath", "Chardham nahi chahiye", or mentions a specific dham, DO NOT push Char Dham or other packages on them!
-   - Acknowledge immediately: "Ji bilkul! Sirf Kedarnath Yatra ka complete package ho jayega."
-   - Stay 100% focused ONLY on what the customer requested.
-2. LANGUAGE & TONE:
-   - Reply in clean, natural, respectful Hinglish (Hindi in Roman alphabets with common English travel words).
-   - NEVER use heavy, formal Shuddh Hindi (no 'अनाधिकृत', 'श्रीमान', 'सात्विक', 'पंजीकरण', 'सुविधाजनक'). Keep it conversational, friendly, and respectful (use 'Aap', 'Ji').
-   - Keep messages SHORT & CRISP (2 to 4 sentences maximum). It must feel like a fast real human WhatsApp message.
-3. LEAD QUALIFICATION:
-   - Do NOT dump phone numbers in every message.
-   - Gently ask 1 or 2 qualification questions:
-     * "Aap total kitne log travel karenge?" (Family / group size)
-     * "Kaun se month ya dates ka plan hai?" (May-June ya Sept-Oct)
-     * "Aap Haridwar, Dehradun ya Delhi kahan se start karenge?"
-4. SALES HANDOFF:
-   - Share contact details ONLY when the customer asks: "Call me", "Booking karni hai", "Advance kaise bheju", "Direct baat karni hai".
+CRITICAL CONVERSATIONAL & MEMORY RULES:
+1. NEVER RE-ASK DETAILS ALREADY GIVEN (STRICT MEMORY):
+   - CAREFULLY review the previous messages in this conversation.
+   - If the customer has ALREADY told you their travel dates/month (e.g., "25 december", "1st october"), pax count (e.g., "4 members", "2 log"), starting city, or destination, NEVER ask for that information again!
+   - Acknowledge what they said and move forward with the next step (e.g., sharing the package details, approximate cost, or day-wise itinerary).
+   - Only ask for information that has NOT yet been mentioned.
+
+2. NEVER CROSS-SELL OR PUSH UNWANTED PACKAGES:
+   - If the customer asked for "Kedarnath only", "Auli Chopta", "Rishikesh", etc., DO NOT push Char Dham on them!
+   - Stay 100% focused on their chosen destination.
+
+3. NEVER OUTPUT INTERNAL THOUGHTS OR MONOLOGUE:
+   - Output ONLY the final message to be sent directly to the customer on WhatsApp.
+   - Strictly NEVER output internal thinking, scratchpad, reasoning, commentary, or prefixes like "Thought:", "User says:", "I should reply:", or "Output:".
+   - Speak directly to the customer as Rishi.
+
+4. LANGUAGE & TONE:
+   - Natural, conversational Hinglish (Hindi written in Roman alphabets mixed with English travel terms).
+   - NEVER use heavy formal Shuddh Hindi (avoid 'अनाधिकृत', 'श्रीमान', 'सात्विक', 'पंजीकरण'). Keep it friendly, warm, and respectful (use 'Aap', 'Ji').
+   - Keep messages crisp and concise (2 to 5 sentences).
+
+5. SALES HANDOFF:
+   - Share coordinator contact only when the customer explicitly asks for direct call, booking payment, or owner contact.
    - Coordinator: Mr. Amit Chandra (+91 9719038278).
 
 OFFICIAL PACKAGES & PRICING (FROM TRAVELTOUTTRAKHAND.COM):
 - KEDARNATH ONLY (3 Nights / 4 Days ex-Haridwar/Rishikesh):
   * Route: Haridwar/Rishikesh -> Guptkashi/Sonprayag -> Kedarnath Dham Darshan -> Haridwar
   * Group/Sharing rate: approx ₹9,500 - ₹12,500 per person
-  * Private Deluxe (Dedicated Cab + Hotel/Resort Stay + MAP Breakfast & Dinner + Yatra Registration): approx ₹13,500 - ₹17,500 per person (based on 2-4 pax).
+  * Private Deluxe (Dedicated Cab + Hotel/Resort Stay + MAP Breakfast & Dinner + Yatra Registration): approx ₹13,500 - ₹17,500 per person.
+- AULI, CHOPTA & TUNGNATH (4N/5D or 5N/6D):
+  * Approx ₹12,000 - ₹16,000 per person (Includes Haridwar pickup, cab, snow stay/camps, Tungnath-Chandrashila trek, Auli cable car/skiing point, meals).
 - CHAR DHAM YATRA (9N/10D):
   * Group/Sharing: approx ₹24,000 - ₹28,000/person | Private Deluxe: approx ₹28,000 - ₹34,000/person.
 - DO DHAM (Kedarnath & Badrinath - 5N/6D): approx ₹16,500 - ₹21,500/person.
-- DO DHAM (Yamunotri & Gangotri - 4N/5D): approx ₹13,500 - ₹17,500/person.
-- BADRINATH ONLY (2N/3D): approx ₹8,500 - ₹11,500/person.
 - HELICOPTER:
-  * Kedarnath shuttle tickets must be booked via IRCTC (heliyatra.irctc.co.in) to avoid scams. We provide complete ground VIP stays, darshan pass, and cab package.
-  * Char Dham 5N/6D VIP Helicopter (with Hyatt Regency stay): ~₹1,95,000 - ₹2,10,000/person.
-  * Do Dham Same Day Helicopter: ~₹95,000 - ₹1,15,000/person.
+  * Kedarnath shuttle tickets must be booked via IRCTC (heliyatra.irctc.co.in). We provide complete ground VIP stays, darshan pass, and cab package.
 - TAXI RENTALS (Haridwar / Dehradun):
   * Dzire ₹3,800/day | Ertiga ₹4,800/day | Innova ₹5,500/day | Crysta ₹6,500/day | Tempo 12s ₹8,000/day.
 
 Never say you are an AI or bot. You are Rishi from Travel to Uttarakhand.`;
 
+/**
+ * Strips any leaked model thinking, reasoning, or prefixes
+ */
+function cleanAgentReply(rawText: string): string {
+  if (!rawText) return "";
+  let text = rawText;
+
+  // Strip <think>...</think> or <thought>...</thought> tags
+  text = text.replace(/<think>[\s\S]*?<\/think>/gi, "");
+  text = text.replace(/<thought>[\s\S]*?<\/thought>/gi, "");
+
+  // Strip "Thought: ... Output: ..." or "User says: ... Reply: ..."
+  if (/Output:\s*/i.test(text)) {
+    const parts = text.split(/Output:\s*/i);
+    text = parts[parts.length - 1];
+  }
+  if (/Reply:\s*/i.test(text)) {
+    const parts = text.split(/Reply:\s*/i);
+    text = parts[parts.length - 1];
+  }
+  if (/Assistant:\s*/i.test(text)) {
+    const parts = text.split(/Assistant:\s*/i);
+    text = parts[parts.length - 1];
+  }
+
+  // Strip code blocks if wrapped
+  text = text.replace(/^```[a-z]*\n?/i, "").replace(/```$/i, "");
+
+  return text.trim();
+}
+
 export async function generateSmartAgentReply(
   userMessage: string,
   customerPhone?: string,
-  chatContext?: string
+  historyOrContext?: any,
+  knownLeadData?: { pax?: string; dates?: string; destination?: string }
 ): Promise<string> {
   const cleanInput = (userMessage || "").trim();
   if (!cleanInput) {
     return "Namaste ji! Travel to Uttarakhand mein aapka swagat hai. Main Rishi hoon. Aap kaun si yatra plan kar rahe hain? 😊";
   }
 
-  // Attempt 1: Call OpenRouter with Gemini 2.5 Flash & DeepSeek
+  // Construct true multi-turn messages array
+  const conversationMessages: any[] = [{ role: "system", content: SYSTEM_PROMPT }];
+
+  // If known details exist, pin them to system prompt so the model NEVER forgets them
+  if (knownLeadData && (knownLeadData.pax || knownLeadData.dates || knownLeadData.destination)) {
+    conversationMessages.push({
+      role: "system",
+      content: `CONFIRMED CLIENT DETAILS SO FAR (DO NOT ASK FOR THESE AGAIN):\n- Destination: ${knownLeadData.destination || "Not specified"}\n- Dates: ${knownLeadData.dates || "Not specified"}\n- Group Size: ${knownLeadData.pax || "Not specified"}`
+    });
+  }
+
+  if (Array.isArray(historyOrContext)) {
+    // Native structured history (last 12 messages)
+    const recent = historyOrContext.slice(-12);
+    for (const h of recent) {
+      if (!h.text || !h.text.trim()) continue;
+      conversationMessages.push({
+        role: h.sender === "customer" ? "user" : "assistant",
+        content: h.text
+      });
+    }
+  } else if (typeof historyOrContext === "string" && historyOrContext.trim()) {
+    conversationMessages.push({
+      role: "system",
+      content: `Previous chat background with this client:\n${historyOrContext.slice(-1200)}`
+    });
+  }
+
+  conversationMessages.push({ role: "user", content: cleanInput });
+
+  // Call OpenRouter with Gemini 2.5 Flash & DeepSeek
   const models = ["google/gemini-2.5-flash", "deepseek/deepseek-chat"];
 
   for (const model of models) {
     try {
-      const messages: any[] = [{ role: "system", content: SYSTEM_PROMPT }];
-
-      if (chatContext) {
-        messages.push({
-          role: "system",
-          content: `Recent conversation history with this client:\n${chatContext.slice(-800)}`
-        });
-      }
-
-      messages.push({ role: "user", content: cleanInput });
-
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 12000); // 12s timeout for reliable AI response
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
 
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
@@ -86,9 +141,9 @@ export async function generateSmartAgentReply(
         },
         body: JSON.stringify({
           model,
-          messages,
-          max_tokens: 250,
-          temperature: 0.6
+          messages: conversationMessages,
+          max_tokens: 280,
+          temperature: 0.5
         }),
         signal: controller.signal
       });
@@ -97,9 +152,10 @@ export async function generateSmartAgentReply(
 
       if (res.ok) {
         const data = await res.json();
-        const reply = data.choices?.[0]?.message?.content?.trim();
-        if (reply) {
-          return reply;
+        const rawReply = data.choices?.[0]?.message?.content?.trim();
+        const cleaned = cleanAgentReply(rawReply);
+        if (cleaned && cleaned.length > 5) {
+          return cleaned;
         }
       }
     } catch (err) {
@@ -176,7 +232,7 @@ export async function transcribeAudioVoiceNote(base64Audio: string, mimeType: st
       const data = await res.json();
       const transcription = data.choices?.[0]?.message?.content?.trim();
       if (transcription && transcription.length > 2) {
-        return transcription;
+        return cleanAgentReply(transcription);
       }
     }
   } catch (err) {
