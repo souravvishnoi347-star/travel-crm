@@ -32,6 +32,11 @@ const COLUMNS = [
 ];
 
 export const SPIRITUAL_YATRA_PRESETS = [
+  "Auli Winter Wonderland (3D/2N · 2N Joshimath)",
+  "Chopta & Tungnath Snow (3D/2N · 2N Chopta)",
+  "Rishikesh + Mussoorie (3D/2N · 1N Rishikesh + 1N Mussoorie)",
+  "Auli + Chopta + Tungnath (5D/4N · 2N Ukhimath/Chopta + 2N Joshimath/Rudraprayag)",
+  "Auli + Chopta + Tungnath + Mussoorie (6D/5N · 1N Mussoorie + 2N Ukhimath + 1N Joshimath + 1N Joshimath/Rudraprayag)",
   "Char Dham Yatra (Yamunotri · Gangotri · Kedarnath · Badrinath)",
   "Do Dham Yatra (Kedarnath + Badrinath)",
   "Do Dham Yatra (Yamunotri + Gangotri)",

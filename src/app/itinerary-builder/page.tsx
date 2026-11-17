@@ -79,11 +79,16 @@ export interface DayPlan {
   route: string;
   activities: string[];
   overnightStay: string;
+  photoUrl?: string;
+  photoCaption?: string;
+  photoUrl2?: string;
+  photoCaption2?: string;
 }
 
 export interface PricingTier {
   package: string;
   price: string;
+  totalPackagePrice?: string;
   hotelCategory: string;
   meals: string;
   specialFeature: string;
@@ -194,6 +199,41 @@ export const CURATED_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
     location: "Kedarnath Dham",
     roomType: "Tent Only (Without Food)",
     caption: "High-altitude mountain alpine camp / Swiss tents with warm bedding near shrine"
+  }
+];
+
+export const WINTER_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
+  {
+    id: "whp-1",
+    url: "/gallery/winter_stay_resort.jpeg",
+    hotelName: "Himalayan Alpine Resort & Heated Stay",
+    location: "Joshimath / Chopta",
+    roomType: "Premium Alpine Heated Room",
+    caption: "Heated mountain rooms with uninterrupted snow peaks view, 24/7 hot water & cozy alpine ambiance"
+  },
+  {
+    id: "whp-2",
+    url: "/gallery/winter_stay_room1.jpeg",
+    hotelName: "Deluxe Mountain View Winter Retreat",
+    location: "Joshimath / Ukhimath",
+    roomType: "Deluxe Mountain View Room",
+    caption: "Spacious wooden styled rooms with heavy winter quilts, geyser facility and panoramic valley vistas"
+  },
+  {
+    id: "whp-3",
+    url: "/gallery/winter_stay_room2.jpeg",
+    hotelName: "Boutique Snow Comfort Hotel",
+    location: "Mussoorie / Rishikesh",
+    roomType: "Cozy Family Suite",
+    caption: "Modern comfort stay with warm hospitality, in-house dining, bonfire arrangements and mountain tranquility"
+  },
+  {
+    id: "whp-4",
+    url: "/gallery/joshimath_stay.jpeg",
+    hotelName: "Joshimath Verified Comfort Stay",
+    location: "Joshimath / Rudraprayag",
+    roomType: "Standard Heated Room",
+    caption: "Conveniently located pre-inspected hotel with power backup and easy proximity to Auli cable car station"
   }
 ];
 
@@ -822,6 +862,688 @@ export const DODHAM_6D_PRESET: ItineraryData = {
   showTrustSection: true
 };
 
+// ========================================================
+// ❄️ WINTER HOLIDAYS SPECIAL SHORTCUT PRESETS (2026 - 2027)
+// ========================================================
+
+// 1. Auli Winter Wonderland (3D/2N) - 2 Nights Joshimath
+export const AULI_3D_PRESET: ItineraryData = {
+  title: "AULI WINTER WONDERLAND PACKAGE 2026-27",
+  subTitle: "UTTARAKHAND WINTER SPECIAL",
+  spiritualHeadline: "3 Days · 02 Nights Snow & Ski Expedition",
+  dhamsSubtitle: "Joshimath · Auli Ropeway · Gorson Bugyal",
+  preparedFor: "Valued Travelers / Winter Holiday Group",
+  travelDates: "Nov 2026 – Mar 2027 Winter Season",
+  duration: "3 Days / 02 Nights",
+  startingPoint: "Haridwar / Rishikesh / Dehradun Airport",
+  routeCovered: "Haridwar – Devprayag – Srinagar – Rudraprayag – Joshimath – Auli – Joshimath – Haridwar",
+  overviewSummary: "Experience the snow-covered winter paradise of Auli, India's premier skiing and snow destination. Enjoy breathtaking views of Mt. Nanda Devi, Asia's iconic cable car / ropeway ride from Joshimath to Auli, thrilling snow activities, and cozy 2 nights stay in Joshimath.",
+  
+  glanceDuration: "3 Days / 02 Nights",
+  glanceDhams: "Auli · Joshimath · Gorson",
+  glanceSector: "Haridwar ⇄ Joshimath / Auli",
+  glanceStartEnd: "Haridwar / Rishikesh / Dehradun",
+  glancePackages: "Winter Deluxe Package",
+
+  days: [
+    {
+      id: 1,
+      dayNumber: 1,
+      dateStr: "Day 01",
+      route: "Haridwar / Rishikesh / Dehradun → Devprayag → Joshimath",
+      activities: [
+        "Morning pickup from Haridwar Railway Station / Rishikesh / Dehradun Airport and proceed towards Joshimath.",
+        "Drive along the scenic Alaknanda river valley; visit Devprayag Sangam (Bhagirathi & Alaknanda confluence) and Rudraprayag.",
+        "Arrive at Joshimath by late afternoon; check in at hotel. Evening at leisure to visit the local market or ancient Shankaracharya Math."
+      ],
+      overnightStay: "Joshimath",
+      photoUrl: "/gallery/joshimath_stay.jpeg",
+      photoCaption: "Scenic Alaknanda Valley Route & Joshimath Valley View Arrival"
+    },
+    {
+      id: 2,
+      dayNumber: 2,
+      dateStr: "Day 02",
+      route: "Joshimath → Auli Cable Car / Ski Slopes & Gorson Bugyal → Joshimath",
+      activities: [
+        "Post breakfast, board the famous Joshimath-Auli Cable Car (ropeway) or take local mountain taxi up to Auli snow meadows.",
+        "Marvel at the mesmerizing 180-degree panorama of Mt. Nanda Devi, Hathi-Ghodi Parvat, and Neelkanth peaks.",
+        "Enjoy thrilling winter activities like skiing, snowboarding, chairlift ride, and snow walk to Gorson Bugyal.",
+        "Witness a magnificent Himalayan sunset over snow peaks and return to Joshimath hotel for hot dinner."
+      ],
+      overnightStay: "Joshimath",
+      photoUrl: "/gallery/auli_ropeway.jpg",
+      photoCaption: "Auli Cable Car (Asia's Longest Ropeway)",
+      photoUrl2: "/gallery/auli_skiing.jpg",
+      photoCaption2: "Thrilling Snow Skiing & Gorson Bugyal Slopes"
+    },
+    {
+      id: 3,
+      dayNumber: 3,
+      dateStr: "Day 03",
+      route: "Joshimath → Maa Dhari Devi Temple → Rishikesh → Haridwar / Dehradun Drop",
+      activities: [
+        "Early morning breakfast and check out from Joshimath hotel.",
+        "Scenic downhill drive via Karnaprayag and Srinagar; visit sacred Maa Dhari Devi Temple on the river Alaknanda.",
+        "Optional evening visit to Rishikesh (Ram Jhula / Triveni Ghat) followed by drop at Haridwar Railway Station / Dehradun Airport."
+      ],
+      overnightStay: "Tour Concludes (Sweet Winter Memories)",
+      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
+      photoCaption: "Sacred Maa Dhari Devi Shrine & Holy Triveni Ghat Rishikesh",
+      photoUrl2: "/gallery/rishikesh_ram_jhula.png",
+      photoCaption2: "Sacred Ram Jhula over Holy River Ganga"
+    }
+  ],
+
+  pricingSubtitle: "Special Auli Winter Holiday 3D/2N Package with dedicated private vehicle, 2 Nights stay in Joshimath and meal plan.",
+  pricingTiers: [
+    { package: "Deluxe Winter Package", price: "₹ 8,500 / Pax", totalPackagePrice: "₹ 8,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe Heated / Clean Mountain Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle + Auli Excursion" },
+    { package: "Premium Winter Package", price: "₹ 12,000 / Pax", totalPackagePrice: "₹ 12,000 / Pax (Twin Sharing)", hotelCategory: "Premium 3-Star Resort in Joshimath", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova/Crysta + Bonfire" }
+  ],
+  pricingNote: "Note: Rates are per person on twin/triple sharing. Cable car / ropeway tickets and ski gear payable directly on spot as per personal choice.",
+
+  inclusions: [
+    "Dedicated Hill Vehicle (Swift Dzire / Ertiga / Innova / Tempo Traveller as per group size) Haridwar to Haridwar",
+    "02 Nights Stay in Joshimath (Deluxe Mountain View Rooms)",
+    "Meals as per plan: Daily Breakfast and Warm Dinner at Joshimath hotel",
+    "All Interstate Taxes, Tolls, Driver Allowance, Fuel and Parking charges",
+    "Sightseeing: Joshimath town, Auli snow slopes, Shankaracharya Math, Devprayag Sangam, Maa Dhari Devi Temple"
+  ],
+  exclusions: [
+    "Auli Cable car / Ropeway / Chairlift ride tickets & skiing gear/instructor fees",
+    "Any personal expenses, room heater charges (payable at hotel if opted), laundry, tips",
+    "Lunch and mid-day snacks on transit",
+    "Expenses arising due to extreme snow roadblocks, weather delays or natural contingencies"
+  ],
+
+  goodToKnow: [
+    "Auli Cable Car runs subject to weather conditions and timings (usually 09:00 AM to 04:30 PM).",
+    "Heavy winter woollens, thermal inners, waterproof gloves, sunglasses and sturdy snow boots are strongly advised.",
+    "During heavy snowfall, local 4x4 vehicles with snow tyre chains may be required between Joshimath and Auli at direct nominal cost."
+  ],
+  bookingPayment: [
+    "Advance deposit required to confirm room and cab reservations during winter peak season.",
+    "Balance amount payable before commencement of journey with official tax invoice & confirmation voucher."
+  ],
+
+  contactAgency: "Travel to Uttarakhand",
+  contactPerson: "Mr. Amit kumar",
+  contactPhone: "+91 9719038278",
+  motto: "जय बद्री विशाल · शुभ शीतकालीन यात्रा",
+
+  photos: [
+    { id: "ph-auli-1", url: "/gallery/auli_ropeway.jpg", caption: "Auli Cable Car & Iconic Ropeway View" },
+    { id: "ph-auli-2", url: "/gallery/auli_skiing.jpg", caption: "Auli Snow Slopes & Skiing Adventure" },
+    { id: "ph-auli-3", url: "/gallery/auli_lake_gorson.webp", caption: "Auli Snow Meadows & Gorson Bugyal" },
+    { id: "ph-auli-4", url: "/gallery/joshimath_stay.jpeg", caption: "Joshimath Town & Scenic Stays" }
+  ],
+  hotelPhotos: WINTER_HOTEL_PHOTO_PRESETS,
+  showPhotosPage1: true,
+  showPhotosPage3: true,
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
+};
+
+// 2. Chopta & Tungnath Winter Special (3D/2N) - 2 Nights Chopta
+export const CHOPTA_3D_PRESET: ItineraryData = {
+  title: "CHOPTA & TUNGNATH WINTER SPECIAL 2026-27",
+  subTitle: "MINI SWITZERLAND OF UTTARAKHAND",
+  spiritualHeadline: "3 Days · 02 Nights Snow Meadows & Temple Trek",
+  dhamsSubtitle: "Chopta · Tungnath (Highest Shiva Shrine) · Chandrashila · Ukhimath",
+  preparedFor: "Valued Trekkers / Winter Holiday Group",
+  travelDates: "Nov 2026 – Mar 2027 Winter Season",
+  duration: "3 Days / 02 Nights",
+  startingPoint: "Haridwar / Rishikesh / Dehradun Airport",
+  routeCovered: "Haridwar – Devprayag – Rudraprayag – Kund – Ukhimath – Chopta – Tungnath – Haridwar",
+  overviewSummary: "Discover the pristine snow-blanketed meadows of Chopta, famously called the Mini Switzerland of Uttarakhand. Embark on the iconic winter snow trek to Tungnath (world's highest Shiva temple at 12,073 ft) and Chandrashila Summit (13,123 ft) with 2 nights cozy stay in Chopta.",
+  
+  glanceDuration: "3 Days / 02 Nights",
+  glanceDhams: "Chopta · Tungnath · Chandrashila",
+  glanceSector: "Haridwar ⇄ Chopta Winter Circuit",
+  glanceStartEnd: "Haridwar / Rishikesh / Dehradun",
+  glancePackages: "Winter Adventure Package",
+
+  days: [
+    {
+      id: 1,
+      dayNumber: 1,
+      dateStr: "Day 01",
+      route: "Haridwar / Rishikesh / Dehradun → Devprayag → Rudraprayag → Chopta",
+      activities: [
+        "Early morning pickup from Haridwar / Rishikesh / Dehradun; begin journey along the holy Ganga & Alaknanda rivers.",
+        "En route halt at sacred Devprayag (Sangam of Alaknanda & Bhagirathi) and Rudraprayag (Mandakini & Alaknanda).",
+        "Ascend through pine and rhododendron forests to Chopta; check in at cozy Swiss cottage / mountain resort. Evening bonfire under star-lit snow skies."
+      ],
+      overnightStay: "Chopta",
+      photoUrl: "/gallery/chopta_snow_meadows.jpg",
+      photoCaption: "Chopta Snow-Covered Alpine Meadows (Mini Switzerland)"
+    },
+    {
+      id: 2,
+      dayNumber: 2,
+      dateStr: "Day 02",
+      route: "Chopta Base → Tungnath Temple & Chandrashila Snow Trek → Chopta",
+      activities: [
+        "Post warm breakfast, gear up for the thrilling winter trek from Chopta to Tungnath (3.5 km snow trail).",
+        "Perform Darshan of the divine Tungnath Temple, the highest of the Panch Kedar shrines.",
+        "Trek a further 1.5 km up to Chandrashila Peak (13,123 ft) for an awe-inspiring 360-degree vista of Chaukhamba, Nanda Devi, and Trishul ranges.",
+        "Descend back to Chopta camp/resort by late afternoon; enjoy hot evening soup, tea, and wholesome dinner."
+      ],
+      overnightStay: "Chopta",
+      photoUrl: "/gallery/tungnath_temple_snow.jpg",
+      photoCaption: "Highest Shiva Shrine Shri Tungnath in Winter Snow",
+      photoUrl2: "/gallery/chandrashila_summit.jpg",
+      photoCaption2: "Chandrashila Summit 360° Himalayan Panorama"
+    },
+    {
+      id: 3,
+      dayNumber: 3,
+      dateStr: "Day 03",
+      route: "Chopta → Ukhimath Omkareshwar Temple → Rishikesh → Haridwar / Dehradun Drop",
+      activities: [
+        "Witness early morning sunrise bathing the Himalayan peaks in gold. Post breakfast, check out from Chopta.",
+        "Drive to Ukhimath and visit holy Omkareshwar Temple, the revered winter seat of Lord Kedarnath.",
+        "Proceed downhill via Srinagar and Devprayag. Timely drop at Haridwar Railway Station or Dehradun Airport for onward journey."
+      ],
+      overnightStay: "Tour Concludes (Sweet Winter Memories)",
+      photoUrl: "/gallery/ukhimath_temple.png",
+      photoCaption: "Sacred Ukhimath Omkareshwar Temple - Winter Seat of Kedarnath"
+    }
+  ],
+
+  pricingSubtitle: "Special Chopta & Tungnath Snow Holiday 3D/2N Package with 2 Nights Stay in Chopta, meals, and dedicated mountain vehicle.",
+  pricingTiers: [
+    { package: "Standard Snow Trek", price: "₹ 7,500 / Pax", totalPackagePrice: "₹ 7,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Cab + Trek Assistance + Bonfire" },
+    { package: "Deluxe Heated Resort", price: "₹ 10,500 / Pax", totalPackagePrice: "₹ 10,500 / Pax (Twin Sharing)", hotelCategory: "Premium Mountain Resort / Heated Cottage", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Vehicle + Bonfire + Microspikes/Gaiters" }
+  ],
+  pricingNote: "Note: Rates per person on twin/triple sharing. Includes stay, transport, and meal plan.",
+
+  inclusions: [
+    "Dedicated Private Hill Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) Haridwar to Haridwar",
+    "02 Nights Stay in Chopta (Swiss Cottage / Deluxe Mountain Resort)",
+    "Meals: Daily Morning Breakfast and Delicious Warm Dinner",
+    "All Interstate Tolls, Parking, Driver Batta, and Mountain Taxes",
+    "Sightseeing & Treks: Chopta Bugyal, Tungnath Temple, Chandrashila Peak, Ukhimath Omkareshwar Temple, Devprayag Sangam"
+  ],
+  exclusions: [
+    "Personal trekking gear, pony/mule charges (if hired during snow trek)",
+    "Personal expenses, mineral water, beverages, laundry, tips",
+    "Any extra vehicle usage or deviations beyond route itinerary",
+    "Emergency medical expenses or stays due to road blockage/heavy snowfall"
+  ],
+
+  goodToKnow: [
+    "Chopta experiences sub-zero temperatures in winter; heavy layered thermal clothing, fleece jackets, waterproof gloves, and trek boots with good grip are essential.",
+    "Tungnath Temple inner sanctum closes in deep winter (deities move to Ukhimath), but the temple premises and Chandrashila snow summit trek remain accessible for trekkers subject to snow safety.",
+    "Campsites provide solar/generator lighting and hot water buckets in winter."
+  ],
+  bookingPayment: [
+    "25% - 50% advance deposit for immediate confirmation.",
+    "Balance payable upon arrival or before departure with GST invoice."
+  ],
+
+  contactAgency: "Travel to Uttarakhand",
+  contactPerson: "Mr. Amit kumar",
+  contactPhone: "+91 9719038278",
+  motto: "हर हर महादेव · ॐ नमः शिवाय",
+
+  photos: [
+    { id: "ph-chopta-1", url: "/gallery/chopta_snow_meadows.jpg", caption: "Chopta Snow-Covered Alpine Meadows & Camps" },
+    { id: "ph-chopta-2", url: "/gallery/tungnath_temple_snow.jpg", caption: "Shri Tungnath Temple in Winter Snow" },
+    { id: "ph-chopta-3", url: "/gallery/chandrashila_summit.jpg", caption: "Chandrashila Peak 360° Himalayan Panorama" },
+    { id: "ph-chopta-4", url: "/gallery/ukhimath_temple.png", caption: "Ukhimath Omkareshwar Temple - Winter Seat" }
+  ],
+  hotelPhotos: WINTER_HOTEL_PHOTO_PRESETS,
+  showPhotosPage1: true,
+  showPhotosPage3: true,
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
+};
+
+// 3. Rishikesh + Mussoorie Winter Getaway (3D/2N) - 1st Night Rishikesh, 2nd Night Mussoorie
+export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
+  title: "RISHIKESH & MUSSOORIE WINTER RETREAT 2026-27",
+  subTitle: "QUEEN OF HILLS & HOLY GANGA EXPERIENCE",
+  spiritualHeadline: "3 Days · 02 Nights Hill & Heritage Winter Break",
+  dhamsSubtitle: "Rishikesh Ganga Aarti · Mussoorie Winterline · Kempty Falls",
+  preparedFor: "Valued Travelers / Family Holiday",
+  travelDates: "Nov 2026 – Mar 2027 Winter Season",
+  duration: "3 Days / 02 Nights",
+  startingPoint: "Haridwar / Dehradun / Delhi NCR",
+  routeCovered: "Haridwar / Dehradun – Rishikesh – Dehradun Malsi – Mussoorie – Kempty Falls – Dehradun / Haridwar",
+  overviewSummary: "A refreshing 3 Days / 02 Nights winter weekend getaway pairing the peaceful spiritual ambiance and divine Ganga Aarti of Rishikesh with the colonial misty charm, Mall Road walks, and rare 'Winterline' sunset views of Mussoorie (Queen of the Hills).",
+  
+  glanceDuration: "3 Days / 02 Nights",
+  glanceDhams: "Rishikesh · Mussoorie",
+  glanceSector: "Haridwar / Dehradun ⇄ Mussoorie",
+  glanceStartEnd: "Haridwar / Dehradun (both ways)",
+  glancePackages: "Deluxe Leisure Package",
+
+  days: [
+    {
+      id: 1,
+      dayNumber: 1,
+      dateStr: "Day 01",
+      route: "Haridwar / Dehradun Pickup → Rishikesh Divine Exploration & Ganga Aarti",
+      activities: [
+        "Morning pickup from Haridwar Railway Station or Dehradun Airport; transfer to Rishikesh and check in at hotel/resort.",
+        "Visit the iconic Ram Jhula, Lakshman Jhula area, Geeta Bhawan, and popular riverside cafes along the Ganga.",
+        "In the evening, attend the mesmerizing Maha Ganga Aarti at Triveni Ghat / Parmarth Niketan amidst blowing conches and thousands of floating diyas.",
+        "Overnight stay in Rishikesh with warm dinner."
+      ],
+      overnightStay: "Rishikesh",
+      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
+      photoCaption: "Maha Ganga Aarti at Triveni Ghat & Holy Ganga",
+      photoUrl2: "/gallery/rishikesh_ram_jhula.png",
+      photoCaption2: "Sacred Ram Jhula Suspension Bridge"
+    },
+    {
+      id: 2,
+      dayNumber: 2,
+      dateStr: "Day 02",
+      route: "Rishikesh → Dehradun Scenic Climb → Mussoorie Hill Station",
+      activities: [
+        "Post breakfast, check out from Rishikesh and drive towards Mussoorie ('Queen of the Hills') via scenic Rajpur Road / Dehradun bypass.",
+        "Visit the famous Kempty Falls and picturesque Company Garden.",
+        "Check in at hotel in Mussoorie. In the evening, enjoy a leisurely stroll along the Mall Road, Kulri Bazaar, and Camel's Back Road while watching the magical winterline sunset."
+      ],
+      overnightStay: "Mussoorie",
+      photoUrl: "/gallery/mussoorie_winterline.jpeg",
+      photoCaption: "Mussoorie Rare Winterline Sunset Phenomenon",
+      photoUrl2: "/gallery/mussoorie_mall_road.webp",
+      photoCaption2: "Mussoorie Mall Road & Misty Hills"
+    },
+    {
+      id: 3,
+      dayNumber: 3,
+      dateStr: "Day 03",
+      route: "Mussoorie Sightseeing → George Everest / Lal Tibba → Dehradun / Haridwar Drop",
+      activities: [
+        "Early morning visit to Lal Tibba viewpoint (Landour) or Sir George Everest House for sweeping vistas of the snow-clad Himalayas and Doon valley.",
+        "Breakfast and checkout from hotel; descend towards Dehradun.",
+        "Optional visit to Robber's Cave (Guchhupani) or Sahastradhara en route.",
+        "Timely drop at Dehradun Airport / Railway Station or Haridwar for onward return journey."
+      ],
+      overnightStay: "Tour Concludes (Sweet Winter Memories)",
+      photoUrl: "/gallery/kempty_falls.avif",
+      photoCaption: "Cascading Kempty Falls & Queen of Hills Vistas"
+    }
+  ],
+
+  pricingSubtitle: "Special Rishikesh & Mussoorie 3D/2N Holiday with 1st Night in Rishikesh and 2nd Night in Mussoorie.",
+  pricingTiers: [
+    { package: "Deluxe Holiday Package", price: "₹ 6,800 / Pax", totalPackagePrice: "₹ 6,800 / Pax (Twin Sharing)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast Included (CP)", specialFeature: "Dedicated AC Sedan / SUV + Full Sightseeing" },
+    { package: "Premium Resort Package", price: "₹ 9,500 / Pax", totalPackagePrice: "₹ 9,500 / Pax (Twin Sharing)", hotelCategory: "4-Star Resort in Rishikesh & Luxury Hill Resort in Mussoorie", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova Crysta + Mall Road Stays" }
+  ],
+  pricingNote: "Note: Rates based on twin sharing. Entry tickets to falls/cable cars and adventure activities at direct payment.",
+
+  inclusions: [
+    "Dedicated AC Vehicle (Dzire / Etios / Ertiga / Innova) throughout the tour",
+    "01 Night Stay in Rishikesh (Deluxe Room)",
+    "01 Night Stay in Mussoorie (Deluxe Mountain/Valley View Room)",
+    "Daily Morning Breakfast at both hotels",
+    "All Driver Batta, Tolls, State Border Taxes, and Parking fees",
+    "Sightseeing: Ram Jhula, Triveni Ghat Ganga Aarti, Kempty Falls, Mall Road, Camel's Back Road, Landour / George Everest"
+  ],
+  exclusions: [
+    "River rafting, ropeway/trolley tickets in Mussoorie, entry tickets at gardens/falls",
+    "Lunches, dinners (unless opted in MAP plan), room heater charges, tips",
+    "Any personal expense or additional travel beyond itinerary"
+  ],
+
+  goodToKnow: [
+    "Mussoorie experiences chilly winter weather with occasional light snow in Dec/Jan; warm coats, jackets, and mufflers are recommended.",
+    "Vehicle movement on Mall Road Mussoorie has restricted timings; our driver will drop you at the designated entry point.",
+    "Exact confirmed stays: 1st Night in Rishikesh, followed by 2nd Night in Mussoorie."
+  ],
+  bookingPayment: [
+    "Convenient online advance booking; instant voucher confirmation.",
+    "Balance payable on arrival with full travel invoice."
+  ],
+
+  contactAgency: "Travel to Uttarakhand",
+  contactPerson: "Mr. Amit kumar",
+  contactPhone: "+91 9719038278",
+  motto: "जय गंगे मात · देवभूमि दर्शन",
+
+  photos: [
+    { id: "ph-rm-1", url: "/gallery/mussoorie_winterline.jpeg", caption: "Mussoorie Rare Winterline Sunset Spectacle" },
+    { id: "ph-rm-2", url: "/gallery/rishikesh_ganga_aarti.webp", caption: "Maha Ganga Aarti at Triveni Ghat Rishikesh" },
+    { id: "ph-rm-3", url: "/gallery/mussoorie_mall_road.webp", caption: "Mussoorie Mall Road & Misty Hills" },
+    { id: "ph-rm-4", url: "/gallery/kempty_falls.avif", caption: "Cascading Kempty Falls Mussoorie" },
+    { id: "ph-rm-5", url: "/gallery/rishikesh_ram_jhula.png", caption: "Sacred Ram Jhula over Holy River Ganga" }
+  ],
+  hotelPhotos: WINTER_HOTEL_PHOTO_PRESETS,
+  showPhotosPage1: true,
+  showPhotosPage3: true,
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
+};
+
+// 4. Auli + Chopta + Tungnath (5D/4N) - 1st & 2nd Night Ukhimath/Chopta, 3rd & 4th Night Joshimath/Rudraprayag
+export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
+  title: "AULI, CHOPTA & TUNGNATH WINTER EXPEDITION 2026-27",
+  subTitle: "ULTIMATE GARHWAL SNOW CIRCUIT",
+  spiritualHeadline: "5 Days · 04 Nights Snow Adventure & High Altitude Trek",
+  dhamsSubtitle: "Chopta Meadows · Tungnath Temple · Chandrashila · Joshimath · Auli Ski Slopes",
+  preparedFor: "Valued Travelers / Winter Holiday Group",
+  travelDates: "Nov 2026 – Mar 2027 Winter Season",
+  duration: "5 Days / 04 Nights",
+  startingPoint: "Haridwar / Rishikesh / Dehradun Airport",
+  routeCovered: "Haridwar – Devprayag – Rudraprayag – Ukhimath/Chopta – Tungnath – Mandal Valley – Joshimath – Auli – Joshimath/Rudraprayag – Haridwar",
+  overviewSummary: "The definitive winter holiday circuit of Uttarakhand! Experience the snow-draped alpine meadows of Chopta, the world's highest Shiva shrine at Tungnath, the summit views from Chandrashila (13,123 ft), and the skiing slopes and Asia's longest ropeway at Auli with panoramic views of Mt. Nanda Devi.",
+  
+  glanceDuration: "5 Days / 04 Nights",
+  glanceDhams: "Chopta · Tungnath · Joshimath · Auli",
+  glanceSector: "Haridwar ⇄ Chopta & Auli Winter Circuit",
+  glanceStartEnd: "Haridwar / Rishikesh / Dehradun",
+  glancePackages: "Winter Expedition Package",
+
+  days: [
+    {
+      id: 1,
+      dayNumber: 1,
+      dateStr: "Day 01",
+      route: "Haridwar / Rishikesh / Dehradun → Devprayag → Rudraprayag → Ukhimath / Chopta",
+      activities: [
+        "Morning pickup from Haridwar Railway Station / Rishikesh / Dehradun; begin the scenic drive up the Garhwal Himalayas.",
+        "En route visit the sacred confluence of Alaknanda and Bhagirathi at Devprayag, and Mandakini confluence at Rudraprayag.",
+        "Drive through the Mandakini valley to Ukhimath / Chopta; check in at hotel/resort. Enjoy evening bonfire and hot dinner amidst mountain chill."
+      ],
+      overnightStay: "Ukhimath / Chopta",
+      photoUrl: "/gallery/ukhimath_temple.png",
+      photoCaption: "Sacred Ukhimath Omkareshwar Temple - Winter Seat of Kedarnath"
+    },
+    {
+      id: 2,
+      dayNumber: 2,
+      dateStr: "Day 02",
+      route: "Chopta Base → Tungnath Temple & Chandrashila Snow Summit Trek → Ukhimath / Chopta",
+      activities: [
+        "Post breakfast, drive to Chopta meadow base and start the exhilarating snow trek to Tungnath (3.5 km).",
+        "Reach the sacred 1,000-year-old Tungnath Temple (highest Shiva shrine in the world at 12,073 ft).",
+        "Further ascend 1.5 km up to Chandrashila Peak (13,123 ft) for a 360-degree panoramic spectacle of Chaukhamba, Nanda Devi, Trishul, and Kedarnath peaks.",
+        "Descend back to Chopta base by late afternoon and return to hotel/resort in Ukhimath / Chopta for dinner and overnight rest."
+      ],
+      overnightStay: "Ukhimath / Chopta",
+      photoUrl: "/gallery/tungnath_temple_snow.jpg",
+      photoCaption: "Highest Shiva Shrine Tungnath in Winter Snow",
+      photoUrl2: "/gallery/chandrashila_summit.jpg",
+      photoCaption2: "Chandrashila Summit 360° Snow Panorama"
+    },
+    {
+      id: 3,
+      dayNumber: 3,
+      dateStr: "Day 03",
+      route: "Ukhimath / Chopta → Scenic Mandal Valley & Gopeshwar → Joshimath / Rudraprayag",
+      activities: [
+        "After breakfast, check out and drive towards Joshimath via the picturesque Mandal forest valley and Gopeshwar / Chamoli.",
+        "Enjoy stunning views of river gorges and snow-capped peaks along the route.",
+        "Arrive at Joshimath / Rudraprayag; check in at hotel. In the evening, visit the ancient Shankaracharya Math and sacred Narsingh Temple (winter abode of Lord Badrinath)."
+      ],
+      overnightStay: "Joshimath / Rudraprayag",
+      photoUrl: "/gallery/joshimath_stay.jpeg",
+      photoCaption: "Scenic Mountain Route to Joshimath Gateway & Valley View Stay"
+    },
+    {
+      id: 4,
+      dayNumber: 4,
+      dateStr: "Day 04",
+      route: "Joshimath → Auli Cable Car, Snow Skiing Slopes & Gorson Bugyal → Joshimath / Rudraprayag",
+      activities: [
+        "Full-day snow adventure in Auli! Take the scenic ropeway (cable car) from Joshimath or mountain taxi up to Auli slopes.",
+        "Marvel at the up-close grandeur of Mt. Nanda Devi (India's second highest mountain), Hathi-Ghodi Parvat, and Dunagiri.",
+        "Partake in skiing, snowboarding, chairlift rides, or snow trek to Gorson Bugyal meadow.",
+        "Witness an unforgettable alpine sunset before returning to hotel in Joshimath / Rudraprayag for dinner and overnight stay."
+      ],
+      overnightStay: "Joshimath / Rudraprayag",
+      photoUrl: "/gallery/auli_ropeway.jpg",
+      photoCaption: "Auli Cable Car (Asia's Longest Ropeway)",
+      photoUrl2: "/gallery/auli_skiing.jpg",
+      photoCaption2: "Auli Snow Skiing Slopes & Nanda Devi Panoramas"
+    },
+    {
+      id: 5,
+      dayNumber: 5,
+      dateStr: "Day 05",
+      route: "Joshimath / Rudraprayag → Karnaprayag → Maa Dhari Devi → Rishikesh → Haridwar Drop",
+      activities: [
+        "Post breakfast, check out and begin the return journey along the Alaknanda river valley.",
+        "Stop at Karnaprayag Sangam and pay obeisance at the holy Maa Dhari Devi Temple near Srinagar.",
+        "Arrive at Rishikesh for brief sightseeing (Ram Jhula / Triveni Ghat) followed by drop at Haridwar Railway Station or Dehradun Airport."
+      ],
+      overnightStay: "Tour Concludes (Sweet Winter Memories)",
+      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
+      photoCaption: "Sacred Maa Dhari Devi & Rishikesh Maha Ganga Aarti"
+    }
+  ],
+
+  pricingSubtitle: "Special 5D/4N Winter Snow Circuit: 2 Nights Ukhimath/Chopta + 2 Nights Joshimath/Rudraprayag.",
+  pricingTiers: [
+    { package: "Deluxe Snow Package", price: "₹ 13,500 / Pax", totalPackagePrice: "₹ 13,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe Mountain View Hotels / Cottages", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle + Tungnath Trek + Auli Excursion" },
+    { package: "Premium Winter Package", price: "₹ 17,500 / Pax", totalPackagePrice: "₹ 17,500 / Pax (Twin Sharing)", hotelCategory: "Premium 3-Star Resorts with Heating Amenities", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova/Crysta + Bonfire + Microspikes" }
+  ],
+  pricingNote: "Note: Rates per person on twin/triple sharing. Cable car tickets & ski rentals payable on spot as per personal choice.",
+
+  inclusions: [
+    "Dedicated Hill Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) Haridwar to Haridwar",
+    "02 Nights Stay in Ukhimath / Chopta (Deluxe Swiss Tent or Mountain Resort)",
+    "02 Nights Stay in Joshimath / Rudraprayag (Deluxe Mountain View Rooms)",
+    "Daily Wholesome Breakfast and Warm Dinner at hotels (MAP Plan)",
+    "All Driver Allowance, Mountain Tolls, Interstate Taxes, and Parking fees",
+    "Sightseeing & Excursions: Chopta Bugyal, Tungnath Temple, Chandrashila, Auli Snow Slopes, Narsingh Temple, Devprayag & Dhari Devi"
+  ],
+  exclusions: [
+    "Auli ropeway / chairlift tickets, ski rental & instructor charges",
+    "Personal porter, pony/mule hire for snow trek, room heater extras",
+    "Lunches, beverages, laundry, tips, and personal insurance",
+    "Costs arising due to heavy snowfall roadblocks, landslides, or emergency diversions"
+  ],
+
+  goodToKnow: [
+    "Both Chopta and Auli experience heavy snow from Dec to Feb. Waterproof trekking boots, heavy thermals, down jackets, and woollen caps are mandatory.",
+    "Night temperatures often drop below 0°C; hotels provide warm blankets and hot water services.",
+    "Confirmed Stays: 1st & 2nd Night at Ukhimath/Chopta; 3rd & 4th Night at Joshimath/Rudraprayag."
+  ],
+  bookingPayment: [
+    "Booking confirmed upon advance deposit; balance payable before journey start.",
+    "Complete digital itinerary, booking voucher, and driver contact shared before departure."
+  ],
+
+  contactAgency: "Travel to Uttarakhand",
+  contactPerson: "Mr. Amit kumar",
+  contactPhone: "+91 9719038278",
+  motto: "जय श्री केदार · जय बद्री विशाल",
+
+  photos: [
+    { id: "ph-act-1", url: "/gallery/chopta_snow_meadows.jpg", caption: "Chopta Snow-Covered Alpine Meadows" },
+    { id: "ph-act-2", url: "/gallery/tungnath_temple_snow.jpg", caption: "Shri Tungnath Temple in Winter Snow" },
+    { id: "ph-act-3", url: "/gallery/auli_ropeway.jpg", caption: "Auli Cable Car & Iconic Ropeway View" },
+    { id: "ph-act-4", url: "/gallery/auli_skiing.jpg", caption: "Auli Snow Slopes & Skiing Adventure" },
+    { id: "ph-act-5", url: "/gallery/chandrashila_summit.jpg", caption: "Chandrashila Peak 360° Snow Panorama" },
+    { id: "ph-act-6", url: "/gallery/joshimath_stay.jpeg", caption: "Joshimath Town & Scenic Stays" }
+  ],
+  hotelPhotos: WINTER_HOTEL_PHOTO_PRESETS,
+  showPhotosPage1: true,
+  showPhotosPage3: true,
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
+};
+
+// 5. Auli + Chopta + Tungnath + Mussoorie (6D/5N) - 1st Mussoorie, 2nd & 3rd Ukhimath, 4th Joshimath, 5th Joshimath/Rudraprayag
+export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
+  title: "AULI, CHOPTA, TUNGNATH & MUSSOORIE GRAND WINTER TOUR 2026-27",
+  subTitle: "COMPLETE UTTARAKHAND WINTER LEISURE & SNOW EXPEDITION",
+  spiritualHeadline: "6 Days · 05 Nights Hills, Snow Slopes & Himalayan Treks",
+  dhamsSubtitle: "Mussoorie · Tehri Lake · Chopta · Tungnath · Joshimath · Auli",
+  preparedFor: "Valued Travelers / Grand Winter Holiday Group",
+  travelDates: "Nov 2026 – Mar 2027 Winter Season",
+  duration: "6 Days / 05 Nights",
+  startingPoint: "Dehradun / Haridwar / Delhi NCR",
+  routeCovered: "Dehradun – Mussoorie – Tehri Dam – Srinagar – Ukhimath – Chopta – Tungnath – Joshimath – Auli – Joshimath/Rudraprayag – Haridwar",
+  overviewSummary: "The crowning jewel of Uttarakhand winter holidays! Covers the colonial charm, Kempty Falls, and winterline sunsets of Mussoorie, followed by the snow trails of Chopta-Tungnath-Chandrashila, and culminating at the world-class skiing slopes and cable car of Auli with majestic views of Mt. Nanda Devi.",
+  
+  glanceDuration: "6 Days / 05 Nights",
+  glanceDhams: "Mussoorie · Chopta · Tungnath · Auli",
+  glanceSector: "Dehradun / Haridwar ⇄ Complete Winter Circuit",
+  glanceStartEnd: "Dehradun / Haridwar",
+  glancePackages: "Grand Winter Package",
+
+  days: [
+    {
+      id: 1,
+      dayNumber: 1,
+      dateStr: "Day 01",
+      route: "Dehradun / Haridwar Pickup → Mussoorie ('Queen of the Hills')",
+      activities: [
+        "Morning pickup from Dehradun Railway Station / Airport or Haridwar; scenic drive up to Mussoorie.",
+        "Visit cascading Kempty Falls and historic Company Garden.",
+        "Check in at hotel in Mussoorie. In the evening, enjoy a sunset stroll on Mall Road and Camel's Back Road with panoramic views of the famous winterline."
+      ],
+      overnightStay: "Mussoorie",
+      photoUrl: "/gallery/mussoorie_winterline.jpeg",
+      photoCaption: "Mussoorie Rare Winterline Sunset Phenomenon"
+    },
+    {
+      id: 2,
+      dayNumber: 2,
+      dateStr: "Day 02",
+      route: "Mussoorie → Dhanaulti Pine Forests → Tehri Lake Route → Ukhimath",
+      activities: [
+        "Post breakfast, check out from Mussoorie and embark on a breathtaking mountain drive via Dhanaulti and Chamba.",
+        "Witness the vast blue expanse of Tehri Dam lake reservoir and traverse through Srinagar into Mandakini valley.",
+        "Arrive at serene Ukhimath by late afternoon; check in at hotel/resort. Visit ancient Omkareshwar Temple (winter seat of Kedarnath).",
+        "Enjoy evening bonfire, dinner, and overnight stay in Ukhimath."
+      ],
+      overnightStay: "Ukhimath",
+      photoUrl: "/gallery/ukhimath_temple.png",
+      photoCaption: "Tehri Lake Route & Ukhimath Omkareshwar Temple"
+    },
+    {
+      id: 3,
+      dayNumber: 3,
+      dateStr: "Day 03",
+      route: "Ukhimath → Chopta Base → Tungnath Temple & Chandrashila Snow Trek → Ukhimath",
+      activities: [
+        "Early morning transfer to Chopta (Mini Switzerland of Uttarakhand) surrounded by snow-blanketed rhododendron forests.",
+        "Trek up the snowy trail to Tungnath Temple (12,073 ft), the highest Shiva shrine on Earth.",
+        "Continue to Chandrashila Peak (13,123 ft) for an awe-inspiring 360-degree panorama of Chaukhamba, Nanda Devi, and Trishul ranges.",
+        "Descend back to Chopta base by afternoon and return to hotel/resort in Ukhimath for delicious hot dinner and relaxation."
+      ],
+      overnightStay: "Ukhimath",
+      photoUrl: "/gallery/tungnath_temple_snow.jpg",
+      photoCaption: "Shri Tungnath Temple in Snow & Chandrashila Peak Trek",
+      photoUrl2: "/gallery/chandrashila_summit.jpg",
+      photoCaption2: "Chandrashila Summit 360° Himalayan Panorama"
+    },
+    {
+      id: 4,
+      dayNumber: 4,
+      dateStr: "Day 04",
+      route: "Ukhimath → Chamoli Valley & Mandal → Joshimath → Auli Snow Slopes",
+      activities: [
+        "Post breakfast, check out and drive towards Joshimath via the picturesque Mandal forest valley.",
+        "Arrive in Joshimath and check in at hotel. Proceed to Auli via the iconic Auli Cable Car (ropeway) or local mountain cab.",
+        "Spend the afternoon marveling at the snow-laden slopes, practicing skiing, or taking in the up-close views of Mt. Nanda Devi.",
+        "Return to Joshimath hotel for dinner and overnight stay."
+      ],
+      overnightStay: "Joshimath",
+      photoUrl: "/gallery/joshimath_stay.jpeg",
+      photoCaption: "Joshimath Town & Alpine Valley View Stays"
+    },
+    {
+      id: 5,
+      dayNumber: 5,
+      dateStr: "Day 05",
+      route: "Joshimath → Auli Gorson Bugyal / Narsingh Temple → Joshimath / Rudraprayag",
+      activities: [
+        "Morning excursion to Gorson Bugyal snow meadow or chairlift ride in Auli.",
+        "Visit sacred Narsingh Temple in Joshimath (winter seat of Lord Badri Vishal) and Shankaracharya Math.",
+        "Leisurely drive to Joshimath / Rudraprayag hotel; check in and unwind with hot tea and mountain dinner."
+      ],
+      overnightStay: "Joshimath / Rudraprayag",
+      photoUrl: "/gallery/auli_ropeway.jpg",
+      photoCaption: "Auli Cable Car Ropeway & Snow Skiing Slopes",
+      photoUrl2: "/gallery/auli_skiing.jpg",
+      photoCaption2: "Thrilling Auli Skiing & Snowboard Meadows"
+    },
+    {
+      id: 6,
+      dayNumber: 6,
+      dateStr: "Day 06",
+      route: "Joshimath / Rudraprayag → Devprayag Sangam → Rishikesh → Haridwar / Dehradun Drop",
+      activities: [
+        "After breakfast, check out and drive down along the Alaknanda river valley.",
+        "En route stop at Devprayag to witness the sacred confluence of Alaknanda and Bhagirathi forming holy river Ganga.",
+        "Pass through Rishikesh with optional visit to Ram Jhula / Triveni Ghat before timely drop at Haridwar Railway Station or Dehradun Airport."
+      ],
+      overnightStay: "Tour Concludes (Sweet Winter Memories)",
+      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
+      photoCaption: "Maha Ganga Aarti at Triveni Ghat & Tour Conclusion"
+    }
+  ],
+
+  pricingSubtitle: "Special 6D/5N Grand Winter Tour: 1st Night Mussoorie, 2nd & 3rd Ukhimath, 4th Joshimath, 5th Joshimath/Rudraprayag.",
+  pricingTiers: [
+    { package: "Grand Deluxe Package", price: "₹ 16,500 / Pax", totalPackagePrice: "₹ 16,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Private Vehicle + Full Hills & Snow Circuit" },
+    { package: "Grand Premium Package", price: "₹ 21,500 / Pax", totalPackagePrice: "₹ 21,500 / Pax (Twin Sharing)", hotelCategory: "Premium 3/4-Star Hotels with Heating", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova Crysta + Mall Road Hotel + Bonfire" }
+  ],
+  pricingNote: "Note: Rates per person on twin/triple sharing. Cable car/ropeway, snow equipment rentals and personal activities payable directly on spot.",
+
+  inclusions: [
+    "Dedicated Mountain Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) throughout the 6-day circuit",
+    "01 Night Stay in Mussoorie (Deluxe Room)",
+    "02 Nights Stay in Ukhimath (Deluxe Mountain Resort / Swiss Cottage)",
+    "01 Night Stay in Joshimath (Deluxe Room)",
+    "01 Night Stay in Joshimath / Rudraprayag (Deluxe Room)",
+    "Daily Breakfast and Warm Dinner at hotels (MAP Plan)",
+    "All Driver Batta, Mountain Tolls, State Taxes, and Parking fees",
+    "Complete Sightseeing: Mussoorie Mall Road, Kempty Falls, Tehri Lake, Ukhimath Omkareshwar, Chopta & Tungnath Trek, Joshimath, Auli Snow Slopes, Devprayag Sangam"
+  ],
+  exclusions: [
+    "Auli ropeway / chairlift tickets, skiing gear & instructor fee",
+    "Mussoorie ropeway, garden entry fees, pony/mule charges",
+    "Lunches, mid-day snacks, beverages, room heaters, tips",
+    "Contingency costs due to roadblocks or weather delays"
+  ],
+
+  goodToKnow: [
+    "Exact Night Stays: 1st Night in Mussoorie, 2nd & 3rd in Ukhimath, 4th in Joshimath, 5th in Joshimath/Rudraprayag.",
+    "Winter in higher Garhwal requires multi-layered warm clothing, thermals, fleece jackets, waterproof gloves, and sturdy snow boots.",
+    "Scenic mountain driving times can vary depending on snowfall; our experienced hill drivers prioritize safety at all times."
+  ],
+  bookingPayment: [
+    "Deposit advance payment to reserve hill properties and mountain vehicle.",
+    "Remaining balance payable on arrival with formal GST tax invoice and yatra voucher."
+  ],
+
+  contactAgency: "Travel to Uttarakhand",
+  contactPerson: "Mr. Amit kumar",
+  contactPhone: "+91 9719038278",
+  motto: "जय बद्री विशाल · ॐ नमः शिवाय",
+
+  photos: [
+    { id: "ph-actm-1", url: "/gallery/mussoorie_winterline.jpeg", caption: "Mussoorie Rare Winterline Sunset Spectacle" },
+    { id: "ph-actm-2", url: "/gallery/chopta_snow_meadows.jpg", caption: "Chopta Snow-Covered Alpine Meadows" },
+    { id: "ph-actm-3", url: "/gallery/tungnath_temple_snow.jpg", caption: "Shri Tungnath Temple in Winter Snow" },
+    { id: "ph-actm-4", url: "/gallery/auli_ropeway.jpg", caption: "Auli Cable Car & Iconic Ropeway View" },
+    { id: "ph-actm-5", url: "/gallery/auli_skiing.jpg", caption: "Auli Snow Slopes & Skiing Adventure" },
+    { id: "ph-actm-6", url: "/gallery/mussoorie_mall_road.webp", caption: "Mussoorie Mall Road & Misty Hills" },
+    { id: "ph-actm-7", url: "/gallery/kempty_falls.avif", caption: "Cascading Kempty Falls Mussoorie" },
+    { id: "ph-actm-8", url: "/gallery/joshimath_stay.jpeg", caption: "Joshimath Town & Scenic Stays" }
+  ],
+  hotelPhotos: WINTER_HOTEL_PHOTO_PRESETS,
+  showPhotosPage1: true,
+  showPhotosPage3: true,
+  showHotelPhotos: true,
+  trustPhotos: DEFAULT_TRUST_PHOTOS,
+  showTrustSection: true
+};
+
 const CURATED_PHOTO_PRESETS = [
   {
     id: "preset-all4-real",
@@ -867,6 +1589,67 @@ const CURATED_PHOTO_PRESETS = [
     id: "preset-group",
     url: "/gallery/chardham_10d_img_4.jpg",
     caption: "Pilgrimage Group & Tempo Traveller"
+  },
+  // ❄️ Winter Specials Presets
+  {
+    id: "preset-auli-ropeway-winter",
+    url: "/gallery/auli_ropeway.jpg",
+    caption: "Auli Cable Car & Ropeway"
+  },
+  {
+    id: "preset-auli-skiing-winter",
+    url: "/gallery/auli_skiing.jpg",
+    caption: "Auli Snow Slopes & Skiing"
+  },
+  {
+    id: "preset-chopta-meadows-winter",
+    url: "/gallery/chopta_snow_meadows.jpg",
+    caption: "Chopta Snow-Covered Alpine Meadows"
+  },
+  {
+    id: "preset-tungnath-winter-snow",
+    url: "/gallery/tungnath_temple_snow.jpg",
+    caption: "Tungnath Temple Winter Snow"
+  },
+  {
+    id: "preset-chandrashila-summit-winter",
+    url: "/gallery/chandrashila_summit.jpg",
+    caption: "Chandrashila Peak Snow Summit"
+  },
+  {
+    id: "preset-ukhimath-temple-winter",
+    url: "/gallery/ukhimath_temple.png",
+    caption: "Ukhimath Omkareshwar Temple"
+  },
+  {
+    id: "preset-mussoorie-winterline",
+    url: "/gallery/mussoorie_winterline.jpeg",
+    caption: "Mussoorie Rare Winterline Sunset"
+  },
+  {
+    id: "preset-mussoorie-mall",
+    url: "/gallery/mussoorie_mall_road.webp",
+    caption: "Mussoorie Mall Road & Misty Hills"
+  },
+  {
+    id: "preset-kempty-falls",
+    url: "/gallery/kempty_falls.avif",
+    caption: "Cascading Kempty Falls Mussoorie"
+  },
+  {
+    id: "preset-rishikesh-aarti",
+    url: "/gallery/rishikesh_ganga_aarti.webp",
+    caption: "Maha Ganga Aarti Triveni Ghat"
+  },
+  {
+    id: "preset-rishikesh-jhula",
+    url: "/gallery/rishikesh_ram_jhula.png",
+    caption: "Ram Jhula Bridge over River Ganga"
+  },
+  {
+    id: "preset-joshimath-stay",
+    url: "/gallery/joshimath_stay.jpeg",
+    caption: "Joshimath Town & Scenic Stays"
   }
 ];
 
@@ -1079,6 +1862,39 @@ export default function ItineraryBuilder() {
               };
               parsed.showTrustSection = true;
             }
+
+            // Auto-migrate winter presets in localStorage
+            if (parsed.title?.includes("AULI") || parsed.title?.includes("CHOPTA") || parsed.title?.includes("WINTER") || parsed.title?.includes("RISHIKESH")) {
+              if (parsed.days && Array.isArray(parsed.days)) {
+                parsed.days = parsed.days.map((d: any) => {
+                  if (!d.photoUrl) {
+                    if (d.route?.toLowerCase().includes("auli") || d.activities?.some((a: string) => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing"))) {
+                      d.photoUrl = "/gallery/auli_ropeway.jpg";
+                      d.photoCaption = "Auli Cable Car (Asia's Longest Ropeway)";
+                      d.photoUrl2 = "/gallery/auli_skiing.jpg";
+                      d.photoCaption2 = "Auli Snow Skiing Slopes";
+                    } else if (d.route?.toLowerCase().includes("tungnath") || d.activities?.some((a: string) => a.toLowerCase().includes("tungnath"))) {
+                      d.photoUrl = "/gallery/tungnath_temple_snow.jpg";
+                      d.photoCaption = "Highest Shiva Shrine Tungnath in Winter Snow";
+                    } else if (d.route?.toLowerCase().includes("joshimath") || d.activities?.some((a: string) => a.toLowerCase().includes("joshimath"))) {
+                      d.photoUrl = "/gallery/joshimath_stay.jpeg";
+                      d.photoCaption = "Scenic Alaknanda Route & Joshimath Arrival";
+                    } else if (d.route?.toLowerCase().includes("mussoorie")) {
+                      d.photoUrl = "/gallery/mussoorie_winterline.jpeg";
+                      d.photoCaption = "Mussoorie Winterline Sunset Spectacle";
+                    } else if (d.route?.toLowerCase().includes("rishikesh")) {
+                      d.photoUrl = "/gallery/rishikesh_ganga_aarti.webp";
+                      d.photoCaption = "Sacred Maa Dhari Devi & Rishikesh Aarti";
+                    }
+                  }
+                  return d;
+                });
+              }
+              if (!parsed.hotelPhotos || parsed.hotelPhotos.length === 0 || parsed.hotelPhotos[0]?.location?.includes("Barkot")) {
+                parsed.hotelPhotos = WINTER_HOTEL_PHOTO_PRESETS;
+              }
+            }
+
             setData(parsed);
           }
         } catch {}
@@ -1877,12 +2693,13 @@ SCHEMA:
   };
 
   const loadCuratedHotelPhotos = () => {
+    const isWinter = data.title.toLowerCase().includes("winter") || data.title.toLowerCase().includes("auli") || data.title.toLowerCase().includes("chopta");
     setData(prev => ({
       ...prev,
-      hotelPhotos: CURATED_HOTEL_PHOTO_PRESETS,
+      hotelPhotos: isWinter ? WINTER_HOTEL_PHOTO_PRESETS : CURATED_HOTEL_PHOTO_PRESETS,
       showHotelPhotos: true
     }));
-    setAiPhotoNotification("✓ Loaded verified hotel & camp photos preset!");
+    setAiPhotoNotification(isWinter ? "✓ Loaded verified winter stay & alpine resort photos!" : "✓ Loaded verified hotel & camp photos preset!");
     setTimeout(() => setAiPhotoNotification(null), 4000);
   };
 
@@ -2235,19 +3052,28 @@ ${data.motto}`;
             'grid-cols-3'
           }`}>
             {data.photos.slice(0, 3).map((photo, pIdx) => {
+              const isContain = photo.fit !== "cover";
               const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-              const fitClass = photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover";
+              const fitClass = isContain ? "object-contain" : "object-cover";
 
               return (
-                <div key={photo.id || pIdx} className="relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-gray-100 h-44 flex flex-col justify-end">
-                  <img 
-                    src={photo.url} 
-                    alt={photo.caption || `Highlight ${pIdx + 1}`} 
-                    className={`absolute inset-0 w-full h-full ${fitClass} ${posClass}`}
-                  />
+                <div key={photo.id || pIdx} className="relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-slate-900 h-44 flex flex-col justify-between">
+                  <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center p-1 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+                    <img 
+                      src={photo.url} 
+                      alt="" 
+                      aria-hidden="true" 
+                      className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                    />
+                    <img 
+                      src={photo.url} 
+                      alt={photo.caption || `Highlight ${pIdx + 1}`} 
+                      className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass} drop-shadow-sm`}
+                    />
+                  </div>
                   {photo.caption && (
-                    <div className="relative z-10 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-2.5 py-1.5 pt-4 text-center">
-                      <p className="text-[10px] font-bold text-white tracking-wide leading-tight line-clamp-2 drop-shadow-xs">
+                    <div className="relative z-10 bg-gradient-to-r from-sky-950 via-[#0369a1] to-sky-950 px-2.5 py-1.5 text-center border-t border-sky-400/30 shrink-0">
+                      <p className="text-[9.5px] font-bold text-white tracking-wide leading-tight line-clamp-1 drop-shadow-xs">
                         {photo.caption}
                       </p>
                     </div>
@@ -2350,120 +3176,332 @@ ${data.motto}`;
     </div>
   );
 
-  const renderPage2 = (prefix: string) => (
-    <div
-      id={`${prefix}-itinerary-page-2`}
-      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
-      style={{ boxSizing: "border-box" }}
-    >
-      {/* Background Watermark */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
-      </div>
+  const renderPage2 = (prefix: string) => {
+    const isShortTour = data.days.length <= 6;
+    const isWinter = data.title.toLowerCase().includes("winter") || 
+                     data.title.toLowerCase().includes("auli") || 
+                     data.title.toLowerCase().includes("chopta") ||
+                     (data.subTitle && data.subTitle.toLowerCase().includes("winter"));
+    const displayHotelPhotos = (data.hotelPhotos && data.hotelPhotos.length > 0) 
+      ? data.hotelPhotos 
+      : (isWinter ? WINTER_HOTEL_PHOTO_PRESETS : CURATED_HOTEL_PHOTO_PRESETS);
 
-      <div className="relative z-10 space-y-2">
-        <h2 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-1.5 flex items-center justify-between">
-          <span>Detailed Day-Wise Itinerary ({data.duration || `${data.days.length} Days / ${Math.max(1, data.days.length - 1)} Nights Plan`})</span>
-          <span className="text-[10px] font-sans font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
-            Complete Day 1 to Day {Math.min(10, data.days.length)} Plan
-          </span>
-        </h2>
-
-        <div className="space-y-1.5">
-          {data.days.slice(0, 10).map(day => (
-            <div key={day.id} className="text-xs space-y-0.5">
-              <div className="bg-[#0369a1] text-white px-2.5 py-0.5 rounded-md text-[10px] font-bold tracking-wide flex items-center justify-between">
-                <div className="flex items-center gap-1.5 truncate">
-                  <span>DAY {day.dayNumber}</span>
-                  {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
-                    <>
-                      <span className="opacity-75">·</span>
-                      <span className="font-normal opacity-90">{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
-                    </>
-                  )}
-                  <span className="opacity-75">·</span>
-                  <span className="truncate">{day.route}</span>
-                </div>
-                {day.overnightStay && (
-                  <span className="text-[9px] bg-sky-900/60 px-1.5 py-0.2 rounded font-medium shrink-0 ml-1 text-sky-100">
-                    Stay: {day.overnightStay}
-                  </span>
-                )}
-              </div>
-
-              <ul className="pl-3 space-y-0.5 text-gray-800 text-[9.5px]">
-                {day.activities.map((act, aIdx) => (
-                  <li key={aIdx} className="leading-tight">
-                    – {act}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+    return (
+      <div
+        id={`${prefix}-itinerary-page-2`}
+        className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+        style={{ boxSizing: "border-box" }}
+      >
+        {/* Background Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+          <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
         </div>
 
-        {/* Holy Sightseeing Highlights & Darshan Landmark Highlights to fill bottom space */}
-        {data.photos && data.photos.length > 0 && (
-          <div className="mt-1 space-y-1">
-            <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1]">
-              <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
-              <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {data.photos.slice(0, 3).map((photo, pIdx) => {
-                const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-                const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
-                return (
-                  <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white">
-                    <div className="h-26 overflow-hidden bg-gray-100 flex items-center justify-center">
-                      <img 
-                        src={photo.url} 
-                        alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
-                        className={`w-full h-full ${fitClass} ${posClass}`}
-                      />
+        <div className={`relative z-10 ${isShortTour ? "space-y-3" : "space-y-2"}`}>
+          <h2 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-1.5 flex items-center justify-between">
+            <span>Detailed Day-Wise Itinerary ({data.duration || `${data.days.length} Days / ${Math.max(1, data.days.length - 1)} Nights Plan`})</span>
+            <span className="text-[10px] font-sans font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+              Complete Day 1 to Day {Math.min(10, data.days.length)} Plan
+            </span>
+          </h2>
+
+          {/* DAY-WISE ITINERARY CARDS WITH DIRECTLY LINKED PHOTOS */}
+          <div className={isShortTour ? "space-y-3" : "space-y-1.5"}>
+            {data.days.slice(0, 10).map((day, dIdx) => {
+              // Resolve day photos (explicit or smart keyword-based matching)
+              const primaryPhotoUrl = day.photoUrl || (
+                day.route.toLowerCase().includes("auli") || day.activities.some(a => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing") || a.toLowerCase().includes("cable car"))
+                  ? "/gallery/auli_ropeway.jpg"
+                  : day.route.toLowerCase().includes("tungnath") || day.activities.some(a => a.toLowerCase().includes("tungnath"))
+                  ? "/gallery/tungnath_temple_snow.jpg"
+                  : day.route.toLowerCase().includes("chandrashila") || day.activities.some(a => a.toLowerCase().includes("chandrashila"))
+                  ? "/gallery/chandrashila_summit.jpg"
+                  : day.route.toLowerCase().includes("chopta") || day.activities.some(a => a.toLowerCase().includes("chopta"))
+                  ? "/gallery/chopta_snow_meadows.jpg"
+                  : day.route.toLowerCase().includes("mussoorie") || day.activities.some(a => a.toLowerCase().includes("mussoorie") || a.toLowerCase().includes("mall road") || a.toLowerCase().includes("winterline"))
+                  ? "/gallery/mussoorie_winterline.jpeg"
+                  : day.route.toLowerCase().includes("rishikesh") || day.activities.some(a => a.toLowerCase().includes("rishikesh") || a.toLowerCase().includes("aarti") || a.toLowerCase().includes("jhula"))
+                  ? "/gallery/rishikesh_ganga_aarti.webp"
+                  : day.route.toLowerCase().includes("joshimath") || day.activities.some(a => a.toLowerCase().includes("joshimath"))
+                  ? "/gallery/joshimath_stay.jpeg"
+                  : day.route.toLowerCase().includes("ukhimath") || day.activities.some(a => a.toLowerCase().includes("ukhimath"))
+                  ? "/gallery/ukhimath_temple.png"
+                  : data.photos && data.photos[dIdx]
+                  ? data.photos[dIdx].url
+                  : null
+              );
+
+              const primaryCaption = day.photoCaption || (
+                data.photos?.find(p => p.url === primaryPhotoUrl)?.caption || `Day ${day.dayNumber} Sightseeing Highlight`
+              );
+
+              const secondaryPhotoUrl = day.photoUrl2 || (
+                day.route.toLowerCase().includes("auli") && primaryPhotoUrl !== "/gallery/auli_skiing.jpg" ? "/gallery/auli_skiing.jpg" :
+                day.route.toLowerCase().includes("tungnath") && primaryPhotoUrl !== "/gallery/chandrashila_summit.jpg" ? "/gallery/chandrashila_summit.jpg" :
+                day.route.toLowerCase().includes("mussoorie") && primaryPhotoUrl !== "/gallery/mussoorie_mall_road.webp" ? "/gallery/mussoorie_mall_road.webp" :
+                day.route.toLowerCase().includes("rishikesh") && primaryPhotoUrl !== "/gallery/rishikesh_ram_jhula.png" ? "/gallery/rishikesh_ram_jhula.png" : null
+              );
+
+              const secondaryCaption = day.photoCaption2 || (
+                data.photos?.find(p => p.url === secondaryPhotoUrl)?.caption || (
+                  secondaryPhotoUrl === "/gallery/auli_skiing.jpg" ? "Thrilling Auli Snow Skiing & Slopes" :
+                  secondaryPhotoUrl === "/gallery/chandrashila_summit.jpg" ? "Chandrashila 360° Himalayan Panorama" :
+                  secondaryPhotoUrl === "/gallery/mussoorie_mall_road.webp" ? "Mussoorie Mall Road & Misty Hills" :
+                  secondaryPhotoUrl === "/gallery/rishikesh_ram_jhula.png" ? "Sacred Ram Jhula over Ganga" : ""
+                )
+              );
+
+              return (
+                <div key={day.id} className={isShortTour ? "bg-white rounded-xl border border-sky-200/90 shadow-2xs overflow-hidden" : "text-xs space-y-0.5"}>
+                  {/* Header Bar */}
+                  <div className={`bg-[#0369a1] text-white font-bold tracking-wide flex items-center justify-between shadow-xs ${isShortTour ? "px-3.5 py-1.5 text-[11px]" : "px-2.5 py-0.5 rounded-md text-[10px]"}`}>
+                    <div className="flex items-center gap-2 min-w-0 pr-2">
+                      <span className="bg-white/20 text-white px-2 py-0.5 rounded font-black text-[10.5px] shrink-0 tracking-wider">
+                        DAY {day.dayNumber}
+                      </span>
+                      {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
+                        <span className="text-sky-100 font-medium text-[10px] shrink-0">
+                          ({day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()})
+                        </span>
+                      )}
+                      <span className="opacity-75 shrink-0">·</span>
+                      <span className="truncate font-semibold">{day.route}</span>
                     </div>
-                    {photo.caption && (
-                      <p className="text-[8.5px] font-bold text-gray-800 py-1 px-1 text-center truncate bg-sky-50/80 border-t border-sky-100">
-                        {photo.caption}
-                      </p>
+                    {day.overnightStay && (
+                      <span className="text-[10px] bg-sky-950/80 border border-sky-400/40 px-2.5 py-0.5 rounded-md font-semibold shrink-0 ml-2 text-white shadow-2xs whitespace-nowrap">
+                        🏨 Stay: {day.overnightStay}
+                      </span>
                     )}
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
 
-        {/* Comfort Standards & Assurances */}
-        <div className="pt-1.5">
-          <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
-            <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1] mb-1">
-              <span>✦ Pilgrimage Yatra Highlights & Mountain Support</span>
-              <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+                  {/* Day Content */}
+                  {isShortTour ? (
+                    <div className="p-2.5 space-y-2">
+                      {/* Activities Bullet Points */}
+                      <ul className="text-gray-800 space-y-1 text-[10.5px] leading-relaxed pl-3">
+                        {day.activities.map((act, aIdx) => (
+                          <li key={aIdx}>
+                            – {act}
+                          </li>
+                        ))}
+                      </ul>
+
+                      {/* Day 1, Day 2, Day 3 Related Photo Strip right after activities */}
+                      {primaryPhotoUrl && (
+                        <div className="pt-1.5 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
+                          <div className={`${secondaryPhotoUrl ? 'w-36 h-20' : 'w-44 h-22'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
+                            <img 
+                              src={primaryPhotoUrl} 
+                              alt="" 
+                              aria-hidden="true" 
+                              className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                            />
+                            <img 
+                              src={primaryPhotoUrl} 
+                              alt={primaryCaption} 
+                              className="relative z-10 max-h-full max-w-full object-cover"
+                            />
+                            <span className="absolute bottom-1 right-1 z-20 text-[7px] font-bold px-1.5 py-0.2 rounded bg-black/75 text-white backdrop-blur-xs">
+                              Day {day.dayNumber}
+                            </span>
+                          </div>
+
+                          {secondaryPhotoUrl && (
+                            <div className="w-36 h-20 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
+                              <img 
+                                src={secondaryPhotoUrl} 
+                                alt="" 
+                                aria-hidden="true" 
+                                className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                              />
+                              <img 
+                                src={secondaryPhotoUrl} 
+                                alt={secondaryCaption} 
+                                className="relative z-10 max-h-full max-w-full object-cover"
+                              />
+                              <span className="absolute bottom-1 right-1 z-20 text-[7px] font-bold px-1.5 py-0.2 rounded bg-black/75 text-white backdrop-blur-xs">
+                                Day {day.dayNumber}
+                              </span>
+                            </div>
+                          )}
+
+                          <div className="flex-1 min-w-0 flex flex-col justify-center">
+                            <p className="text-[10px] font-bold text-[#0369a1] flex items-center gap-1">
+                              <span>📸 Day {day.dayNumber} Sightseeing & Excursion</span>
+                            </p>
+                            <p className="text-[9.5px] text-gray-800 font-semibold mt-0.5 leading-snug">
+                              {primaryCaption}
+                            </p>
+                            {secondaryCaption && (
+                              <p className="text-[8.5px] text-gray-500 mt-0.5 leading-snug">
+                                • {secondaryCaption}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <ul className="pl-3 space-y-0.5 text-gray-800 text-[9.5px] leading-tight">
+                      {day.activities.map((act, aIdx) => (
+                        <li key={aIdx}>
+                          – {act}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* SIGHTSEEING HIGHLIGHTS (ONLY FOR EXTENDED TOURS > 6 DAYS) */}
+          {!isShortTour && data.photos && data.photos.length > 0 && (
+            <div className="mt-1 space-y-1">
+              <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1]">
+                <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
+                <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                {data.photos.slice(0, 3).map((photo, pIdx) => {
+                  const isContain = photo.fit !== "cover";
+                  const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
+                  const fitClass = isContain ? "object-contain" : "object-cover";
+                  return (
+                    <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                      <div className="h-24 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
+                        <img 
+                          src={photo.url} 
+                          alt="" 
+                          aria-hidden="true" 
+                          className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                        />
+                        <img 
+                          src={photo.url} 
+                          alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
+                          className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass}`}
+                        />
+                      </div>
+                      {photo.caption && (
+                        <p className="text-[8.5px] font-bold text-gray-800 py-1 px-1 text-center truncate bg-sky-50/80 border-t border-sky-100 shrink-0">
+                          {photo.caption}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-[9px] text-gray-700">
-              <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                <p className="font-bold text-gray-900">Dedicated Mountain Fleet</p>
-                <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
-                  Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
-                </p>
+          )}
+
+          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for short tours like 3D/5D/6D!) */}
+          {isShortTour && displayHotelPhotos && displayHotelPhotos.length > 0 && (
+            <div className="space-y-1.5 pt-1">
+              <div className="flex items-center justify-between text-[10.5px] font-bold text-[#0369a1]">
+                <span className="flex items-center gap-1.5">
+                  <span>{isWinter ? "🏨 Handpicked Winter Stays & Alpine Comfort" : "🏨 Confirmed Clean Stays & Hospitality"}</span>
+                  <span className="text-[8.5px] font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                    Pre-Inspected & Verified
+                  </span>
+                </span>
+                <span className="text-[9px] font-semibold text-gray-500">Heated Rooms · 24/7 Hot Water · Cozy Stays</span>
               </div>
-              <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                <p className="font-bold text-gray-900">Clean Verified Stays</p>
-                <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
-                  Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
-                </p>
+              <div className="grid grid-cols-3 gap-2.5">
+                {displayHotelPhotos.slice(0, 3).map((hp, hIdx) => {
+                  const isContain = hp.fit !== "cover";
+                  const fitClass = isContain ? "object-contain" : "object-cover";
+                  return (
+                    <div key={hp.id || hIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                      <div className="h-28 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
+                        <img 
+                          src={hp.url} 
+                          alt="" 
+                          aria-hidden="true" 
+                          className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                        />
+                        <img 
+                          src={hp.url} 
+                          alt={hp.hotelName || 'Stay'} 
+                          className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
+                        />
+                        <span className="absolute top-1 right-1 z-20 text-[8px] font-bold px-1.5 py-0.5 rounded bg-[#0369a1] text-white shadow-xs">
+                          📍 {hp.location?.split("/")[0]?.trim() || "Scenic Stay"}
+                        </span>
+                      </div>
+                      <div className="p-1.5 bg-sky-50/70 border-t border-sky-100 flex-1 flex flex-col justify-between">
+                        <p className="text-[9.5px] font-bold text-gray-900 truncate">
+                          {hp.hotelName || hp.roomType}
+                        </p>
+                        <p className="text-[8px] text-gray-600 line-clamp-1 mt-0.5">
+                          {hp.caption || hp.roomType}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                <p className="font-bold text-gray-900">24/7 Pilgrimage Desk</p>
-                <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
-                  Darshan slip assistance, registration support & 24/7 route coordination.
-                </p>
+            </div>
+          )}
+
+          {/* MOUNTAIN FLEET, WEATHER SAFETY & GUEST SUPPORT */}
+          <div className="pt-1">
+            <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
+              <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1] mb-1.5">
+                <span>{isWinter ? "❄️ Winter Mountain Guidelines, Vehicle Safety & Travel Essentials" : "✦ Pilgrimage Yatra Highlights & Mountain Support"}</span>
+                <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
               </div>
+              {isWinter ? (
+                <div className="grid grid-cols-4 gap-2 text-[9px] text-gray-700">
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">Dedicated Mountain Fleet</p>
+                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                      Hill-certified chauffeur, anti-skid snow chains, all state tolls & parking included.
+                    </p>
+                  </div>
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">Thermal Wear Advisory</p>
+                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                      3-layer thermal inners, waterproof snow boots, fleece jackets & UV sunglasses.
+                    </p>
+                  </div>
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">Auli Cable Car Desk</p>
+                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                      On-spot assistance for ropeway chairlift, ski gear rental & snow trail navigation.
+                    </p>
+                  </div>
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">24/7 Ground Assistance</p>
+                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                      Real-time weather tracking, snow roadblock updates & 24/7 WhatsApp helpdesk.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 gap-2 text-[9px] text-gray-700">
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">Dedicated Mountain Fleet</p>
+                    <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                      Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
+                    </p>
+                  </div>
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">Clean Verified Stays</p>
+                    <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                      Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
+                    </p>
+                  </div>
+                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                    <p className="font-bold text-gray-900">24/7 Pilgrimage Desk</p>
+                    <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                      Darshan slip assistance, registration support & 24/7 route coordination.
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
-      </div>
 
       {/* Page 2 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
@@ -2496,6 +3534,7 @@ ${data.motto}`;
       </div>
     </div>
   );
+};
 
   const renderPage3 = (prefix: string) => (
     <div
@@ -2604,15 +3643,23 @@ ${data.motto}`;
                 const safeUrl = (isTent && (hp.url?.includes("32") || !hp.url)) || hp.url === "/gallery/chardham_10d_img_32.jpg"
                   ? "/gallery/kedarnath_alpine_tent.jpg"
                   : hp.url;
+                const isContain = hp.fit !== "cover";
+                const fitClass = isContain ? "object-contain" : "object-cover";
                 return (
                   <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                    <div className="h-36 relative overflow-hidden bg-slate-50 flex items-center justify-center">
+                    <div className="h-36 relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5">
+                      <img 
+                        src={safeUrl} 
+                        alt="" 
+                        aria-hidden="true" 
+                        className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                      />
                       <img 
                         src={safeUrl} 
                         alt={hp.roomType || 'Accommodation'} 
-                        className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain bg-slate-50' : 'object-cover'} ${hp.position || 'object-center'}`}
+                        className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
                       />
-                      <span className={`absolute top-1.5 right-1.5 text-[8.5px] font-bold px-2 py-0.5 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
+                      <span className={`absolute top-1.5 right-1.5 z-20 text-[8.5px] font-bold px-2 py-0.5 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
                         {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Standard Room')}
                       </span>
                     </div>
@@ -2652,21 +3699,28 @@ ${data.motto}`;
             </div>
             <div className={`grid gap-2.5 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
               {data.photos.slice(0, 6).map((photo, pIdx) => {
+                const isContain = photo.fit !== "cover";
                 const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-                const fitClass = photo.fit === "contain" ? "object-contain bg-slate-50" : "object-cover";
+                const fitClass = isContain ? "object-contain" : "object-cover";
                 const landmarkHeightClass = (data.photos?.length || 0) <= 3 ? "h-44" : "h-34";
 
                 return (
                   <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/30 shadow-2xs bg-gray-50 flex flex-col">
-                    <div className={`${landmarkHeightClass} relative overflow-hidden bg-slate-50 flex items-center justify-center`}>
+                    <div className={`${landmarkHeightClass} relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5`}>
+                      <img 
+                        src={photo.url} 
+                        alt="" 
+                        aria-hidden="true" 
+                        className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                      />
                       <img 
                         src={photo.url} 
                         alt={photo.caption || `Landmark ${pIdx + 1}`} 
-                        className={`w-full h-full ${fitClass} ${posClass}`}
+                        className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass}`}
                       />
                     </div>
                     {photo.caption && (
-                      <div className="py-1 px-1.5 bg-white border-t border-gray-100 text-center min-h-[26px] flex items-center justify-center">
+                      <div className="py-1 px-1.5 bg-white border-t border-gray-100 text-center min-h-[26px] flex items-center justify-center shrink-0">
                         <p className="text-[9.5px] font-bold text-gray-800 line-clamp-1 px-1 leading-tight">
                           {photo.caption}
                         </p>
@@ -2982,9 +4036,82 @@ ${data.motto}`;
             </button>
           </div>
 
-          {/* Quick Presets Bar */}
-          <div className="flex items-center gap-1.5 flex-wrap -mt-2">
-            <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Quick Load:</span>
+          {/* ❄️ Winter Holidays 2026-27 Shortcuts Bar (Special Focus) */}
+          <div className="bg-gradient-to-r from-blue-50/90 via-sky-50/70 to-indigo-50/90 border border-blue-200 rounded-xl p-3 shadow-xs -mt-1 space-y-2.5">
+            <div className="flex items-center justify-between gap-2 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">❄️</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider text-blue-950 flex items-center gap-1">
+                  Winter Holidays Itinerary Shortcuts:
+                </span>
+                <span className="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded-full border border-blue-300">
+                  Nov 2026 – Mar 2027
+                </span>
+              </div>
+              <span className="text-[10.5px] text-blue-700 font-semibold">⚡ 1-Click Load Itinerary + Confirmed Stays</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {/* 1. Auli (3D/2N) */}
+              <button
+                type="button"
+                onClick={() => setData(AULI_3D_PRESET)}
+                className="px-2.5 py-1.5 bg-white hover:bg-sky-600 text-sky-950 hover:text-white border border-sky-300 hover:border-sky-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                title="Auli (3D/2N) • 2 Nights Stay in Joshimath"
+              >
+                <span>🏔️ Auli (3D/2N)</span>
+                <span className="text-[10px] text-sky-700 group-hover:text-sky-100 bg-sky-50 group-hover:bg-sky-700/60 px-1.5 py-0.5 rounded font-medium border border-sky-200 group-hover:border-transparent">2N Joshimath</span>
+              </button>
+
+              {/* 2. Chopta (3D/2N) */}
+              <button
+                type="button"
+                onClick={() => setData(CHOPTA_3D_PRESET)}
+                className="px-2.5 py-1.5 bg-white hover:bg-emerald-600 text-emerald-950 hover:text-white border border-emerald-300 hover:border-emerald-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                title="Chopta (3D/2N) • 2 Nights Stay in Chopta"
+              >
+                <span>🌲 Chopta (3D/2N)</span>
+                <span className="text-[10px] text-emerald-700 group-hover:text-emerald-100 bg-emerald-50 group-hover:bg-emerald-700/60 px-1.5 py-0.5 rounded font-medium border border-emerald-200 group-hover:border-transparent">2N Chopta</span>
+              </button>
+
+              {/* 3. Rishikesh + Mussoorie (3D/2N) */}
+              <button
+                type="button"
+                onClick={() => setData(RISHIKESH_MUSSOORIE_3D_PRESET)}
+                className="px-2.5 py-1.5 bg-white hover:bg-purple-600 text-purple-950 hover:text-white border border-purple-300 hover:border-purple-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                title="Rishikesh + Mussoorie (3D/2N) • 1st Night Rishikesh, 2nd Night Mussoorie"
+              >
+                <span>🧘‍♂️ Rishikesh + Mussoorie (3D/2N)</span>
+                <span className="text-[10px] text-purple-700 group-hover:text-purple-100 bg-purple-50 group-hover:bg-purple-700/60 px-1.5 py-0.5 rounded font-medium border border-purple-200 group-hover:border-transparent">1N Rishi + 1N Muss</span>
+              </button>
+
+              {/* 4. Auli + Chopta + Tungnath (5D/4N) */}
+              <button
+                type="button"
+                onClick={() => setData(AULI_CHOPTA_TUNGNATH_5D_PRESET)}
+                className="px-2.5 py-1.5 bg-white hover:bg-indigo-600 text-indigo-950 hover:text-white border border-indigo-300 hover:border-indigo-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                title="Auli + Chopta + Tungnath (5D/4N) • 2N Ukhimath/Chopta + 2N Joshimath/Rudraprayag"
+              >
+                <span>❄️ Auli + Chopta + Tungnath (5D/4N)</span>
+                <span className="text-[10px] text-indigo-700 group-hover:text-indigo-100 bg-indigo-50 group-hover:bg-indigo-700/60 px-1.5 py-0.5 rounded font-medium border border-indigo-200 group-hover:border-transparent">2N Ukhimath + 2N Joshimath</span>
+              </button>
+
+              {/* 5. Auli + Chopta + Tungnath + Mussoorie (6D/5N) */}
+              <button
+                type="button"
+                onClick={() => setData(AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET)}
+                className="px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-600 hover:to-orange-600 text-amber-950 hover:text-white border border-amber-300 hover:border-amber-600 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                title="Auli + Chopta + Tungnath + Mussoorie (6D/5N) • 1N Mussoorie, 2N & 3N Ukhimath, 4N Joshimath, 5N Joshimath/Rudraprayag"
+              >
+                <span>👑 Auli + Chopta + Tungnath + Mussoorie (6D/5N)</span>
+                <span className="text-[10px] text-amber-800 group-hover:text-amber-100 bg-amber-100/80 group-hover:bg-amber-700/60 px-1.5 py-0.5 rounded font-semibold border border-amber-200 group-hover:border-transparent">1N Muss + 2N Ukhi + 1N Joshi + 1N Joshi/Rudra</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Pilgrimage Presets & Quick Tools Bar */}
+          <div className="flex items-center gap-1.5 flex-wrap -mt-1">
+            <span className="text-[10.5px] font-bold text-gray-500 uppercase tracking-wider mr-1">Chardham Presets:</span>
             <button
               type="button"
               onClick={() => setData(CHARDHAM_12P_10D_PRESET)}
@@ -3505,6 +4632,50 @@ ${data.motto}`;
                         </button>
                       </div>
                     </div>
+
+                    {/* Day Photo & Caption Editor */}
+                    <div className="pt-2 border-t border-gray-200/80">
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-[10px] font-medium text-sky-800 flex items-center gap-1">
+                          <ImageIcon className="w-3 h-3 text-sky-600" />
+                          <span>Day {day.dayNumber} Visual Highlight Photo & Caption</span>
+                        </label>
+                        {day.photoUrl && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateDayField(day.id, "photoUrl", "");
+                              updateDayField(day.id, "photoCaption", "");
+                              updateDayField(day.id, "photoUrl2", "");
+                              updateDayField(day.id, "photoCaption2", "");
+                            }}
+                            className="text-[9px] text-rose-500 hover:underline cursor-pointer"
+                          >
+                            Reset Photo
+                          </button>
+                        )}
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Image URL or /gallery/..."
+                            value={day.photoUrl || ""}
+                            onChange={e => updateDayField(day.id, "photoUrl", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Caption (e.g. Auli Cable Car)"
+                            value={day.photoCaption || ""}
+                            onChange={e => updateDayField(day.id, "photoCaption", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -3814,11 +4985,11 @@ ${data.motto}`;
                             {hp.url && (
                               <div className="mt-1 space-y-1">
                                 <div className="flex items-center gap-2">
-                                  <div className="h-10 w-16 rounded overflow-hidden border border-gray-200 shrink-0 bg-slate-50 flex items-center justify-center">
+                                  <div className="h-10 w-16 rounded overflow-hidden border border-gray-200 shrink-0 bg-slate-900 flex items-center justify-center p-0.5">
                                     <img 
                                       src={hp.url === "/gallery/chardham_10d_img_32.jpg" ? "/gallery/kedarnath_alpine_tent.jpg" : hp.url} 
                                       alt={hp.hotelName} 
-                                      className={`w-full h-full ${hp.fit === 'contain' ? 'object-contain' : 'object-cover'}`} 
+                                      className={`max-h-full max-w-full ${hp.fit === 'cover' ? 'w-full h-full object-cover' : 'object-contain'}`} 
                                     />
                                   </div>
                                   <span className="text-[9px] text-gray-400 font-mono truncate max-w-[180px]">
@@ -3830,19 +5001,19 @@ ${data.motto}`;
                                   <div className="flex gap-1">
                                     <button
                                       type="button"
-                                      onClick={() => updateHotelPhoto(hp.id, "fit", "cover")}
-                                      className={`text-[9px] px-2 py-0.5 rounded font-semibold ${hp.fit !== 'contain' ? 'bg-sky-600 text-white' : 'bg-white text-gray-700 border border-gray-200'}`}
-                                      title="Fill container (landscape)"
+                                      onClick={() => updateHotelPhoto(hp.id, "fit", "contain")}
+                                      className={`text-[9px] px-2 py-0.5 rounded font-semibold cursor-pointer ${hp.fit !== 'cover' ? 'bg-sky-600 text-white' : 'bg-white text-gray-700 border border-gray-200'}`}
+                                      title="Show full photo without cutting portrait/vertical shots"
                                     >
-                                      Cover (Fill)
+                                      ✓ Full Fit (No Cut)
                                     </button>
                                     <button
                                       type="button"
-                                      onClick={() => updateHotelPhoto(hp.id, "fit", "contain")}
-                                      className={`text-[9px] px-2 py-0.5 rounded font-semibold ${hp.fit === 'contain' ? 'bg-sky-600 text-white' : 'bg-white text-gray-700 border border-gray-200'}`}
-                                      title="Show full photo without cutting portrait/vertical shots"
+                                      onClick={() => updateHotelPhoto(hp.id, "fit", "cover")}
+                                      className={`text-[9px] px-2 py-0.5 rounded font-semibold cursor-pointer ${hp.fit === 'cover' ? 'bg-sky-600 text-white' : 'bg-white text-gray-700 border border-gray-200'}`}
+                                      title="Fill container (crop to fill)"
                                     >
-                                      Contain (No Cut)
+                                      Crop to Fill
                                     </button>
                                   </div>
                                 </div>
@@ -4536,11 +5707,11 @@ ${data.motto}`;
                   <div className="space-y-2">
                     {(data.photos || []).map((photo, pIdx) => (
                       <div key={photo.id || pIdx} className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-3">
-                        <div className="w-16 h-14 rounded-lg overflow-hidden bg-gray-200 shrink-0 relative border border-gray-200">
+                        <div className="w-16 h-14 rounded-lg overflow-hidden bg-slate-900 shrink-0 relative border border-gray-200 flex items-center justify-center p-0.5">
                           <img 
                             src={photo.url} 
                             alt={photo.caption} 
-                            className={`w-full h-full ${photo.fit === "contain" ? "object-contain bg-slate-900" : "object-cover"} ${photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center"}`} 
+                            className={`max-h-full max-w-full ${photo.fit === "cover" ? "w-full h-full object-cover" : "object-contain"} ${photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center"}`} 
                           />
                         </div>
                         <div className="flex-1 space-y-1.5">
@@ -4602,11 +5773,11 @@ ${data.motto}`;
                             </button>
                             <button
                               type="button"
-                              onClick={() => handleUpdatePhotoSetting(photo.id, "fit", photo.fit === "contain" ? "cover" : "contain")}
-                              className={`px-1.5 py-0.5 rounded text-[9.5px] font-bold cursor-pointer transition ${photo.fit === "contain" ? "bg-emerald-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
-                              title="Fit entire image without cropping (adds clean dark border if needed)"
+                              onClick={() => handleUpdatePhotoSetting(photo.id, "fit", photo.fit === "cover" ? "contain" : "cover")}
+                              className={`px-1.5 py-0.5 rounded text-[9.5px] font-bold cursor-pointer transition ${photo.fit !== "cover" ? "bg-emerald-600 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"}`}
+                              title="Fit entire image without cropping (Full Fit is active by default)"
                             >
-                              {photo.fit === "contain" ? "✓ Full Fit (No Crop)" : "Crop to Fill"}
+                              {photo.fit !== "cover" ? "✓ Full Fit (No Crop)" : "Crop to Fill"}
                             </button>
                           </div>
                         </div>

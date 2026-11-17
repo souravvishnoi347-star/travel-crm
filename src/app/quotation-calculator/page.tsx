@@ -45,10 +45,14 @@ interface PresetPackage {
 }
 
 const QUICK_PRESETS: PresetPackage[] = [
+  { name: "Auli Winter Wonderland (3D/2N)", pax: 2, days: 3, hotelCost: 10000, cabCost: 12500, mealCost: 4000, otherCost: 1500 },
+  { name: "Chopta & Tungnath Snow (3D/2N)", pax: 2, days: 3, hotelCost: 8000, cabCost: 11000, mealCost: 3500, otherCost: 1000 },
+  { name: "Rishikesh-Mussoorie (3D/2N)", pax: 2, days: 3, hotelCost: 8000, cabCost: 9000, mealCost: 3500, otherCost: 1000 },
+  { name: "Auli + Chopta + Tungnath (5D/4N)", pax: 4, days: 5, hotelCost: 22000, cabCost: 25000, mealCost: 11000, otherCost: 3000 },
+  { name: "Auli + Chopta + Tungnath + Mussoorie (6D/5N)", pax: 4, days: 6, hotelCost: 28000, cabCost: 32000, mealCost: 14000, otherCost: 4000 },
   { name: "Char Dham 9N/10D", pax: 4, days: 10, hotelCost: 38000, cabCost: 55000, mealCost: 18000, otherCost: 3000 },
   { name: "Do Dham Kedar-Badri 5N/6D", pax: 2, days: 6, hotelCost: 18500, cabCost: 24000, mealCost: 7500, otherCost: 2000 },
   { name: "Ek Dham Kedarnath 3N/4D", pax: 4, days: 4, hotelCost: 16000, cabCost: 17000, mealCost: 8000, otherCost: 2500 },
-  { name: "Rishikesh-Mussoorie 2N/3D", pax: 2, days: 3, hotelCost: 8000, cabCost: 9000, mealCost: 3500, otherCost: 1000 },
 ];
 
 export default function QuotationCalculatorPage() {

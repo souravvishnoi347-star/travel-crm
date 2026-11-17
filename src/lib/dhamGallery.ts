@@ -6,7 +6,7 @@ export interface DhamGalleryPhoto {
   id: string;
   url: string;
   caption: string;
-  dham: "kedarnath" | "badrinath" | "gangotri" | "yamunotri" | "helicopter" | "haridwar_rishikesh" | "chopta_tungnath" | "himalayas" | "custom";
+  dham: "kedarnath" | "badrinath" | "gangotri" | "yamunotri" | "helicopter" | "haridwar_rishikesh" | "chopta_tungnath" | "auli" | "mussoorie" | "himalayas" | "custom";
   dhamLabel: string;
   isDefault?: boolean;
   isCustom?: boolean;
@@ -142,18 +142,175 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     dham: "custom",
     dhamLabel: "Group Transport",
     isDefault: true
+  },
+
+  // ❄️ Winter Holidays 2026-27 Curated Library Photos
+  // Auli & Joshimath
+  {
+    id: "dham-auli-ropeway",
+    url: "/gallery/auli_ropeway.jpg",
+    caption: "Auli Cable Car & Iconic Ropeway View",
+    dham: "auli",
+    dhamLabel: "Auli Snow Slopes",
+    isDefault: true
+  },
+  {
+    id: "dham-auli-skiing",
+    url: "/gallery/auli_skiing.jpg",
+    caption: "Auli Snow Skiing & Winter Adventures",
+    dham: "auli",
+    dhamLabel: "Auli Snow Slopes",
+    isDefault: true
+  },
+  {
+    id: "dham-auli-lake",
+    url: "/gallery/auli_lake_gorson.webp",
+    caption: "Auli Snow Slopes, Artificial Lake & Gorson Bugyal",
+    dham: "auli",
+    dhamLabel: "Auli Snow Slopes",
+    isDefault: true
+  },
+  {
+    id: "dham-joshimath-stay",
+    url: "/gallery/joshimath_stay.jpeg",
+    caption: "Joshimath Town & Scenic Himalayan Stay",
+    dham: "auli",
+    dhamLabel: "Joshimath Gateway",
+    isDefault: true
+  },
+  {
+    id: "dham-joshimath-board",
+    url: "/gallery/joshimath_board.png",
+    caption: "Joshimath Gateway & Sacred Town Signboard",
+    dham: "auli",
+    dhamLabel: "Joshimath Gateway",
+    isDefault: true
+  },
+
+  // Chopta, Tungnath & Ukhimath
+  {
+    id: "dham-chopta-snow-meadows",
+    url: "/gallery/chopta_snow_meadows.jpg",
+    caption: "Chopta Snow-Covered Alpine Meadows & Swiss Camps",
+    dham: "chopta_tungnath",
+    dhamLabel: "Chopta & Tungnath",
+    isDefault: true
+  },
+  {
+    id: "dham-tungnath-winter-snow",
+    url: "/gallery/tungnath_temple_snow.jpg",
+    caption: "Shri Tungnath Temple - Highest Shiva Shrine in Winter",
+    dham: "chopta_tungnath",
+    dhamLabel: "Chopta & Tungnath",
+    isDefault: true
+  },
+  {
+    id: "dham-chandrashila-peak-snow",
+    url: "/gallery/chandrashila_summit.jpg",
+    caption: "Chandrashila Summit - 360° Himalayan Snow Panorama",
+    dham: "chopta_tungnath",
+    dhamLabel: "Chopta & Tungnath",
+    isDefault: true
+  },
+  {
+    id: "dham-ukhimath-temple",
+    url: "/gallery/ukhimath_temple.png",
+    caption: "Ukhimath Omkareshwar Temple - Winter Abode of Kedarnath",
+    dham: "chopta_tungnath",
+    dhamLabel: "Ukhimath Temple",
+    isDefault: true
+  },
+
+  // Mussoorie & Queen of Hills
+  {
+    id: "dham-mussoorie-winterline",
+    url: "/gallery/mussoorie_winterline.jpeg",
+    caption: "Mussoorie Rare Winterline Sunset Spectacle",
+    dham: "mussoorie",
+    dhamLabel: "Mussoorie Hill Station",
+    isDefault: true
+  },
+  {
+    id: "dham-mussoorie-mall-road",
+    url: "/gallery/mussoorie_mall_road.webp",
+    caption: "Mussoorie Mall Road & Misty Mountain View",
+    dham: "mussoorie",
+    dhamLabel: "Mussoorie Hill Station",
+    isDefault: true
+  },
+  {
+    id: "dham-kempty-falls",
+    url: "/gallery/kempty_falls.avif",
+    caption: "Cascading Kempty Falls Mussoorie",
+    dham: "mussoorie",
+    dhamLabel: "Mussoorie Hill Station",
+    isDefault: true
+  },
+
+  // Rishikesh Divine
+  {
+    id: "dham-rishikesh-ganga-aarti-auth",
+    url: "/gallery/rishikesh_ganga_aarti.webp",
+    caption: "Maha Ganga Aarti at Triveni Ghat Rishikesh",
+    dham: "haridwar_rishikesh",
+    dhamLabel: "Haridwar & Rishikesh",
+    isDefault: true
+  },
+  {
+    id: "dham-rishikesh-ram-jhula-auth",
+    url: "/gallery/rishikesh_ram_jhula.png",
+    caption: "Sacred Ram Jhula Suspension Bridge over Holy Ganga",
+    dham: "haridwar_rishikesh",
+    dhamLabel: "Haridwar & Rishikesh",
+    isDefault: true
+  },
+
+  // 🏨 Authentic Winter Stays & Mountain Resorts
+  {
+    id: "dham-winter-stay-resort",
+    url: "/gallery/winter_stay_resort.jpeg",
+    caption: "Himalayan Alpine Resort & Heated Winter Stay",
+    dham: "auli",
+    dhamLabel: "Auli & Joshimath Stay",
+    isDefault: true
+  },
+  {
+    id: "dham-winter-stay-room1",
+    url: "/gallery/winter_stay_room1.jpeg",
+    caption: "Deluxe Mountain View Winter Room & Suites",
+    dham: "auli",
+    dhamLabel: "Auli & Joshimath Stay",
+    isDefault: true
+  },
+  {
+    id: "dham-winter-stay-room2",
+    url: "/gallery/winter_stay_room2.jpeg",
+    caption: "Cozy Wooden Snow View Suite & Retreat",
+    dham: "chopta_tungnath",
+    dhamLabel: "Chopta & Alpine Stays",
+    isDefault: true
+  },
+  {
+    id: "dham-winter-stay-joshimath",
+    url: "/gallery/joshimath_stay.jpeg",
+    caption: "Joshimath Comfort Stay & Valley View Balcony",
+    dham: "auli",
+    dhamLabel: "Joshimath Stays",
+    isDefault: true
   }
 ];
 
 export const DHAM_CATEGORIES = [
   { key: "all", label: "All Photos" },
+  { key: "auli", label: "❄️ Auli & Joshimath" },
+  { key: "chopta_tungnath", label: "🌲 Chopta & Tungnath" },
+  { key: "mussoorie", label: "👑 Mussoorie" },
+  { key: "haridwar_rishikesh", label: "🧘‍♂️ Rishikesh & Haridwar" },
   { key: "kedarnath", label: "Kedarnath" },
   { key: "badrinath", label: "Badrinath" },
   { key: "gangotri", label: "Gangotri" },
   { key: "yamunotri", label: "Yamunotri" },
   { key: "helicopter", label: "Helicopter" },
-  { key: "haridwar_rishikesh", label: "Haridwar / Rishikesh" },
-  { key: "chopta_tungnath", label: "Chopta / Tungnath" },
   { key: "custom", label: "Custom Uploads" },
 ];
 
