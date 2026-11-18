@@ -3016,7 +3016,7 @@ ${data.motto}`;
   const renderPage1 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-1`}
-      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
@@ -3025,27 +3025,27 @@ ${data.motto}`;
       </div>
 
       {/* Header / Logo */}
-      <div className="relative z-10 flex flex-col items-center text-center pt-1">
-        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-24 w-auto object-contain mb-1.5 drop-shadow-xs" />
-        <p className="text-[10.5px] uppercase tracking-widest text-[#0369a1] font-bold">Travel to Uttarakhand</p>
+      <div className="relative z-10 flex flex-col items-center text-center pt-0.5">
+        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-20 w-auto object-contain mb-1 drop-shadow-xs" />
+        <p className="text-xs uppercase tracking-widest text-[#0369a1] font-black">Travel to Uttarakhand</p>
         
-        <h1 className="text-3xl font-serif font-black text-[#0369a1] tracking-tight mt-2 uppercase">
+        <h1 className="text-2xl sm:text-[27px] font-serif font-black text-[#0369a1] tracking-tight mt-1.5 uppercase leading-tight">
           {data.title}
         </h1>
-        <p className="text-xs font-semibold tracking-widest text-[#dc2626] uppercase mt-0.5">
+        <p className="text-[13px] font-black tracking-wider text-[#dc2626] uppercase mt-0.5">
           {data.subTitle}
         </p>
-        <p className="text-[11px] text-gray-600 font-medium italic mt-0.5">
+        <p className="text-[12.5px] text-gray-700 font-bold italic mt-0.5">
           {data.spiritualHeadline}
         </p>
-        <p className="text-[10px] text-gray-500 tracking-wide mt-0.5 font-sans">
+        <p className="text-[12px] text-gray-600 tracking-wide mt-0.5 font-semibold">
           {data.dhamsSubtitle}
         </p>
       </div>
 
       {/* Visual Photo Strip Showcase - Spacious & Uncropped */}
       {data.showPhotosPage1 !== false && data.photos && data.photos.length > 0 && (
-        <div className="relative z-10 my-3">
+        <div className="relative z-10 my-2.5">
           <div className={`grid gap-2.5 ${
             data.photos.length === 1 ? 'grid-cols-1' : 
             data.photos.length === 2 ? 'grid-cols-2' : 
@@ -3057,7 +3057,7 @@ ${data.motto}`;
               const fitClass = isContain ? "object-contain" : "object-cover";
 
               return (
-                <div key={photo.id || pIdx} className="relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-slate-900 h-44 flex flex-col justify-between">
+                <div key={photo.id || pIdx} className="relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-slate-900 h-40 flex flex-col justify-between">
                   <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center p-1 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
                     <img 
                       src={photo.url} 
@@ -3073,7 +3073,7 @@ ${data.motto}`;
                   </div>
                   {photo.caption && (
                     <div className="relative z-10 bg-gradient-to-r from-sky-950 via-[#0369a1] to-sky-950 px-2.5 py-1.5 text-center border-t border-sky-400/30 shrink-0">
-                      <p className="text-[9.5px] font-bold text-white tracking-wide leading-tight line-clamp-1 drop-shadow-xs">
+                      <p className="text-[11px] font-black text-white tracking-wide leading-tight line-clamp-1 drop-shadow-xs">
                         {photo.caption}
                       </p>
                     </div>
@@ -3085,67 +3085,67 @@ ${data.motto}`;
         </div>
       )}
 
-      {/* Summary Details Table - Elegant & Well Spaced */}
-      <div className="relative z-10 my-3 border-t border-b border-gray-200 py-3 text-[11px] space-y-2">
-        <div className="grid grid-cols-[120px_1fr] items-start">
-          <span className="font-bold text-gray-700">Prepared For</span>
-          <span className="font-bold text-[#0369a1] text-xs">{data.preparedFor}</span>
+      {/* Summary Details Table - Bold, Clear & Highly Readable on Mobile */}
+      <div className="relative z-10 my-2.5 border-t-2 border-b-2 border-sky-100 py-3 text-[13px] space-y-2">
+        <div className="grid grid-cols-[135px_1fr] items-start">
+          <span className="font-black text-gray-800 text-[13px]">Prepared For</span>
+          <span className="font-black text-[#0369a1] text-[14.5px]">{data.preparedFor}</span>
         </div>
-        <div className="grid grid-cols-[120px_1fr] items-start">
-          <span className="font-bold text-gray-700">Travel Dates</span>
-          <span className="font-semibold text-gray-800">{data.travelDates}</span>
+        <div className="grid grid-cols-[135px_1fr] items-start">
+          <span className="font-black text-gray-800 text-[13px]">Travel Dates</span>
+          <span className="font-bold text-gray-950 text-[13px]">{data.travelDates}</span>
         </div>
-        <div className="grid grid-cols-[120px_1fr] items-start">
-          <span className="font-bold text-gray-700">Duration</span>
-          <span className="font-semibold text-gray-800">{data.duration}</span>
+        <div className="grid grid-cols-[135px_1fr] items-start">
+          <span className="font-black text-gray-800 text-[13px]">Duration</span>
+          <span className="font-bold text-gray-950 text-[13px]">{data.duration}</span>
         </div>
-        <div className="grid grid-cols-[120px_1fr] items-start">
-          <span className="font-bold text-gray-700">Starting Point</span>
-          <span className="font-semibold text-gray-800">{data.startingPoint}</span>
+        <div className="grid grid-cols-[135px_1fr] items-start">
+          <span className="font-black text-gray-800 text-[13px]">Starting Point</span>
+          <span className="font-bold text-gray-950 text-[13px]">{data.startingPoint}</span>
         </div>
-        <div className="grid grid-cols-[120px_1fr] items-start">
-          <span className="font-bold text-gray-700">Route Covered</span>
-          <span className="text-[11px] text-gray-700 leading-relaxed font-medium">{data.routeCovered}</span>
+        <div className="grid grid-cols-[135px_1fr] items-start">
+          <span className="font-black text-gray-800 text-[13px]">Route Covered</span>
+          <span className="text-[12.5px] text-gray-900 leading-snug font-bold">{data.routeCovered}</span>
         </div>
       </div>
 
       {/* Your Journey At A Glance Box - Fills Space Gracefully */}
-      <div className="relative z-10 space-y-2.5">
-        <h3 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1]/30 pb-1">
+      <div className="relative z-10 space-y-2">
+        <h3 className="text-lg font-serif font-black text-[#0369a1] border-b-2 border-[#0369a1]/30 pb-1">
           Your Journey At A Glance
         </h3>
-        <p className="text-[11px] text-gray-700 leading-relaxed text-justify">
+        <p className="text-[12.5px] text-gray-900 leading-relaxed font-medium text-justify">
           {data.overviewSummary}
         </p>
 
-        <table className="w-full text-left text-[11px] border border-gray-200 mt-2 rounded-lg overflow-hidden">
+        <table className="w-full text-left text-[12.5px] border border-sky-200 mt-2 rounded-lg overflow-hidden">
           <tbody className="divide-y divide-gray-200">
             <tr className="bg-gray-50/70">
-              <td className="px-3 py-2 font-bold text-gray-700 w-1/3">Duration</td>
-              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceDuration}</td>
+              <td className="px-3.5 py-1.5 font-black text-gray-800 w-[35%] text-[12.5px]">Duration</td>
+              <td className="px-3.5 py-1.5 font-bold text-gray-950 text-[12.5px]">{data.glanceDuration}</td>
             </tr>
             <tr>
-              <td className="px-3 py-2 font-bold text-gray-700">Dhams Covered</td>
-              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceDhams}</td>
+              <td className="px-3.5 py-1.5 font-black text-gray-800 text-[12.5px]">Dhams Covered</td>
+              <td className="px-3.5 py-1.5 font-bold text-gray-950 text-[12.5px]">{data.glanceDhams}</td>
             </tr>
             <tr className="bg-gray-50/70">
-              <td className="px-3 py-2 font-bold text-gray-700">Kedarnath Sector</td>
-              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceSector}</td>
+              <td className="px-3.5 py-1.5 font-black text-gray-800 text-[12.5px]">Kedarnath Sector</td>
+              <td className="px-3.5 py-1.5 font-bold text-gray-950 text-[12.5px]">{data.glanceSector}</td>
             </tr>
             <tr>
-              <td className="px-3 py-2 font-bold text-gray-700">Start / End Point</td>
-              <td className="px-3 py-2 font-semibold text-gray-900">{data.glanceStartEnd}</td>
+              <td className="px-3.5 py-1.5 font-black text-gray-800 text-[12.5px]">Start / End Point</td>
+              <td className="px-3.5 py-1.5 font-bold text-gray-950 text-[12.5px]">{data.glanceStartEnd}</td>
             </tr>
             <tr className="bg-gray-50/70">
-              <td className="px-3 py-2 font-bold text-gray-700">Packages Available</td>
-              <td className="px-3 py-2 font-bold text-[#0369a1]">{data.glancePackages}</td>
+              <td className="px-3.5 py-1.5 font-black text-gray-800 text-[12.5px]">Packages Available</td>
+              <td className="px-3.5 py-1.5 font-black text-[#0369a1] text-[13px]">{data.glancePackages}</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       {/* Page 1 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
@@ -3189,7 +3189,7 @@ ${data.motto}`;
     return (
       <div
         id={`${prefix}-itinerary-page-2`}
-        className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+        className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
         style={{ boxSizing: "border-box" }}
       >
         {/* Background Watermark */}
@@ -3197,16 +3197,16 @@ ${data.motto}`;
           <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
         </div>
 
-        <div className={`relative z-10 ${isShortTour ? "space-y-3" : "space-y-2"}`}>
-          <h2 className="text-base font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1 mb-1.5 flex items-center justify-between">
+        <div className={`relative z-10 ${isShortTour ? (data.days.length <= 3 ? "space-y-2.5" : "space-y-1.5") : "space-y-1.5"}`}>
+          <h2 className="text-lg font-serif font-black text-[#0369a1] border-b-2 border-[#0369a1] pb-1 mb-1.5 flex items-center justify-between">
             <span>Detailed Day-Wise Itinerary ({data.duration || `${data.days.length} Days / ${Math.max(1, data.days.length - 1)} Nights Plan`})</span>
-            <span className="text-[10px] font-sans font-bold text-sky-700 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
+            <span className="text-[11px] font-sans font-black text-sky-800 bg-sky-50 border border-sky-200 px-3 py-0.5 rounded-full">
               Complete Day 1 to Day {Math.min(10, data.days.length)} Plan
             </span>
           </h2>
 
           {/* DAY-WISE ITINERARY CARDS WITH DIRECTLY LINKED PHOTOS */}
-          <div className={isShortTour ? "space-y-3" : "space-y-1.5"}>
+          <div className={isShortTour ? (data.days.length <= 3 ? "space-y-2.5" : "space-y-1.5") : "space-y-1.5"}>
             {data.days.slice(0, 10).map((day, dIdx) => {
               // Resolve day photos (explicit or smart keyword-based matching)
               const primaryPhotoUrl = day.photoUrl || (
@@ -3254,21 +3254,21 @@ ${data.motto}`;
               return (
                 <div key={day.id} className={isShortTour ? "bg-white rounded-xl border border-sky-200/90 shadow-2xs overflow-hidden" : "text-xs space-y-0.5"}>
                   {/* Header Bar */}
-                  <div className={`bg-[#0369a1] text-white font-bold tracking-wide flex items-center justify-between shadow-xs ${isShortTour ? "px-3.5 py-1.5 text-[11px]" : "px-2.5 py-0.5 rounded-md text-[10px]"}`}>
+                  <div className={`bg-[#0369a1] text-white font-bold tracking-wide flex items-center justify-between shadow-xs ${isShortTour ? "px-3.5 py-1.5 text-[12px]" : "px-2.5 py-1 rounded-md text-[11px]"}`}>
                     <div className="flex items-center gap-2 min-w-0 pr-2">
-                      <span className="bg-white/20 text-white px-2 py-0.5 rounded font-black text-[10.5px] shrink-0 tracking-wider">
+                      <span className="bg-white/20 text-white px-2 py-0.5 rounded font-black text-[11.5px] shrink-0 tracking-wider">
                         DAY {day.dayNumber}
                       </span>
                       {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
-                        <span className="text-sky-100 font-medium text-[10px] shrink-0">
+                        <span className="text-sky-100 font-semibold text-[11px] shrink-0">
                           ({day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()})
                         </span>
                       )}
                       <span className="opacity-75 shrink-0">·</span>
-                      <span className="truncate font-semibold">{day.route}</span>
+                      <span className="truncate font-bold text-[12px]">{day.route}</span>
                     </div>
                     {day.overnightStay && (
-                      <span className="text-[10px] bg-sky-950/80 border border-sky-400/40 px-2.5 py-0.5 rounded-md font-semibold shrink-0 ml-2 text-white shadow-2xs whitespace-nowrap">
+                      <span className="text-[10.5px] bg-sky-950/90 border border-sky-400/40 px-2.5 py-0.5 rounded-md font-bold shrink-0 ml-2 text-white shadow-2xs whitespace-nowrap">
                         🏨 Stay: {day.overnightStay}
                       </span>
                     )}
@@ -3276,9 +3276,9 @@ ${data.motto}`;
 
                   {/* Day Content */}
                   {isShortTour ? (
-                    <div className="p-2.5 space-y-2">
-                      {/* Activities Bullet Points */}
-                      <ul className="text-gray-800 space-y-1 text-[10.5px] leading-relaxed pl-3">
+                    <div className="p-2 space-y-1.5">
+                      {/* Activities Bullet Points - Large & Clear */}
+                      <ul className="text-gray-950 space-y-1 text-[12px] font-medium leading-relaxed pl-3">
                         {day.activities.map((act, aIdx) => (
                           <li key={aIdx}>
                             – {act}
@@ -3288,8 +3288,8 @@ ${data.motto}`;
 
                       {/* Day 1, Day 2, Day 3 Related Photo Strip right after activities */}
                       {primaryPhotoUrl && (
-                        <div className="pt-1.5 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
-                          <div className={`${secondaryPhotoUrl ? 'w-36 h-20' : 'w-44 h-22'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
+                        <div className="pt-1 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
+                          <div className={`${secondaryPhotoUrl ? 'w-32 h-16' : 'w-40 h-20'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
                             <img 
                               src={primaryPhotoUrl} 
                               alt="" 
@@ -3301,13 +3301,13 @@ ${data.motto}`;
                               alt={primaryCaption} 
                               className="relative z-10 max-h-full max-w-full object-cover"
                             />
-                            <span className="absolute bottom-1 right-1 z-20 text-[7px] font-bold px-1.5 py-0.2 rounded bg-black/75 text-white backdrop-blur-xs">
+                            <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
                               Day {day.dayNumber}
                             </span>
                           </div>
 
                           {secondaryPhotoUrl && (
-                            <div className="w-36 h-20 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
+                            <div className="w-32 h-16 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
                               <img 
                                 src={secondaryPhotoUrl} 
                                 alt="" 
@@ -3319,21 +3319,21 @@ ${data.motto}`;
                                 alt={secondaryCaption} 
                                 className="relative z-10 max-h-full max-w-full object-cover"
                               />
-                              <span className="absolute bottom-1 right-1 z-20 text-[7px] font-bold px-1.5 py-0.2 rounded bg-black/75 text-white backdrop-blur-xs">
+                              <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
                                 Day {day.dayNumber}
                               </span>
                             </div>
                           )}
 
                           <div className="flex-1 min-w-0 flex flex-col justify-center">
-                            <p className="text-[10px] font-bold text-[#0369a1] flex items-center gap-1">
+                            <p className="text-[11px] font-black text-[#0369a1] flex items-center gap-1">
                               <span>📸 Day {day.dayNumber} Sightseeing & Excursion</span>
                             </p>
-                            <p className="text-[9.5px] text-gray-800 font-semibold mt-0.5 leading-snug">
+                            <p className="text-[11px] text-gray-950 font-bold mt-0.5 leading-snug">
                               {primaryCaption}
                             </p>
                             {secondaryCaption && (
-                              <p className="text-[8.5px] text-gray-500 mt-0.5 leading-snug">
+                              <p className="text-[10px] text-gray-700 font-semibold mt-0.5 leading-snug">
                                 • {secondaryCaption}
                               </p>
                             )}
@@ -3342,7 +3342,7 @@ ${data.motto}`;
                       )}
                     </div>
                   ) : (
-                    <ul className="pl-3 space-y-0.5 text-gray-800 text-[9.5px] leading-tight">
+                    <ul className="pl-3 space-y-0.5 text-gray-950 text-[11px] font-medium leading-snug">
                       {day.activities.map((act, aIdx) => (
                         <li key={aIdx}>
                           – {act}
@@ -3358,9 +3358,9 @@ ${data.motto}`;
           {/* SIGHTSEEING HIGHLIGHTS (ONLY FOR EXTENDED TOURS > 6 DAYS) */}
           {!isShortTour && data.photos && data.photos.length > 0 && (
             <div className="mt-1 space-y-1">
-              <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1]">
+              <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1]">
                 <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
-                <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+                <span className="text-[9.5px] font-bold text-gray-600">Travel to Uttarakhand</span>
               </div>
               <div className="grid grid-cols-3 gap-2">
                 {data.photos.slice(0, 3).map((photo, pIdx) => {
@@ -3383,7 +3383,7 @@ ${data.motto}`;
                         />
                       </div>
                       {photo.caption && (
-                        <p className="text-[8.5px] font-bold text-gray-800 py-1 px-1 text-center truncate bg-sky-50/80 border-t border-sky-100 shrink-0">
+                        <p className="text-[10px] font-black text-gray-900 py-1 px-1 text-center truncate bg-sky-50/80 border-t border-sky-100 shrink-0">
                           {photo.caption}
                         </p>
                       )}
@@ -3396,15 +3396,15 @@ ${data.motto}`;
 
           {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for short tours like 3D/5D/6D!) */}
           {isShortTour && displayHotelPhotos && displayHotelPhotos.length > 0 && (
-            <div className="space-y-1.5 pt-1">
-              <div className="flex items-center justify-between text-[10.5px] font-bold text-[#0369a1]">
+            <div className="space-y-1.5 pt-0.5">
+              <div className="flex items-center justify-between text-[11.5px] font-black text-[#0369a1]">
                 <span className="flex items-center gap-1.5">
                   <span>{isWinter ? "🏨 Handpicked Winter Stays & Alpine Comfort" : "🏨 Confirmed Clean Stays & Hospitality"}</span>
-                  <span className="text-[8.5px] font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                  <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
                     Pre-Inspected & Verified
                   </span>
                 </span>
-                <span className="text-[9px] font-semibold text-gray-500">Heated Rooms · 24/7 Hot Water · Cozy Stays</span>
+                <span className="text-[9.5px] font-semibold text-gray-600">Heated Rooms · 24/7 Hot Water · Cozy Stays</span>
               </div>
               <div className="grid grid-cols-3 gap-2.5">
                 {displayHotelPhotos.slice(0, 3).map((hp, hIdx) => {
@@ -3412,7 +3412,7 @@ ${data.motto}`;
                   const fitClass = isContain ? "object-contain" : "object-cover";
                   return (
                     <div key={hp.id || hIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                      <div className="h-28 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
+                      <div className="h-26 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
                         <img 
                           src={hp.url} 
                           alt="" 
@@ -3424,15 +3424,15 @@ ${data.motto}`;
                           alt={hp.hotelName || 'Stay'} 
                           className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
                         />
-                        <span className="absolute top-1 right-1 z-20 text-[8px] font-bold px-1.5 py-0.5 rounded bg-[#0369a1] text-white shadow-xs">
+                        <span className="absolute top-1 right-1 z-20 text-[8.5px] font-black px-1.5 py-0.5 rounded bg-[#0369a1] text-white shadow-xs">
                           📍 {hp.location?.split("/")[0]?.trim() || "Scenic Stay"}
                         </span>
                       </div>
                       <div className="p-1.5 bg-sky-50/70 border-t border-sky-100 flex-1 flex flex-col justify-between">
-                        <p className="text-[9.5px] font-bold text-gray-900 truncate">
+                        <p className="text-[10.5px] font-black text-gray-950 truncate">
                           {hp.hotelName || hp.roomType}
                         </p>
-                        <p className="text-[8px] text-gray-600 line-clamp-1 mt-0.5">
+                        <p className="text-[9px] text-gray-700 font-medium line-clamp-1 mt-0.5">
                           {hp.caption || hp.roomType}
                         </p>
                       </div>
@@ -3444,56 +3444,56 @@ ${data.motto}`;
           )}
 
           {/* MOUNTAIN FLEET, WEATHER SAFETY & GUEST SUPPORT */}
-          <div className="pt-1">
-            <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
-              <div className="flex items-center justify-between text-[10px] font-bold text-[#0369a1] mb-1.5">
+          <div className="pt-0.5">
+            <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
+              <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] mb-1">
                 <span>{isWinter ? "❄️ Winter Mountain Guidelines, Vehicle Safety & Travel Essentials" : "✦ Pilgrimage Yatra Highlights & Mountain Support"}</span>
-                <span className="text-[8.5px] font-semibold text-gray-500">Travel to Uttarakhand</span>
+                <span className="text-[9px] font-bold text-gray-600">Travel to Uttarakhand</span>
               </div>
               {isWinter ? (
-                <div className="grid grid-cols-4 gap-2 text-[9px] text-gray-700">
+                <div className="grid grid-cols-4 gap-2 text-[9.5px] text-gray-800">
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">Dedicated Mountain Fleet</p>
-                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       Hill-certified chauffeur, anti-skid snow chains, all state tolls & parking included.
                     </p>
                   </div>
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">Thermal Wear Advisory</p>
-                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">Thermal Wear Advisory</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       3-layer thermal inners, waterproof snow boots, fleece jackets & UV sunglasses.
                     </p>
                   </div>
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">Auli Cable Car Desk</p>
-                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">Auli Cable Car Desk</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       On-spot assistance for ropeway chairlift, ski gear rental & snow trail navigation.
                     </p>
                   </div>
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">24/7 Ground Assistance</p>
-                    <p className="text-[8px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">24/7 Ground Assistance</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       Real-time weather tracking, snow roadblock updates & 24/7 WhatsApp helpdesk.
                     </p>
                   </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-3 gap-2 text-[9px] text-gray-700">
+                <div className="grid grid-cols-3 gap-2 text-[9.5px] text-gray-800">
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">Dedicated Mountain Fleet</p>
-                    <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
                     </p>
                   </div>
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">Clean Verified Stays</p>
-                    <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">Clean Verified Stays</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
                     </p>
                   </div>
                   <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-bold text-gray-900">24/7 Pilgrimage Desk</p>
-                    <p className="text-[8.5px] text-gray-500 mt-0.5 leading-tight">
+                    <p className="font-black text-gray-950 text-[10.5px]">24/7 Pilgrimage Desk</p>
+                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
                       Darshan slip assistance, registration support & 24/7 route coordination.
                     </p>
                   </div>
@@ -3504,7 +3504,7 @@ ${data.motto}`;
         </div>
 
       {/* Page 2 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
@@ -3539,7 +3539,7 @@ ${data.motto}`;
   const renderPage3 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-3`}
-      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
@@ -3552,27 +3552,27 @@ ${data.motto}`;
         {/* Remaining Days (Only for large itineraries > 10 days) */}
         {data.days.length > 10 && (
           <div className="space-y-1.5">
-            <h4 className="text-xs font-serif font-bold text-[#0369a1] border-b border-sky-100 pb-0.5 flex items-center justify-between">
+            <h4 className="text-[13px] font-serif font-black text-[#0369a1] border-b border-sky-100 pb-0.5 flex items-center justify-between">
               <span>Detailed Day-Wise Itinerary (Continued — Days 11 to {data.days.length} of {data.days.length} Days)</span>
-              <span className="text-[10px] font-sans font-semibold text-sky-700 bg-sky-50 border border-sky-200 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-sans font-bold text-sky-800 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
                 Part 2 · Extended Days
               </span>
             </h4>
             {data.days.slice(10).map(day => (
               <div key={day.id} className="text-xs space-y-0.5">
-                <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[10.5px] font-bold tracking-wide flex items-center gap-1.5">
-                  <span>DAY {day.dayNumber}</span>
+                <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[11.5px] font-bold tracking-wide flex items-center gap-1.5">
+                  <span className="font-black">DAY {day.dayNumber}</span>
                   {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
                     <>
                       <span className="opacity-75">·</span>
-                      <span>{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
+                      <span className="font-semibold text-sky-100">{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
                     </>
                   )}
                   <span className="opacity-75">·</span>
-                  <span className="truncate">{day.route}</span>
+                  <span className="truncate font-bold">{day.route}</span>
                 </div>
 
-                <ul className="pl-3 space-y-0.5 text-gray-800 text-[10px]">
+                <ul className="pl-3 space-y-0.5 text-gray-950 text-[11px] font-medium">
                   {day.activities.map((act, aIdx) => (
                     <li key={aIdx} className="leading-tight">
                       – {act}
@@ -3580,7 +3580,7 @@ ${data.motto}`;
                   ))}
                 </ul>
 
-                <p className="pl-3 text-[9.5px] text-amber-900 italic font-semibold">
+                <p className="pl-3 text-[10.5px] text-amber-950 italic font-bold">
                   Overnight Stay: {day.overnightStay}
                 </p>
               </div>
@@ -3589,53 +3589,53 @@ ${data.motto}`;
         )}
 
         {/* Package Options & Pricing Table */}
-        <div className="space-y-1 pt-1">
-          <h3 className="text-base font-serif font-bold text-[#0369a1]">
+        <div className="space-y-1 pt-0.5">
+          <h3 className="text-lg font-serif font-black text-[#0369a1]">
             Package Options & Pricing
           </h3>
-          <p className="text-[11px] text-gray-600 leading-snug">
+          <p className="text-[12px] text-gray-700 font-medium leading-snug">
             {data.pricingSubtitle}
           </p>
 
-          <table className="w-full text-xs border border-gray-200 text-center mt-1">
-            <thead className="bg-[#0369a1] text-white font-bold text-[10.5px]">
+          <table className="w-full text-xs border border-sky-200 text-center mt-1.5 rounded-lg overflow-hidden">
+            <thead className="bg-[#0369a1] text-white font-bold text-[11.5px]">
               <tr>
-                <th className="px-3 py-1.5 text-left">Package</th>
-                <th className="px-3 py-1.5">Price / Person</th>
-                <th className="px-3 py-1.5">Hotel Category</th>
-                <th className="px-3 py-1.5">Meals</th>
-                <th className="px-3 py-1.5">Special / Transport</th>
+                <th className="px-3.5 py-2 text-left">Package</th>
+                <th className="px-3 py-2">Price / Person</th>
+                <th className="px-3 py-2">Hotel Category</th>
+                <th className="px-3 py-2">Meals</th>
+                <th className="px-3 py-2">Special / Transport</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 text-[10.5px]">
+            <tbody className="divide-y divide-gray-200 text-[11.5px]">
               {data.pricingTiers.map((tier, tIdx) => (
                 <tr key={tIdx} className={tIdx % 2 === 0 ? "bg-white" : "bg-gray-50/70"}>
-                  <td className="px-3 py-1.5 font-bold text-gray-900 text-left">{tier.package}</td>
-                  <td className="px-3 py-1.5 font-bold text-[#0369a1]">{tier.price}</td>
-                  <td className="px-3 py-1.5 text-gray-700">{tier.hotelCategory}</td>
-                  <td className="px-3 py-1.5 text-gray-700">{tier.meals}</td>
-                  <td className="px-3 py-1.5 text-gray-700">{tier.specialFeature}</td>
+                  <td className="px-3.5 py-2 font-black text-gray-950 text-left text-[12px]">{tier.package}</td>
+                  <td className="px-3 py-2 font-black text-[#0369a1] text-[12.5px]">{tier.price}</td>
+                  <td className="px-3 py-2 text-gray-800 font-medium">{tier.hotelCategory}</td>
+                  <td className="px-3 py-2 text-gray-800 font-medium">{tier.meals}</td>
+                  <td className="px-3 py-2 text-gray-800 font-medium">{tier.specialFeature}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <p className="text-[9.5px] text-gray-500 italic mt-0.5">
+          <p className="text-[10.5px] text-gray-600 font-semibold italic mt-0.5">
             {data.pricingNote}
           </p>
         </div>
 
         {/* Confirmed Accommodation Standards Showcase */}
         {data.showHotelPhotos !== false && data.hotelPhotos && data.hotelPhotos.length > 0 && (
-          <div className="pt-3 border-t border-gray-200 space-y-2">
+          <div className="pt-2.5 border-t border-gray-200 space-y-1.5">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-1.5">
+              <h4 className="text-[12.5px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
                 <span>🏨 Confirmed Accommodation Standards & Clean Stays</span>
-                <span className="text-[9px] font-semibold px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
                   Pre-inspected & Verified
                 </span>
               </h4>
-              <span className="text-[9.5px] text-gray-500 font-medium">Standard Clean Stays & Camps</span>
+              <span className="text-[10px] text-gray-600 font-semibold">Standard Clean Stays & Camps</span>
             </div>
             <div className={`grid gap-2.5 ${data.hotelPhotos.length === 1 ? 'grid-cols-1' : data.hotelPhotos.length === 2 ? 'grid-cols-2' : data.hotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
               {data.hotelPhotos.slice(0, 4).map((hp, hIdx) => {
@@ -3647,7 +3647,7 @@ ${data.motto}`;
                 const fitClass = isContain ? "object-contain" : "object-cover";
                 return (
                   <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                    <div className="h-36 relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5">
+                    <div className="h-34 relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5">
                       <img 
                         src={safeUrl} 
                         alt="" 
@@ -3659,21 +3659,21 @@ ${data.motto}`;
                         alt={hp.roomType || 'Accommodation'} 
                         className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
                       />
-                      <span className={`absolute top-1.5 right-1.5 z-20 text-[8.5px] font-bold px-2 py-0.5 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
+                      <span className={`absolute top-1.5 right-1.5 z-20 text-[9px] font-black px-2 py-0.5 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
                         {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Standard Room')}
                       </span>
                     </div>
                     <div className="p-2 bg-sky-50/50 flex-1 flex flex-col justify-between">
                       <div>
-                        <p className="text-[10.5px] font-bold text-gray-900 leading-tight truncate">
+                        <p className="text-[11.5px] font-black text-gray-950 leading-tight truncate">
                           {isTent ? 'Alpine Camp / Tent Stay' : (hp.roomType || 'Standard Clean Room')}
                         </p>
-                        <p className="text-[9px] text-[#0369a1] font-semibold flex items-center gap-1 mt-0.5">
+                        <p className="text-[10px] text-[#0369a1] font-bold flex items-center gap-1 mt-0.5">
                           📍 {hp.location}
                         </p>
                       </div>
                       {hp.caption && (
-                        <p className="text-[8.5px] text-gray-600 mt-1 leading-snug line-clamp-2">
+                        <p className="text-[9.5px] text-gray-700 font-medium mt-1 leading-snug line-clamp-2">
                           {hp.caption}
                         </p>
                       )}
@@ -3687,22 +3687,22 @@ ${data.motto}`;
 
         {/* Page 3 Destinations Gallery - Sacred Yatra Landmarks Showcase */}
         {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
-          <div className="pt-3 border-t border-gray-200 space-y-2">
+          <div className="pt-2.5 border-t border-gray-200 space-y-1.5">
             <div className="flex items-center justify-between">
-              <h4 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-1.5">
+              <h4 className="text-[12.5px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
                 <span>🛕 Sacred Yatra Destinations & Sightseeing Highlights</span>
-                <span className="text-[9px] font-semibold px-2 py-0.5 bg-sky-50 text-sky-700 rounded-full border border-sky-200">
+                <span className="text-[9px] font-bold px-2 py-0.5 bg-sky-50 text-sky-800 rounded-full border border-sky-200">
                   Visual Tour Guide
                 </span>
               </h4>
-              <span className="text-[9.5px] text-gray-500 font-medium">Travel to Uttarakhand</span>
+              <span className="text-[10px] text-gray-600 font-semibold">Travel to Uttarakhand</span>
             </div>
             <div className={`grid gap-2.5 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
               {data.photos.slice(0, 6).map((photo, pIdx) => {
                 const isContain = photo.fit !== "cover";
                 const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
                 const fitClass = isContain ? "object-contain" : "object-cover";
-                const landmarkHeightClass = (data.photos?.length || 0) <= 3 ? "h-44" : "h-34";
+                const landmarkHeightClass = (data.photos?.length || 0) <= 3 ? "h-40" : "h-32";
 
                 return (
                   <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/30 shadow-2xs bg-gray-50 flex flex-col">
@@ -3721,7 +3721,7 @@ ${data.motto}`;
                     </div>
                     {photo.caption && (
                       <div className="py-1 px-1.5 bg-white border-t border-gray-100 text-center min-h-[26px] flex items-center justify-center shrink-0">
-                        <p className="text-[9.5px] font-bold text-gray-800 line-clamp-1 px-1 leading-tight">
+                        <p className="text-[10.5px] font-black text-gray-900 line-clamp-1 px-1 leading-tight">
                           {photo.caption}
                         </p>
                       </div>
@@ -3735,7 +3735,7 @@ ${data.motto}`;
       </div>
 
       {/* Page 3 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
@@ -3769,7 +3769,7 @@ ${data.motto}`;
   const renderPage4 = (prefix: string) => (
     <div
       id={`${prefix}-itinerary-page-4`}
-      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-10 py-7 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
       style={{ boxSizing: "border-box" }}
     >
       {/* Background Watermark */}
@@ -3777,9 +3777,9 @@ ${data.motto}`;
         <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      <div className="relative z-10 space-y-3">
+      <div className="relative z-10 space-y-2.5">
         
-        <h2 className="text-lg font-serif font-bold text-[#0369a1] border-b border-[#0369a1] pb-1">
+        <h2 className="text-lg font-serif font-black text-[#0369a1] border-b-2 border-[#0369a1] pb-1">
           Inclusions & Exclusions
         </h2>
 
@@ -3788,8 +3788,8 @@ ${data.motto}`;
           
           {/* Inclusions Column */}
           <div className="space-y-1">
-            <h4 className="font-bold text-[#0369a1] text-xs mb-1">Inclusions</h4>
-            <ul className="space-y-1 text-gray-800 text-[10.5px]">
+            <h4 className="font-black text-[#0369a1] text-[13px] mb-1">Inclusions</h4>
+            <ul className="space-y-1 text-gray-950 text-[12px] font-medium">
               {data.inclusions.map((inc, i) => (
                 <li key={i} className="flex items-start gap-1.5 leading-snug">
                   <span className="text-emerald-700 font-bold shrink-0">✓</span>
@@ -3801,8 +3801,8 @@ ${data.motto}`;
 
           {/* Exclusions Column */}
           <div className="space-y-1">
-            <h4 className="font-bold text-[#0369a1] text-xs mb-1">Exclusions</h4>
-            <ul className="space-y-1 text-gray-800 text-[10.5px]">
+            <h4 className="font-black text-[#0369a1] text-[13px] mb-1">Exclusions</h4>
+            <ul className="space-y-1 text-gray-950 text-[12px] font-medium">
               {data.exclusions.map((exc, i) => (
                 <li key={i} className="flex items-start gap-1.5 leading-snug">
                   <span className="text-rose-600 font-bold shrink-0">✕</span>
@@ -3815,12 +3815,12 @@ ${data.motto}`;
         </div>
 
         {/* Good To Know Section */}
-        <div className="space-y-1 pt-1.5 border-t border-gray-200">
-          <h3 className="text-xs font-serif font-bold text-[#0369a1]">Good To Know</h3>
-          <ul className="space-y-0.5 text-gray-700 text-[10px]">
+        <div className="space-y-1 pt-1 border-t border-gray-200">
+          <h3 className="text-[12.5px] font-serif font-black text-[#0369a1]">Good To Know</h3>
+          <ul className="space-y-0.5 text-gray-800 text-[11px] font-medium">
             {data.goodToKnow.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5 leading-snug">
-                <span className="text-gray-400 shrink-0">•</span>
+                <span className="text-sky-600 font-bold shrink-0">•</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -3828,12 +3828,12 @@ ${data.motto}`;
         </div>
 
         {/* Booking & Payment Section */}
-        <div className="space-y-1 pt-1.5 border-t border-gray-200">
-          <h3 className="text-xs font-serif font-bold text-[#0369a1]">Booking & Payment</h3>
-          <ul className="space-y-0.5 text-gray-700 text-[10px]">
+        <div className="space-y-1 pt-1 border-t border-gray-200">
+          <h3 className="text-[12.5px] font-serif font-black text-[#0369a1]">Booking & Payment</h3>
+          <ul className="space-y-0.5 text-gray-800 text-[11px] font-medium">
             {data.bookingPayment.map((item, idx) => (
               <li key={idx} className="flex items-start gap-1.5 leading-snug">
-                <span className="text-gray-400 shrink-0">•</span>
+                <span className="text-sky-600 font-bold shrink-0">•</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -3842,22 +3842,22 @@ ${data.motto}`;
 
         {/* Trust & Credentials Section — All 4 Items: Tourism Certificate, Transport License, Owner, Office */}
         {data.showTrustSection !== false && (
-          <div className="pt-2 border-t border-gray-200 space-y-1.5">
+          <div className="pt-1.5 border-t border-gray-200 space-y-1.5">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-serif font-bold text-[#0369a1] flex items-center gap-2">
+              <h3 className="text-[12px] font-serif font-black text-[#0369a1] flex items-center gap-2">
                 <span>🏆 Why Trust Us — Official Credentials & Registration</span>
-                <span className="text-[9px] font-normal px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200">
+                <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
                   Govt. Registered & 100% Verified
                 </span>
               </h3>
-              <span className="text-[9px] text-gray-500 font-semibold">Travel to Uttarakhand</span>
+              <span className="text-[9.5px] text-gray-600 font-bold">Travel to Uttarakhand</span>
             </div>
             
             <div className="grid grid-cols-4 gap-2.5">
               
               {/* 1. Uttarakhand Tourism Development Board Certificate */}
               <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                <div className="h-26 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
                   <img 
                     src={data.trustPhotos?.certificatePhoto || "/certificates/uttrakhand_tourism.jpeg"} 
                     alt="Tourism Reg Certificate" 
@@ -3865,10 +3865,10 @@ ${data.motto}`;
                   />
                 </div>
                 <div className="p-1.5 bg-sky-50/40 text-center flex-1 flex flex-col justify-between">
-                  <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                  <p className="text-[9.5px] font-bold text-gray-900 leading-tight">
                     {data.trustPhotos?.certificateCaption || "Uttarakhand Tourism Reg: UTTR/HARIDWAR/08-2024/007176"}
                   </p>
-                  <p className="text-[8px] text-emerald-700 font-semibold mt-0.5">
+                  <p className="text-[8.5px] text-emerald-700 font-bold mt-0.5">
                     ✓ Govt. Registered Tour Operator
                   </p>
                 </div>
@@ -3876,7 +3876,7 @@ ${data.motto}`;
 
               {/* 2. Transport Authority Dehradun License */}
               <div className="rounded-xl overflow-hidden border border-purple-200 shadow-2xs bg-white flex flex-col">
-                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                <div className="h-26 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
                   <img 
                     src={data.trustPhotos?.certificate2Photo || "/certificates/certificate.jpeg"} 
                     alt="Transport Authority License" 
@@ -3884,10 +3884,10 @@ ${data.motto}`;
                   />
                 </div>
                 <div className="p-1.5 bg-purple-50/40 text-center flex-1 flex flex-col justify-between">
-                  <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                  <p className="text-[9.5px] font-bold text-gray-900 leading-tight">
                     {data.trustPhotos?.certificate2Caption || "Transport Authority Reg: 44/RT/2025"}
                   </p>
-                  <p className="text-[8px] text-purple-700 font-semibold mt-0.5">
+                  <p className="text-[8.5px] text-purple-700 font-bold mt-0.5">
                     ✓ Dehradun RTA Registered
                   </p>
                 </div>
@@ -3895,7 +3895,7 @@ ${data.motto}`;
 
               {/* 3. Owner Photo */}
               <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                <div className="h-26 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
                   <img 
                     src={data.trustPhotos?.ownerPhoto || "/certificates/owner.jpeg"} 
                     alt={data.trustPhotos?.ownerName || "Amit Chandra"} 
@@ -3904,14 +3904,14 @@ ${data.motto}`;
                 </div>
                 <div className="p-1.5 bg-sky-50/40 text-center flex-1 flex flex-col justify-between">
                   <div>
-                    <p className="text-[10px] font-bold text-gray-900 leading-tight">
+                    <p className="text-[10.5px] font-black text-gray-950 leading-tight">
                       {data.trustPhotos?.ownerName || "Amit Chandra"}
                     </p>
-                    <p className="text-[8.5px] text-[#0369a1] font-semibold">
+                    <p className="text-[9px] text-[#0369a1] font-bold">
                       {data.trustPhotos?.ownerTitle || "Founder & Managing Director"}
                     </p>
                   </div>
-                  <p className="text-[8px] text-gray-500 mt-0.5">
+                  <p className="text-[8.5px] text-gray-600 font-medium mt-0.5">
                     12+ Yrs Yatra Management
                   </p>
                 </div>
@@ -3919,7 +3919,7 @@ ${data.motto}`;
 
               {/* 4. Booking Office Photo */}
               <div className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                <div className="h-28 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
+                <div className="h-26 overflow-hidden bg-gray-50 flex items-center justify-center p-0.5">
                   <img 
                     src={data.trustPhotos?.officePhoto || "/certificates/office_front.jpeg"} 
                     alt="Booking Office" 
@@ -3927,10 +3927,10 @@ ${data.motto}`;
                   />
                 </div>
                 <div className="p-1.5 bg-sky-50/40 text-center flex-1 flex flex-col justify-between">
-                  <p className="text-[9px] font-bold text-gray-800 leading-tight">
+                  <p className="text-[9.5px] font-bold text-gray-900 leading-tight">
                     {data.trustPhotos?.officeCaption || "Shop 38, Pursharthi Market, Haridwar"}
                   </p>
-                  <p className="text-[8px] text-sky-700 font-semibold mt-0.5">
+                  <p className="text-[8.5px] text-sky-800 font-bold mt-0.5">
                     📍 Direct Booking & Help Desk
                   </p>
                 </div>
@@ -3941,19 +3941,19 @@ ${data.motto}`;
         )}
 
         {/* For Bookings & Queries Center Box */}
-        <div className="flex flex-col items-center justify-center text-center pt-1.5">
-          <img src="/logo.png" alt="logo" className="h-14 w-auto object-contain mb-0.5 drop-shadow-xs" />
-          <p className="text-[8.5px] uppercase tracking-widest text-gray-500 font-bold">For Bookings & Queries</p>
-          <h4 className="text-sm font-serif font-bold text-[#0369a1]">{data.contactAgency}</h4>
-          <p className="text-[11px] text-gray-800 font-semibold">{data.contactPerson}</p>
-          <p className="text-[11px] text-gray-900 font-bold tracking-wider">{data.contactPhone}</p>
-          <div className="flex items-center justify-center gap-3 mt-1">
+        <div className="flex flex-col items-center justify-center text-center pt-1">
+          <img src="/logo.png" alt="logo" className="h-12 w-auto object-contain mb-0.5 drop-shadow-xs" />
+          <p className="text-[9px] uppercase tracking-widest text-gray-600 font-black">For Bookings & Queries</p>
+          <h4 className="text-sm font-serif font-black text-[#0369a1]">{data.contactAgency}</h4>
+          <p className="text-[12px] text-gray-900 font-bold">{data.contactPerson}</p>
+          <p className="text-[12px] text-gray-950 font-black tracking-wider">{data.contactPhone}</p>
+          <div className="flex items-center justify-center gap-3 mt-0.5">
             <a 
               href="https://traveltouttrakhand.com" 
               target="_blank" 
               rel="noopener noreferrer" 
               data-pdf-link="https://traveltouttrakhand.com" 
-              className="text-[11px] text-[#0369a1] font-bold tracking-wider hover:underline"
+              className="text-[11.5px] text-[#0369a1] font-bold tracking-wider hover:underline"
             >
               🌐 www.traveltouttrakhand.com
             </a>
@@ -3963,7 +3963,7 @@ ${data.motto}`;
               target="_blank" 
               rel="noopener noreferrer" 
               data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-              className="text-[11px] font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/70 border border-sky-200"
+              className="text-[11.5px] font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/70 border border-sky-200"
             >
               <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
@@ -3977,7 +3977,7 @@ ${data.motto}`;
       </div>
 
       {/* Page 4 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[9.5px] text-gray-500">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
