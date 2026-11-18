@@ -3355,47 +3355,8 @@ ${data.motto}`;
             })}
           </div>
 
-          {/* SIGHTSEEING HIGHLIGHTS (ONLY FOR EXTENDED TOURS > 6 DAYS) */}
-          {!isShortTour && data.photos && data.photos.length > 0 && (
-            <div className="mt-1 space-y-1">
-              <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1]">
-                <span>🛕 Holy Darshan & Sacred Sightseeing Highlights</span>
-                <span className="text-[9.5px] font-bold text-gray-600">Travel to Uttarakhand</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2">
-                {data.photos.slice(0, 3).map((photo, pIdx) => {
-                  const isContain = photo.fit !== "cover";
-                  const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-                  const fitClass = isContain ? "object-contain" : "object-cover";
-                  return (
-                    <div key={photo.id || pIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                      <div className="h-24 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
-                        <img 
-                          src={photo.url} 
-                          alt="" 
-                          aria-hidden="true" 
-                          className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                        />
-                        <img 
-                          src={photo.url} 
-                          alt={photo.caption || `Sightseeing ${pIdx + 1}`} 
-                          className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass}`}
-                        />
-                      </div>
-                      {photo.caption && (
-                        <p className="text-[10px] font-black text-gray-900 py-1 px-1 text-center truncate bg-sky-50/80 border-t border-sky-100 shrink-0">
-                          {photo.caption}
-                        </p>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for short tours like 3D/5D/6D!) */}
-          {isShortTour && displayHotelPhotos && displayHotelPhotos.length > 0 && (
+          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for very short tours like 3D!) */}
+          {data.days.length <= 3 && displayHotelPhotos && displayHotelPhotos.length > 0 && (
             <div className="space-y-1.5 pt-0.5">
               <div className="flex items-center justify-between text-[11.5px] font-black text-[#0369a1]">
                 <span className="flex items-center gap-1.5">
@@ -3443,64 +3404,66 @@ ${data.motto}`;
             </div>
           )}
 
-          {/* MOUNTAIN FLEET, WEATHER SAFETY & GUEST SUPPORT */}
-          <div className="pt-0.5">
-            <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
-              <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] mb-1">
-                <span>{isWinter ? "❄️ Winter Mountain Guidelines, Vehicle Safety & Travel Essentials" : "✦ Pilgrimage Yatra Highlights & Mountain Support"}</span>
-                <span className="text-[9px] font-bold text-gray-600">Travel to Uttarakhand</span>
+          {/* MOUNTAIN FLEET & WEATHER SAFETY (Only for very short tours like 3D to fill Page 2) */}
+          {data.days.length <= 3 && (
+            <div className="pt-0.5">
+              <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
+                <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] mb-1">
+                  <span>{isWinter ? "❄️ Winter Mountain Guidelines, Vehicle Safety & Travel Essentials" : "✦ Pilgrimage Yatra Highlights & Mountain Support"}</span>
+                  <span className="text-[9px] font-bold text-gray-600">Travel to Uttarakhand</span>
+                </div>
+                {isWinter ? (
+                  <div className="grid grid-cols-4 gap-2 text-[9.5px] text-gray-800">
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        Hill-certified chauffeur, anti-skid snow chains, all state tolls & parking included.
+                      </p>
+                    </div>
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">Thermal Wear Advisory</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        3-layer thermal inners, waterproof snow boots, fleece jackets & UV sunglasses.
+                      </p>
+                    </div>
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">Auli Cable Car Desk</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        On-spot assistance for ropeway chairlift, ski gear rental & snow trail navigation.
+                      </p>
+                    </div>
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">24/7 Ground Assistance</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        Real-time weather tracking, snow roadblock updates & 24/7 WhatsApp helpdesk.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2 text-[9.5px] text-gray-800">
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
+                      </p>
+                    </div>
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">Clean Verified Stays</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
+                      </p>
+                    </div>
+                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
+                      <p className="font-black text-gray-950 text-[10.5px]">24/7 Pilgrimage Desk</p>
+                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
+                        Darshan slip assistance, registration support & 24/7 route coordination.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
-              {isWinter ? (
-                <div className="grid grid-cols-4 gap-2 text-[9.5px] text-gray-800">
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      Hill-certified chauffeur, anti-skid snow chains, all state tolls & parking included.
-                    </p>
-                  </div>
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">Thermal Wear Advisory</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      3-layer thermal inners, waterproof snow boots, fleece jackets & UV sunglasses.
-                    </p>
-                  </div>
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">Auli Cable Car Desk</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      On-spot assistance for ropeway chairlift, ski gear rental & snow trail navigation.
-                    </p>
-                  </div>
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">24/7 Ground Assistance</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      Real-time weather tracking, snow roadblock updates & 24/7 WhatsApp helpdesk.
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-3 gap-2 text-[9.5px] text-gray-800">
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
-                    </p>
-                  </div>
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">Clean Verified Stays</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
-                    </p>
-                  </div>
-                  <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                    <p className="font-black text-gray-950 text-[10.5px]">24/7 Pilgrimage Desk</p>
-                    <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                      Darshan slip assistance, registration support & 24/7 route coordination.
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
-          </div>
+          )}
         </div>
 
       {/* Page 2 Footer */}
