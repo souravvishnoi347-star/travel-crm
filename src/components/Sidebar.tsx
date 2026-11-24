@@ -10,7 +10,6 @@ import {
   Car, 
   Menu, 
   X, 
-  Plane, 
   Map, 
   Users, 
   Store, 
@@ -19,23 +18,54 @@ import {
   Image as ImageIcon,
   FolderArchive,
   MessageSquare,
-  Calculator
+  Calculator,
+  ChevronRight,
+  Bike
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-const navigation = [
-  { name: "Yatra Dashboard", href: "/", icon: LayoutDashboard },
-  { name: "Trip Cost Calculator", href: "/quotation-calculator", icon: Calculator },
-  { name: "Documents & Vouchers Hub", href: "/documents", icon: FolderArchive },
-  { name: "WhatsApp Live Desk", href: "/whatsapp-desk", icon: MessageSquare },
-  { name: "Yatra Invoices & Billing", href: "/invoices", icon: FileText },
-  { name: "Chardham Itineraries", href: "/itinerary-builder", icon: Map },
-  { name: "Hotel Service Vouchers", href: "/hotels", icon: Hotel },
-  { name: "Transport Vouchers", href: "/transport", icon: Car },
-  { name: "Dham Photo Library", href: "/gallery", icon: ImageIcon },
-  { name: "Pilgrimage Leads", href: "/leads", icon: Users },
-  { name: "Vendors & Payables", href: "/vendors", icon: Store },
-  { name: "CRM & WhatsApp Setup", href: "/settings", icon: Settings },
+interface NavItem {
+  name: string;
+  href: string;
+  icon: any;
+  badge?: string;
+  badgeType?: "default" | "live" | "muted";
+}
+
+interface NavSection {
+  title: string;
+  items: NavItem[];
+}
+
+const navigationSections: NavSection[] = [
+  {
+    title: "Yatra Operations",
+    items: [
+      { name: "Yatra Dashboard", href: "/", icon: LayoutDashboard },
+      { name: "Chardham Itineraries", href: "/itinerary-builder", icon: Map, badge: "Hub", badgeType: "default" },
+      { name: "Bike & Scooty Rentals", href: "/transport", icon: Bike, badge: "Haridwar", badgeType: "muted" },
+      { name: "Documents & Vouchers", href: "/documents", icon: FolderArchive },
+      { name: "Hotel Vouchers", href: "/hotels", icon: Hotel },
+      { name: "Fleet & Transport", href: "/transport", icon: Car },
+    ],
+  },
+  {
+    title: "Commercials & Leads",
+    items: [
+      { name: "Trip Cost Calculator", href: "/quotation-calculator", icon: Calculator },
+      { name: "Payment Receipts", href: "/invoices", icon: FileText },
+      { name: "Pilgrim Leads", href: "/leads", icon: Users },
+      { name: "WhatsApp Live Desk", href: "/whatsapp-desk", icon: MessageSquare, badge: "Live", badgeType: "live" },
+    ],
+  },
+  {
+    title: "Assets & Partners",
+    items: [
+      { name: "Dham Photo Library", href: "/gallery", icon: ImageIcon },
+      { name: "Vendors & Payables", href: "/vendors", icon: Store },
+      { name: "CRM & WhatsApp Setup", href: "/settings", icon: Settings },
+    ],
+  },
 ];
 
 export function Sidebar() {
@@ -45,102 +75,155 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Menu Button */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 z-50 flex items-center justify-between px-4">
-        <div className="flex items-center">
-          <img src="/logo.png" alt="Travel to Uttarakhand" className="h-11 w-auto object-contain" />
-        </div>
+      {/* Mobile Top Header */}
+      <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#0b1329] border-b border-slate-800 z-50 flex items-center justify-between px-4 shadow-md">
+        <Link href="/" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-white border border-slate-700/80 p-0.5 flex items-center justify-center shadow-sm">
+            <img src="/logo.png" alt="Traymbhkam" className="h-full w-full object-contain" />
+          </div>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm font-bold text-white tracking-tight">Traymbhkam</span>
+              <span className="px-1 py-0.2 rounded text-[8.5px] font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                EST. 2022
+              </span>
+            </div>
+            <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400">
+              TOUR &amp; TRAVELS • HARIDWAR
+            </span>
+          </div>
+        </Link>
         <button
           onClick={() => setMobileMenuOpen(true)}
-          className="p-2 rounded-md text-gray-500 hover:text-sky-600 hover:bg-sky-50 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors"
+          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          aria-label="Open navigation menu"
         >
-          <Menu size={24} />
+          <Menu size={22} />
         </button>
       </div>
 
       {/* Mobile Sidebar Overlay */}
       {mobileMenuOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden transition-opacity"
+          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity"
           onClick={() => setMobileMenuOpen(false)}
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar Desktop & Mobile Drawer */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-200 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#0b1329] border-r border-slate-800/80 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-4 py-4 border-b border-gray-100 lg:px-5 lg:py-4.5 lg:border-b lg:border-slate-100">
+        {/* Brand Header */}
+        <div className="flex items-center justify-between px-4 py-4.5 border-b border-slate-800/80">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-12 h-12 rounded-xl bg-white border border-gray-100 shadow-2xs flex items-center justify-center p-1 group-hover:border-sky-200 transition-all shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-white border border-slate-700/60 shadow-md flex items-center justify-center p-1 group-hover:scale-105 transition-transform shrink-0">
               <img 
                 src="/logo.png" 
-                alt="Travel to Uttarakhand" 
-                className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-105" 
+                alt="Traymbhkam" 
+                className="h-full w-full object-contain" 
               />
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-[15px] font-bold text-gray-900 tracking-tight leading-tight group-hover:text-sky-700 transition-colors">
-                Travel to Uttarakhand
-              </span>
-              <span className="text-[10.5px] font-bold uppercase tracking-wider text-sky-600 mt-0.5">
-                TOURISM & CRM STUDIO
+              <div className="flex items-center gap-1.5">
+                <span className="text-[14.5px] font-bold text-white tracking-tight leading-tight group-hover:text-amber-300 transition-colors">
+                  Traymbhkam
+                </span>
+                <span className="px-1.5 py-0.5 rounded text-[8.5px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 tracking-tight">
+                  EST. 2022
+                </span>
+              </div>
+              <span className="text-[9.5px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
+                TOUR &amp; TRAVELS • HARIDWAR
               </span>
             </div>
           </Link>
           <button
             onClick={() => setMobileMenuOpen(false)}
-            className="lg:hidden p-2 rounded-md text-gray-500 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+            className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-5 px-3 space-y-1 custom-scrollbar">
-          {navigation.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.name}
-                href={item.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center gap-3 px-3.5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 group ${
-                  isActive
-                    ? "bg-gradient-to-r from-sky-50 to-blue-50/50 text-sky-700 shadow-xs border border-sky-200/80 font-bold"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                }`}
-              >
-                <item.icon
-                  className={`w-4 h-4 transition-transform duration-200 group-hover:scale-110 ${
-                    isActive ? "text-sky-600" : "text-gray-400 group-hover:text-gray-600"
-                  }`}
-                />
-                {item.name}
-              </Link>
-            );
-          })}
+        {/* Grouped Navigation Links */}
+        <div className="flex-1 overflow-y-auto py-3 px-3 space-y-4 custom-scrollbar">
+          {navigationSections.map((section) => (
+            <div key={section.title} className="space-y-1">
+              <div className="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 select-none">
+                {section.title}
+              </div>
+
+              {section.items.map((item) => {
+                const isActive = pathname === item.href;
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-xl transition-all duration-150 group ${
+                      isActive
+                        ? "bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border border-amber-500/40 text-amber-300 font-bold shadow-xs"
+                        : "text-slate-300 hover:text-white hover:bg-slate-800/60 border border-transparent"
+                    }`}
+                  >
+                    <item.icon
+                      className={`w-4 h-4 transition-transform duration-150 group-hover:scale-105 shrink-0 ${
+                        isActive ? "text-amber-400" : "text-slate-400 group-hover:text-slate-200"
+                      }`}
+                    />
+                    <span className="truncate">{item.name}</span>
+
+                    {/* Badges */}
+                    {item.badge && (
+                      <span
+                        className={`ml-auto text-[9.5px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 shrink-0 ${
+                          item.badgeType === "live"
+                            ? "bg-emerald-500/20 text-emerald-300 border border-emerald-500/40"
+                            : item.badgeType === "muted"
+                            ? "bg-slate-800/90 text-slate-400 border border-slate-700/60 text-[9px] font-medium"
+                            : "bg-slate-800 text-slate-300 border border-slate-700 font-semibold"
+                        }`}
+                      >
+                        {item.badgeType === "live" && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        )}
+                        {item.badge}
+                      </span>
+                    )}
+
+                    {/* Active Chevron Indicator */}
+                    {isActive && !item.badge && (
+                      <ChevronRight className="w-3.5 h-3.5 text-amber-400/80 ml-auto shrink-0" />
+                    )}
+                  </Link>
+                );
+              })}
+            </div>
+          ))}
         </div>
 
-        <div className="p-3.5 border-t border-gray-100 bg-slate-50/80 flex items-center justify-between">
+        {/* Bottom Profile Area */}
+        <div className="p-3 border-t border-slate-800/80 bg-[#070d19] flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-sky-100 border border-sky-200 flex items-center justify-center text-sky-700 font-bold text-xs shadow-2xs shrink-0">
-              {user?.name ? user.name.charAt(0) : "A"}
+            <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs shadow-md shrink-0">
+              {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-xs font-bold text-gray-900 truncate">
-                {user?.name || "Mr. Amit kumar"}
+              <span className="text-xs font-bold text-white truncate">
+                {user?.name || "Mr. Gagandeep"}
               </span>
-              <span className="text-[10px] text-gray-500 truncate">
-                {user?.email || "admin@traveltouttrakhand.com"}
+              <span className="text-[10px] text-slate-400 truncate">
+                Haridwar Operations
               </span>
             </div>
           </div>
           <button
             onClick={logout}
             title="Sign Out of CRM"
-            className="p-1.5 rounded-lg text-gray-400 hover:text-red-600 hover:bg-red-50 transition cursor-pointer shrink-0"
+            className="p-1.5 rounded-lg text-slate-400 hover:text-red-400 hover:bg-slate-800/80 transition cursor-pointer shrink-0"
           >
             <LogOut className="w-4 h-4" />
           </button>

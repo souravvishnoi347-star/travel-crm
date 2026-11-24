@@ -14,7 +14,9 @@ import {
   Plus, 
   CheckCircle2, 
   Clock,
-  ArrowRight
+  ArrowRight,
+  Bike,
+  Compass
 } from "lucide-react";
 import Link from "next/link";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
@@ -166,31 +168,50 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div className="space-y-7 max-w-7xl mx-auto pb-12">
+    <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
-      {/* Welcome & Action Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* Welcome & Action Header (Matching Inspiration Screenshot) */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <span>Travel to Uttarakhand Operations</span>
-            <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-200">
-              Spiritual Travel Edition
+          <div className="flex items-center gap-2 mb-1.5">
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-800 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-md">
+              TRAYMBHKAM TOUR &amp; TRAVELS
             </span>
+            <span className="text-[11px] font-semibold text-slate-500">
+              • Haridwar Operations Desk
+            </span>
+          </div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+            Yatra Operations Dashboard
           </h1>
-          <p className="text-gray-500 mt-0.5 text-sm">Chardham, Do Dham, Teen Dham, Ek Dham & Helicopter Yatra Operations Desk</p>
+          <p className="text-gray-500 mt-0.5 text-xs sm:text-sm">
+            Welcome, Mr. Gagandeep • Chardham Pilgrimage Bookings, Vouchers &amp; Billing Desk
+          </p>
         </div>
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center flex-wrap gap-2">
+          <Link 
+            href="/transport" 
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100 text-amber-900 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
+          >
+            <Bike size={14} className="text-amber-700" /> Bike Desk
+          </Link>
           <Link 
             href="/invoices" 
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-white border border-gray-200 hover:border-sky-300 text-gray-700 hover:text-sky-700 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100 text-amber-900 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
           >
-            <FileText size={15} className="text-sky-600" /> Generate Invoice
+            <FileText size={14} className="text-amber-700" /> Quick Invoice
+          </Link>
+          <Link 
+            href="/transport" 
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100 text-amber-900 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
+          >
+            <Car size={14} className="text-amber-700" /> Fleet Voucher
           </Link>
           <Link 
             href="/itinerary-builder" 
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#0369a1] hover:bg-[#025684] text-white rounded-xl font-semibold text-xs shadow-sm transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#090f1d] hover:bg-slate-900 text-white rounded-xl font-bold text-xs shadow-sm border border-slate-700/60 transition cursor-pointer"
           >
-            <Plus size={15} /> Create Itinerary
+            <Plus size={14} className="text-amber-400" /> + New Proposal
           </Link>
         </div>
       </div>
@@ -198,44 +219,44 @@ export default function Dashboard() {
       {/* 5-Card Operational & Booking Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         
-        {/* KPI 1: Active Lead Pipeline */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-sky-200 transition-all">
+        {/* KPI 1: Active Inquiries */}
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-amber-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Active Leads</span>
-            <div className="w-8 h-8 rounded-lg bg-sky-50 text-sky-600 flex items-center justify-center">
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Active Inquiries</span>
+            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
               <Users size={17} />
             </div>
           </div>
           <p className="text-2xl font-bold text-gray-900 font-mono">{stats.activeLeads}</p>
-          <p className="text-[10.5px] text-sky-600 font-semibold mt-1">Ongoing Guest Inquiries</p>
+          <p className="text-[10.5px] text-gray-500 font-medium mt-1">Ongoing Pilgrim Leads</p>
         </div>
 
         {/* KPI 2: Confirmed Yatra Bookings */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-emerald-200 transition-all">
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-emerald-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Confirmed Yatras</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Confirmed Tours</span>
             <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
               <CheckCircle2 size={17} />
             </div>
           </div>
           <p className="text-2xl font-bold text-gray-900 font-mono">{stats.confirmedTours}</p>
-          <p className="text-[10.5px] text-emerald-600 font-semibold mt-1">Booked & Confirmed Tours</p>
+          <p className="text-[10.5px] text-emerald-600 font-medium mt-1">Booked Yatra Tours</p>
         </div>
 
-        {/* KPI 3: Itineraries Generated */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-purple-200 transition-all">
+        {/* KPI 3: Proposals Generated */}
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-purple-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Itineraries</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Proposals</span>
             <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
               <Map size={17} />
             </div>
           </div>
           <p className="text-2xl font-bold text-gray-900 font-mono">{stats.totalItineraries}</p>
-          <p className="text-[10.5px] text-purple-600 font-semibold mt-1">Brochures & Proposals</p>
+          <p className="text-[10.5px] text-gray-500 font-medium mt-1">Itinerary Quotes</p>
         </div>
 
         {/* KPI 4: Service Vouchers */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-cyan-200 transition-all">
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-cyan-300 transition-all">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Service Vouchers</span>
             <div className="w-8 h-8 rounded-lg bg-cyan-50 text-cyan-600 flex items-center justify-center">
@@ -243,21 +264,129 @@ export default function Dashboard() {
             </div>
           </div>
           <p className="text-2xl font-bold text-gray-900 font-mono">{stats.totalVouchers}</p>
-          <p className="text-[10.5px] text-cyan-600 font-semibold mt-1">Hotel & Cab Vouchers</p>
+          <p className="text-[10.5px] text-gray-500 font-medium mt-1">Hotel &amp; Fleet Vouchers</p>
         </div>
 
         {/* KPI 5: Vendor Payables */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-rose-200 transition-all">
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-rose-300 transition-all">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Vendor Payables</span>
+            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Partner Payables</span>
             <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center">
               <Store size={17} />
             </div>
           </div>
           <p className="text-2xl font-bold text-gray-900 font-mono">₹{stats.pendingPayables.toLocaleString("en-IN")}</p>
-          <p className="text-[10.5px] text-rose-600 font-semibold mt-1">Due to Hotels & Transporters</p>
+          <p className="text-[10.5px] text-gray-500 font-medium mt-1">Hotels &amp; Cabs Due</p>
         </div>
 
+      </div>
+
+      {/* Chardham Yatra Circuit Presets • Haridwar Departures (From Inspiration Screenshot) */}
+      <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
+        <div className="flex items-center justify-between mb-3.5">
+          <div className="flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
+              <Compass size={16} />
+            </span>
+            <div>
+              <h2 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5">
+                Chardham Yatra Circuit Presets <span className="text-gray-300 font-normal hidden sm:inline">•</span> <span className="text-gray-600 text-xs sm:text-sm font-semibold">Haridwar Departures</span>
+              </h2>
+              <p className="text-[11px] text-gray-500">Quick-launch customized package proposals for clients</p>
+            </div>
+          </div>
+          <Link 
+            href="/itinerary-builder" 
+            className="text-xs font-bold text-gray-800 hover:text-amber-700 flex items-center gap-1 hover:underline transition"
+          >
+            Itinerary Studio <ArrowRight size={13} />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+          {[
+            {
+              tag: "Signature Tour",
+              duration: "9N/10D or 11N/12D",
+              title: "Complete Char Dham Yatra",
+              sub: "Yamunotri • Gangotri • Kedarnath • Badrinath",
+              hub: "Ex-Haridwar Hub",
+              link: "/itinerary-builder"
+            },
+            {
+              tag: "High Demand",
+              duration: "5N/6D",
+              title: "Do Dham (Kedarnath + Badrinath)",
+              sub: "Kedarnath Temple • Badrinath Ji Darshan",
+              hub: "Ex-Haridwar / Rishikesh",
+              link: "/itinerary-builder"
+            },
+            {
+              tag: "Sacred Rivers",
+              duration: "4N/5D",
+              title: "Yamunotri & Gangotri Do Dham",
+              sub: "Yamunotri Dham • Harsil Apple Valley • Gangotri",
+              hub: "Ex-Haridwar / Dehradun",
+              link: "/itinerary-builder"
+            },
+            {
+              tag: "Highest Shiva Shrine",
+              duration: "6N/7D",
+              title: "Kedarnath - Tungnath - Badrinath",
+              sub: "Kedarnath Jyotirlinga • Chopta Tungnath • Badrinath",
+              hub: "Ex-Haridwar Hub",
+              link: "/itinerary-builder"
+            },
+            {
+              tag: "Supreme Shiva Yatra",
+              duration: "10N/11D",
+              title: "Panch Kedar Holy Circuit",
+              sub: "Kedarnath • Madhyamaheshwar • Tungnath • Rudranath",
+              hub: "Ex-Haridwar Hub",
+              link: "/itinerary-builder"
+            },
+            {
+              tag: "Helicopter / Trek",
+              duration: "3N/4D",
+              title: "Ek Dham (Kedarnath Trek / Heli)",
+              sub: "Guptkashi • Phata • Kedarnath Shrine",
+              hub: "Ex-Haridwar Hub",
+              link: "/itinerary-builder"
+            },
+          ].map((preset, idx) => (
+            <div 
+              key={idx} 
+              className="p-3.5 rounded-xl border border-gray-100 hover:border-amber-300 hover:shadow-xs transition-all bg-gradient-to-b from-white to-amber-50/15 flex flex-col justify-between group"
+            >
+              <div>
+                <div className="flex items-center justify-between gap-1 mb-2">
+                  <span className="text-[9px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                    {preset.tag}
+                  </span>
+                  <span className="text-[10px] font-semibold text-gray-500">
+                    {preset.duration}
+                  </span>
+                </div>
+                <h3 className="font-bold text-gray-900 text-xs leading-snug group-hover:text-amber-800 transition-colors">
+                  {preset.title}
+                </h3>
+                <p className="text-[10px] text-gray-500 line-clamp-2 mt-1">
+                  {preset.sub}
+                </p>
+              </div>
+
+              <div className="flex items-center justify-between pt-3 mt-2 border-t border-gray-100 text-[10.5px]">
+                <span className="text-gray-400 font-medium">{preset.hub}</span>
+                <Link 
+                  href={preset.link} 
+                  className="font-bold text-amber-700 hover:text-amber-900 flex items-center gap-0.5"
+                >
+                  Configure <span className="text-xs">→</span>
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* QUICK ACTIONS & STUDIO LAUNCHPAD */}
