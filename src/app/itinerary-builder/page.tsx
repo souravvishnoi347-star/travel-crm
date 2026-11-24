@@ -107,6 +107,7 @@ export interface PaxVehicleSlab {
   vehicleCategory: string;
   roomsCount: string;
   ratePerPax: number;
+  totalPackageRate?: number;
   hotelCategory: string;
   hotelSharing: string;
   mealPlan: string;
@@ -4352,13 +4353,14 @@ ${data.motto}`;
             {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? (
               <div className="border border-sky-300 rounded-xl overflow-hidden mt-1.5 shadow-2xs">
                 <table className="w-full text-xs text-center">
-                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[11px]">
+                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[10.5px]">
                     <tr>
-                      <th className="px-3 py-2 text-left">Group Sizing</th>
-                      <th className="px-2.5 py-2 text-left">Dedicated Mountain Vehicle</th>
-                      <th className="px-2.5 py-2">Stay & Rooms</th>
-                      <th className="px-2.5 py-2">Meal Plan</th>
-                      <th className="px-3 py-2 text-right">Investment / Person</th>
+                      <th className="px-2.5 py-2 text-left">Group Sizing</th>
+                      <th className="px-2 py-2 text-left">Dedicated Mountain Vehicle</th>
+                      <th className="px-2 py-2">Stay & Rooms</th>
+                      <th className="px-2 py-2">Meal Plan</th>
+                      <th className="px-2.5 py-2 text-right">Price / Person</th>
+                      <th className="px-3 py-2 text-right bg-sky-950/80">Total Package Cost</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 text-[11px]">
@@ -4388,8 +4390,11 @@ ${data.motto}`;
                           <td className="px-2.5 py-1.5 text-gray-700 font-medium">
                             {slab.mealPlan}
                           </td>
-                          <td className="px-3 py-1.5 text-right font-black text-[#0369a1] text-[12px]">
-                            ₹ {slab.ratePerPax.toLocaleString('en-IN')}/- <span className="text-[9.5px] font-semibold text-gray-500">per pax</span>
+                          <td className="px-2.5 py-1.5 text-right font-black text-[#0369a1] text-[11.5px] whitespace-nowrap">
+                            ₹ {slab.ratePerPax.toLocaleString('en-IN')}/- <span className="text-[9px] font-semibold text-gray-500 block">/ person</span>
+                          </td>
+                          <td className="px-3 py-1.5 text-right font-black text-emerald-800 text-[12px] bg-emerald-50/60 whitespace-nowrap">
+                            ₹ {(slab.totalPackageRate || (slab.paxCount * slab.ratePerPax)).toLocaleString('en-IN')}/- <span className="text-[8.5px] font-bold text-emerald-700 block">Total Package</span>
                           </td>
                         </tr>
                       );
@@ -4400,13 +4405,14 @@ ${data.motto}`;
             ) : (
               <div className="border-2 border-sky-300 rounded-xl overflow-hidden mt-1.5 shadow-xs bg-white">
                 <table className="w-full text-xs text-center">
-                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[11.5px]">
+                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[11px]">
                     <tr>
-                      <th className="px-3.5 py-2.5 text-left">Confirmed Package & Group</th>
-                      <th className="px-3 py-2.5">Price / Person</th>
-                      <th className="px-3 py-2.5">Hotel Category & Rooms</th>
-                      <th className="px-3 py-2.5">Meals Included</th>
-                      <th className="px-3 py-2.5">Dedicated Transport</th>
+                      <th className="px-3 py-2 text-left">Confirmed Package & Group</th>
+                      <th className="px-2.5 py-2 text-right">Price / Person</th>
+                      <th className="px-2.5 py-2 text-right bg-sky-950/70">Total Package Price</th>
+                      <th className="px-2.5 py-2">Hotel Category & Rooms</th>
+                      <th className="px-2.5 py-2">Meals Included</th>
+                      <th className="px-2.5 py-2">Dedicated Transport</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 text-[11.5px]">
@@ -4418,10 +4424,20 @@ ${data.motto}`;
                             <span>{tier.package}</span>
                           </span>
                         </td>
-                        <td className="px-3 py-3 font-black text-[#0369a1] text-[13.5px]">
+                        <td className="px-2.5 py-2.5 font-black text-[#0369a1] text-[12px] text-right whitespace-nowrap">
                           {tier.price}
                         </td>
-                        <td className="px-3 py-3 text-gray-900 font-bold">
+                        <td className="px-2.5 py-2.5 font-black text-emerald-800 text-[12px] text-right bg-emerald-50/50 whitespace-nowrap">
+                          {(() => {
+                            const pMatch = tier.package.match(/^(\d+)\s*Pax/i);
+                            const pCount = pMatch ? parseInt(pMatch[1]) : (data.selectedPaxCount || 2);
+                            const numP = parseInt(tier.price.replace(/[^\d]/g, '')) || 0;
+                            const calcT = numP > 0 ? numP * pCount : 0;
+                            const resT = tier.totalPackagePrice || (calcT > 0 ? `₹ ${calcT.toLocaleString('en-IN')} / Total` : tier.price);
+                            return resT.startsWith('₹') ? resT : `₹ ${resT}`;
+                          })()}
+                        </td>
+                        <td className="px-2.5 py-2.5 text-gray-900 font-bold">
                           {tier.hotelCategory}
                         </td>
                         <td className="px-3 py-3 text-gray-800 font-medium">
@@ -5902,8 +5918,11 @@ ${data.motto}`;
                           <span className={`text-[9px] font-semibold truncate mt-0.5 ${isSelected ? "text-sky-100" : "text-gray-600"}`}>
                             {slab.vehicleCategory}
                           </span>
-                          <span className={`text-[10px] font-black mt-1 ${isSelected ? "text-amber-200" : "text-emerald-700"}`}>
-                            ₹{slab.ratePerPax.toLocaleString('en-IN')}
+                          <span className={`text-[10px] font-black mt-0.5 ${isSelected ? "text-amber-200" : "text-[#0369a1]"}`}>
+                            ₹{slab.ratePerPax.toLocaleString('en-IN')} <span className="text-[8.5px] font-medium opacity-80">/pax</span>
+                          </span>
+                          <span className={`text-[9.5px] font-black ${isSelected ? "text-white" : "text-emerald-700"}`}>
+                            Total: ₹{(slab.paxCount * slab.ratePerPax).toLocaleString('en-IN')}
                           </span>
                         </button>
                       );
@@ -5921,13 +5940,23 @@ ${data.motto}`;
                       {data.selectedPaxCount ? `${String(data.selectedPaxCount).padStart(2, '0')} Pax` : "04 Pax"} · {data.selectedVehicle || "Swift Dzire / Sedan"}
                     </span>
                   </div>
-                  <div className="text-right">
-                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-gray-500 block">
-                      Per Pax Investment
-                    </span>
-                    <span className="text-[13px] font-black text-emerald-700">
-                      ₹ {(data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499).toLocaleString('en-IN')}/- <span className="text-[10px] font-medium text-gray-600">/ Person</span>
-                    </span>
+                  <div className="flex items-center gap-4 text-right">
+                    <div>
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-gray-500 block">
+                        Per Pax Investment
+                      </span>
+                      <span className="text-[12px] font-black text-[#0369a1]">
+                        ₹ {(data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499).toLocaleString('en-IN')}/- <span className="text-[9.5px] font-medium text-gray-600">/ person</span>
+                      </span>
+                    </div>
+                    <div className="pl-3 border-l border-sky-200">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-gray-500 block">
+                        Total Package Cost
+                      </span>
+                      <span className="text-[13.5px] font-black text-emerald-700">
+                        ₹ {(((data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499)) * (data.selectedPaxCount || 4)).toLocaleString('en-IN')}/- <span className="text-[9.5px] font-bold text-emerald-600">Total</span>
+                      </span>
+                    </div>
                   </div>
                 </div>
 
@@ -5976,6 +6005,7 @@ ${data.motto}`;
                             <th className="p-1.5">Vehicle</th>
                             <th className="p-1.5">Rooms</th>
                             <th className="p-1.5 text-right">Rate / Pax (₹)</th>
+                            <th className="p-1.5 text-right bg-emerald-50 text-emerald-900">Total Package (₹)</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -6005,8 +6035,11 @@ ${data.motto}`;
                                   type="number"
                                   value={slab.ratePerPax}
                                   onChange={e => updateSlabField(sIdx, "ratePerPax", parseInt(e.target.value) || 0)}
-                                  className="w-20 px-1.5 py-0.5 border border-gray-200 rounded text-[10.5px] font-bold text-emerald-700 text-right"
+                                  className="w-20 px-1.5 py-0.5 border border-gray-200 rounded text-[10.5px] font-bold text-[#0369a1] text-right"
                                 />
+                              </td>
+                              <td className="p-1 text-right font-black text-emerald-700 bg-emerald-50/60 text-[11px] whitespace-nowrap px-2">
+                                ₹ {(slab.paxCount * slab.ratePerPax).toLocaleString('en-IN')}
                               </td>
                             </tr>
                           ))}
