@@ -1242,8 +1242,8 @@ export const AULI_3D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
-  useCoverBanner: true,
+  coverBannerUrl: "",
+  useCoverBanner: false,
 
   days: [
     {
@@ -1385,8 +1385,8 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
-  useCoverBanner: true,
+  coverBannerUrl: "",
+  useCoverBanner: false,
 
   days: [
     {
@@ -1526,8 +1526,8 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
-  useCoverBanner: true,
+  coverBannerUrl: "",
+  useCoverBanner: false,
 
   days: [
     {
@@ -1857,8 +1857,8 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_6D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
-  useCoverBanner: true,
+  coverBannerUrl: "",
+  useCoverBanner: false,
 
   days: [
     {
@@ -2372,15 +2372,26 @@ export default function ItineraryBuilder() {
               parsed.showTrustSection = true;
             }
 
-            // Auto-migrate winter presets in localStorage
-            if (parsed.title?.includes("AULI") || parsed.title?.includes("CHOPTA") || parsed.title?.includes("WINTER") || parsed.title?.includes("RISHIKESH")) {
+            // Auto-migrate cover banner in localStorage: ONLY for Auli + Chopta + Tungnath 5D preset
+            const isAuliChoptaTungnath5D = (parsed.title?.includes("AULI") || parsed.title?.includes("auli")) && 
+                                           (parsed.title?.includes("CHOPTA") || parsed.title?.includes("chopta")) && 
+                                           (parsed.title?.includes("TUNGNATH") || parsed.title?.includes("tungnath")) &&
+                                           !parsed.title?.includes("MUSSOORIE");
+            if (isAuliChoptaTungnath5D) {
               if (parsed.useCoverBanner !== false) {
                 parsed.useCoverBanner = true;
                 if (!parsed.coverBannerUrl) {
                   parsed.coverBannerUrl = "/gallery/auli_chopta_tungnath_banner.jpg";
                 }
               }
-              if (parsed.days && Array.isArray(parsed.days)) {
+            } else {
+              // Clear erroneously attached auli_chopta banner for other packages
+              if (parsed.coverBannerUrl === "/gallery/auli_chopta_tungnath_banner.jpg") {
+                parsed.coverBannerUrl = "";
+                parsed.useCoverBanner = false;
+              }
+            }
+            if (parsed.days && Array.isArray(parsed.days)) {
                 // Auto-migrate Day 1 panoramic banner for Ukhimath / Devprayag route
                 if (parsed.days[0] && (
                   parsed.days[0].photoUrl?.includes("ukhimath") ||
@@ -2419,9 +2430,10 @@ export default function ItineraryBuilder() {
                 });
               }
               if (!parsed.hotelPhotos || parsed.hotelPhotos.length === 0 || parsed.hotelPhotos[0]?.location?.includes("Barkot")) {
-                parsed.hotelPhotos = WINTER_HOTEL_PHOTO_PRESETS;
+                if (parsed.title?.includes("AULI") || parsed.title?.includes("CHOPTA") || parsed.title?.includes("WINTER")) {
+                  parsed.hotelPhotos = WINTER_HOTEL_PHOTO_PRESETS;
+                }
               }
-            }
 
             // Cleanse AC word from vehicle names across all loaded itineraries (mountain norm)
             if (Array.isArray(parsed.paxVehicleSlabs)) {
@@ -3631,12 +3643,13 @@ ${data.motto}`;
   // =========================================================
   
   const renderPage1 = (prefix: string) => {
-    const isWinter = data.title.toLowerCase().includes("winter") || 
-                     data.title.toLowerCase().includes("auli") || 
-                     data.title.toLowerCase().includes("chopta") ||
-                     (data.subTitle && data.subTitle.toLowerCase().includes("winter"));
-    const showCoverBanner = data.useCoverBanner !== false && !!(data.coverBannerUrl || isWinter);
-    const resolvedCoverBannerUrl = data.coverBannerUrl || (isWinter ? "/gallery/auli_chopta_tungnath_banner.jpg" : "");
+    // Cover banner is strictly shown only when useCoverBanner is true and coverBannerUrl is provided (defaults only for Auli+Chopta+Tungnath 5D)
+    const isAuliChoptaTungnath = data.title.toLowerCase().includes("auli") && 
+                                 data.title.toLowerCase().includes("chopta") && 
+                                 data.title.toLowerCase().includes("tungnath") &&
+                                 !data.title.toLowerCase().includes("mussoorie");
+    const resolvedCoverBannerUrl = data.coverBannerUrl || (isAuliChoptaTungnath && data.useCoverBanner !== false ? "/gallery/auli_chopta_tungnath_banner.jpg" : "");
+    const showCoverBanner = data.useCoverBanner === true && !!resolvedCoverBannerUrl;
 
     return (
       <div
@@ -3970,7 +3983,7 @@ ${data.motto}`;
         {isShortTour ? (
           <div className="p-2 space-y-1.5">
             {/* Activities Bullet Points - Large & Clear */}
-            <ul className="text-gray-950 space-y-1 text-[12px] font-medium leading-relaxed pl-3">
+            <ul className="text-gray-950 space-y-0.5 text-[11.5px] font-medium leading-normal pl-3">
               {day.activities.map((act, aIdx) => (
                 <li key={aIdx}>
                   – {act}
@@ -3981,7 +3994,7 @@ ${data.motto}`;
             {/* Day Related Photo Banner (Panorama) or Standard Photo Strip right after activities */}
             {isDayBanner ? (
               <div className="pt-1 border-t border-sky-100/90">
-                <div className="w-full h-24 sm:h-[105px] rounded-lg overflow-hidden border border-sky-300/90 bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 shadow-2xs relative flex items-center justify-center p-0.5">
+                <div className="w-full h-20 sm:h-[88px] rounded-lg overflow-hidden border border-sky-300/90 bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 shadow-2xs relative flex items-center justify-center p-0.5">
                   <img 
                     src={day.bannerPhotoUrl || primaryPhotoUrl || "/gallery/day1_ukhimath_devprayag_banner.jpg"} 
                     alt="" 
@@ -4000,7 +4013,7 @@ ${data.motto}`;
               </div>
             ) : primaryPhotoUrl ? (
               <div className="pt-1 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
-                <div className={`${secondaryPhotoUrl ? 'w-32 h-16' : 'w-40 h-20'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
+                <div className={`${secondaryPhotoUrl ? 'w-28 h-14' : 'w-36 h-18'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
                   <img 
                     src={primaryPhotoUrl} 
                     alt="" 
@@ -4018,7 +4031,7 @@ ${data.motto}`;
                 </div>
 
                 {secondaryPhotoUrl && (
-                  <div className="w-32 h-16 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
+                  <div className="w-28 h-14 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
                     <img 
                       src={secondaryPhotoUrl} 
                       alt="" 
@@ -4124,8 +4137,8 @@ ${data.motto}`;
             </div>
           )}
 
-          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for very short tours like 3D!) */}
-          {data.days.length <= 3 && displayHotelPhotos && displayHotelPhotos.length > 0 && (
+          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for short tours 3D-6D to prevent Page 3 cramping) */}
+          {isShortTour && displayHotelPhotos && displayHotelPhotos.length > 0 && (
             <div className="space-y-1.5 pt-0.5">
               <div className="flex items-center justify-between text-[11.5px] font-black text-[#0369a1]">
                 <span className="flex items-center gap-1.5">
@@ -4429,8 +4442,8 @@ ${data.motto}`;
             </p>
           </div>
 
-          {/* Confirmed Accommodation Standards Showcase */}
-          {data.showHotelPhotos !== false && displayHotelPhotos && displayHotelPhotos.length > 0 && (
+          {/* Confirmed Accommodation Standards Showcase: Shown on Page 3 only for 10D tours where page3Days is empty */}
+          {page3Days.length === 0 && data.showHotelPhotos !== false && displayHotelPhotos && displayHotelPhotos.length > 0 && (
             <div className="pt-2 border-t border-gray-200 space-y-1">
               <div className="flex items-center justify-between">
                 <h4 className="text-[12px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
