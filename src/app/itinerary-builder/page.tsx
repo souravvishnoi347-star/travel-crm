@@ -821,13 +821,10 @@ export function DynamicQrCodeSuite({
 }) {
   const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "919719038278";
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding the ${title} itinerary`)}`;
-  const mapsUrl = `https://maps.google.com/?q=Haridwar+to+Ukhimath+to+Chopta+to+Tungnath+to+Joshimath+to+Auli`;
-  const upiId = customUpiId || "traveltouttarakhand@sbi";
-  const upiUrl = `upi://pay?pa=${upiId}&pn=Travel%20To%20Uttarakhand&cu=INR`;
+  const googleReviewUrl = "https://g.page/r/traveltouttarakhand/review";
 
   const waQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(whatsappUrl)}`;
-  const mapsQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(mapsUrl)}`;
-  const upiQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(upiUrl)}`;
+  const reviewQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(googleReviewUrl)}`;
 
   return (
     <div className="p-3 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-indigo-50/60 border border-sky-200 shadow-2xs space-y-2">
@@ -843,85 +840,59 @@ export function DynamicQrCodeSuite({
         </span>
       </div>
 
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3.5">
         {/* QR 1: WhatsApp Support */}
         <a 
           href={whatsappUrl} 
           target="_blank" 
           rel="noopener noreferrer"
           data-pdf-link={whatsappUrl}
-          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-emerald-400 hover:shadow-xs transition-all flex items-center gap-2.5 group cursor-pointer"
+          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-emerald-400 hover:shadow-xs transition-all flex items-center gap-3 group cursor-pointer"
         >
           <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 p-0.5 flex items-center justify-center shrink-0">
             <img src={waQrUrl} alt="WhatsApp QR" className="w-full h-full object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 text-[9px] font-black text-emerald-700 uppercase tracking-tight mb-0.5">
+            <div className="flex items-center gap-1 text-[9.5px] font-black text-emerald-700 uppercase tracking-tight mb-0.5">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
               WhatsApp Live Desk
             </div>
-            <p className="text-[11px] font-black text-gray-900 group-hover:text-emerald-700 transition-colors leading-tight">
-              Scan to Chat Live
+            <p className="text-[11.5px] font-black text-gray-900 group-hover:text-emerald-700 transition-colors leading-tight">
+              Scan for Chat Support
             </p>
             <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
               Direct Yatra Specialist ({phone || "+91 97190 38278"})
             </p>
-            <span className="inline-block mt-1 text-[8.5px] font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-              Tap / Scan ➔
+            <span className="inline-block mt-1 text-[8.5px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+              Chat on WhatsApp ➔
             </span>
           </div>
         </a>
 
-        {/* QR 2: Google Maps Driving Route */}
+        {/* QR 2: Google Verified Reviews */}
         <a 
-          href={mapsUrl} 
+          href={googleReviewUrl} 
           target="_blank" 
           rel="noopener noreferrer"
-          data-pdf-link={mapsUrl}
-          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-blue-400 hover:shadow-xs transition-all flex items-center gap-2.5 group cursor-pointer"
+          data-pdf-link={googleReviewUrl}
+          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-amber-400 hover:shadow-xs transition-all flex items-center gap-3 group cursor-pointer"
         >
           <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 p-0.5 flex items-center justify-center shrink-0">
-            <img src={mapsQrUrl} alt="Google Maps Route QR" className="w-full h-full object-contain" />
+            <img src={reviewQrUrl} alt="Google Reviews QR" className="w-full h-full object-contain" />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 text-[9px] font-black text-blue-700 uppercase tracking-tight mb-0.5">
-              <MapPin className="w-2.5 h-2.5 text-blue-600" />
-              Live Driving Route
+            <div className="flex items-center gap-1 text-[9.5px] font-black text-amber-700 uppercase tracking-tight mb-0.5">
+              <span>⭐</span>
+              Google Verified Reviews
             </div>
-            <p className="text-[11px] font-black text-gray-900 group-hover:text-blue-700 transition-colors leading-tight">
-              Scan for GPS Route
+            <p className="text-[11.5px] font-black text-gray-900 group-hover:text-amber-700 transition-colors leading-tight">
+              Scan to Review Us
             </p>
             <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
-              Opens full road navigation on Google Maps
+              Rated 4.9 ★ by 1,200+ Happy Pilgrims
             </p>
-            <span className="inline-block mt-1 text-[8.5px] font-bold text-blue-800 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">
-              Open Navigation ➔
-            </span>
-          </div>
-        </a>
-
-        {/* QR 3: UPI Advance Token */}
-        <a 
-          href={upiUrl} 
-          data-pdf-link={upiUrl}
-          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-amber-400 hover:shadow-xs transition-all flex items-center gap-2.5 group cursor-pointer"
-        >
-          <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 p-0.5 flex items-center justify-center shrink-0">
-            <img src={upiQrUrl} alt="UPI Payment QR" className="w-full h-full object-contain" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-1 text-[9px] font-black text-amber-800 uppercase tracking-tight mb-0.5">
-              <ShieldCheck className="w-2.5 h-2.5 text-amber-600" />
-              Verified Advance Token
-            </div>
-            <p className="text-[11px] font-black text-gray-900 group-hover:text-amber-800 transition-colors leading-tight">
-              Scan to Pay Token
-            </p>
-            <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
-              GPay · PhonePe · Paytm · UPI VPA
-            </p>
-            <span className="inline-block mt-1 text-[8.5px] font-bold text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
-              {upiId}
+            <span className="inline-block mt-1 text-[8.5px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              5-Star Google Review ➔
             </span>
           </div>
         </a>
@@ -4495,8 +4466,8 @@ ${data.motto}`;
             {page2Days.map((day, dIdx) => renderDayCard(day, dIdx, isShortTour))}
           </div>
 
-          {/* Continuation Banner on Page 2 for multi-part itineraries */}
-          {isShortTour && data.days.length > 3 && (
+          {/* Continuation / Navigation Banner on Page 2 */}
+          {isShortTour && data.days.length > 3 ? (
             <div className="mt-1.5 p-1.5 bg-gradient-to-r from-sky-50 via-blue-50/70 to-sky-50 rounded-lg border border-sky-200/80 flex items-center justify-between text-[10.5px] font-bold text-sky-900 shadow-2xs">
               <span className="flex items-center gap-1.5">
                 <span className="text-[#0369a1] font-black">✦ Continued on Page 3:</span>
@@ -4510,120 +4481,17 @@ ${data.motto}`;
                 Turn to Page 3 ➔
               </span>
             </div>
-          )}
-
-          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully ONLY for 2D/3D tours where there are no Day 4+ cards) */}
-          {data.days.length <= 3 && displayHotelPhotos && displayHotelPhotos.length > 0 && (
-            <div className="space-y-1.5 pt-0.5">
-              <div className="flex items-center justify-between text-[11.5px] font-black text-[#0369a1]">
-                <span className="flex items-center gap-1.5">
-                  <span>{isWinter ? "🏨 Handpicked Winter Stays & Alpine Comfort" : "🏨 Confirmed Clean Stays & Hospitality"}</span>
-                  <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
-                    Pre-Inspected &amp; Verified
-                  </span>
+          ) : (
+            <div className="mt-1.5 p-1.5 bg-gradient-to-r from-sky-50 via-blue-50/70 to-sky-50 rounded-lg border border-sky-200/80 flex items-center justify-between text-[10.5px] font-bold text-sky-900 shadow-2xs">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[#0369a1] font-black">✦ Tour Circuit Complete:</span>
+                <span className="text-gray-700 font-medium">
+                  All {data.days.length} Days Day-Wise Sightseeing &amp; Route Covered
                 </span>
-                <span className="text-[9.5px] font-semibold text-gray-600">Heated Rooms · 24/7 Hot Water · Cozy Stays</span>
-              </div>
-              <div className="grid grid-cols-3 gap-2.5">
-                {displayHotelPhotos.slice(0, 3).map((hp, hIdx) => {
-                  const isContain = hp.fit !== "cover";
-                  const fitClass = isContain ? "object-contain" : "object-cover";
-                  return (
-                    <div key={hp.id || hIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                      <div className="h-24 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
-                        <img 
-                          src={hp.url} 
-                          alt="" 
-                          aria-hidden="true" 
-                          className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                        />
-                        <img 
-                          src={hp.url} 
-                          alt={hp.hotelName || 'Stay'} 
-                          className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
-                        />
-                        <span className="absolute top-1 right-1 z-20 text-[8.5px] font-black px-1.5 py-0.5 rounded bg-[#0369a1] text-white shadow-xs">
-                          📍 {hp.location?.split("/")[0]?.trim() || "Scenic Stay"}
-                        </span>
-                      </div>
-                      <div className="p-1.5 bg-sky-50/70 border-t border-sky-100 flex-1 flex flex-col justify-between">
-                        <p className="text-[10.5px] font-black text-gray-950 truncate">
-                          {hp.hotelName || hp.roomType}
-                        </p>
-                        <p className="text-[9px] text-gray-700 font-medium line-clamp-1 mt-0.5">
-                          {hp.caption || hp.roomType}
-                        </p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY (Only for <=3D tours on Page 2; for >3D tours it renders on Page 3) */}
-          {data.days.length <= 3 && data.showWinterPackingAdvisory !== false && (
-            <WinterPackingAdvisory />
-          )}
-
-          {/* MOUNTAIN FLEET & WEATHER SAFETY (Only for very short tours like 3D to fill Page 2) */}
-          {data.days.length <= 3 && (
-            <div className="pt-0.5">
-              <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/60 to-indigo-50/50 border border-sky-200">
-                <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] mb-1">
-                  <span>{isWinter ? "❄️ Winter Mountain Guidelines, Vehicle Safety & Travel Essentials" : "✦ Pilgrimage Yatra Highlights & Mountain Support"}</span>
-                  <span className="text-[9px] font-bold text-gray-600">Travel to Uttarakhand</span>
-                </div>
-                {isWinter ? (
-                  <div className="grid grid-cols-4 gap-2 text-[9.5px] text-gray-800">
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        Hill-certified chauffeur, anti-skid snow chains, all state tolls & parking included.
-                      </p>
-                    </div>
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">Thermal Wear Advisory</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        3-layer thermal inners, waterproof snow boots, fleece jackets & UV sunglasses.
-                      </p>
-                    </div>
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">Auli Cable Car Desk</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        On-spot assistance for ropeway chairlift, ski gear rental & snow trail navigation.
-                      </p>
-                    </div>
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">24/7 Ground Assistance</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        Real-time weather tracking, snow roadblock updates & 24/7 WhatsApp helpdesk.
-                      </p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-3 gap-2 text-[9.5px] text-gray-800">
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">Dedicated Mountain Fleet</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        Experienced hill chauffeur, Non-AC in hills, all state tolls & parking included.
-                      </p>
-                    </div>
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">Clean Verified Stays</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        Standard pre-inspected hygienic rooms & alpine camps with hot water facility.
-                      </p>
-                    </div>
-                    <div className="bg-white/90 p-1.5 rounded-lg border border-sky-100 shadow-2xs">
-                      <p className="font-black text-gray-950 text-[10.5px]">24/7 Pilgrimage Desk</p>
-                      <p className="text-[9px] text-gray-600 font-medium mt-0.5 leading-tight">
-                        Darshan slip assistance, registration support & 24/7 route coordination.
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
+              </span>
+              <span className="text-[9.5px] font-black text-[#0369a1] bg-white px-2.5 py-0.5 rounded-full border border-sky-300">
+                Turn to Page 3 for Pricing &amp; Stays ➔
+              </span>
             </div>
           )}
         </div>
@@ -4839,8 +4707,8 @@ ${data.motto}`;
             </p>
           </div>
 
-          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY: Shows on Page 3 for tours > 3 days */}
-          {data.days.length > 3 && data.showWinterPackingAdvisory !== false && isWinter && (
+          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY: Shows on Page 3 */}
+          {data.showWinterPackingAdvisory !== false && isWinter && (
             <div className="pt-1">
               <WinterPackingAdvisory />
             </div>
