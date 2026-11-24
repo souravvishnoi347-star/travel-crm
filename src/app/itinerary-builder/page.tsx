@@ -1877,8 +1877,12 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "",
-  useCoverBanner: false,
+  coverBannerUrl: "/gallery/rishikesh_mussoorie_banner.jpg",
+  useCoverBanner: true,
+  showAltitudeProfile: false,
+  showWinterPackingAdvisory: false,
+  showDynamicQrCodes: true,
+  qrCodeType: "all",
 
   days: [
     {
@@ -2204,8 +2208,12 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_6D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "",
-  useCoverBanner: false,
+  coverBannerUrl: "/gallery/mussoorie_chopta_tungnath_auli_banner.jpg",
+  useCoverBanner: true,
+  showAltitudeProfile: true,
+  showWinterPackingAdvisory: true,
+  showDynamicQrCodes: true,
+  qrCodeType: "all",
 
   days: [
     {
@@ -2717,16 +2725,41 @@ export default function ItineraryBuilder() {
               parsed.showTrustSection = true;
             }
 
-            // Auto-migrate cover banner in localStorage: ONLY for Auli + Chopta + Tungnath 5D preset
-            const isAuliChoptaTungnath5D = (parsed.title?.includes("AULI") || parsed.title?.includes("auli")) && 
-                                           (parsed.title?.includes("CHOPTA") || parsed.title?.includes("chopta")) && 
-                                           (parsed.title?.includes("TUNGNATH") || parsed.title?.includes("tungnath")) &&
-                                           !parsed.title?.includes("MUSSOORIE");
-            if (isAuliChoptaTungnath5D) {
+            // Auto-migrate cover banners in localStorage for specific presets
+            const titleUpper = (parsed.title || "").toUpperCase();
+            if (titleUpper.includes("RISHIKESH") && titleUpper.includes("MUSSOORIE")) {
+              if (parsed.useCoverBanner !== false) {
+                parsed.useCoverBanner = true;
+                if (!parsed.coverBannerUrl || parsed.coverBannerUrl.includes("auli_chopta")) {
+                  parsed.coverBannerUrl = "/gallery/rishikesh_mussoorie_banner.jpg";
+                }
+              }
+            } else if (titleUpper.includes("MUSSOORIE") && titleUpper.includes("CHOPTA") && titleUpper.includes("AULI")) {
+              if (parsed.useCoverBanner !== false) {
+                parsed.useCoverBanner = true;
+                if (!parsed.coverBannerUrl || parsed.coverBannerUrl.includes("auli_chopta_tungnath_banner.jpg")) {
+                  parsed.coverBannerUrl = "/gallery/mussoorie_chopta_tungnath_auli_banner.jpg";
+                }
+              }
+            } else if (titleUpper.includes("AULI") && titleUpper.includes("CHOPTA") && titleUpper.includes("TUNGNATH") && !titleUpper.includes("MUSSOORIE")) {
               if (parsed.useCoverBanner !== false) {
                 parsed.useCoverBanner = true;
                 if (!parsed.coverBannerUrl) {
                   parsed.coverBannerUrl = "/gallery/auli_chopta_tungnath_banner.jpg";
+                }
+              }
+            } else if (titleUpper.includes("AULI") && !titleUpper.includes("CHOPTA")) {
+              if (parsed.useCoverBanner !== false) {
+                parsed.useCoverBanner = true;
+                if (!parsed.coverBannerUrl) {
+                  parsed.coverBannerUrl = "/gallery/auli_package_banner.jpg";
+                }
+              }
+            } else if (titleUpper.includes("CHOPTA") && !titleUpper.includes("AULI")) {
+              if (parsed.useCoverBanner !== false) {
+                parsed.useCoverBanner = true;
+                if (!parsed.coverBannerUrl) {
+                  parsed.coverBannerUrl = "/gallery/chopta_tungnath_banner.jpg";
                 }
               }
             } else {
@@ -4196,20 +4229,8 @@ ${data.motto}`;
       </div>
 
       {/* Page 1 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
-        <div className="flex items-center gap-2">
-          <span>Travel to Uttarakhand · {data.contactPhone}</span>
-          <a
-            href={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "919719038278"}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding ${data.title}`)}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-pdf-link={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "919719038278"}`}
-            className="text-[9.5px] font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 transition"
-          >
-            <QrCode className="w-3 h-3 text-emerald-600" />
-            <span>Scan to WhatsApp Live Desk</span>
-          </a>
-        </div>
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
+        <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
             href="https://traveltouttrakhand.com" 
@@ -4516,7 +4537,7 @@ ${data.motto}`;
         </div>
 
       {/* Page 2 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
@@ -4864,7 +4885,7 @@ ${data.motto}`;
         </div>
 
         {/* Page 3 Footer */}
-        <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
+        <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
           <span>Travel to Uttarakhand · {data.contactPhone}</span>
           <div className="flex items-center gap-3">
             <a 
@@ -5117,7 +5138,7 @@ ${data.motto}`;
       </div>
 
       {/* Page 4 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
+      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
         <span>Travel to Uttarakhand · {data.contactPhone}</span>
         <div className="flex items-center gap-3">
           <a 
