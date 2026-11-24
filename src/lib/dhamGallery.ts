@@ -126,13 +126,13 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
     isDefault: true
   },
 
-  // Deluxe Hotels & Group Travel
+  // Standard Hotels & Group Travel
   {
     id: "dham-hotel-deluxe-1",
     url: "/gallery/chardham_10d_img_31.jpg",
-    caption: "Confirmed Deluxe Hill Hotel & Comfortable Room Stay",
+    caption: "Confirmed Standard Clean Hill Hotel & Room Stay",
     dham: "custom",
-    dhamLabel: "Deluxe Hotels",
+    dhamLabel: "Standard Hotels",
     isDefault: true
   },
   {
@@ -303,7 +303,7 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
   {
     id: "dham-winter-stay-room1",
     url: "/gallery/winter_stay_room1.jpeg",
-    caption: "Deluxe Mountain View Winter Room & Suites",
+    caption: "Standard Clean Mountain View Winter Room & Suites",
     dham: "auli",
     dhamLabel: "Auli & Joshimath Stay",
     isDefault: true

@@ -38,11 +38,11 @@ OFFICIAL PACKAGES & PRICING (FROM TRAVELTOUTTRAKHAND.COM):
 - KEDARNATH ONLY (3 Nights / 4 Days ex-Haridwar/Rishikesh):
   * Route: Haridwar/Rishikesh -> Guptkashi/Sonprayag -> Kedarnath Dham Darshan -> Haridwar
   * Group/Sharing rate: approx ₹9,500 - ₹12,500 per person
-  * Private Deluxe (Dedicated Cab + Hotel/Resort Stay + MAP Breakfast & Dinner + Yatra Registration): approx ₹13,500 - ₹17,500 per person.
+  * Private Standard (Dedicated Cab + Hotel/Resort Stay + MAP Breakfast & Dinner + Yatra Registration): approx ₹13,500 - ₹17,500 per person.
 - AULI, CHOPTA & TUNGNATH (4N/5D or 5N/6D):
   * Approx ₹12,000 - ₹16,000 per person (Includes Haridwar pickup, cab, snow stay/camps, Tungnath-Chandrashila trek, Auli cable car/skiing point, meals).
 - CHAR DHAM YATRA (9N/10D):
-  * Group/Sharing: approx ₹24,000 - ₹28,000/person | Private Deluxe: approx ₹28,000 - ₹34,000/person.
+  * Group/Sharing: approx ₹24,000 - ₹28,000/person | Private Standard: approx ₹28,000 - ₹34,000/person.
 - DO DHAM (Kedarnath & Badrinath - 5N/6D): approx ₹16,500 - ₹21,500/person.
 - HELICOPTER:
   * Kedarnath shuttle tickets must be booked via IRCTC (heliyatra.irctc.co.in). We provide complete ground VIP stays, darshan pass, and cab package.

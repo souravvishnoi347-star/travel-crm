@@ -90,15 +90,15 @@ const PRESET_TRANSPORT_12P_10D = {
   favouringPax: "12",
   favouringVehicle: "Tempo Traveller",
   itinerary: [
-    { date: "Day 1", details: "Haridwar/Dehradun pickup, drive to Barkot via Kempty Falls", hotel: "Barkot Deluxe Hotel" },
-    { date: "Day 2", details: "Drive to Janki Chatti, Yamunotri Dham trek, Darshan & return to Barkot", hotel: "Barkot Deluxe Hotel" },
-    { date: "Day 3", details: "Scenic drive from Barkot to Uttarkashi, Vishwanath Temple", hotel: "Uttarkashi Deluxe Hotel" },
-    { date: "Day 4", details: "Gangotri Dham Darshan via beautiful Harsil Valley & back to Uttarkashi", hotel: "Uttarkashi Deluxe Hotel" },
+    { date: "Day 1", details: "Haridwar/Dehradun pickup, drive to Barkot via Kempty Falls", hotel: "Barkot Standard Hotel" },
+    { date: "Day 2", details: "Drive to Janki Chatti, Yamunotri Dham trek, Darshan & return to Barkot", hotel: "Barkot Standard Hotel" },
+    { date: "Day 3", details: "Scenic drive from Barkot to Uttarkashi, Vishwanath Temple", hotel: "Uttarkashi Standard Hotel" },
+    { date: "Day 4", details: "Gangotri Dham Darshan via beautiful Harsil Valley & back to Uttarkashi", hotel: "Uttarkashi Standard Hotel" },
     { date: "Day 5", details: "Scenic mountain transfer from Uttarkashi to Phata / Rampur / Guptkashi", hotel: "Phata / Rampur Resort" },
     { date: "Day 6", details: "Transfer to Sonprayag/Gaurikund, Kedarnath Trek & Holy Darshan", hotel: "Kedarnath (Tent Only)" },
     { date: "Day 7", details: "Morning trek down to Gaurikund, transfer to Sitapur / Phata hotel", hotel: "Phata / Sitapur Resort" },
-    { date: "Day 8", details: "Drive to Badrinath via Chopta alpine hill station, evening Aarti", hotel: "Badrinath Deluxe Hotel" },
-    { date: "Day 9", details: "Badrinath Darshan, Mana Village, Vyas Gufa, drive to Pipalkoti", hotel: "Pipalkoti Deluxe Hotel" },
+    { date: "Day 8", details: "Drive to Badrinath via Chopta alpine hill station, evening Aarti", hotel: "Badrinath Standard Hotel" },
+    { date: "Day 9", details: "Badrinath Darshan, Mana Village, Vyas Gufa, drive to Pipalkoti", hotel: "Pipalkoti Standard Hotel" },
     { date: "Day 10", details: "Enroute Maa Dhari Devi & Devprayag, Rishikesh drop / Haridwar drop", hotel: "Tour Concludes" }
   ]
 };

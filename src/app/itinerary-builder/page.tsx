@@ -258,9 +258,9 @@ export const WINTER_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
   {
     id: "whp-2",
     url: "/gallery/winter_stay_room1.jpeg",
-    hotelName: "Deluxe Mountain View Winter Retreat",
+    hotelName: "Standard Clean Mountain Winter Retreat",
     location: "Joshimath / Ukhimath",
-    roomType: "Deluxe Mountain View Room",
+    roomType: "Standard Clean Mountain View Room",
     caption: "Spacious wooden styled rooms with heavy winter quilts, geyser facility and panoramic valley vistas"
   },
   {
@@ -289,7 +289,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 15499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -300,7 +300,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 10499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -311,7 +311,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 8999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -322,7 +322,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Luxury MPV",
     roomsCount: "04 Double Rooms",
     ratePerPax: 9499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -333,7 +333,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "06 Double Rooms",
     ratePerPax: 7999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -344,7 +344,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "07 Double Rooms",
     ratePerPax: 7499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -355,7 +355,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 6999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   }
@@ -369,7 +369,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 22999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -380,7 +380,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 15999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -391,7 +391,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 13499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -402,7 +402,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Luxury MPV",
     roomsCount: "04 Double Rooms",
     ratePerPax: 14499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -413,7 +413,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "06 Double Rooms",
     ratePerPax: 11999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -424,7 +424,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "07 Double Rooms",
     ratePerPax: 11299,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -435,7 +435,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 10499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   }
@@ -449,7 +449,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 27499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -460,7 +460,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 18999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -471,7 +471,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 15999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -482,7 +482,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Luxury MPV",
     roomsCount: "04 Double Rooms",
     ratePerPax: 16999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -493,7 +493,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "06 Double Rooms",
     ratePerPax: 13999,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -504,7 +504,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "07 Double Rooms",
     ratePerPax: 13299,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
@@ -515,7 +515,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Tempo Traveller",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 12499,
-    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   }
@@ -1583,7 +1583,7 @@ export const AULI_3D_PRESET: ItineraryData = {
   glanceDhams: "Auli · Joshimath · Gorson",
   glanceSector: "Haridwar ⇄ Joshimath / Auli",
   glanceStartEnd: "Haridwar / Rishikesh / Dehradun Airport",
-  glancePackages: "Winter Deluxe Package",
+  glancePackages: "Winter Standard Package",
 
   selectedPaxCount: 4,
   selectedVehicle: "Swift Dzire / Sedan",
@@ -1664,15 +1664,15 @@ export const AULI_3D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special Auli Winter Holiday 3D/2N Package with dedicated private vehicle, 2 Nights stay in Joshimath and meal plan.",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Deluxe Heated Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + 2 Nights Joshimath" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Deluxe Heated Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe Heated Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + 2 Nights Joshimath" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
   pricingNote: "Note: Rates are per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
   inclusions: [
     "Dedicated Hill Vehicle (Swift Dzire / Ertiga / Innova / Tempo Traveller as per group size) Haridwar to Haridwar",
-    "02 Nights Stay in Joshimath (Deluxe Mountain View Rooms)",
+    "02 Nights Stay in Joshimath (Standard Clean Mountain View Rooms)",
     "Meals as per plan: Daily Breakfast and Warm Dinner at Joshimath hotel",
     "All Interstate Taxes, Tolls, Driver Allowance, Fuel and Parking charges",
     "Sightseeing: Joshimath town, Auli snow slopes, Shankaracharya Math, Devprayag Sangam, Maa Dhari Devi Temple"
@@ -1809,15 +1809,15 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special Chopta & Tungnath Snow Holiday 3D/2N Package with 2 Nights Stay in Chopta, meals, and dedicated mountain vehicle.",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Snow Trek Assistance" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Snow Trek Assistance" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
   pricingNote: "Note: Rates per person on twin/double sharing. Includes 2 nights stay, dedicated hill transport, and MAP meal plan.",
 
   inclusions: [
     "Dedicated Private Hill Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) Haridwar to Haridwar",
-    "02 Nights Stay in Chopta (Swiss Cottage / Deluxe Mountain Resort)",
+    "02 Nights Stay in Chopta (Standard Clean Swiss Cottage / Alpine Resort)",
     "Meals: Daily Morning Breakfast and Delicious Warm Dinner",
     "All Interstate Tolls, Parking, Driver Batta, and Mountain Taxes",
     "Sightseeing & Treks: Chopta Bugyal, Tungnath Temple, Chandrashila Peak, Ukhimath Omkareshwar Temple, Devprayag Sangam"
@@ -1875,7 +1875,7 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
   glanceDhams: "Rishikesh · Mussoorie",
   glanceSector: "Haridwar / Dehradun ⇄ Mussoorie",
   glanceStartEnd: "Haridwar / Dehradun (both ways)",
-  glancePackages: "Deluxe Leisure Package",
+  glancePackages: "Standard Leisure Package",
 
   selectedPaxCount: 4,
   selectedVehicle: "Swift Dzire / Sedan",
@@ -1953,16 +1953,16 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special Rishikesh & Mussoorie 3D/2N Holiday with 1st Night in Rishikesh and 2nd Night in Mussoorie.",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Sightseeing" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Sightseeing" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
   pricingNote: "Note: Rates based on double sharing with dedicated private vehicle and MAP meals. Entry tickets to falls/cable cars at direct payment.",
 
   inclusions: [
     "Dedicated Private Vehicle (Dzire / Etios / Ertiga / Innova) throughout the tour",
-    "01 Night Stay in Rishikesh (Deluxe Room)",
-    "01 Night Stay in Mussoorie (Deluxe Mountain/Valley View Room)",
+    "01 Night Stay in Rishikesh (Standard Clean Room)",
+    "01 Night Stay in Mussoorie (Standard Clean Mountain/Valley View Room)",
     "Daily Morning Breakfast at both hotels",
     "All Driver Batta, Tolls, State Border Taxes, and Parking fees",
     "Sightseeing: Ram Jhula, Triveni Ghat Ganga Aarti, Kempty Falls, Mall Road, Camel's Back Road, Landour / George Everest"
@@ -2137,16 +2137,16 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special 5D/4N Winter Snow Circuit: 2 Nights Ukhimath/Chopta + 2 Nights Joshimath/Rudraprayag.",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (2 Double Rooms)", hotelCategory: "Deluxe Alpine Hotels & Heated Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Circuit" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 22,999 / Pax", totalPackagePrice: "₹ 22,999 / Pax (1 Double Room)", hotelCategory: "Deluxe Alpine Hotels & Heated Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 13,499 / Pax", totalPackagePrice: "₹ 13,499 / Pax (3 Double Rooms)", hotelCategory: "Deluxe Alpine Hotels & Heated Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Circuit" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 22,999 / Pax", totalPackagePrice: "₹ 22,999 / Pax (1 Double Room)", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 13,499 / Pax", totalPackagePrice: "₹ 13,499 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
   pricingNote: "Note: Rates per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
   inclusions: [
     "Dedicated Hill Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) Haridwar to Haridwar",
-    "02 Nights Stay in Ukhimath / Chopta (Deluxe Swiss Tent or Mountain Resort)",
-    "02 Nights Stay in Joshimath / Rudraprayag (Deluxe Mountain View Rooms)",
+    "02 Nights Stay in Ukhimath / Chopta (Standard Clean Swiss Tent / Mountain Resort)",
+    "02 Nights Stay in Joshimath / Rudraprayag (Standard Clean Mountain View Rooms)",
     "Daily Wholesome Breakfast and Warm Dinner at hotels (MAP Plan)",
     "All Driver Allowance, Mountain Tolls, Interstate Taxes, and Parking fees",
     "Sightseeing & Excursions: Chopta Bugyal, Tungnath Temple, Chandrashila, Auli Snow Slopes, Narsingh Temple, Devprayag & Dhari Devi"
@@ -2342,18 +2342,18 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special 6D/5N Grand Winter Tour: 1st Night Mussoorie, 2nd & 3rd Ukhimath, 4th Joshimath, 5th Joshimath/Rudraprayag.",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 18,999 / Pax", totalPackagePrice: "₹ 18,999 / Pax (2 Double Rooms)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Grand Circuit" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 27,499 / Pax", totalPackagePrice: "₹ 27,499 / Pax (1 Double Room)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 18,999 / Pax", totalPackagePrice: "₹ 18,999 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Grand Circuit" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 27,499 / Pax", totalPackagePrice: "₹ 27,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
   pricingNote: "Note: Rates per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
   inclusions: [
     "Dedicated Mountain Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) throughout the 6-day circuit",
-    "01 Night Stay in Mussoorie (Deluxe Room)",
-    "02 Nights Stay in Ukhimath (Deluxe Mountain Resort / Swiss Cottage)",
-    "01 Night Stay in Joshimath (Deluxe Room)",
-    "01 Night Stay in Joshimath / Rudraprayag (Deluxe Room)",
+    "01 Night Stay in Mussoorie (Standard Clean Room)",
+    "02 Nights Stay in Ukhimath (Standard Clean Mountain Resort / Swiss Cottage)",
+    "01 Night Stay in Joshimath (Standard Clean Room)",
+    "01 Night Stay in Joshimath / Rudraprayag (Standard Clean Room)",
     "Daily Breakfast and Warm Dinner at hotels (MAP Plan)",
     "All Driver Batta, Mountain Tolls, State Taxes, and Parking fees",
     "Complete Sightseeing: Mussoorie Mall Road, Kempty Falls, Tehri Lake, Ukhimath Omkareshwar, Chopta & Tungnath Trek, Joshimath, Auli Snow Slopes, Devprayag Sangam"
@@ -3448,7 +3448,7 @@ SCHEMA:
         package: `${slab.paxLabel} (${slab.vehicleName})`,
         price: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax`,
         totalPackagePrice: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax (${slab.roomsCount})`,
-        hotelCategory: `${slab.hotelCategory || "Deluxe Alpine Hotel (Heated)"} — ${slab.roomsCount}`,
+        hotelCategory: `${slab.hotelCategory || "Standard Clean Alpine Hotel"} — ${slab.roomsCount}`,
         meals: slab.mealPlan || "Breakfast & Dinner (MAP Plan)",
         specialFeature: `Dedicated ${slab.vehicleName} (Private Hill Chauffeur)`
       }
@@ -4497,7 +4497,7 @@ ${data.motto}`;
 
           {/* Continuation Banner on Page 2 for multi-part itineraries */}
           {isShortTour && data.days.length > 3 && (
-            <div className="mt-2 p-2 bg-gradient-to-r from-sky-50 via-blue-50/70 to-sky-50 rounded-lg border border-sky-200/80 flex items-center justify-between text-[11px] font-bold text-sky-900 shadow-2xs">
+            <div className="mt-1.5 p-1.5 bg-gradient-to-r from-sky-50 via-blue-50/70 to-sky-50 rounded-lg border border-sky-200/80 flex items-center justify-between text-[10.5px] font-bold text-sky-900 shadow-2xs">
               <span className="flex items-center gap-1.5">
                 <span className="text-[#0369a1] font-black">✦ Continued on Page 3:</span>
                 <span className="text-gray-700 font-medium">
@@ -4506,20 +4506,20 @@ ${data.motto}`;
                     : `Day 4 (${data.days[3].route.split('→')[1]?.trim() || 'Auli Snow Excursion'}) & Day 5 (${data.days[4]?.route.split('→')[data.days[4]?.route.split('→').length - 1]?.trim() || 'Return Journey'})`}
                 </span>
               </span>
-              <span className="text-[10px] font-black text-[#0369a1] bg-white px-2.5 py-0.5 rounded-full border border-sky-300">
+              <span className="text-[9.5px] font-black text-[#0369a1] bg-white px-2.5 py-0.5 rounded-full border border-sky-300">
                 Turn to Page 3 ➔
               </span>
             </div>
           )}
 
-          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for short tours 3D-6D to prevent Page 3 cramping) */}
-          {isShortTour && displayHotelPhotos && displayHotelPhotos.length > 0 && (
+          {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully ONLY for 2D/3D tours where there are no Day 4+ cards) */}
+          {data.days.length <= 3 && displayHotelPhotos && displayHotelPhotos.length > 0 && (
             <div className="space-y-1.5 pt-0.5">
               <div className="flex items-center justify-between text-[11.5px] font-black text-[#0369a1]">
                 <span className="flex items-center gap-1.5">
                   <span>{isWinter ? "🏨 Handpicked Winter Stays & Alpine Comfort" : "🏨 Confirmed Clean Stays & Hospitality"}</span>
                   <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
-                    Pre-Inspected & Verified
+                    Pre-Inspected &amp; Verified
                   </span>
                 </span>
                 <span className="text-[9.5px] font-semibold text-gray-600">Heated Rooms · 24/7 Hot Water · Cozy Stays</span>
@@ -4561,8 +4561,8 @@ ${data.motto}`;
             </div>
           )}
 
-          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY (DEMO POINT 3) */}
-          {data.showWinterPackingAdvisory !== false && (
+          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY (Only for <=3D tours on Page 2; for >3D tours it renders on Page 3) */}
+          {data.days.length <= 3 && data.showWinterPackingAdvisory !== false && (
             <WinterPackingAdvisory />
           )}
 
@@ -4838,6 +4838,13 @@ ${data.motto}`;
               {data.pricingNote}
             </p>
           </div>
+
+          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY: Shows on Page 3 for tours > 3 days */}
+          {data.days.length > 3 && data.showWinterPackingAdvisory !== false && isWinter && (
+            <div className="pt-1">
+              <WinterPackingAdvisory />
+            </div>
+          )}
 
           {/* Confirmed Accommodation Standards Showcase: Shown on Page 3 only for 10D tours where page3Days is empty */}
           {page3Days.length === 0 && data.showHotelPhotos !== false && displayHotelPhotos && displayHotelPhotos.length > 0 && (
@@ -6776,11 +6783,11 @@ ${data.motto}`;
                               </button>
                               <button
                                 type="button"
-                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Deluxe Double Room")}
-                                className="text-[9px] px-1.5 py-0.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded"
-                                title="Optional for guests requesting deluxe"
+                                onClick={() => updateHotelPhoto(hp.id, "roomType", "Standard Double Room")}
+                                className="text-[9px] px-1.5 py-0.5 bg-sky-50 hover:bg-sky-100 text-sky-700 rounded"
+                                title="Standard clean room for guests"
                               >
-                                Deluxe (Opt)
+                                Standard
                               </button>
                             </div>
                           </div>
@@ -6851,7 +6858,7 @@ ${data.motto}`;
                                   { url: "/hotels_custom/hotel_stay_4.jpeg", label: "Double Bed" },
                                   { url: "/hotels_custom/hotel_stay_3.jpeg", label: "Mountain Stay" },
                                   { url: "/hotels_custom/hotel_stay_6.jpeg", label: "Twin Room" },
-                                  { url: "/hotels_custom/hotel_stay_7.jpeg", label: "Deluxe Bed" },
+                                  { url: "/hotels_custom/hotel_stay_7.jpeg", label: "Standard Bed" },
                                   { url: "/hotels_custom/hotel_stay_1.jpeg", label: "Bath/Geyser" },
                                   { url: "/hotels_custom/hotel_stay_5.jpeg", label: "Luxury Triple" },
                                   { url: "/hotels_custom/hotel_stay_8.jpeg", label: "Cozy Double" },

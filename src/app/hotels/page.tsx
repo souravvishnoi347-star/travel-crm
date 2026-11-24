@@ -628,7 +628,7 @@ const PRESET_DODHAM_5D: HotelVoucherData = {
   tripDuration: "05 Days / 04 Nights Do Dham Tour (Kedarnath & Badrinath)",
   emergencyContact: "Mr. Amit kumar · +91 9719038278 (24x7 Helpline)",
   specialInstructions: "• Please carry valid original government ID.\n• Kedarnath base camp check-in requires biometric yatra pass.\n• Mountain weather can be chilly; warm woolens recommended.",
-  inclusions: "• Accommodation in clean deluxe hotels and hill camps.\n• Meal Plan: MAP (Daily Breakfast & Dinner).\n• All local taxes included.",
+  inclusions: "• Accommodation in clean standard hotels and hill camps.\n• Meal Plan: MAP (Daily Breakfast & Dinner).\n• All local taxes included.",
   stays: [
     {
       id: "stay-1",
@@ -2402,7 +2402,7 @@ export default function HotelVouchersPage() {
                 <input 
                   type="text" 
                   className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-[#0369a1]" 
-                  placeholder="e.g. 10 Days / 09 Nights Chardham Deluxe Tour" 
+                  placeholder="e.g. 10 Days / 09 Nights Chardham Standard Tour" 
                   value={data.tripDuration} 
                   onChange={e => updateData({ ...data, tripDuration: e.target.value })} 
                 />

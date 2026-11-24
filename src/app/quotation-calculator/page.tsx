@@ -60,7 +60,7 @@ export default function QuotationCalculatorPage() {
   const [viewMode, setViewMode] = useState<"quick" | "detailed">("quick");
 
   // Core Trip Info
-  const [tripTitle, setTripTitle] = useState("Char Dham Deluxe Yatra 2026");
+  const [tripTitle, setTripTitle] = useState("Char Dham Standard Yatra 2026");
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [paxCount, setPaxCount] = useState<number>(4);
@@ -74,7 +74,7 @@ export default function QuotationCalculatorPage() {
 
   // Detailed Mode Items
   const [items, setItems] = useState<CostItem[]>([
-    { id: "1", category: "hotel", title: "Yamunotri & Gangotri Hotels (4N)", unitCost: 3000, quantity: 2, days: 4, notes: "Deluxe MAP" },
+    { id: "1", category: "hotel", title: "Yamunotri & Gangotri Hotels (4N)", unitCost: 3000, quantity: 2, days: 4, notes: "Standard MAP" },
     { id: "2", category: "hotel", title: "Kedarnath & Badrinath Stays (5N)", unitCost: 3500, quantity: 2, days: 5, notes: "Temple view stays" },
     { id: "3", category: "transport", title: "Innova Crysta AC (10 Days)", unitCost: 5500, quantity: 1, days: 10, notes: "Tolls & Driver DA incl." },
     { id: "4", category: "meals", title: "Breakfast + Dinner (4 Pax x 10 Days)", unitCost: 450, quantity: 4, days: 10, notes: "Pure veg satvik" },
