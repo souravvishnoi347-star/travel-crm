@@ -44,7 +44,8 @@ import {
   Car,
   QrCode,
   Compass,
-  ExternalLink
+  ExternalLink,
+  Send
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
@@ -2545,6 +2546,15 @@ export default function ItineraryBuilder() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
 
+  // WhatsApp Direct Send & Share Modal state
+  const [isWaModalOpen, setIsWaModalOpen] = useState(false);
+  const [waRecipientPhone, setWaRecipientPhone] = useState("");
+  const [waRecipientName, setWaRecipientName] = useState("");
+  const [isGeneratingWaPdf, setIsGeneratingWaPdf] = useState(false);
+  const [waShareSuccess, setWaShareSuccess] = useState<string | null>(null);
+  const [copiedWaText, setCopiedWaText] = useState(false);
+  const [crmLeads, setCrmLeads] = useState<Array<{ id: string; name: string; phone: string; destination?: string }>>([]);
+
   // Active Pax & Vehicle Slabs for current itinerary
   const activeSlabs: PaxVehicleSlab[] = (data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0)
     ? data.paxVehicleSlabs
@@ -2610,6 +2620,26 @@ export default function ItineraryBuilder() {
     setFitMode(mode);
     setManualZoom(null);
   };
+
+  // Sync recipient name and fetch CRM leads for WhatsApp modal
+  useEffect(() => {
+    if (isWaModalOpen) {
+      if (!waRecipientName) {
+        setWaRecipientName(data.preparedFor || "");
+      }
+      if (typeof window !== "undefined") {
+        try {
+          const raw = localStorage.getItem("triloki_leads");
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+              setCrmLeads(parsed.filter((l: any) => l.name && l.phone).slice(0, 8));
+            }
+          }
+        } catch {}
+      }
+    }
+  }, [isWaModalOpen, data.preparedFor]);
 
   // Fetch API key from permanent local storage, env variable, cache or Supabase settings
   useEffect(() => {
@@ -3897,66 +3927,126 @@ SCHEMA:
     }
   };
 
+  // Helper to build structured, polite WhatsApp proposal message
+  const buildWhatsAppMessage = (
+    itin: ItineraryData, 
+    recipientName: string, 
+    phone: string
+  ) => {
+    const selectedTier = itin.pricingTiers?.[0];
+    const totalCost = selectedTier?.totalPackagePrice || (itin.selectedPaxCount ? `₹ ${(itin.selectedPaxCount * 10499).toLocaleString('en-IN')}` : "");
+    const perPaxCost = selectedTier?.price || "";
+    const vehicle = itin.selectedVehicle || "Swift Dzire / Dedicated Mountain Vehicle";
+    const paxLabel = itin.selectedPaxCount ? `${itin.selectedPaxCount} Pax` : "Private Group";
+
+    return `🙏 *जय बद्री विशाल | ॐ नमः शिवाय* 🙏
+*Travel to Uttarakhand · Official Travel Proposal*
+
+Dear *${recipientName || itin.preparedFor || "Valued Guest"}*,
+Greetings from *Travel to Uttarakhand*! 🏔️✨
+
+We are pleased to share your customized itinerary proposal for:
+*${itin.title}*
+_${itin.subTitle}_
+
+📋 *TOUR HIGHLIGHTS & DURATION:*
+• *Duration:* ${itin.duration}
+• *Travel Dates:* ${itin.travelDates}
+• *Route Covered:* ${itin.routeCovered}
+• *Night Stays:* ${itin.days.map(d => `Day ${d.dayNumber}: ${d.overnightStay}`).join(" ➔ ")}
+
+🚗 *VEHICLE & SIZING:*
+• *Group Size:* ${paxLabel}
+• *Vehicle:* ${vehicle} (Dedicated throughout tour with fuel, driver allowance, tolls & parking)
+
+💰 *CONFIRMED INVESTMENT:*
+• *Per Person Rate:* ${perPaxCost}
+• *Total Package Cost:* ${totalCost}
+• *Meal Plan:* Daily Breakfast & Warm Dinner (MAP Plan)
+• *Hotel Category:* ${selectedTier?.hotelCategory || "Clean Mountain View Alpine Hotels / Swiss Tents"}
+
+✨ *KEY INCLUSIONS:*
+${itin.inclusions.slice(0, 4).map(inc => `✓ ${inc}`).join("\n")}
+
+📞 *FOR BOOKINGS & ASSISTANCE:*
+• *Helpline:* +91 97190 38278 (Mr. Amit Kumar)
+• *Email:* admin@traveltouttrakhand.com
+• *Website:* https://traveltouttrakhand.com
+• *YouTube:* https://youtube.com/@traveltouttarakhand
+
+_Please find the attached complete 4-Page Official PDF Itinerary with day-wise itinerary, mountain altitude profile, packing advisory, and authentic photos!_`;
+  };
+
+  // Generate multi-page high-resolution PDF instance in-memory
+  const generateItineraryPdfInstance = async () => {
+    const html2canvasModule = await import("html2canvas-pro");
+    const html2canvas = html2canvasModule.default || html2canvasModule;
+    
+    const jsPDFModule = await import("jspdf");
+    const jsPDF = jsPDFModule.jsPDF;
+
+    const pdf = new jsPDF("p", "mm", "a4");
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+
+    const pageIds = [
+      "print-itinerary-page-1", 
+      "print-itinerary-page-2", 
+      "print-itinerary-page-3", 
+      "print-itinerary-page-4"
+    ];
+
+    for (let i = 0; i < pageIds.length; i++) {
+      const el = document.getElementById(pageIds[i]);
+      if (!el) continue;
+
+      if (i > 0) {
+        pdf.addPage();
+      }
+
+      const canvas = await html2canvas(el, {
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
+
+      const imgData = canvas.toDataURL("image/jpeg", 0.98);
+      pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
+
+      // Add clickable PDF link annotations for all links in the document!
+      try {
+        const linkEls = el.querySelectorAll("a[href], [data-pdf-link]");
+        const containerRect = el.getBoundingClientRect();
+        linkEls.forEach((linkNode) => {
+          const rect = linkNode.getBoundingClientRect();
+          const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
+          if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
+            const x = ((rect.left - containerRect.left) / containerRect.width) * pageWidth;
+            const y = ((rect.top - containerRect.top) / containerRect.height) * pageHeight;
+            const w = (rect.width / containerRect.width) * pageWidth;
+            const h = (rect.height / containerRect.height) * pageHeight;
+            pdf.link(x, y, w, h, { url: targetUrl });
+          }
+        });
+      } catch (linkErr) {
+        console.warn("Could not attach PDF link annotations:", linkErr);
+      }
+    }
+
+    const cleanRecipient = (waRecipientName || data.preparedFor || "Guest").replace(/[^a-zA-Z0-9]/g, "_");
+    const cleanTitle = data.title.replace(/[^a-zA-Z0-9]/g, "_");
+    const filename = `${cleanTitle}_${cleanRecipient}.pdf`;
+    const blob = pdf.output("blob");
+    const file = new File([blob], filename, { type: "application/pdf" });
+
+    return { pdf, filename, blob, file };
+  };
+
   // PDF Multi-Page Generation (captures from print containers)
   const handleDownloadPDF = async () => {
     try {
       setIsDownloading(true);
-
-      const html2canvasModule = await import("html2canvas-pro");
-      const html2canvas = html2canvasModule.default || html2canvasModule;
-      
-      const jsPDFModule = await import("jspdf");
-      const jsPDF = jsPDFModule.jsPDF;
-
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-
-      const pageIds = [
-        "print-itinerary-page-1", 
-        "print-itinerary-page-2", 
-        "print-itinerary-page-3", 
-        "print-itinerary-page-4"
-      ];
-
-      for (let i = 0; i < pageIds.length; i++) {
-        const el = document.getElementById(pageIds[i]);
-        if (!el) continue;
-
-        if (i > 0) {
-          pdf.addPage();
-        }
-
-        const canvas = await html2canvas(el, {
-          scale: 2,
-          useCORS: true,
-          logging: false
-        });
-
-        const imgData = canvas.toDataURL("image/jpeg", 0.98);
-        pdf.addImage(imgData, "JPEG", 0, 0, pageWidth, pageHeight);
-
-        // Add clickable PDF link annotations for all links in the document!
-        try {
-          const linkEls = el.querySelectorAll("a[href], [data-pdf-link]");
-          const containerRect = el.getBoundingClientRect();
-          linkEls.forEach((linkNode) => {
-            const rect = linkNode.getBoundingClientRect();
-            const targetUrl = linkNode.getAttribute("data-pdf-link") || (linkNode as HTMLAnchorElement).href;
-            if (targetUrl && rect.width > 0 && rect.height > 0 && containerRect.width > 0 && containerRect.height > 0) {
-              const x = ((rect.left - containerRect.left) / containerRect.width) * pageWidth;
-              const y = ((rect.top - containerRect.top) / containerRect.height) * pageHeight;
-              const w = (rect.width / containerRect.width) * pageWidth;
-              const h = (rect.height / containerRect.height) * pageHeight;
-              pdf.link(x, y, w, h, { url: targetUrl });
-            }
-          });
-        } catch (linkErr) {
-          console.warn("Could not attach PDF link annotations:", linkErr);
-        }
-      }
-
-      const filename = `${data.title.replace(/[^a-zA-Z0-9]/g, "_")}_${data.preparedFor.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+      const { pdf, filename } = await generateItineraryPdfInstance();
       pdf.save(filename);
 
       // Save to Supabase Cloud
@@ -3997,24 +4087,80 @@ SCHEMA:
     }
   };
 
-  // WhatsApp Share
-  const handleWhatsAppShare = () => {
-    const text = `*${data.title}* - ${data.spiritualHeadline}
-*Prepared For:* ${data.preparedFor}
-*Dates:* ${data.travelDates} (${data.duration})
-*Route:* ${data.routeCovered}
+  // ⚡ 1-Click Direct Attach PDF & Send (Zero Manual Download to PC)
+  const handleDirectWhatsAppShare = async () => {
+    try {
+      setIsGeneratingWaPdf(true);
+      setWaShareSuccess(null);
+      const { pdf, filename, file } = await generateItineraryPdfInstance();
+      const text = buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
 
-*Package Options:*
-${data.pricingTiers.map(t => `• *${t.package}*: ${t.price} (${t.hotelCategory})`).join("\n")}
+      // Check if navigator.share with files is supported (Windows Edge/Chrome, Mobile, Mac)
+      if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          title: `${data.title} - Travel to Uttarakhand`,
+          text: text,
+          files: [file]
+        });
+        setWaShareSuccess("PDF Itinerary successfully shared to WhatsApp!");
+        setTimeout(() => setWaShareSuccess(null), 5000);
+      } else {
+        // Fallback for browsers without direct file share API:
+        // Automatically save the PDF into browser download shelf ready to drag into WhatsApp Web,
+        // and open WhatsApp Web with the cleanPhone & text prefilled!
+        pdf.save(filename);
+        const cleanPhone = waRecipientPhone.replace(/[^0-9]/g, "");
+        const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+        const waUrl = formattedPhone 
+          ? `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(text)}`
+          : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        
+        window.open(waUrl, "_blank");
+        setWaShareSuccess("WhatsApp Web chat open ho gaya hai aur PDF ready hai! PDF ko direct chat me drag ya attach karein.");
+        setTimeout(() => setWaShareSuccess(null), 7000);
+      }
+    } catch (err: any) {
+      if (err.name !== "AbortError") {
+        console.error("WhatsApp share failed:", err);
+        alert("WhatsApp share error: " + (err.message || err));
+      }
+    } finally {
+      setIsGeneratingWaPdf(false);
+    }
+  };
 
-*Contact & Bookings:*
-${data.contactAgency}
-${data.contactPerson} (${data.contactPhone})
-${data.motto}`;
+  // 🌐 Open WhatsApp Web Directly
+  const handleOpenWhatsAppWeb = async () => {
+    try {
+      setIsGeneratingWaPdf(true);
+      setWaShareSuccess(null);
+      const text = buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
+      const cleanPhone = waRecipientPhone.replace(/[^0-9]/g, "");
+      const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
+      const waUrl = formattedPhone 
+        ? `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(text)}`
+        : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`, "_blank");
-    setCopiedShare(true);
-    setTimeout(() => setCopiedShare(false), 2500);
+      // Generate PDF in background and place in download shelf for instant drag-and-drop into WhatsApp Web
+      const { pdf, filename } = await generateItineraryPdfInstance();
+      pdf.save(filename);
+
+      window.open(waUrl, "_blank");
+      setWaShareSuccess("WhatsApp Web chat open ho gaya hai! PDF ko direct chat window me drag karein.");
+      setTimeout(() => setWaShareSuccess(null), 7000);
+    } catch (err) {
+      console.error("Open WhatsApp Web error:", err);
+    } finally {
+      setIsGeneratingWaPdf(false);
+    }
+  };
+
+  // 📋 Copy Formatted WhatsApp Text
+  const handleCopyWhatsAppText = () => {
+    const text = buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
+    navigator.clipboard.writeText(text);
+    setCopiedWaText(true);
+    setTimeout(() => setCopiedWaText(false), 2500);
   };
 
   // =========================================================
@@ -7912,13 +8058,14 @@ ${data.motto}`;
             </div>
 
             {/* WhatsApp */}
+            {/* WhatsApp Direct Send Suite */}
             <button
-              onClick={handleWhatsAppShare}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
-              title="Share itinerary on WhatsApp"
+              onClick={() => setIsWaModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-lg text-xs font-bold shadow-xs transition active:scale-95 cursor-pointer"
+              title="Send Itinerary directly to client on WhatsApp (No download needed)"
             >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>WhatsApp</span>
+              <MessageCircle className="w-3.5 h-3.5 fill-white/20" />
+              <span>Send to WhatsApp</span>
             </button>
 
             {/* Download PDF */}
@@ -8122,6 +8269,244 @@ ${data.motto}`;
                 className="px-5 py-2 bg-[#0369a1] hover:bg-[#025684] text-white rounded-xl font-bold text-xs shadow-xs transition cursor-pointer"
               >
                 Done / Apply to Itinerary
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 📲 WhatsApp Direct Send & Itinerary Share Suite */}
+      {isWaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in-95">
+            {/* Header */}
+            <div className="p-4 bg-gradient-to-r from-emerald-600 via-teal-700 to-[#0369a1] text-white flex items-center justify-between shrink-0 shadow-xs">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center font-bold shadow-inner">
+                  <MessageCircle className="w-5 h-5 text-white fill-white/20" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base flex items-center gap-2">
+                    <span>Send Itinerary via WhatsApp</span>
+                    <span className="text-[10px] bg-emerald-400/30 text-emerald-100 border border-emerald-300/40 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
+                      Zero Manual Download
+                    </span>
+                  </h3>
+                  <p className="text-xs text-emerald-100 font-medium">
+                    Direct PDF Attachment &amp; WhatsApp Web Automation • Travel to Uttarakhand
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsWaModalOpen(false)}
+                className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white cursor-pointer transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-4 custom-scrollbar text-gray-800 text-xs">
+              
+              {/* Active Itinerary Snapshot Banner */}
+              <div className="bg-gradient-to-br from-emerald-50/80 via-sky-50/60 to-blue-50/80 border border-emerald-200/80 rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">
+                      Selected Proposal
+                    </span>
+                    <span className="text-[11px] font-bold text-sky-900">{data.duration}</span>
+                  </div>
+                  <h4 className="font-serif font-black text-sm text-[#0369a1]">{data.title}</h4>
+                  <p className="text-[11px] text-gray-600 font-medium">{data.dhamsSubtitle || data.subTitle}</p>
+                </div>
+                <div className="shrink-0 bg-white px-3 py-2 rounded-lg border border-emerald-300 shadow-2xs text-right">
+                  <p className="text-[9.5px] uppercase font-bold text-gray-500">Confirmed Quote</p>
+                  <p className="text-sm font-black text-emerald-700">
+                    {data.pricingTiers[0]?.price || "₹ 10,499 / Pax"}
+                  </p>
+                  {data.pricingTiers[0]?.totalPackagePrice && (
+                    <p className="text-[10px] font-bold text-gray-700">
+                      {data.pricingTiers[0].totalPackagePrice}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Recipient Details Inputs */}
+              <div className="bg-gray-50/80 border border-gray-200 rounded-xl p-3.5 space-y-3">
+                <h5 className="font-black text-gray-900 text-xs flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-[#0369a1]" />
+                  <span>Client / Recipient Information</span>
+                </h5>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                      Client WhatsApp Number <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative flex rounded-lg shadow-2xs">
+                      <span className="inline-flex items-center px-3 rounded-l-lg border border-r-0 border-gray-300 bg-gray-100 text-gray-700 font-bold text-xs">
+                        🇮🇳 +91
+                      </span>
+                      <input
+                        type="tel"
+                        placeholder="e.g. 98765 43210"
+                        value={waRecipientPhone}
+                        onChange={(e) => setWaRecipientPhone(e.target.value)}
+                        className="flex-1 min-w-0 block w-full px-3 py-2 rounded-none rounded-r-lg border border-gray-300 text-xs font-semibold focus:ring-emerald-500 focus:border-emerald-500 bg-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                      Client / Group Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Mr. Amit Sharma"
+                      value={waRecipientName}
+                      onChange={(e) => setWaRecipientName(e.target.value)}
+                      className="w-full px-3 py-2 rounded-lg border border-gray-300 text-xs font-semibold focus:ring-emerald-500 focus:border-emerald-500 bg-white shadow-2xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Quick 1-Click Pick from CRM Leads */}
+                {crmLeads.length > 0 && (
+                  <div className="pt-2 border-t border-gray-200">
+                    <p className="text-[10.5px] font-bold text-gray-500 mb-1.5 flex items-center gap-1">
+                      <span>⚡ 1-Click Fill from Recent CRM Leads:</span>
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {crmLeads.map((lead) => (
+                        <button
+                          key={lead.id}
+                          type="button"
+                          onClick={() => {
+                            setWaRecipientName(lead.name);
+                            setWaRecipientPhone(lead.phone.replace(/[^0-9]/g, "").slice(-10));
+                          }}
+                          className="px-2.5 py-1 bg-white hover:bg-emerald-50 text-gray-800 hover:text-emerald-900 border border-gray-200 hover:border-emerald-400 rounded-lg text-[10.5px] font-medium transition cursor-pointer flex items-center gap-1 shadow-2xs"
+                        >
+                          <User className="w-3 h-3 text-emerald-600" />
+                          <span className="font-bold">{lead.name}</span>
+                          <span className="text-gray-500">({lead.phone.slice(-10)})</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Status Message / Notification */}
+              {waShareSuccess && (
+                <div className="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-900 font-bold text-xs flex items-center gap-2 animate-in fade-in">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>{waShareSuccess}</span>
+                </div>
+              )}
+
+              {/* ACTION BUTTONS (The core feature requested by user) */}
+              <div className="space-y-2.5 pt-1">
+                <p className="text-[11px] font-black uppercase tracking-wider text-gray-500">
+                  Select Sending Method:
+                </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Method 1: Web Share (Direct File Attachment - No Download to disk) */}
+                  <button
+                    type="button"
+                    onClick={handleDirectWhatsAppShare}
+                    disabled={isGeneratingWaPdf}
+                    className="p-3.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl shadow-md transition active:scale-[0.98] disabled:opacity-60 flex flex-col justify-between text-left group cursor-pointer border border-emerald-500"
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="font-black text-sm flex items-center gap-1.5">
+                        <Send className="w-4 h-4" />
+                        <span>⚡ 1-Click Direct Attach PDF</span>
+                      </span>
+                      <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold uppercase">
+                        Recommended
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-emerald-100 font-medium leading-relaxed">
+                      PDF file ready karke direct WhatsApp me attach karke send karein bina PC me download kiye.
+                    </p>
+                  </button>
+
+                  {/* Method 2: WhatsApp Web Direct */}
+                  <button
+                    type="button"
+                    onClick={handleOpenWhatsAppWeb}
+                    disabled={isGeneratingWaPdf}
+                    className="p-3.5 bg-gradient-to-r from-[#0369a1] to-sky-700 hover:from-[#025684] hover:to-sky-800 text-white rounded-xl shadow-md transition active:scale-[0.98] disabled:opacity-60 flex flex-col justify-between text-left group cursor-pointer border border-sky-500"
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <span className="font-black text-sm flex items-center gap-1.5">
+                        <ExternalLink className="w-4 h-4" />
+                        <span>🌐 Open WhatsApp Web</span>
+                      </span>
+                      <span className="text-[9px] bg-white/20 text-white px-2 py-0.5 rounded-full font-bold uppercase">
+                        Instant Web
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-sky-100 font-medium leading-relaxed">
+                      Direct {waRecipientPhone ? `+91 ${waRecipientPhone}` : "Client"} ka chat khul jayega full proposal text aur ready PDF ke saath.
+                    </p>
+                  </button>
+                </div>
+
+                {/* Additional utility: Copy text */}
+                <div className="flex items-center justify-between pt-1">
+                  <button
+                    type="button"
+                    onClick={handleCopyWhatsAppText}
+                    className="text-gray-600 hover:text-gray-900 font-bold text-xs flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition cursor-pointer"
+                  >
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{copiedWaText ? "Proposal Copied!" : "Copy Proposal Text"}</span>
+                  </button>
+                  <span className="text-[10.5px] text-gray-500 italic">
+                    Includes all 4-Page details, rates, route &amp; contact
+                  </span>
+                </div>
+              </div>
+
+              {/* Message Live Preview Accordion */}
+              <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+                <div className="p-2.5 bg-gray-100 border-b border-gray-200 flex items-center justify-between font-bold text-xs text-gray-700">
+                  <span className="flex items-center gap-1.5">
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>WhatsApp Message Preview (Pre-Formatted)</span>
+                  </span>
+                  <span className="text-[10px] text-gray-500 font-normal">Formatted for WhatsApp font &amp; emojis</span>
+                </div>
+                <div className="p-3 max-h-40 overflow-y-auto bg-slate-50 font-mono text-[11px] text-gray-800 whitespace-pre-wrap select-all custom-scrollbar leading-relaxed">
+                  {buildWhatsAppMessage(data, waRecipientName, waRecipientPhone)}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-3 bg-gray-50 border-t border-gray-200 flex items-center justify-between text-xs text-gray-500 shrink-0">
+              {isGeneratingWaPdf ? (
+                <div className="flex items-center gap-2 text-emerald-700 font-bold">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Processing high-resolution 4-page PDF brochure in memory...</span>
+                </div>
+              ) : (
+                <span>Travel to Uttarakhand • Official CRM WhatsApp Gateway</span>
+              )}
+              <button
+                type="button"
+                onClick={() => setIsWaModalOpen(false)}
+                className="px-4 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-bold text-xs transition cursor-pointer"
+              >
+                Close
               </button>
             </div>
           </div>
