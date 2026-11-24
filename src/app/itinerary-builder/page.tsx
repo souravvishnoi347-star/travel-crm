@@ -41,7 +41,10 @@ import {
   Tag,
   Filter,
   RefreshCw,
-  Car
+  Car,
+  QrCode,
+  Compass,
+  ExternalLink
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
@@ -186,6 +189,14 @@ export interface ItineraryData {
     officeCaption?: string;
   };
   showTrustSection?: boolean;
+
+  // 3 Advanced Mountaineering & Interactive Features (Demo)
+  showAltitudeProfile?: boolean;
+  altitudeProfilePlacement?: "page1" | "page2";
+  showWinterPackingAdvisory?: boolean;
+  showDynamicQrCodes?: boolean;
+  qrCodeType?: "all" | "whatsapp" | "maps" | "upi";
+  customUpiId?: string;
 }
 
 export const DEFAULT_TRUST_PHOTOS = {
@@ -590,6 +601,336 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
   }
 ];
 
+// ==========================================
+// 3 ADVANCED MOUNTAINEERING & INTERACTIVE DEMO COMPONENTS
+// ==========================================
+
+export interface AltitudeWaypoint {
+  name: string;
+  label: string;
+  altFt: string;
+  altM: string;
+  x: number;
+  y: number;
+  isSummit?: boolean;
+}
+
+export const AULI_CHOPTA_ALTITUDE_WAYPOINTS: AltitudeWaypoint[] = [
+  { name: "Haridwar", label: "Gateway", altFt: "1,020 Ft", altM: "314 m", x: 42, y: 88 },
+  { name: "Devprayag", label: "Holy Sangam", altFt: "1,550 Ft", altM: "472 m", x: 128, y: 84 },
+  { name: "Ukhimath", label: "Winter Seat", altFt: "4,300 Ft", altM: "1,311 m", x: 224, y: 68 },
+  { name: "Chopta", label: "Alpine Base", altFt: "8,790 Ft", altM: "2,680 m", x: 318, y: 48 },
+  { name: "Tungnath", label: "Shiva Shrine", altFt: "12,073 Ft", altM: "3,680 m", x: 412, y: 28 },
+  { name: "Chandrashila", label: "Summit 🏔️", altFt: "13,123 Ft", altM: "4,000 m", x: 492, y: 14, isSummit: true },
+  { name: "Joshimath", label: "Town Valley", altFt: "6,198 Ft", altM: "1,890 m", x: 590, y: 58 },
+  { name: "Auli Slopes", label: "Skiing & Ropeway", altFt: "10,010 Ft", altM: "3,050 m", x: 682, y: 38 },
+];
+
+export const CHARDHAM_ALTITUDE_WAYPOINTS: AltitudeWaypoint[] = [
+  { name: "Haridwar", label: "Gateway", altFt: "1,020 Ft", altM: "314 m", x: 42, y: 88 },
+  { name: "Barkot", label: "Yamuna Base", altFt: "6,950 Ft", altM: "2,118 m", x: 128, y: 60 },
+  { name: "Yamunotri", label: "Dham 1", altFt: "10,797 Ft", altM: "3,291 m", x: 212, y: 34 },
+  { name: "Uttarkashi", label: "Valley Stay", altFt: "3,799 Ft", altM: "1,158 m", x: 298, y: 74 },
+  { name: "Gangotri", label: "Dham 2", altFt: "10,200 Ft", altM: "3,100 m", x: 382, y: 38 },
+  { name: "Guptkashi", label: "Mandakini", altFt: "4,327 Ft", altM: "1,319 m", x: 468, y: 70 },
+  { name: "Kedarnath", label: "Dham 3 🏔️", altFt: "11,755 Ft", altM: "3,583 m", x: 554, y: 22, isSummit: true },
+  { name: "Badrinath", label: "Dham 4", altFt: "10,279 Ft", altM: "3,133 m", x: 636, y: 36 },
+  { name: "Haridwar", label: "Return Hub", altFt: "1,020 Ft", altM: "314 m", x: 688, y: 88 },
+];
+
+export function AltitudeElevationProfile({ isWinter, title = "" }: { isWinter?: boolean; title?: string }) {
+  const isChardham = title.toLowerCase().includes("chardham") || (!title.toLowerCase().includes("chopta") && !title.toLowerCase().includes("auli"));
+  const points = isChardham ? CHARDHAM_ALTITUDE_WAYPOINTS : AULI_CHOPTA_ALTITUDE_WAYPOINTS;
+  const maxPoint = points.find(p => p.isSummit) || points[5];
+
+  return (
+    <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50/90 via-blue-50/60 to-indigo-50/80 border border-sky-200/90 shadow-2xs space-y-1.5">
+      <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] pb-1 border-b border-sky-200/60">
+        <div className="flex items-center gap-1.5">
+          <span className="p-1 rounded-md bg-[#0369a1] text-white">
+            <Compass className="w-3.5 h-3.5" />
+          </span>
+          <span>🏔️ Visual Route &amp; Altitude Elevation Profile</span>
+          <span className="text-[8.5px] font-black uppercase tracking-wide px-2 py-0.2 rounded-full bg-sky-100 text-sky-800 border border-sky-300">
+            Garhwal Mountaineering Grade
+          </span>
+        </div>
+        <div className="flex items-center gap-2 text-[9.5px] font-bold text-gray-700">
+          <span>Low Valley: <b className="text-gray-900 font-black">1,020 Ft</b></span>
+          <span className="text-gray-300">➔</span>
+          <span className="text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-300 font-black">
+            Summit: {maxPoint.altFt} 🏔️
+          </span>
+          <span className="text-emerald-700 font-black hidden sm:inline">(Acclimatization Safe)</span>
+        </div>
+      </div>
+
+      {/* SVG Mountain Curve Canvas */}
+      <div className="relative w-full overflow-hidden bg-white/70 rounded-lg border border-sky-100 p-1">
+        <svg viewBox="0 0 730 108" className="w-full h-auto overflow-visible" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="altitudeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#0284c7" stopOpacity="0.35" />
+              <stop offset="70%" stopColor="#0284c7" stopOpacity="0.08" />
+              <stop offset="100%" stopColor="#0284c7" stopOpacity="0.01" />
+            </linearGradient>
+            <filter id="summitGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="1" stdDeviation="2" floodColor="#f59e0b" floodOpacity="0.6" />
+            </filter>
+          </defs>
+
+          {/* Shaded Area Below Mountain Curve */}
+          <polygon
+            points={`42,88 ${points.map(p => `${p.x},${p.y}`).join(" ")} ${points[points.length - 1].x},104 42,104`}
+            fill="url(#altitudeGradient)"
+          />
+
+          {/* Smooth Elevation Line */}
+          <path
+            d={`M ${points[0].x},${points[0].y} ` + points.slice(1).map((p, idx) => {
+              const prev = points[idx];
+              const cx1 = prev.x + (p.x - prev.x) * 0.5;
+              const cx2 = prev.x + (p.x - prev.x) * 0.5;
+              return `C ${cx1},${prev.y} ${cx2},${p.y} ${p.x},${p.y}`;
+            }).join(" ")}
+            fill="none"
+            stroke="#0284c7"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* Waypoint Markers */}
+          {points.map((pt, i) => (
+            <g key={i}>
+              {pt.isSummit ? (
+                <>
+                  <circle cx={pt.x} cy={pt.y} r="8" fill="#fef3c7" opacity="0.6" />
+                  <circle cx={pt.x} cy={pt.y} r="5.5" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" filter="url(#summitGlow)" />
+                </>
+              ) : (
+                <>
+                  <circle cx={pt.x} cy={pt.y} r="4.5" fill="#ffffff" stroke="#0284c7" strokeWidth="2.5" />
+                </>
+              )}
+            </g>
+          ))}
+        </svg>
+
+        {/* Milestone Waypoint Tags */}
+        <div className="grid grid-cols-8 gap-1 pt-1.5 text-center">
+          {points.map((pt, i) => (
+            <div key={i} className={`flex flex-col items-center ${pt.isSummit ? 'scale-105' : ''}`}>
+              <span className={`text-[8.5px] font-black px-1 py-0.2 rounded leading-tight whitespace-nowrap ${
+                pt.isSummit 
+                  ? 'bg-amber-500 text-slate-950 shadow-xs border border-amber-600 font-extrabold' 
+                  : 'bg-sky-50 text-[#0369a1] border border-sky-200'
+              }`}>
+                {pt.altFt}
+              </span>
+              <span className="text-[9.5px] font-black text-gray-900 truncate max-w-full mt-0.5">
+                {pt.name}
+              </span>
+              <span className="text-[7.5px] text-gray-500 font-semibold truncate max-w-full">
+                {pt.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function WinterPackingAdvisory() {
+  const items = [
+    {
+      icon: "🧤",
+      title: "3-Layer Thermal Inners",
+      subtitle: "Fleece & Wool Base Layer",
+      desc: "Crucial for sub-zero alpine nights (-2°C to 5°C)."
+    },
+    {
+      icon: "🥾",
+      title: "Waterproof Snow Boots",
+      subtitle: "High-Ankle Grip Trekking",
+      desc: "Deep tread sole with wool socks for snow walks."
+    },
+    {
+      icon: "🕶️",
+      title: "UV Polarized Sunglasses",
+      subtitle: "100% Snow Glare Protection",
+      desc: "Mandatory on snow slopes to avoid snow blindness."
+    },
+    {
+      icon: "🧥",
+      title: "Down Feather Jacket",
+      subtitle: "Wind & Snow Parka (-5°C)",
+      desc: "Heavy winter hooded coat for Chopta & Auli slopes."
+    },
+    {
+      icon: "💊",
+      title: "Mountain First Aid Kit",
+      subtitle: "Camphor, ORS & Cold Care",
+      desc: "Pocket camphor pouch for breathing & thermal care."
+    }
+  ];
+
+  return (
+    <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50/60 border border-sky-200 shadow-2xs">
+      <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] mb-1.5 pb-1 border-b border-sky-200/60">
+        <span className="flex items-center gap-1.5">
+          <span>❄️ Winter Holiday Gear &amp; Packing Advisory (Chopta · Tungnath · Auli Special)</span>
+          <span className="text-[8.5px] font-extrabold px-2 py-0.2 bg-sky-100 text-sky-800 rounded-full border border-sky-300">
+            Mandatory Alpine Comfort
+          </span>
+        </span>
+        <span className="text-[9px] font-semibold text-gray-600">
+          *Snow boots &amp; heavy jackets also available for easy rent at Chopta base point
+        </span>
+      </div>
+
+      <div className="grid grid-cols-5 gap-1.5">
+        {items.map((item, idx) => (
+          <div key={idx} className="bg-white/95 rounded-lg p-2 border border-sky-100 shadow-2xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-1 mb-0.5">
+                <span className="text-sm">{item.icon}</span>
+                <span className="text-[10px] font-black text-gray-950 leading-tight truncate">{item.title}</span>
+              </div>
+              <p className="text-[8.5px] font-bold text-[#0369a1] leading-tight mb-0.5">{item.subtitle}</p>
+              <p className="text-[8px] text-gray-600 leading-tight font-medium">{item.desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function DynamicQrCodeSuite({ 
+  title, 
+  phone, 
+  customUpiId,
+  mode = "all"
+}: { 
+  title: string; 
+  phone: string; 
+  customUpiId?: string;
+  mode?: "all" | "whatsapp" | "maps" | "upi";
+}) {
+  const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "918266016066";
+  const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding the ${title} itinerary`)}`;
+  const mapsUrl = `https://maps.google.com/?q=Haridwar+to+Ukhimath+to+Chopta+to+Tungnath+to+Joshimath+to+Auli`;
+  const upiId = customUpiId || "traveltouttarakhand@sbi";
+  const upiUrl = `upi://pay?pa=${upiId}&pn=Travel%20To%20Uttarakhand&cu=INR`;
+
+  const waQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(whatsappUrl)}`;
+  const mapsQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(mapsUrl)}`;
+  const upiQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(upiUrl)}`;
+
+  return (
+    <div className="p-3 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-indigo-50/60 border border-sky-200 shadow-2xs space-y-2">
+      <div className="flex items-center justify-between text-[11.5px] font-black text-[#0369a1]">
+        <div className="flex items-center gap-1.5">
+          <span className="p-1 rounded bg-[#0369a1] text-white">
+            <QrCode className="w-3.5 h-3.5" />
+          </span>
+          <span>Live Interactive QR Codes · Scan with Phone Camera or Tap Directly</span>
+        </div>
+        <span className="text-[9.5px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+          Instant Mobile Access
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        {/* QR 1: WhatsApp Support */}
+        <a 
+          href={whatsappUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          data-pdf-link={whatsappUrl}
+          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-emerald-400 hover:shadow-xs transition-all flex items-center gap-2.5 group cursor-pointer"
+        >
+          <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 p-0.5 flex items-center justify-center shrink-0">
+            <img src={waQrUrl} alt="WhatsApp QR" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1 text-[9px] font-black text-emerald-700 uppercase tracking-tight mb-0.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              WhatsApp Live Desk
+            </div>
+            <p className="text-[11px] font-black text-gray-900 group-hover:text-emerald-700 transition-colors leading-tight">
+              Scan to Chat Live
+            </p>
+            <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
+              Direct Yatra Specialist ({phone || "+91 82660 16066"})
+            </p>
+            <span className="inline-block mt-1 text-[8.5px] font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+              Tap / Scan ➔
+            </span>
+          </div>
+        </a>
+
+        {/* QR 2: Google Maps Driving Route */}
+        <a 
+          href={mapsUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          data-pdf-link={mapsUrl}
+          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-blue-400 hover:shadow-xs transition-all flex items-center gap-2.5 group cursor-pointer"
+        >
+          <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 p-0.5 flex items-center justify-center shrink-0">
+            <img src={mapsQrUrl} alt="Google Maps Route QR" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1 text-[9px] font-black text-blue-700 uppercase tracking-tight mb-0.5">
+              <MapPin className="w-2.5 h-2.5 text-blue-600" />
+              Live Driving Route
+            </div>
+            <p className="text-[11px] font-black text-gray-900 group-hover:text-blue-700 transition-colors leading-tight">
+              Scan for GPS Route
+            </p>
+            <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
+              Opens full road navigation on Google Maps
+            </p>
+            <span className="inline-block mt-1 text-[8.5px] font-bold text-blue-800 bg-blue-50 px-1.5 py-0.2 rounded border border-blue-200">
+              Open Navigation ➔
+            </span>
+          </div>
+        </a>
+
+        {/* QR 3: UPI Advance Token */}
+        <a 
+          href={upiUrl} 
+          data-pdf-link={upiUrl}
+          className="bg-white rounded-xl p-2.5 border border-sky-200 hover:border-amber-400 hover:shadow-xs transition-all flex items-center gap-2.5 group cursor-pointer"
+        >
+          <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-100 p-0.5 flex items-center justify-center shrink-0">
+            <img src={upiQrUrl} alt="UPI Payment QR" className="w-full h-full object-contain" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1 text-[9px] font-black text-amber-800 uppercase tracking-tight mb-0.5">
+              <ShieldCheck className="w-2.5 h-2.5 text-amber-600" />
+              Verified Advance Token
+            </div>
+            <p className="text-[11px] font-black text-gray-900 group-hover:text-amber-800 transition-colors leading-tight">
+              Scan to Pay Token
+            </p>
+            <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
+              GPay · PhonePe · Paytm · UPI VPA
+            </p>
+            <span className="inline-block mt-1 text-[8.5px] font-bold text-amber-900 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+              {upiId}
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
 // Exact preset matching standard 10 Days / 09 Nights Chardham Yatra (Haridwar / Dehradun)
 const CHARDHAM_PRESET: ItineraryData = {
   title: "CHARDHAM YATRA",
@@ -608,6 +949,12 @@ const CHARDHAM_PRESET: ItineraryData = {
   glanceSector: "Haridwar ⇄ Complete Chardham Circuit",
   glanceStartEnd: "Haridwar / Dehradun (both ways)",
   glancePackages: "Standard Package",
+
+  showAltitudeProfile: true,
+  altitudeProfilePlacement: "page2",
+  showDynamicQrCodes: true,
+  qrCodeType: "all",
+  customUpiId: "traveltouttarakhand@sbi",
 
   days: [
     {
@@ -3852,7 +4199,19 @@ ${data.motto}`;
 
       {/* Page 1 Footer */}
       <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
-        <span>Travel to Uttarakhand · {data.contactPhone}</span>
+        <div className="flex items-center gap-2">
+          <span>Travel to Uttarakhand · {data.contactPhone}</span>
+          <a
+            href={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "918266016066"}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding ${data.title}`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-pdf-link={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "918266016066"}`}
+            className="text-[9.5px] font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 transition"
+          >
+            <QrCode className="w-3 h-3 text-emerald-600" />
+            <span>Scan to WhatsApp Live Desk</span>
+          </a>
+        </div>
         <div className="flex items-center gap-3">
           <a 
             href="https://traveltouttrakhand.com" 
@@ -4081,10 +4440,12 @@ ${data.motto}`;
 
   const renderPage2 = (prefix: string) => {
     const isShortTour = data.days.length <= 6;
-    const isWinter = data.title.toLowerCase().includes("winter") || 
-                     data.title.toLowerCase().includes("auli") || 
-                     data.title.toLowerCase().includes("chopta") ||
-                     (data.subTitle && data.subTitle.toLowerCase().includes("winter"));
+    const isWinter = Boolean(
+      data.title.toLowerCase().includes("winter") || 
+      data.title.toLowerCase().includes("auli") || 
+      data.title.toLowerCase().includes("chopta") ||
+      (data.subTitle && data.subTitle.toLowerCase().includes("winter"))
+    );
     const displayHotelPhotos = (data.hotelPhotos && data.hotelPhotos.length > 0) 
       ? data.hotelPhotos 
       : (isWinter ? WINTER_HOTEL_PHOTO_PRESETS : CURATED_HOTEL_PHOTO_PRESETS);
@@ -4115,6 +4476,11 @@ ${data.motto}`;
                 : `Complete Day 1 to Day ${Math.min(10, data.days.length)} Plan`}
             </span>
           </h2>
+
+          {/* 🏔️ VISUAL MOUNTAIN ALTITUDE & TERRAIN ELEVATION PROFILE (DEMO POINT 1) */}
+          {data.showAltitudeProfile !== false && (
+            <AltitudeElevationProfile isWinter={isWinter} title={data.title} />
+          )}
 
           {/* DAY-WISE ITINERARY CARDS WITH DIRECTLY LINKED PHOTOS */}
           <div className={isShortTour ? (data.days.length <= 3 ? "space-y-2.5" : "space-y-1.5") : "space-y-1.5"}>
@@ -4156,7 +4522,7 @@ ${data.motto}`;
                   const fitClass = isContain ? "object-contain" : "object-cover";
                   return (
                     <div key={hp.id || hIdx} className="rounded-lg overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                      <div className="h-26 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
+                      <div className="h-24 overflow-hidden bg-slate-900 relative flex items-center justify-center p-0.5">
                         <img 
                           src={hp.url} 
                           alt="" 
@@ -4185,6 +4551,11 @@ ${data.motto}`;
                 })}
               </div>
             </div>
+          )}
+
+          {/* ❄️ WINTER HOLIDAY GEAR & PACKING ADVISORY (DEMO POINT 3) */}
+          {data.showWinterPackingAdvisory !== false && (
+            <WinterPackingAdvisory />
           )}
 
           {/* MOUNTAIN FLEET & WEATHER SAFETY (Only for very short tours like 3D to fill Page 2) */}
@@ -4284,10 +4655,12 @@ ${data.motto}`;
 
   const renderPage3 = (prefix: string) => {
     const isShortTour = data.days.length <= 6;
-    const isWinter = data.title.toLowerCase().includes("winter") || 
-                     data.title.toLowerCase().includes("auli") || 
-                     data.title.toLowerCase().includes("chopta") ||
-                     (data.subTitle && data.subTitle.toLowerCase().includes("winter"));
+    const isWinter = Boolean(
+      data.title.toLowerCase().includes("winter") || 
+      data.title.toLowerCase().includes("auli") || 
+      data.title.toLowerCase().includes("chopta") ||
+      (data.subTitle && data.subTitle.toLowerCase().includes("winter"))
+    );
     const displayHotelPhotos = (data.hotelPhotos && data.hotelPhotos.length > 0) 
       ? data.hotelPhotos 
       : (isWinter ? WINTER_HOTEL_PHOTO_PRESETS : CURATED_HOTEL_PHOTO_PRESETS);
@@ -4766,6 +5139,16 @@ ${data.motto}`;
 
             </div>
           </div>
+        )}
+
+        {/* LIVE INTERACTIVE DYNAMIC QR CODES (DEMO POINT 2) */}
+        {data.showDynamicQrCodes !== false && (
+          <DynamicQrCodeSuite 
+            title={data.title} 
+            phone={data.contactPhone} 
+            customUpiId={data.customUpiId}
+            mode={data.qrCodeType || "all"}
+          />
         )}
 
         {/* For Bookings & Queries Center Box */}
@@ -6193,6 +6576,63 @@ ${data.motto}`;
                       className="rounded text-sky-600 focus:ring-sky-500"
                     />
                     <span className="text-gray-700 font-medium">Show Confirmed Accommodations & Hotel Stays on Page 3</span>
+                  </label>
+                </div>
+
+                {/* 3 ADVANCED LUXURY FEATURES (DEMO) */}
+                <div className="mt-3 pt-2.5 border-t border-sky-200/80 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-[#0369a1] text-[11px] uppercase tracking-wider flex items-center gap-1.5">
+                      <span>✨ 3 Luxury Mountaineering Features (Demo)</span>
+                    </span>
+                    <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300">
+                      Live Integrated
+                    </span>
+                  </div>
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.showAltitudeProfile !== false}
+                      onChange={e => setData({ ...data, showAltitudeProfile: e.target.checked })}
+                      className="rounded text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-sky-950 font-bold">1. Visual Mountain Altitude Profile (🏔️ High-Altitude Curve)</span>
+                  </label>
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.showDynamicQrCodes !== false}
+                      onChange={e => setData({ ...data, showDynamicQrCodes: e.target.checked })}
+                      className="rounded text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-sky-950 font-bold">2. Live Interactive Dynamic QR Codes (📲 WhatsApp + Maps + UPI)</span>
+                  </label>
+
+                  {data.showDynamicQrCodes !== false && (
+                    <div className="pl-6 pt-1 space-y-1.5 text-[10.5px]">
+                      <div className="flex items-center gap-2">
+                        <label className="font-semibold text-gray-700 w-24">Custom UPI ID:</label>
+                        <input
+                          type="text"
+                          value={data.customUpiId || "traveltouttarakhand@sbi"}
+                          onChange={e => setData({ ...data, customUpiId: e.target.value })}
+                          placeholder="e.g. traveltouttarakhand@sbi"
+                          className="flex-1 px-2 py-1 bg-white border border-sky-200 rounded text-xs font-bold text-gray-900"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={data.showWinterPackingAdvisory !== false}
+                      onChange={e => setData({ ...data, showWinterPackingAdvisory: e.target.checked })}
+                      className="rounded text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-sky-950 font-bold">3. Winter Holiday Gear &amp; Packing Advisory Strip (❄️ Auli/Chopta Special)</span>
                   </label>
                 </div>
               </div>
