@@ -644,8 +644,8 @@ export function AltitudeElevationProfile({ isWinter, title = "" }: { isWinter?: 
   const maxPoint = points.find(p => p.isSummit) || points[5];
 
   return (
-    <div className="p-2.5 rounded-xl bg-gradient-to-r from-sky-50/90 via-blue-50/60 to-indigo-50/80 border border-sky-200/90 shadow-2xs space-y-1.5">
-      <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] pb-1 border-b border-sky-200/60">
+    <div className="p-2 rounded-xl bg-gradient-to-r from-sky-50/90 via-blue-50/60 to-indigo-50/80 border border-sky-200/90 shadow-2xs space-y-1">
+      <div className="flex items-center justify-between text-[11px] font-black text-[#0369a1] pb-0.5 border-b border-sky-200/60">
         <div className="flex items-center gap-1.5">
           <span className="p-1 rounded-md bg-[#0369a1] text-white">
             <Compass className="w-3.5 h-3.5" />
@@ -666,8 +666,8 @@ export function AltitudeElevationProfile({ isWinter, title = "" }: { isWinter?: 
       </div>
 
       {/* SVG Mountain Curve Canvas */}
-      <div className="relative w-full overflow-hidden bg-white/70 rounded-lg border border-sky-100 p-1">
-        <svg viewBox="0 0 730 108" className="w-full h-auto overflow-visible" preserveAspectRatio="none">
+      <div className="relative w-full overflow-hidden bg-white/70 rounded-lg border border-sky-100 p-0.5">
+        <svg viewBox="0 0 730 96" className="w-full h-auto overflow-visible" preserveAspectRatio="none">
           <defs>
             <linearGradient id="altitudeGradient" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stopColor="#0284c7" stopOpacity="0.35" />
@@ -824,7 +824,7 @@ export function DynamicQrCodeSuite({
   const googleReviewUrl = "https://g.page/r/traveltouttarakhand/review";
 
   const waQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(whatsappUrl)}`;
-  const reviewQrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=${encodeURIComponent(googleReviewUrl)}`;
+  const reviewQrUrl = "/gallery/google_review_qr.jpg";
 
   return (
     <div className="p-3 rounded-xl bg-gradient-to-r from-sky-50 via-blue-50/50 to-indigo-50/60 border border-sky-200 shadow-2xs space-y-2">
@@ -1633,11 +1633,9 @@ export const AULI_3D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special Auli Winter Holiday 3D/2N Package with dedicated private vehicle, 2 Nights stay in Joshimath and meal plan.",
+  pricingSubtitle: "Confirmed Private Quotation for 04 Pax with Dedicated Swift Dzire, 02 Double Rooms and Breakfast & Dinner (MAP Plan).",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + 2 Nights Joshimath" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 41,996 Total Package", hotelCategory: "Standard Clean Alpine Hotel (2 Double Rooms)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + 2 Nights Joshimath" }
   ],
   pricingNote: "Note: Rates are per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
@@ -1778,11 +1776,9 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special Chopta & Tungnath Snow Holiday 3D/2N Package with 2 Nights Stay in Chopta, meals, and dedicated mountain vehicle.",
+  pricingSubtitle: "Confirmed Private Quotation for 04 Pax with Dedicated Swift Dzire, 02 Double Rooms and Breakfast & Dinner (MAP Plan).",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Snow Trek Assistance" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 41,996 Total Package", hotelCategory: "Standard Clean Swiss Tent / Alpine Resort in Chopta (2 Double Rooms)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Snow Trek Assistance" }
   ],
   pricingNote: "Note: Rates per person on twin/double sharing. Includes 2 nights stay, dedicated hill transport, and MAP meal plan.",
 
@@ -1922,11 +1918,9 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special Rishikesh & Mussoorie 3D/2N Holiday with 1st Night in Rishikesh and 2nd Night in Mussoorie.",
+  pricingSubtitle: "Confirmed Private Quotation for 04 Pax with Dedicated Swift Dzire, 02 Double Rooms and Breakfast & Dinner (MAP Plan).",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Sightseeing" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 41,996 Total Package", hotelCategory: "Standard Clean City & Hill Hotels (2 Double Rooms)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Sightseeing" }
   ],
   pricingNote: "Note: Rates based on double sharing with dedicated private vehicle and MAP meals. Entry tickets to falls/cable cars at direct payment.",
 
@@ -2106,11 +2100,9 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special 5D/4N Winter Snow Circuit: 2 Nights Ukhimath/Chopta + 2 Nights Joshimath/Rudraprayag.",
+  pricingSubtitle: "Confirmed Private Quotation for 04 Pax with Dedicated Swift Dzire, 02 Double Rooms and Breakfast & Dinner (MAP Plan).",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Circuit" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 22,999 / Pax", totalPackagePrice: "₹ 22,999 / Pax (1 Double Room)", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 13,499 / Pax", totalPackagePrice: "₹ 13,499 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 63,996 Total Package", hotelCategory: "Standard Clean Alpine Hotels & Mountain Stays (2 Double Rooms)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Circuit" }
   ],
   pricingNote: "Note: Rates per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
@@ -2311,11 +2303,9 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
     }
   ],
 
-  pricingSubtitle: "Special 6D/5N Grand Winter Tour: 1st Night Mussoorie, 2nd & 3rd Ukhimath, 4th Joshimath, 5th Joshimath/Rudraprayag.",
+  pricingSubtitle: "Confirmed Private Quotation for 04 Pax with Dedicated Swift Dzire, 02 Double Rooms and Breakfast & Dinner (MAP Plan).",
   pricingTiers: [
-    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 18,999 / Pax", totalPackagePrice: "₹ 18,999 / Pax (2 Double Rooms)", hotelCategory: "Standard Clean Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Grand Circuit" },
-    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 27,499 / Pax", totalPackagePrice: "₹ 27,499 / Pax (1 Double Room)", hotelCategory: "Standard Clean Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
-    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (3 Double Rooms)", hotelCategory: "Standard Clean Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 18,999 / Pax", totalPackagePrice: "₹ 75,996 Total Package", hotelCategory: "Standard Clean Hotels & Mountain Resorts (2 Double Rooms)", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Grand Circuit" }
   ],
   pricingNote: "Note: Rates per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
@@ -3414,12 +3404,13 @@ SCHEMA:
 
   // Pax & Vehicle Slabs handlers
   const selectPaxSlab = (slab: PaxVehicleSlab) => {
+    const totalCost = slab.ratePerPax * slab.paxCount;
     const updatedPricingTiers: PricingTier[] = [
       {
         package: `${slab.paxLabel} (${slab.vehicleName})`,
         price: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax`,
-        totalPackagePrice: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax (${slab.roomsCount})`,
-        hotelCategory: `${slab.hotelCategory || "Standard Clean Alpine Hotel"} — ${slab.roomsCount}`,
+        totalPackagePrice: `₹ ${totalCost.toLocaleString('en-IN')} Total Package`,
+        hotelCategory: `${slab.hotelCategory || "Standard Clean Alpine Hotel"} (${slab.roomsCount})`,
         meals: slab.mealPlan || "Breakfast & Dinner (MAP Plan)",
         specialFeature: `Dedicated ${slab.vehicleName} (Private Hill Chauffeur)`
       }
@@ -4332,8 +4323,8 @@ ${data.motto}`;
 
             {/* Day Related Photo Banner (Panorama) or Standard Photo Strip right after activities */}
             {isDayBanner ? (
-              <div className="pt-1 border-t border-sky-100/90">
-                <div className="w-full h-20 sm:h-[88px] rounded-lg overflow-hidden border border-sky-300/90 bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 shadow-2xs relative flex items-center justify-center p-0.5">
+              <div className="pt-0.5 border-t border-sky-100/90">
+                <div className="w-full h-16 sm:h-[68px] rounded-lg overflow-hidden border border-sky-300/90 bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 shadow-2xs relative flex items-center justify-center p-0.5">
                   <img 
                     src={day.bannerPhotoUrl || primaryPhotoUrl || "/gallery/day1_ukhimath_devprayag_banner.jpg"} 
                     alt="" 
@@ -4351,8 +4342,8 @@ ${data.motto}`;
                 </div>
               </div>
             ) : primaryPhotoUrl ? (
-              <div className="pt-1 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
-                <div className={`${secondaryPhotoUrl ? 'w-28 h-14' : 'w-36 h-18'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
+              <div className="pt-0.5 border-t border-sky-100/90 flex items-center gap-2 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1 rounded-lg">
+                <div className={`${secondaryPhotoUrl ? 'w-24 h-12' : 'w-28 h-14'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
                   <img 
                     src={primaryPhotoUrl} 
                     alt="" 
@@ -4370,7 +4361,7 @@ ${data.motto}`;
                 </div>
 
                 {secondaryPhotoUrl && (
-                  <div className="w-28 h-14 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
+                  <div className="w-24 h-12 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
                     <img 
                       src={secondaryPhotoUrl} 
                       alt="" 
@@ -4389,14 +4380,14 @@ ${data.motto}`;
                 )}
 
                 <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <p className="text-[11px] font-black text-[#0369a1] flex items-center gap-1">
+                  <p className="text-[10.5px] font-black text-[#0369a1] flex items-center gap-1">
                     <span>📸 Day {day.dayNumber} Sightseeing & Excursion</span>
                   </p>
-                  <p className="text-[11px] text-gray-950 font-bold mt-0.5 leading-snug">
+                  <p className="text-[10.5px] text-gray-950 font-bold mt-0.5 leading-snug line-clamp-1">
                     {primaryCaption}
                   </p>
                   {secondaryCaption && (
-                    <p className="text-[10px] text-gray-700 font-semibold mt-0.5 leading-snug">
+                    <p className="text-[9.5px] text-gray-700 font-semibold mt-0.5 leading-snug line-clamp-1">
                       • {secondaryCaption}
                     </p>
                   )}
@@ -4579,11 +4570,11 @@ ${data.motto}`;
             </div>
           )}
 
-          {/* Dynamic Pax & Vehicle Matrix Table OR Standard Pricing Table */}
+          {/* Dynamic Pax & Vehicle Matrix Table OR Single Package Quotation Table */}
           <div className="space-y-1 pt-0.5">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-serif font-black text-[#0369a1] flex items-center gap-2">
-                <span>{data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? "Group Sizing, Vehicle & Pricing Matrix" : "Package Options & Pricing"}</span>
+                <span>{data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint === true && data.selectedPricingOption === "matrix_table" ? "Group Sizing, Vehicle & Pricing Matrix" : "Confirmed Package Quotation"}</span>
                 {data.selectedPaxCount && (
                   <span className="text-[10px] font-sans font-black bg-sky-100 text-[#0369a1] border border-sky-300 px-2.5 py-0.5 rounded-full">
                     Quoted for: {String(data.selectedPaxCount).padStart(2, '0')} Pax
@@ -4591,7 +4582,7 @@ ${data.motto}`;
                 )}
               </h3>
               <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
-                {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? "Dedicated Fleet · MAP Meals · Double Sharing" : "Standard Packages"}
+                {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint === true && data.selectedPricingOption === "matrix_table" ? "Dedicated Fleet · MAP Meals · Double Sharing" : "Standard Private Package"}
               </span>
             </div>
 
@@ -4599,14 +4590,14 @@ ${data.motto}`;
               {data.pricingSubtitle}
             </p>
 
-            {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? (
+            {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint === true && data.selectedPricingOption === "matrix_table" ? (
               <div className="border border-sky-300 rounded-xl overflow-hidden mt-1.5 shadow-2xs">
                 <table className="w-full text-xs text-center">
                   <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[10.5px]">
                     <tr>
                       <th className="px-2.5 py-2 text-left">Group Sizing</th>
                       <th className="px-2 py-2 text-left">Dedicated Mountain Vehicle</th>
-                      <th className="px-2 py-2">Stay & Rooms</th>
+                      <th className="px-2 py-2">Stay &amp; Rooms</th>
                       <th className="px-2 py-2">Meal Plan</th>
                       <th className="px-2.5 py-2 text-right">Price / Person</th>
                       <th className="px-3 py-2 text-right bg-sky-950/80">Total Package Cost</th>
@@ -4654,49 +4645,68 @@ ${data.motto}`;
             ) : (
               <div className="border-2 border-sky-300 rounded-xl overflow-hidden mt-1.5 shadow-xs bg-white">
                 <table className="w-full text-xs text-center">
-                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[11px]">
+                  <thead className="bg-gradient-to-r from-sky-950 via-[#0369a1] to-sky-950 text-white font-bold text-[11px]">
                     <tr>
-                      <th className="px-3 py-2 text-left">Confirmed Package & Group</th>
-                      <th className="px-2.5 py-2 text-right">Price / Person</th>
-                      <th className="px-2.5 py-2 text-right bg-sky-950/70">Total Package Price</th>
-                      <th className="px-2.5 py-2">Hotel Category & Rooms</th>
-                      <th className="px-2.5 py-2">Meals Included</th>
-                      <th className="px-2.5 py-2">Dedicated Transport</th>
+                      <th className="px-3.5 py-2 text-left">Confirmed Group Sizing</th>
+                      <th className="px-2.5 py-2 text-left">Dedicated Transport</th>
+                      <th className="px-2.5 py-2">Stay &amp; Rooms</th>
+                      <th className="px-2.5 py-2">Meal Plan</th>
+                      <th className="px-3 py-2 text-right">Price / Person</th>
+                      <th className="px-3.5 py-2 text-right bg-emerald-700 text-white font-black">Total Package Cost</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-200 text-[11.5px]">
-                    {data.pricingTiers.map((tier, tIdx) => (
-                      <tr key={tIdx} className={tIdx % 2 === 0 ? "bg-sky-50/40" : "bg-white"}>
-                        <td className="px-3.5 py-3 font-black text-gray-950 text-left text-[12.5px]">
-                          <span className="flex items-center gap-1.5">
-                            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-                            <span>{tier.package}</span>
-                          </span>
-                        </td>
-                        <td className="px-2.5 py-2.5 font-black text-[#0369a1] text-[12px] text-right whitespace-nowrap">
-                          {tier.price}
-                        </td>
-                        <td className="px-2.5 py-2.5 font-black text-emerald-800 text-[12px] text-right bg-emerald-50/50 whitespace-nowrap">
-                          {(() => {
-                            const pMatch = tier.package.match(/^(\d+)\s*Pax/i);
-                            const pCount = pMatch ? parseInt(pMatch[1]) : (data.selectedPaxCount || 2);
-                            const numP = parseInt(tier.price.replace(/[^\d]/g, '')) || 0;
-                            const calcT = numP > 0 ? numP * pCount : 0;
-                            const resT = tier.totalPackagePrice || (calcT > 0 ? `₹ ${calcT.toLocaleString('en-IN')} / Total` : tier.price);
-                            return resT.startsWith('₹') ? resT : `₹ ${resT}`;
-                          })()}
-                        </td>
-                        <td className="px-2.5 py-2.5 text-gray-900 font-bold">
-                          {tier.hotelCategory}
-                        </td>
-                        <td className="px-3 py-3 text-gray-800 font-medium">
-                          {tier.meals}
-                        </td>
-                        <td className="px-3 py-3 font-black text-sky-950">
-                          {tier.specialFeature}
-                        </td>
-                      </tr>
-                    ))}
+                  <tbody className="text-[11.5px]">
+                    {(() => {
+                      const currentSlab = data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4));
+                      const matchingTier = data.pricingTiers.find(t => {
+                        const pMatch = t.package.match(/^(\d+)\s*Pax/i);
+                        return pMatch && parseInt(pMatch[1]) === (data.selectedPaxCount || 4);
+                      }) || data.pricingTiers[0];
+
+                      const paxCount = data.selectedPaxCount || (currentSlab ? currentSlab.paxCount : (matchingTier?.package.match(/^(\d+)\s*Pax/i) ? parseInt(matchingTier.package.match(/^(\d+)\s*Pax/i)![1]) : 4));
+                      const groupLabel = currentSlab ? `${currentSlab.paxLabel} (Private Tour)` : (matchingTier?.package || `${String(paxCount).padStart(2, '0')} Pax Private Tour`);
+                      const vehicle = currentSlab?.vehicleName || matchingTier?.specialFeature?.replace(/^Dedicated\s+/i, "") || data.selectedVehicle || "Swift Dzire / Sedan";
+                      const rooms = currentSlab?.roomsCount || "Standard Clean Mountain Stays (Double Sharing)";
+                      const hotelCat = currentSlab?.hotelCategory || matchingTier?.hotelCategory || "Standard Clean Alpine Hotels";
+                      const meals = currentSlab?.mealPlan || matchingTier?.meals || "Breakfast & Dinner (MAP Plan)";
+                      
+                      let perPaxNum = currentSlab?.ratePerPax || 0;
+                      if (!perPaxNum && matchingTier?.price) {
+                        perPaxNum = parseInt(matchingTier.price.replace(/[^\d]/g, '')) || 0;
+                      }
+                      const perPaxStr = perPaxNum > 0 ? `₹ ${perPaxNum.toLocaleString('en-IN')}/-` : (matchingTier?.price || "₹ 15,999/-");
+                      
+                      const totalCostNum = currentSlab?.totalPackageRate || (perPaxNum > 0 ? perPaxNum * paxCount : 0);
+                      const totalCostStr = totalCostNum > 0 ? `₹ ${totalCostNum.toLocaleString('en-IN')}/-` : (matchingTier?.totalPackagePrice || perPaxStr);
+
+                      return (
+                        <tr className="bg-white">
+                          <td className="px-3.5 py-3 font-black text-gray-950 text-left text-[12.5px]">
+                            <span className="flex items-center gap-1.5">
+                              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+                              <span>{groupLabel}</span>
+                            </span>
+                          </td>
+                          <td className="px-2.5 py-3 text-left font-bold text-gray-900">
+                            🚗 {vehicle}
+                          </td>
+                          <td className="px-2.5 py-3 text-gray-900 font-bold">
+                            🏨 {rooms}
+                            <span className="block text-[9.5px] font-medium text-gray-600">{hotelCat}</span>
+                          </td>
+                          <td className="px-2.5 py-3 text-gray-800 font-medium">
+                            🍽️ {meals}
+                          </td>
+                          <td className="px-3 py-3 font-black text-[#0369a1] text-[13px] text-right whitespace-nowrap">
+                            {perPaxStr} <span className="text-[9px] font-semibold text-gray-500 block">/ person</span>
+                          </td>
+                          <td className="px-3.5 py-3 font-black text-emerald-950 text-[14px] text-right bg-emerald-50/90 border-l-2 border-emerald-300 whitespace-nowrap">
+                            <span className="text-emerald-800 text-[14.5px] font-black">{totalCostStr}</span>
+                            <span className="text-[9px] font-bold text-emerald-700 block">Total Package</span>
+                          </td>
+                        </tr>
+                      );
+                    })()}
                   </tbody>
                 </table>
               </div>
@@ -6231,11 +6241,15 @@ ${data.motto}`;
                   <label className="flex items-center gap-2 cursor-pointer text-gray-900 font-bold select-none text-[11px]">
                     <input
                       type="checkbox"
-                      checked={data.showPaxMatrixOnPrint !== false}
-                      onChange={e => setData({ ...data, showPaxMatrixOnPrint: e.target.checked })}
+                      checked={data.showPaxMatrixOnPrint === true && data.selectedPricingOption === "matrix_table"}
+                      onChange={e => setData({ 
+                        ...data, 
+                        showPaxMatrixOnPrint: e.target.checked,
+                        selectedPricingOption: e.target.checked ? "matrix_table" : "single_quote"
+                      })}
                       className="rounded border-gray-300 text-sky-600 focus:ring-sky-500 w-4 h-4 cursor-pointer"
                     />
-                    <span>Print Group Sizing & Vehicle Matrix Table on Page 3 (PDF)</span>
+                    <span>Print Full Comparison Matrix Table (all group sizes on Page 3)</span>
                   </label>
                   {!data.paxVehicleSlabs && (
                     <button
