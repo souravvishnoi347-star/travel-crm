@@ -1614,8 +1614,8 @@ export const AULI_3D_PRESET: ItineraryData = {
         "Arrive at Joshimath by late afternoon; check in at hotel. Evening at leisure to visit the local market or ancient Shankaracharya Math."
       ],
       overnightStay: "Joshimath",
-      photoUrl: "/gallery/joshimath_stay.jpeg",
-      photoCaption: "Scenic Alaknanda Valley Route & Joshimath Valley View Arrival"
+      photoUrl: "/gallery/day1_ukhimath_devprayag_banner.jpg",
+      photoCaption: "Scenic Mountain Route via Devprayag Sangam to Joshimath Gateway"
     },
     {
       id: 2,
@@ -1635,9 +1635,7 @@ export const AULI_3D_PRESET: ItineraryData = {
       ],
       overnightStay: "Joshimath",
       photoUrl: "/gallery/auli_ropeway.jpg",
-      photoCaption: "Auli Cable Car (Asia's Longest Ropeway)",
-      photoUrl2: "/gallery/auli_skiing.jpg",
-      photoCaption2: "Thrilling Snow Skiing & Gorson Bugyal Slopes"
+      photoCaption: "Auli Cable Car (Asia's Longest Ropeway) & Snow Slopes"
     },
     {
       id: 3,
@@ -1656,9 +1654,7 @@ export const AULI_3D_PRESET: ItineraryData = {
       ],
       overnightStay: "Tour Concludes (Sweet Winter Memories)",
       photoUrl: "/gallery/chardham_10d_img_18.jpg",
-      photoCaption: "Sacred Maa Dhari Devi Shrine on River Alaknanda",
-      photoUrl2: "/gallery/chardham_10d_img_19.jpg",
-      photoCaption2: "Devprayag Sangam - Holy Confluence of Bhagirathi & Alaknanda"
+      photoCaption: "Sacred Maa Dhari Devi Temple on River Alaknanda & Devprayag"
     }
   ],
 
@@ -1780,9 +1776,7 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
       ],
       overnightStay: "Chopta",
       photoUrl: "/gallery/tungnath_temple_snow.jpg",
-      photoCaption: "Highest Shiva Shrine Shri Tungnath in Winter Snow",
-      photoUrl2: "/gallery/chandrashila_summit.jpg",
-      photoCaption2: "Chandrashila Summit 360° Himalayan Panorama"
+      photoCaption: "Highest Shiva Shrine Shri Tungnath in Winter Snow (12,073 Ft)"
     },
     {
       id: 3,
@@ -1904,9 +1898,7 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
       ],
       overnightStay: "Rishikesh",
       photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
-      photoCaption: "Maha Ganga Aarti at Triveni Ghat & Holy Ganga",
-      photoUrl2: "/gallery/rishikesh_ram_jhula.png",
-      photoCaption2: "Sacred Ram Jhula Suspension Bridge"
+      photoCaption: "Divine Maha Ganga Aarti at Triveni Ghat Rishikesh"
     },
     {
       id: 2,
@@ -1925,9 +1917,7 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
       ],
       overnightStay: "Mussoorie",
       photoUrl: "/gallery/mussoorie_winterline.jpeg",
-      photoCaption: "Mussoorie Rare Winterline Sunset Phenomenon",
-      photoUrl2: "/gallery/mussoorie_mall_road.webp",
-      photoCaption2: "Mussoorie Mall Road & Misty Hills"
+      photoCaption: "Mussoorie 'Queen of the Hills' & Rare Winterline Sunset"
     },
     {
       id: 3,
@@ -2067,9 +2057,7 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
       ],
       overnightStay: "Ukhimath / Chopta",
       photoUrl: "/gallery/tungnath_temple_snow.jpg",
-      photoCaption: "Highest Shiva Shrine Tungnath in Winter Snow",
-      photoUrl2: "/gallery/chandrashila_summit.jpg",
-      photoCaption2: "Chandrashila Summit 360° Snow Panorama"
+      photoCaption: "Highest Shiva Shrine Shri Tungnath in Winter Snow (12,073 Ft)"
     },
     {
       id: 3,
@@ -2108,9 +2096,7 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
       ],
       overnightStay: "Joshimath / Rudraprayag",
       photoUrl: "/gallery/auli_ropeway.jpg",
-      photoCaption: "Auli Cable Car (Asia's Longest Ropeway)",
-      photoUrl2: "/gallery/auli_skiing.jpg",
-      photoCaption2: "Auli Snow Skiing Slopes & Nanda Devi Panoramas"
+      photoCaption: "Auli Cable Car (Asia's Longest Ropeway) & Snow Slopes"
     },
     {
       id: 5,
@@ -2274,9 +2260,7 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       ],
       overnightStay: "Ukhimath",
       photoUrl: "/gallery/tungnath_temple_snow.jpg",
-      photoCaption: "Shri Tungnath Temple in Snow & Chandrashila Peak Trek",
-      photoUrl2: "/gallery/chandrashila_summit.jpg",
-      photoCaption2: "Chandrashila Summit 360° Himalayan Panorama"
+      photoCaption: "Shri Tungnath Temple in Snow & Chandrashila Peak Trek (12,073 Ft)"
     },
     {
       id: 4,
@@ -2315,9 +2299,7 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       ],
       overnightStay: "Joshimath / Rudraprayag",
       photoUrl: "/gallery/auli_ropeway.jpg",
-      photoCaption: "Auli Cable Car Ropeway & Snow Skiing Slopes",
-      photoUrl2: "/gallery/auli_skiing.jpg",
-      photoCaption2: "Thrilling Auli Skiing & Snowboard Meadows"
+      photoCaption: "Auli Cable Car Ropeway & Snow Skiing Slopes"
     },
     {
       id: 6,
@@ -2815,12 +2797,12 @@ export default function ItineraryBuilder() {
                   parsed.days[0].photoCaption2 = undefined;
                 }
                 parsed.days = parsed.days.map((d: any) => {
+                  d.photoUrl2 = undefined;
+                  d.photoCaption2 = undefined;
                   if (!d.photoUrl) {
                     if (d.route?.toLowerCase().includes("auli") || d.activities?.some((a: string) => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing"))) {
                       d.photoUrl = "/gallery/auli_ropeway.jpg";
                       d.photoCaption = "Auli Cable Car (Asia's Longest Ropeway)";
-                      d.photoUrl2 = "/gallery/auli_skiing.jpg";
-                      d.photoCaption2 = "Auli Snow Skiing Slopes";
                     } else if (d.route?.toLowerCase().includes("tungnath") || d.activities?.some((a: string) => a.toLowerCase().includes("tungnath"))) {
                       d.photoUrl = "/gallery/tungnath_temple_snow.jpg";
                       d.photoCaption = "Highest Shiva Shrine Tungnath in Winter Snow";
@@ -4429,7 +4411,7 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
 };
 
   const renderDayCard = (day: DayPlan, dIdx: number, isShortTour: boolean) => {
-    // Resolve day photos (explicit or smart keyword-based matching)
+    // Resolve day photo specifically matching what is visited on that day
     const primaryPhotoUrl = day.photoUrl || (
       day.route.toLowerCase().includes("auli") || day.activities.some(a => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing") || a.toLowerCase().includes("cable car"))
         ? "/gallery/auli_ropeway.jpg"
@@ -4437,43 +4419,42 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
         ? "/gallery/tungnath_temple_snow.jpg"
         : day.route.toLowerCase().includes("chandrashila") || day.activities.some(a => a.toLowerCase().includes("chandrashila"))
         ? "/gallery/chandrashila_summit.jpg"
-        : day.route.toLowerCase().includes("chopta") || day.activities.some(a => a.toLowerCase().includes("chopta"))
-        ? "/gallery/chopta_snow_meadows.jpg"
+        : day.route.toLowerCase().includes("kempty") || day.activities.some(a => a.toLowerCase().includes("kempty"))
+        ? "/gallery/kempty_falls.avif"
         : day.route.toLowerCase().includes("mussoorie") || day.activities.some(a => a.toLowerCase().includes("mussoorie") || a.toLowerCase().includes("mall road") || a.toLowerCase().includes("winterline"))
         ? "/gallery/mussoorie_winterline.jpeg"
+        : day.route.toLowerCase().includes("chopta") || day.activities.some(a => a.toLowerCase().includes("chopta"))
+        ? "/gallery/chopta_snow_meadows.jpg"
         : day.route.toLowerCase().includes("rishikesh") || day.activities.some(a => a.toLowerCase().includes("rishikesh") || a.toLowerCase().includes("aarti") || a.toLowerCase().includes("jhula"))
         ? "/gallery/rishikesh_ganga_aarti.webp"
+        : day.route.toLowerCase().includes("dhari devi") || day.activities.some(a => a.toLowerCase().includes("dhari devi"))
+        ? "/gallery/chardham_10d_img_18.jpg"
+        : day.route.toLowerCase().includes("devprayag") || day.activities.some(a => a.toLowerCase().includes("devprayag"))
+        ? "/gallery/day1_ukhimath_devprayag_banner.jpg"
         : day.route.toLowerCase().includes("joshimath") || day.activities.some(a => a.toLowerCase().includes("joshimath"))
         ? "/gallery/joshimath_stay.jpeg"
         : day.route.toLowerCase().includes("ukhimath") || day.activities.some(a => a.toLowerCase().includes("ukhimath"))
         ? "/gallery/ukhimath_temple.png"
         : data.photos && data.photos[dIdx]
         ? data.photos[dIdx].url
-        : null
+        : "/gallery/day1_ukhimath_devprayag_banner.jpg"
     );
-
-    const isDayBanner = !!(day.bannerPhotoUrl || primaryPhotoUrl?.includes("banner") || primaryPhotoUrl?.includes("ukhimath_devprayag"));
 
     const primaryCaption = day.photoCaption || (
-      isDayBanner 
-        ? "Ukhimath Shri Omkareshwar Temple & Devprayag Sangam" 
-        : (data.photos?.find(p => p.url === primaryPhotoUrl)?.caption || `Day ${day.dayNumber} Sightseeing Highlight`)
-    );
-
-    const secondaryPhotoUrl = isDayBanner ? null : day.photoUrl2 || (
-      day.route.toLowerCase().includes("auli") && primaryPhotoUrl !== "/gallery/auli_skiing.jpg" ? "/gallery/auli_skiing.jpg" :
-      day.route.toLowerCase().includes("tungnath") && primaryPhotoUrl !== "/gallery/chandrashila_summit.jpg" ? "/gallery/chandrashila_summit.jpg" :
-      day.route.toLowerCase().includes("mussoorie") && primaryPhotoUrl !== "/gallery/mussoorie_mall_road.webp" ? "/gallery/mussoorie_mall_road.webp" :
-      day.route.toLowerCase().includes("rishikesh") && !day.route.toLowerCase().includes("chopta") && !day.route.toLowerCase().includes("ukhimath") && primaryPhotoUrl !== "/gallery/rishikesh_ram_jhula.png" ? "/gallery/rishikesh_ram_jhula.png" : null
-    );
-
-    const secondaryCaption = day.photoCaption2 || (
-      data.photos?.find(p => p.url === secondaryPhotoUrl)?.caption || (
-        secondaryPhotoUrl === "/gallery/auli_skiing.jpg" ? "Thrilling Auli Snow Skiing & Slopes" :
-        secondaryPhotoUrl === "/gallery/chandrashila_summit.jpg" ? "Chandrashila 360° Himalayan Panorama" :
-        secondaryPhotoUrl === "/gallery/mussoorie_mall_road.webp" ? "Mussoorie Mall Road & Misty Hills" :
-        secondaryPhotoUrl === "/gallery/rishikesh_ram_jhula.png" ? "Sacred Ram Jhula over Ganga" : ""
-      )
+      primaryPhotoUrl?.includes("day1_ukhimath") ? "Devprayag Sangam & Scenic Mountain Route" :
+      primaryPhotoUrl?.includes("auli_ropeway") ? "Auli Cable Car (Asia's Longest Ropeway) & Snow Slopes" :
+      primaryPhotoUrl?.includes("auli_skiing") ? "Thrilling Auli Snow Skiing & Slopes" :
+      primaryPhotoUrl?.includes("tungnath_temple") ? "Highest Shiva Shrine Shri Tungnath in Winter Snow (12,073 Ft)" :
+      primaryPhotoUrl?.includes("chandrashila") ? "Chandrashila Summit 360° Himalayan Panorama (13,123 Ft)" :
+      primaryPhotoUrl?.includes("chopta_snow") ? "Chopta Snow-Covered Alpine Meadows (Mini Switzerland)" :
+      primaryPhotoUrl?.includes("mussoorie_winterline") ? "Mussoorie 'Queen of the Hills' & Rare Winterline Sunset" :
+      primaryPhotoUrl?.includes("kempty_falls") ? "Cascading Kempty Falls & Scenic Mountain Vistas" :
+      primaryPhotoUrl?.includes("rishikesh_ganga") ? "Divine Maha Ganga Aarti at Triveni Ghat Rishikesh" :
+      primaryPhotoUrl?.includes("chardham_10d_img_18") ? "Sacred Maa Dhari Devi Temple on River Alaknanda" :
+      primaryPhotoUrl?.includes("chardham_10d_img_19") ? "Devprayag Sangam - Holy Confluence of Bhagirathi & Alaknanda" :
+      primaryPhotoUrl?.includes("joshimath") ? "Scenic Alaknanda Valley Route to Joshimath Gateway" :
+      primaryPhotoUrl?.includes("ukhimath_temple") ? "Historic Shri Omkareshwar Temple Ukhimath (Winter Seat of Kedarnath)" :
+      `Day ${day.dayNumber} Sightseeing & Excursion Highlight`
     );
 
     return (
@@ -4537,79 +4518,33 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
               ))}
             </ul>
 
-            {/* Day Related Photo Banner (Panorama) or Standard Photo Strip right after activities */}
-            {isDayBanner ? (
+            {/* Single Full-Width Horizontal Panoramic Picture for the Day */}
+            {primaryPhotoUrl && (
               <div className="pt-0.5 border-t border-sky-100/90">
                 <div className="w-full h-16 sm:h-[68px] rounded-lg overflow-hidden border border-sky-300/90 bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 shadow-2xs relative flex items-center justify-center p-0.5">
                   <img 
-                    src={day.bannerPhotoUrl || primaryPhotoUrl || "/gallery/day1_ukhimath_devprayag_banner.jpg"} 
+                    src={primaryPhotoUrl} 
                     alt="" 
                     aria-hidden="true" 
                     className="absolute inset-0 w-full h-full object-cover opacity-25 filter blur-xs"
                   />
                   <img 
-                    src={day.bannerPhotoUrl || primaryPhotoUrl || "/gallery/day1_ukhimath_devprayag_banner.jpg"} 
-                    alt={primaryCaption || `Day ${day.dayNumber} Sightseeing Excursion`} 
-                    className="relative z-10 max-h-full max-w-full object-contain drop-shadow-sm"
-                  />
-                  <span className="absolute bottom-1 right-1.5 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
-                    Day {day.dayNumber} Excursion
-                  </span>
-                </div>
-              </div>
-            ) : primaryPhotoUrl ? (
-              <div className="pt-0.5 border-t border-sky-100/90 flex items-center gap-2 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1 rounded-lg">
-                <div className={`${secondaryPhotoUrl ? 'w-24 h-12' : 'w-28 h-14'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
-                  <img 
-                    src={primaryPhotoUrl} 
-                    alt="" 
-                    aria-hidden="true" 
-                    className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                  />
-                  <img 
                     src={primaryPhotoUrl} 
                     alt={primaryCaption} 
-                    className="relative z-10 max-h-full max-w-full object-cover"
+                    className="relative z-10 max-h-full max-w-full object-contain drop-shadow-sm"
                   />
-                  <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
-                    Day {day.dayNumber}
-                  </span>
-                </div>
-
-                {secondaryPhotoUrl && (
-                  <div className="w-24 h-12 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
-                    <img 
-                      src={secondaryPhotoUrl} 
-                      alt="" 
-                      aria-hidden="true" 
-                      className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                    />
-                    <img 
-                      src={secondaryPhotoUrl} 
-                      alt={secondaryCaption} 
-                      className="relative z-10 max-h-full max-w-full object-cover"
-                    />
-                    <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
-                      Day {day.dayNumber}
+                  <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/90 via-black/55 to-transparent pt-3 pb-1 px-2.5 flex items-center justify-between text-white pointer-events-none">
+                    <span className="text-[9px] font-bold tracking-wide text-sky-100 truncate max-w-[75%] flex items-center gap-1 drop-shadow-xs">
+                      <span>📸</span>
+                      <span>{primaryCaption}</span>
+                    </span>
+                    <span className="text-[7.5px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#0369a1] text-white border border-sky-400/40 shadow-xs shrink-0">
+                      Day {day.dayNumber} Excursion
                     </span>
                   </div>
-                )}
-
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                  <p className="text-[10.5px] font-black text-[#0369a1] flex items-center gap-1">
-                    <span>📸 Day {day.dayNumber} Sightseeing & Excursion</span>
-                  </p>
-                  <p className="text-[10.5px] text-gray-950 font-bold mt-0.5 leading-snug line-clamp-1">
-                    {primaryCaption}
-                  </p>
-                  {secondaryCaption && (
-                    <p className="text-[9.5px] text-gray-700 font-semibold mt-0.5 leading-snug line-clamp-1">
-                      • {secondaryCaption}
-                    </p>
-                  )}
                 </div>
               </div>
-            ) : null}
+            )}
           </div>
         ) : (
           <ul className="pl-3 space-y-0.5 text-gray-950 text-[11px] font-medium leading-snug">
