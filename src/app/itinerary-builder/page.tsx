@@ -2550,6 +2550,7 @@ export default function ItineraryBuilder() {
   const [isWaModalOpen, setIsWaModalOpen] = useState(false);
   const [waRecipientPhone, setWaRecipientPhone] = useState("");
   const [waRecipientName, setWaRecipientName] = useState("");
+  const [waTextOption, setWaTextOption] = useState<"none" | "short" | "full">("none");
   const [isGeneratingWaPdf, setIsGeneratingWaPdf] = useState(false);
   const [waShareSuccess, setWaShareSuccess] = useState<string | null>(null);
   const [copiedWaText, setCopiedWaText] = useState(false);
@@ -4087,21 +4088,33 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
     }
   };
 
+  // Get final WhatsApp text based on user preference ("none" | "short" | "full")
+  const getFinalWhatsAppText = () => {
+    if (waTextOption === "none") return "";
+    if (waTextOption === "short") {
+      return `🙏 Greetings! Here is the official PDF travel itinerary for *${data.title}* (${data.duration}) · *Travel to Uttarakhand* (+91 97190 38278).`;
+    }
+    return buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
+  };
+
   // ⚡ 1-Click Direct Attach PDF & Send (Zero Manual Download to PC)
   const handleDirectWhatsAppShare = async () => {
     try {
       setIsGeneratingWaPdf(true);
       setWaShareSuccess(null);
       const { pdf, filename, file } = await generateItineraryPdfInstance();
-      const text = buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
+      const text = getFinalWhatsAppText();
 
       // Check if navigator.share with files is supported (Windows Edge/Chrome, Mobile, Mac)
       if (typeof navigator !== "undefined" && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({
+        const shareData: any = {
           title: `${data.title} - Travel to Uttarakhand`,
-          text: text,
           files: [file]
-        });
+        };
+        if (text) {
+          shareData.text = text;
+        }
+        await navigator.share(shareData);
         setWaShareSuccess("PDF Itinerary successfully shared to WhatsApp!");
         setTimeout(() => setWaShareSuccess(null), 5000);
       } else {
@@ -4112,8 +4125,12 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
         const cleanPhone = waRecipientPhone.replace(/[^0-9]/g, "");
         const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
         const waUrl = formattedPhone 
-          ? `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(text)}`
-          : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+          ? (text 
+              ? `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(text)}`
+              : `https://web.whatsapp.com/send?phone=${formattedPhone}`)
+          : (text 
+              ? `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`
+              : `https://web.whatsapp.com/`);
         
         window.open(waUrl, "_blank");
         setWaShareSuccess("WhatsApp Web chat open ho gaya hai aur PDF ready hai! PDF ko direct chat me drag ya attach karein.");
@@ -4134,12 +4151,16 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
     try {
       setIsGeneratingWaPdf(true);
       setWaShareSuccess(null);
-      const text = buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
+      const text = getFinalWhatsAppText();
       const cleanPhone = waRecipientPhone.replace(/[^0-9]/g, "");
       const formattedPhone = cleanPhone.length === 10 ? `91${cleanPhone}` : cleanPhone;
       const waUrl = formattedPhone 
-        ? `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(text)}`
-        : `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        ? (text 
+            ? `https://web.whatsapp.com/send?phone=${formattedPhone}&text=${encodeURIComponent(text)}`
+            : `https://web.whatsapp.com/send?phone=${formattedPhone}`)
+        : (text 
+            ? `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`
+            : `https://web.whatsapp.com/`);
 
       // Generate PDF in background and place in download shelf for instant drag-and-drop into WhatsApp Web
       const { pdf, filename } = await generateItineraryPdfInstance();
@@ -4157,7 +4178,7 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
 
   // 📋 Copy Formatted WhatsApp Text
   const handleCopyWhatsAppText = () => {
-    const text = buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
+    const text = getFinalWhatsAppText() || buildWhatsAppMessage(data, waRecipientName, waRecipientPhone);
     navigator.clipboard.writeText(text);
     setCopiedWaText(true);
     setTimeout(() => setCopiedWaText(false), 2500);
@@ -8409,6 +8430,58 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
                 </div>
               )}
 
+              {/* Message Text Preference (Optional written copy) */}
+              <div className="bg-gray-50/90 border border-gray-200 rounded-xl p-3.5 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-black text-gray-900 text-xs flex items-center gap-1.5">
+                    <FileText className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>WhatsApp Message Text (Kya written text bhejna hai?):</span>
+                  </span>
+                  <span className="text-[10px] text-gray-500 font-bold">
+                    {waTextOption === "none" ? "🚫 Sirf PDF File Jayegi (No Written Copy)" : waTextOption === "short" ? "💬 1-Line Caption Jayega" : "📋 Detailed Tour Summary Jayegi"}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 p-1 bg-gray-200/70 rounded-xl text-center font-bold text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setWaTextOption("none")}
+                    className={`py-2 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                      waTextOption === "none" 
+                        ? "bg-white text-emerald-800 shadow-xs ring-1 ring-emerald-500/30 font-black" 
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <span>📄 Only PDF File</span>
+                    <span className="text-[9px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full font-bold">No Text</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWaTextOption("short")}
+                    className={`py-2 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                      waTextOption === "short" 
+                        ? "bg-white text-emerald-800 shadow-xs ring-1 ring-emerald-500/30 font-black" 
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <span>💬 Short Caption</span>
+                    <span className="text-[9px] bg-sky-100 text-sky-800 px-1.5 py-0.2 rounded-full font-bold">1-Line</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setWaTextOption("full")}
+                    className={`py-2 px-2 rounded-lg transition cursor-pointer flex items-center justify-center gap-1.5 ${
+                      waTextOption === "full" 
+                        ? "bg-white text-emerald-800 shadow-xs ring-1 ring-emerald-500/30 font-black" 
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <span>📋 Full Proposal</span>
+                    <span className="text-[9px] bg-purple-100 text-purple-800 px-1.5 py-0.2 rounded-full font-bold">Details</span>
+                  </button>
+                </div>
+              </div>
+
               {/* ACTION BUTTONS (The core feature requested by user) */}
               <div className="space-y-2.5 pt-1">
                 <p className="text-[11px] font-black uppercase tracking-wider text-gray-500">
@@ -8433,7 +8506,9 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
                       </span>
                     </div>
                     <p className="text-[11px] text-emerald-100 font-medium leading-relaxed">
-                      PDF file ready karke direct WhatsApp me attach karke send karein bina PC me download kiye.
+                      {waTextOption === "none" 
+                        ? "Sirf 4-page PDF document direct WhatsApp me attach hoke share hoga (Zero written text)."
+                        : "PDF file + aapka selected text caption direct WhatsApp chat me attach hoke share hoga."}
                     </p>
                   </button>
 
@@ -8454,40 +8529,51 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
                       </span>
                     </div>
                     <p className="text-[11px] text-sky-100 font-medium leading-relaxed">
-                      Direct {waRecipientPhone ? `+91 ${waRecipientPhone}` : "Client"} ka chat khul jayega full proposal text aur ready PDF ke saath.
+                      Direct {waRecipientPhone ? `+91 ${waRecipientPhone}` : "Client"} ka WhatsApp Web chat khulega aur PDF tray me ready rahegi 1-second drag-drop ke liye.
                     </p>
                   </button>
                 </div>
 
-                {/* Additional utility: Copy text */}
-                <div className="flex items-center justify-between pt-1">
-                  <button
-                    type="button"
-                    onClick={handleCopyWhatsAppText}
-                    className="text-gray-600 hover:text-gray-900 font-bold text-xs flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition cursor-pointer"
-                  >
-                    <Check className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{copiedWaText ? "Proposal Copied!" : "Copy Proposal Text"}</span>
-                  </button>
-                  <span className="text-[10.5px] text-gray-500 italic">
-                    Includes all 4-Page details, rates, route &amp; contact
-                  </span>
-                </div>
+                {/* Additional utility: Copy text (only when text is selected) */}
+                {waTextOption !== "none" && (
+                  <div className="flex items-center justify-between pt-1">
+                    <button
+                      type="button"
+                      onClick={handleCopyWhatsAppText}
+                      className="text-gray-600 hover:text-gray-900 font-bold text-xs flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg transition cursor-pointer"
+                    >
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>{copiedWaText ? "Copied!" : "Copy Caption Text"}</span>
+                    </button>
+                    <span className="text-[10.5px] text-gray-500 italic">
+                      Copy proposal text to clipboard
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* Message Live Preview Accordion */}
-              <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-2xs">
-                <div className="p-2.5 bg-gray-100 border-b border-gray-200 flex items-center justify-between font-bold text-xs text-gray-700">
-                  <span className="flex items-center gap-1.5">
-                    <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>WhatsApp Message Preview (Pre-Formatted)</span>
+              {waTextOption !== "none" ? (
+                <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+                  <div className="p-2.5 bg-gray-100 border-b border-gray-200 flex items-center justify-between font-bold text-xs text-gray-700">
+                    <span className="flex items-center gap-1.5">
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>WhatsApp Message Preview ({waTextOption === "short" ? "Short 1-Line" : "Full Proposal"})</span>
+                    </span>
+                    <span className="text-[10px] text-gray-500 font-normal">Formatted for WhatsApp font &amp; emojis</span>
+                  </div>
+                  <div className="p-3 max-h-36 overflow-y-auto bg-slate-50 font-mono text-[11px] text-gray-800 whitespace-pre-wrap select-all custom-scrollbar leading-relaxed">
+                    {getFinalWhatsAppText()}
+                  </div>
+                </div>
+              ) : (
+                <div className="p-3 bg-emerald-50/80 border border-emerald-200 rounded-xl flex items-center gap-2.5 text-xs text-emerald-950">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>
+                    <strong className="font-bold">Clean Mode Active:</strong> Chat me koi bhi written copy / message text nahi jayega, bas aapka 4-page official PDF brochure direct send hoga.
                   </span>
-                  <span className="text-[10px] text-gray-500 font-normal">Formatted for WhatsApp font &amp; emojis</span>
                 </div>
-                <div className="p-3 max-h-40 overflow-y-auto bg-slate-50 font-mono text-[11px] text-gray-800 whitespace-pre-wrap select-all custom-scrollbar leading-relaxed">
-                  {buildWhatsAppMessage(data, waRecipientName, waRecipientPhone)}
-                </div>
-              </div>
+              )}
 
             </div>
 
