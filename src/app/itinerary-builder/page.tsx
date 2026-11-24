@@ -819,7 +819,7 @@ export function DynamicQrCodeSuite({
   customUpiId?: string;
   mode?: "all" | "whatsapp" | "maps" | "upi";
 }) {
-  const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "918266016066";
+  const cleanPhone = phone ? phone.replace(/[^0-9]/g, "") : "919719038278";
   const whatsappUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding the ${title} itinerary`)}`;
   const mapsUrl = `https://maps.google.com/?q=Haridwar+to+Ukhimath+to+Chopta+to+Tungnath+to+Joshimath+to+Auli`;
   const upiId = customUpiId || "traveltouttarakhand@sbi";
@@ -864,7 +864,7 @@ export function DynamicQrCodeSuite({
               Scan to Chat Live
             </p>
             <p className="text-[9px] text-gray-500 font-medium line-clamp-1 mt-0.5">
-              Direct Yatra Specialist ({phone || "+91 82660 16066"})
+              Direct Yatra Specialist ({phone || "+91 97190 38278"})
             </p>
             <span className="inline-block mt-1 text-[8.5px] font-bold text-emerald-800 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
               Tap / Scan ➔
@@ -4210,10 +4210,10 @@ ${data.motto}`;
         <div className="flex items-center gap-2">
           <span>Travel to Uttarakhand · {data.contactPhone}</span>
           <a
-            href={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "918266016066"}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding ${data.title}`)}`}
+            href={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "919719038278"}?text=${encodeURIComponent(`Hi Travel to Uttarakhand, I have an inquiry regarding ${data.title}`)}`}
             target="_blank"
             rel="noopener noreferrer"
-            data-pdf-link={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "918266016066"}`}
+            data-pdf-link={`https://wa.me/${data.contactPhone?.replace(/[^0-9]/g, "") || "919719038278"}`}
             className="text-[9.5px] font-black text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded-full border border-emerald-300 flex items-center gap-1 transition"
           >
             <QrCode className="w-3 h-3 text-emerald-600" />

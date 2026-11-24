@@ -19,8 +19,7 @@ import {
   FolderArchive,
   MessageSquare,
   Calculator,
-  ChevronRight,
-  Bike
+  ChevronRight
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -43,17 +42,16 @@ const navigationSections: NavSection[] = [
     items: [
       { name: "Yatra Dashboard", href: "/", icon: LayoutDashboard },
       { name: "Chardham Itineraries", href: "/itinerary-builder", icon: Map, badge: "Hub", badgeType: "default" },
-      { name: "Bike & Scooty Rentals", href: "/transport", icon: Bike, badge: "Haridwar", badgeType: "muted" },
       { name: "Documents & Vouchers", href: "/documents", icon: FolderArchive },
-      { name: "Hotel Vouchers", href: "/hotels", icon: Hotel },
-      { name: "Fleet & Transport", href: "/transport", icon: Car },
+      { name: "Hotel Service Vouchers", href: "/hotels", icon: Hotel },
+      { name: "Transport Vouchers", href: "/transport", icon: Car },
     ],
   },
   {
     title: "Commercials & Leads",
     items: [
       { name: "Trip Cost Calculator", href: "/quotation-calculator", icon: Calculator },
-      { name: "Payment Receipts", href: "/invoices", icon: FileText },
+      { name: "Yatra Invoices & Billing", href: "/invoices", icon: FileText },
       { name: "Pilgrim Leads", href: "/leads", icon: Users },
       { name: "WhatsApp Live Desk", href: "/whatsapp-desk", icon: MessageSquare, badge: "Live", badgeType: "live" },
     ],
@@ -79,17 +77,17 @@ export function Sidebar() {
       <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-[#0b1329] border-b border-slate-800 z-50 flex items-center justify-between px-4 shadow-md">
         <Link href="/" className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-lg bg-white border border-slate-700/80 p-0.5 flex items-center justify-center shadow-sm">
-            <img src="/logo.png" alt="Traymbhkam" className="h-full w-full object-contain" />
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-full w-full object-contain" />
           </div>
           <div className="flex flex-col">
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold text-white tracking-tight">Traymbhkam</span>
-              <span className="px-1 py-0.2 rounded text-[8.5px] font-extrabold bg-amber-500/20 text-amber-400 border border-amber-500/30">
-                EST. 2022
+              <span className="text-sm font-bold text-white tracking-tight">Travel to Uttarakhand</span>
+              <span className="px-1 py-0.2 rounded text-[8.5px] font-extrabold bg-sky-500/20 text-sky-400 border border-sky-500/30">
+                STUDIO
               </span>
             </div>
             <span className="text-[9px] uppercase font-bold tracking-wider text-slate-400">
-              TOUR &amp; TRAVELS • HARIDWAR
+              TOURISM &amp; CRM • HARIDWAR
             </span>
           </div>
         </Link>
@@ -122,21 +120,21 @@ export function Sidebar() {
             <div className="w-10 h-10 rounded-xl bg-white border border-slate-700/60 shadow-md flex items-center justify-center p-1 group-hover:scale-105 transition-transform shrink-0">
               <img 
                 src="/logo.png" 
-                alt="Traymbhkam" 
+                alt="Travel to Uttarakhand" 
                 className="h-full w-full object-contain" 
               />
             </div>
             <div className="flex flex-col min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-[14.5px] font-bold text-white tracking-tight leading-tight group-hover:text-amber-300 transition-colors">
-                  Traymbhkam
+                <span className="text-[14.5px] font-bold text-white tracking-tight leading-tight group-hover:text-sky-300 transition-colors truncate">
+                  Travel to Uttarakhand
                 </span>
-                <span className="px-1.5 py-0.5 rounded text-[8.5px] font-black bg-amber-500/20 text-amber-400 border border-amber-500/30 tracking-tight">
-                  EST. 2022
+                <span className="px-1.5 py-0.5 rounded text-[8.5px] font-black bg-sky-500/20 text-sky-400 border border-sky-500/30 tracking-tight shrink-0">
+                  STUDIO
                 </span>
               </div>
               <span className="text-[9.5px] font-bold uppercase tracking-widest text-slate-400 mt-0.5">
-                TOUR &amp; TRAVELS • HARIDWAR
+                TOURISM &amp; CRM • HARIDWAR
               </span>
             </div>
           </Link>
@@ -165,13 +163,13 @@ export function Sidebar() {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-xl transition-all duration-150 group ${
                       isActive
-                        ? "bg-gradient-to-r from-amber-500/15 via-amber-500/10 to-transparent border border-amber-500/40 text-amber-300 font-bold shadow-xs"
+                        ? "bg-gradient-to-r from-sky-500/20 via-sky-500/10 to-transparent border border-sky-500/40 text-sky-300 font-bold shadow-xs"
                         : "text-slate-300 hover:text-white hover:bg-slate-800/60 border border-transparent"
                     }`}
                   >
                     <item.icon
                       className={`w-4 h-4 transition-transform duration-150 group-hover:scale-105 shrink-0 ${
-                        isActive ? "text-amber-400" : "text-slate-400 group-hover:text-slate-200"
+                        isActive ? "text-sky-400" : "text-slate-400 group-hover:text-slate-200"
                       }`}
                     />
                     <span className="truncate">{item.name}</span>
@@ -196,7 +194,7 @@ export function Sidebar() {
 
                     {/* Active Chevron Indicator */}
                     {isActive && !item.badge && (
-                      <ChevronRight className="w-3.5 h-3.5 text-amber-400/80 ml-auto shrink-0" />
+                      <ChevronRight className="w-3.5 h-3.5 text-sky-400/80 ml-auto shrink-0" />
                     )}
                   </Link>
                 );
@@ -208,15 +206,15 @@ export function Sidebar() {
         {/* Bottom Profile Area */}
         <div className="p-3 border-t border-slate-800/80 bg-[#070d19] flex items-center justify-between gap-2">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-amber-500 text-slate-950 font-black flex items-center justify-center text-xs shadow-md shrink-0">
-              {user?.name ? user.name.charAt(0).toUpperCase() : "G"}
+            <div className="w-8 h-8 rounded-lg bg-[#0284c7] text-white font-black flex items-center justify-center text-xs shadow-md shrink-0">
+              {user?.name ? user.name.charAt(0).toUpperCase() : "A"}
             </div>
             <div className="flex flex-col min-w-0">
               <span className="text-xs font-bold text-white truncate">
-                {user?.name || "Mr. Gagandeep"}
+                {user?.name || "Mr. Amit kumar"}
               </span>
               <span className="text-[10px] text-slate-400 truncate">
-                Haridwar Operations
+                {user?.email || "admin@traveltouttrakhand.com"}
               </span>
             </div>
           </div>

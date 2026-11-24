@@ -36,21 +36,25 @@ export function CrmLayout({ children }: { children: React.ReactNode }) {
         <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 md:px-6 py-2.5 flex items-center justify-between shadow-2xs">
           <GlobalSearch />
           <div className="flex items-center gap-2.5 text-xs">
-            <div className="hidden xl:flex items-center gap-1.5 text-slate-700 bg-amber-50/70 border border-amber-200/70 px-2.5 py-1 rounded-lg font-medium text-[11.5px]">
-              <MapPin className="w-3.5 h-3.5 text-amber-600" />
-              <span>Haridwar Station Gate 2</span>
-            </div>
             <a 
-              href="tel:+918266016066" 
-              className="hidden lg:flex items-center gap-1.5 text-amber-900 bg-amber-500/10 border border-amber-300/60 px-2.5 py-1 rounded-lg font-bold text-[11.5px] hover:bg-amber-500/15 transition"
+              href="https://traveltouttrakhand.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="hidden md:flex items-center gap-1.5 text-sky-700 font-semibold bg-sky-50 border border-sky-200/80 px-2.5 py-1 rounded-lg hover:bg-sky-100 transition"
             >
-              <Phone className="w-3.5 h-3.5 text-amber-600" />
-              <span>+91 82660 16066</span>
+              🌐 traveltouttrakhand.com
             </a>
-            <span className="hidden lg:inline text-gray-200">|</span>
+            <a 
+              href="tel:+919719038278" 
+              className="hidden lg:flex items-center gap-1.5 text-sky-800 bg-sky-50/70 border border-sky-200 px-2.5 py-1 rounded-lg font-bold text-[11.5px] hover:bg-sky-100 transition"
+            >
+              <Phone className="w-3.5 h-3.5 text-sky-600" />
+              <span>+91 97190 38278</span>
+            </a>
+            <span className="hidden sm:inline text-gray-200">|</span>
             <div className="flex items-center gap-2">
               <span className="text-gray-800 font-bold hidden sm:inline">
-                {user?.name || "Mr. Gagandeep"}
+                {user?.name || "Mr. Amit kumar"}
               </span>
               <button
                 onClick={logout}

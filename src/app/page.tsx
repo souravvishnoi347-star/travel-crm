@@ -15,7 +15,6 @@ import {
   CheckCircle2, 
   Clock,
   ArrowRight,
-  Bike,
   Compass
 } from "lucide-react";
 import Link from "next/link";
@@ -170,12 +169,12 @@ export default function Dashboard() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto pb-12">
       
-      {/* Welcome & Action Header (Matching Inspiration Screenshot) */}
+      {/* Welcome & Action Header (Travel to Uttarakhand Official CRM) */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-[10px] font-extrabold uppercase tracking-widest text-amber-800 bg-amber-500/15 border border-amber-500/30 px-2 py-0.5 rounded-md">
-              TRAYMBHKAM TOUR &amp; TRAVELS
+            <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0369a1] bg-sky-500/15 border border-sky-500/30 px-2 py-0.5 rounded-md">
+              TRAVEL TO UTTARAKHAND
             </span>
             <span className="text-[11px] font-semibold text-slate-500">
               • Haridwar Operations Desk
@@ -185,33 +184,27 @@ export default function Dashboard() {
             Yatra Operations Dashboard
           </h1>
           <p className="text-gray-500 mt-0.5 text-xs sm:text-sm">
-            Welcome, Mr. Gagandeep • Chardham Pilgrimage Bookings, Vouchers &amp; Billing Desk
+            Welcome, Mr. Amit kumar • Chardham Pilgrimage Bookings, Vouchers &amp; Billing Desk
           </p>
         </div>
         <div className="flex items-center flex-wrap gap-2">
           <Link 
-            href="/transport" 
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100 text-amber-900 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
-          >
-            <Bike size={14} className="text-amber-700" /> Bike Desk
-          </Link>
-          <Link 
             href="/invoices" 
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100 text-amber-900 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-sky-50/70 border border-sky-200/80 hover:bg-sky-100 text-[#0369a1] rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
           >
-            <FileText size={14} className="text-amber-700" /> Quick Invoice
+            <FileText size={14} className="text-[#0284c7]" /> Quick Invoice
           </Link>
           <Link 
             href="/transport" 
-            className="inline-flex items-center gap-1.5 px-3 py-2 bg-amber-50/70 border border-amber-200/80 hover:bg-amber-100 text-amber-900 rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-2 bg-sky-50/70 border border-sky-200/80 hover:bg-sky-100 text-[#0369a1] rounded-xl font-semibold text-xs shadow-2xs transition cursor-pointer"
           >
-            <Car size={14} className="text-amber-700" /> Fleet Voucher
+            <Car size={14} className="text-[#0284c7]" /> Fleet Voucher
           </Link>
           <Link 
             href="/itinerary-builder" 
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#090f1d] hover:bg-slate-900 text-white rounded-xl font-bold text-xs shadow-sm border border-slate-700/60 transition cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white rounded-xl font-bold text-xs shadow-sm transition cursor-pointer"
           >
-            <Plus size={14} className="text-amber-400" /> + New Proposal
+            <Plus size={14} className="text-white" /> + Create Itinerary
           </Link>
         </div>
       </div>
@@ -220,10 +213,10 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
         
         {/* KPI 1: Active Inquiries */}
-        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-amber-300 transition-all">
+        <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-2xs hover:border-sky-300 transition-all">
           <div className="flex items-center justify-between mb-2">
             <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Active Inquiries</span>
-            <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-sky-50 text-[#0284c7] flex items-center justify-center">
               <Users size={17} />
             </div>
           </div>
@@ -281,23 +274,23 @@ export default function Dashboard() {
 
       </div>
 
-      {/* Chardham Yatra Circuit Presets • Haridwar Departures (From Inspiration Screenshot) */}
+      {/* Chardham & Winter Yatra Circuit Presets • Haridwar Departures */}
       <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm">
         <div className="flex items-center justify-between mb-3.5">
           <div className="flex items-center gap-2">
-            <span className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center">
+            <span className="w-7 h-7 rounded-lg bg-sky-500/10 text-[#0284c7] flex items-center justify-center">
               <Compass size={16} />
             </span>
             <div>
               <h2 className="text-sm sm:text-base font-bold text-gray-900 flex items-center gap-1.5">
-                Chardham Yatra Circuit Presets <span className="text-gray-300 font-normal hidden sm:inline">•</span> <span className="text-gray-600 text-xs sm:text-sm font-semibold">Haridwar Departures</span>
+                Chardham &amp; Winter Circuit Presets <span className="text-gray-300 font-normal hidden sm:inline">•</span> <span className="text-gray-600 text-xs sm:text-sm font-semibold">Haridwar Departures</span>
               </h2>
               <p className="text-[11px] text-gray-500">Quick-launch customized package proposals for clients</p>
             </div>
           </div>
           <Link 
             href="/itinerary-builder" 
-            className="text-xs font-bold text-gray-800 hover:text-amber-700 flex items-center gap-1 hover:underline transition"
+            className="text-xs font-bold text-[#0369a1] hover:text-[#0284c7] flex items-center gap-1 hover:underline transition"
           >
             Itinerary Studio <ArrowRight size={13} />
           </Link>
@@ -356,18 +349,18 @@ export default function Dashboard() {
           ].map((preset, idx) => (
             <div 
               key={idx} 
-              className="p-3.5 rounded-xl border border-gray-100 hover:border-amber-300 hover:shadow-xs transition-all bg-gradient-to-b from-white to-amber-50/15 flex flex-col justify-between group"
+              className="p-3.5 rounded-xl border border-gray-100 hover:border-sky-300 hover:shadow-xs transition-all bg-gradient-to-b from-white to-sky-50/20 flex flex-col justify-between group"
             >
               <div>
                 <div className="flex items-center justify-between gap-1 mb-2">
-                  <span className="text-[9px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                  <span className="text-[9px] font-black uppercase tracking-tight px-1.5 py-0.5 rounded bg-sky-50 text-sky-800 border border-sky-200">
                     {preset.tag}
                   </span>
                   <span className="text-[10px] font-semibold text-gray-500">
                     {preset.duration}
                   </span>
                 </div>
-                <h3 className="font-bold text-gray-900 text-xs leading-snug group-hover:text-amber-800 transition-colors">
+                <h3 className="font-bold text-gray-900 text-xs leading-snug group-hover:text-[#0284c7] transition-colors">
                   {preset.title}
                 </h3>
                 <p className="text-[10px] text-gray-500 line-clamp-2 mt-1">
@@ -379,7 +372,7 @@ export default function Dashboard() {
                 <span className="text-gray-400 font-medium">{preset.hub}</span>
                 <Link 
                   href={preset.link} 
-                  className="font-bold text-amber-700 hover:text-amber-900 flex items-center gap-0.5"
+                  className="font-bold text-[#0284c7] hover:text-[#0369a1] flex items-center gap-0.5"
                 >
                   Configure <span className="text-xs">→</span>
                 </Link>
