@@ -4170,6 +4170,53 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
   // MODULAR PAGE RENDERERS (Identical across Preview & Print)
   // =========================================================
   
+  // Reusable Luxury Page Footer (Unified across all 4 pages)
+  const renderPageFooter = (pageNum: number, totalPages: number = 4) => (
+    <div className="relative z-10 border-t border-sky-200/90 pt-1.5 flex justify-between items-center text-[10.5px] text-gray-700 font-medium whitespace-nowrap bg-gradient-to-r from-sky-50/70 via-white to-sky-50/70 px-2.5 py-1 rounded-lg mt-auto shadow-2xs">
+      <div className="flex items-center gap-2">
+        <span className="font-serif font-black text-[#0369a1] text-[11px] tracking-wide">
+          {data.contactAgency}
+        </span>
+        <span className="text-gray-300">•</span>
+        <span className="font-bold text-gray-950 flex items-center gap-1 text-[10px]">
+          <span className="text-emerald-600">📞</span> {data.contactPhone}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2 text-[10px]">
+        <a 
+          href="https://traveltouttrakhand.com" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          data-pdf-link="https://traveltouttrakhand.com" 
+          className="font-bold text-[#0369a1] hover:underline flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-sky-200 shadow-2xs"
+        >
+          <span>🌐 traveltouttrakhand.com</span>
+        </a>
+        <span className="text-gray-300">•</span>
+        <a 
+          href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+          className="font-bold text-gray-800 hover:underline flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-rose-200 shadow-2xs"
+        >
+          <svg className="w-3 h-3 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
+            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span className="text-rose-700 font-bold">@traveltouttarakhand</span>
+        </a>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <span className="text-[8.5px] font-bold uppercase tracking-wider text-gray-500">Official Proposal</span>
+        <span className="bg-gradient-to-r from-[#0369a1] to-[#0284c7] text-white text-[9px] font-black tracking-wider px-2 py-0.5 rounded-full shadow-2xs">
+          Page {pageNum} of {totalPages}
+        </span>
+      </div>
+    </div>
+  );
+
   const renderPage1 = (prefix: string) => {
     // Cover banner is strictly shown only when useCoverBanner is true and coverBannerUrl is provided (defaults only for Auli+Chopta+Tungnath 5D)
     const isAuliChoptaTungnath = data.title.toLowerCase().includes("auli") && 
@@ -4378,34 +4425,7 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
       </div>
 
       {/* Page 1 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
-        <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <div className="flex items-center gap-3">
-          <a 
-            href="https://traveltouttrakhand.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://traveltouttrakhand.com" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
-          >
-            <span>🌐 www.traveltouttrakhand.com</span>
-          </a>
-          <span className="text-gray-300">•</span>
-          <a 
-            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/60 border border-sky-200/80 shadow-2xs"
-          >
-            <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span>YouTube: @traveltouttarakhand</span>
-          </a>
-        </div>
-        <span>Page 1 of 4</span>
-      </div>
+      {renderPageFooter(1)}
     </div>
   );
 };
@@ -4639,34 +4659,7 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
         </div>
 
       {/* Page 2 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
-        <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <div className="flex items-center gap-3">
-          <a 
-            href="https://traveltouttrakhand.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://traveltouttrakhand.com" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
-          >
-            <span>🌐 www.traveltouttrakhand.com</span>
-          </a>
-          <span className="text-gray-300">•</span>
-          <a 
-            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/60 border border-sky-200/80 shadow-2xs"
-          >
-            <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span>YouTube: @traveltouttarakhand</span>
-          </a>
-        </div>
-        <span>Page 2 of 4</span>
-      </div>
+      {renderPageFooter(2)}
     </div>
   );
 };
@@ -4987,34 +4980,7 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
         </div>
 
         {/* Page 3 Footer */}
-        <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
-          <span>Travel to Uttarakhand · {data.contactPhone}</span>
-          <div className="flex items-center gap-3">
-            <a 
-              href="https://traveltouttrakhand.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              data-pdf-link="https://traveltouttrakhand.com" 
-              className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
-            >
-              <span>🌐 www.traveltouttrakhand.com</span>
-            </a>
-            <span className="text-gray-300">•</span>
-            <a 
-              href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-              className="font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/60 border border-sky-200/80 shadow-2xs"
-            >
-              <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-              </svg>
-              <span>YouTube: @traveltouttarakhand</span>
-            </a>
-          </div>
-          <span>Page 3 of 4</span>
-        </div>
+        {renderPageFooter(3)}
       </div>
     );
   };
@@ -5203,71 +5169,123 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
           />
         )}
 
-        {/* For Bookings & Queries Center Box */}
-        <div className="flex flex-col items-center justify-center text-center pt-1">
-          <img src="/logo.png" alt="logo" className="h-12 w-auto object-contain mb-0.5 drop-shadow-xs" />
-          <p className="text-[9px] uppercase tracking-widest text-gray-600 font-black">For Bookings & Queries</p>
-          <h4 className="text-sm font-serif font-black text-[#0369a1]">{data.contactAgency}</h4>
-          <p className="text-[12px] text-gray-900 font-bold">{data.contactPerson}</p>
-          <p className="text-[12px] text-gray-950 font-black tracking-wider">{data.contactPhone}</p>
-          <div className="flex items-center justify-center gap-3 mt-0.5">
-            <a 
-              href="https://traveltouttrakhand.com" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              data-pdf-link="https://traveltouttrakhand.com" 
-              className="text-[11.5px] text-[#0369a1] font-bold tracking-wider hover:underline"
-            >
-              🌐 www.traveltouttrakhand.com
-            </a>
-            <span className="text-gray-300">•</span>
-            <a 
-              href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-              className="text-[11.5px] font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/70 border border-sky-200"
-            >
-              <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
-                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-              </svg>
-              <span>YouTube: @traveltouttarakhand</span>
-            </a>
+        {/* Executive Authorized Booking & Support Desk Card */}
+        <div className="relative rounded-2xl border border-sky-300/80 bg-gradient-to-br from-sky-50/90 via-white to-blue-50/70 p-2.5 sm:p-3 shadow-xs overflow-hidden mt-1">
+          {/* Decorative Background Accents */}
+          <div className="absolute top-0 right-0 -mr-6 -mt-6 w-24 h-24 bg-sky-200/30 rounded-full blur-xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 -ml-6 -mb-6 w-24 h-24 bg-blue-200/25 rounded-full blur-xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col gap-2">
+            {/* Top Row: Official Agency Branding & Govt Regd Badge */}
+            <div className="flex items-center justify-between border-b border-sky-200/70 pb-1.5">
+              <div className="flex items-center gap-2.5">
+                <img src="/logo.png" alt="logo" className="h-10 w-auto object-contain drop-shadow-xs" />
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-[13px] font-serif font-black text-[#0369a1] leading-tight tracking-wide">
+                      {data.contactAgency}
+                    </h4>
+                    <span className="text-[8px] font-black uppercase tracking-wider text-sky-800 bg-sky-100/90 px-1.5 py-0.2 rounded border border-sky-200">
+                      Haridwar Desk
+                    </span>
+                  </div>
+                  <p className="text-[8.5px] text-gray-600 font-semibold mt-0.5">
+                    Shop 38, Pursharthi Market, Near Haridwar Railway Station
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right flex flex-col items-end gap-0.5">
+                <span className="inline-flex items-center gap-1 text-[8px] font-black text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-2 py-0.5 rounded-full shadow-2xs">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse" />
+                  <span>✓ Govt. Registered Tour Operator</span>
+                </span>
+                <span className="text-[7.5px] text-gray-500 font-semibold">
+                  Uttarakhand Tourism Regd: UTTR/HARIDWAR/08-2024/007176
+                </span>
+              </div>
+            </div>
+
+            {/* Middle Row: Contact Specialist Officer & Quick Actions */}
+            <div className="grid grid-cols-2 gap-2.5 items-center">
+              {/* Left Column: Direct Contact Specialist */}
+              <div className="flex items-center gap-2.5 bg-white/95 border border-sky-200/90 rounded-xl p-2 shadow-2xs">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[#0369a1] to-sky-500 flex items-center justify-center text-white font-black text-sm shadow-xs shrink-0">
+                  👤
+                </div>
+                <div className="text-left min-w-0">
+                  <p className="text-[8.5px] uppercase tracking-wider text-sky-700 font-black">
+                    Chief Yatra Specialist
+                  </p>
+                  <p className="text-[12px] font-black text-gray-950 leading-tight truncate">
+                    {data.contactPerson}
+                  </p>
+                  <a 
+                    href={`tel:${data.contactPhone}`} 
+                    className="inline-flex items-center gap-1.5 text-[11px] font-black text-[#0369a1] hover:text-sky-700 mt-0.5 transition"
+                  >
+                    <span className="text-emerald-600">📞</span>
+                    <span>{data.contactPhone}</span>
+                    <span className="text-[7.5px] font-black text-emerald-800 bg-emerald-100/90 border border-emerald-300 px-1 py-0.2 rounded">
+                      Call & WhatsApp
+                    </span>
+                  </a>
+                </div>
+              </div>
+
+              {/* Right Column: Interactive Digital Portals */}
+              <div className="flex flex-col gap-1.5 justify-center">
+                <a 
+                  href="https://traveltouttrakhand.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  data-pdf-link="https://traveltouttrakhand.com" 
+                  className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/95 border border-sky-200/90 text-sky-950 hover:bg-sky-50 shadow-2xs group transition"
+                >
+                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-[#0369a1]">
+                    <span className="text-sm">🌐</span>
+                    <span>www.traveltouttrakhand.com</span>
+                  </span>
+                  <span className="text-[8px] font-black text-sky-600 uppercase tracking-wider group-hover:translate-x-0.5 transition-transform">
+                    Official Portal →
+                  </span>
+                </a>
+                <a 
+                  href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+                  className="flex items-center justify-between px-2.5 py-1.5 rounded-xl bg-white/95 border border-rose-200/90 text-gray-950 hover:bg-rose-50 shadow-2xs group transition"
+                >
+                  <span className="flex items-center gap-1.5 text-[10px] font-bold text-gray-900">
+                    <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                    </svg>
+                    <span>YouTube: <strong className="text-red-700 font-black">@traveltouttarakhand</strong></span>
+                  </span>
+                  <span className="text-[8px] font-black text-rose-600 uppercase tracking-wider group-hover:translate-x-0.5 transition-transform">
+                    Travel Vlogs →
+                  </span>
+                </a>
+              </div>
+            </div>
+
+            {/* Bottom Row: Divine Motto Ribbon */}
+            <div className="flex items-center justify-between pt-1 border-t border-sky-200/70 text-[9.5px]">
+              <span className="font-serif font-black text-[#0369a1] tracking-widest flex items-center gap-1">
+                <span>🕉️</span> <span>{data.motto || "जय बद्री विशाल · जय श्री केदार"}</span>
+              </span>
+              <span className="text-[8.5px] font-bold text-sky-800 flex items-center gap-1">
+                <span>🏔️</span> <span>Uttarakhand Pilgrimage & Snow Holiday Experts · 100% Verified Fleet</span>
+              </span>
+            </div>
           </div>
-          <p className="text-[11px] text-[#0369a1] font-serif font-bold mt-0.5 tracking-widest">{data.motto}</p>
         </div>
 
       </div>
 
       {/* Page 4 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium whitespace-nowrap">
-        <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <div className="flex items-center gap-3">
-          <a 
-            href="https://traveltouttrakhand.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://traveltouttrakhand.com" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
-          >
-            <span>🌐 www.traveltouttrakhand.com</span>
-          </a>
-          <span className="text-gray-300">•</span>
-          <a 
-            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/60 border border-sky-200/80 shadow-2xs"
-          >
-            <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span>YouTube: @traveltouttarakhand</span>
-          </a>
-        </div>
-        <span>Page 4 of 4</span>
-      </div>
+      {renderPageFooter(4)}
     </div>
   );
 
