@@ -289,6 +289,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 15499,
+    totalPackageRate: 30998,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -300,6 +301,7 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 10499,
+    totalPackageRate: 41996,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -311,17 +313,19 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 8999,
+    totalPackageRate: 53994,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
   {
     paxCount: 8,
-    paxLabel: "07 - 08 Pax",
+    paxLabel: "08 Pax",
     vehicleName: "Innova / Innova Crysta",
-    vehicleCategory: "Luxury MPV",
+    vehicleCategory: "Innova",
     roomsCount: "04 Double Rooms",
     ratePerPax: 9499,
+    totalPackageRate: 75992,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -330,9 +334,10 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     paxCount: 12,
     paxLabel: "12 Pax",
     vehicleName: "12-Seater Luxury Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "12S Tempo",
     roomsCount: "06 Double Rooms",
     ratePerPax: 7999,
+    totalPackageRate: 95988,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -341,9 +346,10 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     paxCount: 14,
     paxLabel: "14 Pax",
     vehicleName: "14-Seater Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "14S Tempo",
     roomsCount: "07 Double Rooms",
     ratePerPax: 7499,
+    totalPackageRate: 104986,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -352,9 +358,10 @@ export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
     paxCount: 17,
     paxLabel: "17 Pax",
     vehicleName: "17-Seater Grand Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "17S Tempo",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 6999,
+    totalPackageRate: 118983,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -369,6 +376,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 22999,
+    totalPackageRate: 45998,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -380,6 +388,7 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 15999,
+    totalPackageRate: 63996,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -391,17 +400,19 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 13499,
+    totalPackageRate: 80994,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
   {
     paxCount: 8,
-    paxLabel: "07 - 08 Pax",
+    paxLabel: "08 Pax",
     vehicleName: "Innova / Innova Crysta",
-    vehicleCategory: "Luxury MPV",
+    vehicleCategory: "Innova",
     roomsCount: "04 Double Rooms",
     ratePerPax: 14499,
+    totalPackageRate: 115992,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -410,9 +421,10 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     paxCount: 12,
     paxLabel: "12 Pax",
     vehicleName: "12-Seater Luxury Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "12S Tempo",
     roomsCount: "06 Double Rooms",
     ratePerPax: 11999,
+    totalPackageRate: 143988,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -421,9 +433,10 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     paxCount: 14,
     paxLabel: "14 Pax",
     vehicleName: "14-Seater Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "14S Tempo",
     roomsCount: "07 Double Rooms",
     ratePerPax: 11299,
+    totalPackageRate: 158186,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -432,9 +445,10 @@ export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
     paxCount: 17,
     paxLabel: "17 Pax",
     vehicleName: "17-Seater Grand Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "17S Tempo",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 10499,
+    totalPackageRate: 178483,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -449,6 +463,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 27499,
+    totalPackageRate: 54998,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -460,6 +475,7 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 18999,
+    totalPackageRate: 75996,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -471,17 +487,19 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 15999,
+    totalPackageRate: 95994,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
   {
     paxCount: 8,
-    paxLabel: "07 - 08 Pax",
+    paxLabel: "08 Pax",
     vehicleName: "Innova / Innova Crysta",
-    vehicleCategory: "Luxury MPV",
+    vehicleCategory: "Innova",
     roomsCount: "04 Double Rooms",
     ratePerPax: 16999,
+    totalPackageRate: 135992,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -490,9 +508,10 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     paxCount: 12,
     paxLabel: "12 Pax",
     vehicleName: "12-Seater Luxury Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "12S Tempo",
     roomsCount: "06 Double Rooms",
     ratePerPax: 13999,
+    totalPackageRate: 167988,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -501,9 +520,10 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     paxCount: 14,
     paxLabel: "14 Pax",
     vehicleName: "14-Seater Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "14S Tempo",
     roomsCount: "07 Double Rooms",
     ratePerPax: 13299,
+    totalPackageRate: 186186,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -512,9 +532,10 @@ export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
     paxCount: 17,
     paxLabel: "17 Pax",
     vehicleName: "17-Seater Grand Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "17S Tempo",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 12499,
+    totalPackageRate: 212483,
     hotelCategory: "Standard Clean Alpine Hotel",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -529,6 +550,7 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "01 Double Room",
     ratePerPax: 34999,
+    totalPackageRate: 69998,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -540,6 +562,7 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
     vehicleCategory: "Sedan",
     roomsCount: "02 Double Rooms",
     ratePerPax: 24999,
+    totalPackageRate: 99996,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -551,17 +574,19 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
     vehicleCategory: "SUV",
     roomsCount: "03 Double Rooms",
     ratePerPax: 21999,
+    totalPackageRate: 131994,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
   },
   {
     paxCount: 8,
-    paxLabel: "07 - 08 Pax",
+    paxLabel: "08 Pax",
     vehicleName: "Innova / Innova Crysta",
-    vehicleCategory: "Luxury MPV",
+    vehicleCategory: "Innova",
     roomsCount: "04 Double Rooms",
     ratePerPax: 23499,
+    totalPackageRate: 187992,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -570,9 +595,10 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
     paxCount: 12,
     paxLabel: "12 Pax",
     vehicleName: "12-Seater Luxury Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "12S Tempo",
     roomsCount: "06 Double Rooms",
     ratePerPax: 18999,
+    totalPackageRate: 227988,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -581,9 +607,10 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
     paxCount: 14,
     paxLabel: "14 Pax",
     vehicleName: "14-Seater Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "14S Tempo",
     roomsCount: "07 Double Rooms",
     ratePerPax: 17999,
+    totalPackageRate: 251986,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -592,9 +619,10 @@ export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
     paxCount: 17,
     paxLabel: "17 Pax",
     vehicleName: "17-Seater Grand Tempo Traveller",
-    vehicleCategory: "Tempo Traveller",
+    vehicleCategory: "17S Tempo",
     roomsCount: "08-09 Double Rooms",
     ratePerPax: 16999,
+    totalPackageRate: 288983,
     hotelCategory: "Standard Clean Hotel / Alpine Camp",
     hotelSharing: "Double Sharing",
     mealPlan: "Breakfast & Dinner (MAP Plan)"
@@ -3404,13 +3432,13 @@ SCHEMA:
 
   // Pax & Vehicle Slabs handlers
   const selectPaxSlab = (slab: PaxVehicleSlab) => {
-    const totalCost = slab.ratePerPax * slab.paxCount;
+    const totalCost = slab.totalPackageRate || (slab.ratePerPax * slab.paxCount);
     const updatedPricingTiers: PricingTier[] = [
       {
         package: `${slab.paxLabel} (${slab.vehicleName})`,
         price: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax`,
-        totalPackagePrice: `₹ ${totalCost.toLocaleString('en-IN')} Total Package`,
-        hotelCategory: `${slab.hotelCategory || "Standard Clean Alpine Hotel"} (${slab.roomsCount})`,
+        totalPackagePrice: `₹ ${totalCost.toLocaleString('en-IN')} Total`,
+        hotelCategory: `${slab.hotelCategory || "Standard Clean Alpine Hotel"} — ${slab.roomsCount}`,
         meals: slab.mealPlan || "Breakfast & Dinner (MAP Plan)",
         specialFeature: `Dedicated ${slab.vehicleName} (Private Hill Chauffeur)`
       }
@@ -4647,12 +4675,12 @@ ${data.motto}`;
                 <table className="w-full text-xs text-center">
                   <thead className="bg-gradient-to-r from-sky-950 via-[#0369a1] to-sky-950 text-white font-bold text-[11px]">
                     <tr>
-                      <th className="px-3.5 py-2 text-left">Confirmed Group Sizing</th>
-                      <th className="px-2.5 py-2 text-left">Dedicated Transport</th>
-                      <th className="px-2.5 py-2">Stay &amp; Rooms</th>
-                      <th className="px-2.5 py-2">Meal Plan</th>
-                      <th className="px-3 py-2 text-right">Price / Person</th>
+                      <th className="px-3.5 py-2 text-left">Confirmed Package &amp; Group</th>
+                      <th className="px-2.5 py-2 text-right">Price / Person</th>
                       <th className="px-3.5 py-2 text-right bg-emerald-700 text-white font-black">Total Package Cost</th>
+                      <th className="px-2.5 py-2 text-center">Hotel Category &amp; Rooms</th>
+                      <th className="px-2.5 py-2 text-center">Meals Included</th>
+                      <th className="px-2.5 py-2 text-center">Dedicated Transport</th>
                     </tr>
                   </thead>
                   <tbody className="text-[11.5px]">
@@ -4663,46 +4691,54 @@ ${data.motto}`;
                         return pMatch && parseInt(pMatch[1]) === (data.selectedPaxCount || 4);
                       }) || data.pricingTiers[0];
 
-                      const paxCount = data.selectedPaxCount || (currentSlab ? currentSlab.paxCount : (matchingTier?.package.match(/^(\d+)\s*Pax/i) ? parseInt(matchingTier.package.match(/^(\d+)\s*Pax/i)![1]) : 4));
-                      const groupLabel = currentSlab ? `${currentSlab.paxLabel} (Private Tour)` : (matchingTier?.package || `${String(paxCount).padStart(2, '0')} Pax Private Tour`);
-                      const vehicle = currentSlab?.vehicleName || matchingTier?.specialFeature?.replace(/^Dedicated\s+/i, "") || data.selectedVehicle || "Swift Dzire / Sedan";
-                      const rooms = currentSlab?.roomsCount || "Standard Clean Mountain Stays (Double Sharing)";
-                      const hotelCat = currentSlab?.hotelCategory || matchingTier?.hotelCategory || "Standard Clean Alpine Hotels";
-                      const meals = currentSlab?.mealPlan || matchingTier?.meals || "Breakfast & Dinner (MAP Plan)";
-                      
+                      let paxCount = data.selectedPaxCount;
+                      if (!paxCount && currentSlab) paxCount = currentSlab.paxCount;
+                      if (!paxCount && matchingTier?.package) {
+                        const pMatch = matchingTier.package.match(/^(\d+)\s*Pax/i);
+                        if (pMatch) paxCount = parseInt(pMatch[1]);
+                      }
+                      if (!paxCount) paxCount = 4;
+
                       let perPaxNum = currentSlab?.ratePerPax || 0;
                       if (!perPaxNum && matchingTier?.price) {
                         perPaxNum = parseInt(matchingTier.price.replace(/[^\d]/g, '')) || 0;
                       }
-                      const perPaxStr = perPaxNum > 0 ? `₹ ${perPaxNum.toLocaleString('en-IN')}/-` : (matchingTier?.price || "₹ 15,999/-");
-                      
-                      const totalCostNum = currentSlab?.totalPackageRate || (perPaxNum > 0 ? perPaxNum * paxCount : 0);
-                      const totalCostStr = totalCostNum > 0 ? `₹ ${totalCostNum.toLocaleString('en-IN')}/-` : (matchingTier?.totalPackagePrice || perPaxStr);
+                      if (!perPaxNum) perPaxNum = 15999;
+                      const perPaxStr = `₹ ${perPaxNum.toLocaleString('en-IN')} / Pax`;
+
+                      // ALWAYS compute true total package cost: rate * paxCount!
+                      const calculatedTotalNum = currentSlab?.totalPackageRate || (perPaxNum * paxCount);
+                      const totalCostStr = `₹ ${calculatedTotalNum.toLocaleString('en-IN')}/-`;
+
+                      const groupLabel = currentSlab ? `${currentSlab.paxLabel} (${currentSlab.vehicleName})` : (matchingTier?.package || `${String(paxCount).padStart(2, '0')} Pax Private Tour`);
+                      const vehicle = currentSlab?.vehicleName || matchingTier?.specialFeature?.replace(/^Dedicated\s+/i, "") || data.selectedVehicle || "Swift Dzire / Sedan";
+                      const rooms = currentSlab?.roomsCount || "Standard Clean Mountain Stays";
+                      const hotelCat = currentSlab?.hotelCategory || matchingTier?.hotelCategory || "Standard Clean Alpine Hotel";
+                      const meals = currentSlab?.mealPlan || matchingTier?.meals || "Breakfast & Dinner (MAP Plan)";
 
                       return (
                         <tr className="bg-white">
-                          <td className="px-3.5 py-3 font-black text-gray-950 text-left text-[12.5px]">
+                          <td className="px-3.5 py-3 font-black text-gray-950 text-left text-[12px]">
                             <span className="flex items-center gap-1.5">
                               <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
                               <span>{groupLabel}</span>
                             </span>
                           </td>
-                          <td className="px-2.5 py-3 text-left font-bold text-gray-900">
-                            🚗 {vehicle}
+                          <td className="px-2.5 py-3 font-black text-[#0369a1] text-[12.5px] text-right whitespace-nowrap">
+                            {perPaxStr}
                           </td>
-                          <td className="px-2.5 py-3 text-gray-900 font-bold">
-                            🏨 {rooms}
-                            <span className="block text-[9.5px] font-medium text-gray-600">{hotelCat}</span>
+                          <td className="px-3.5 py-3 font-black text-emerald-950 text-[14px] text-right bg-emerald-50/90 border-l border-r border-emerald-300 whitespace-nowrap">
+                            <span className="text-emerald-800 text-[14px] font-black">{totalCostStr}</span>
+                            <span className="text-[8.5px] font-bold text-emerald-700 block">Total Package ({paxCount} Pax)</span>
                           </td>
-                          <td className="px-2.5 py-3 text-gray-800 font-medium">
-                            🍽️ {meals}
+                          <td className="px-2.5 py-3 text-gray-900 font-bold text-[11px] text-center">
+                            {hotelCat} — {rooms}
                           </td>
-                          <td className="px-3 py-3 font-black text-[#0369a1] text-[13px] text-right whitespace-nowrap">
-                            {perPaxStr} <span className="text-[9px] font-semibold text-gray-500 block">/ person</span>
+                          <td className="px-2.5 py-3 text-gray-800 font-medium text-[11px] text-center">
+                            {meals}
                           </td>
-                          <td className="px-3.5 py-3 font-black text-emerald-950 text-[14px] text-right bg-emerald-50/90 border-l-2 border-emerald-300 whitespace-nowrap">
-                            <span className="text-emerald-800 text-[14.5px] font-black">{totalCostStr}</span>
-                            <span className="text-[9px] font-bold text-emerald-700 block">Total Package</span>
+                          <td className="px-2.5 py-3 text-center font-bold text-gray-900 text-[11px]">
+                            Dedicated {vehicle} (Private Hill Chauffeur)
                           </td>
                         </tr>
                       );
@@ -6171,35 +6207,62 @@ ${data.motto}`;
 
                 {/* Quick-Click Pax Selection Chips */}
                 <div>
-                  <label className="block text-[10.5px] font-bold text-sky-950 mb-1.5">
-                    ⚡ 1-Click Select Quoted Group Size:
+                  <label className="block text-[10.5px] font-bold text-sky-950 mb-1.5 flex items-center justify-between">
+                    <span>⚡ 1-Click Select Quoted Group Size:</span>
+                    <span className="text-[9.5px] text-gray-500 font-semibold">Auto-calculates vehicle &amp; total price</span>
                   </label>
-                  <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-7">
-                    {(data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 ? data.paxVehicleSlabs : DEFAULT_WINTER_PAX_SLABS_3D).map((slab) => {
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {(data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 ? data.paxVehicleSlabs : DEFAULT_WINTER_PAX_SLABS_5D).map((slab) => {
                       const isSelected = (data.selectedPaxCount || 4) === slab.paxCount;
+                      const totalCost = slab.totalPackageRate || (slab.paxCount * slab.ratePerPax);
+                      const cleanLabel = slab.paxLabel.replace(/07\s*-\s*08/i, "08 Pax").trim();
+                      const vehTag = slab.vehicleCategory?.includes("Tempo") 
+                        ? `${slab.paxCount}S Tempo` 
+                        : slab.vehicleCategory?.includes("Innova") || slab.vehicleCategory?.includes("MPV") 
+                          ? "Innova" 
+                          : slab.vehicleCategory?.includes("SUV") 
+                            ? "SUV" 
+                            : "Sedan";
+
                       return (
                         <button
                           key={slab.paxCount}
                           type="button"
                           onClick={() => selectPaxSlab(slab)}
-                          className={`p-1.5 rounded-lg border text-center transition cursor-pointer flex flex-col justify-between ${
+                          className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between h-[84px] relative overflow-hidden ${
                             isSelected
-                              ? "bg-[#0369a1] text-white border-[#0369a1] shadow-md ring-2 ring-sky-300"
+                              ? "bg-gradient-to-br from-[#0369a1] via-sky-800 to-sky-950 text-white border-[#0369a1] shadow-md ring-2 ring-sky-300 ring-offset-1 scale-[1.01]"
                               : "bg-white text-gray-800 border-sky-200 hover:border-sky-400 hover:bg-sky-50 shadow-2xs"
                           }`}
                         >
-                          <span className={`text-[11px] font-black leading-tight ${isSelected ? "text-white" : "text-sky-950"}`}>
-                            {slab.paxLabel}
-                          </span>
-                          <span className={`text-[9px] font-semibold truncate mt-0.5 ${isSelected ? "text-sky-100" : "text-gray-600"}`}>
-                            {slab.vehicleCategory}
-                          </span>
-                          <span className={`text-[10px] font-black mt-0.5 ${isSelected ? "text-amber-200" : "text-[#0369a1]"}`}>
-                            ₹{slab.ratePerPax.toLocaleString('en-IN')} <span className="text-[8.5px] font-medium opacity-80">/pax</span>
-                          </span>
-                          <span className={`text-[9.5px] font-black ${isSelected ? "text-white" : "text-emerald-700"}`}>
-                            Total: ₹{(slab.paxCount * slab.ratePerPax).toLocaleString('en-IN')}
-                          </span>
+                          {/* Top: Group & Vehicle Tag */}
+                          <div className="flex items-center justify-between w-full">
+                            <span className={`text-[12px] font-black tracking-tight ${isSelected ? "text-white" : "text-sky-950"}`}>
+                              {cleanLabel}
+                            </span>
+                            <span className={`text-[8.5px] font-extrabold px-1.5 py-0.2 rounded ${
+                              isSelected ? "bg-white/20 text-white" : "bg-sky-50 text-[#0369a1] border border-sky-200"
+                            }`}>
+                              {vehTag}
+                            </span>
+                          </div>
+
+                          {/* Middle: Per Pax Rate */}
+                          <div className="my-auto py-0.5">
+                            <div className={`text-[12px] font-black leading-tight ${isSelected ? "text-amber-300" : "text-[#0369a1]"}`}>
+                              ₹ {slab.ratePerPax.toLocaleString('en-IN')} <span className="text-[8.5px] font-medium opacity-80">/pax</span>
+                            </div>
+                          </div>
+
+                          {/* Bottom: Total Package Cost */}
+                          <div className={`text-[9.5px] font-bold leading-none ${isSelected ? "text-emerald-200" : "text-emerald-700"}`}>
+                            Total: <span className="font-black">₹ {totalCost.toLocaleString('en-IN')}</span>
+                          </div>
+
+                          {/* Selected indicator */}
+                          {isSelected && (
+                            <span className="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          )}
                         </button>
                       );
                     })}
@@ -6207,30 +6270,33 @@ ${data.motto}`;
                 </div>
 
                 {/* Active Selected Quote Info Card */}
-                <div className="p-2.5 bg-white rounded-lg border border-sky-200 shadow-2xs flex items-center justify-between flex-wrap gap-2">
-                  <div>
-                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-gray-500 block">
-                      Active Customer Quote
-                    </span>
-                    <span className="text-[12px] font-black text-[#0369a1]">
+                <div className="p-3 bg-white rounded-xl border border-sky-200 shadow-2xs flex items-center justify-between flex-wrap gap-2.5">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      <span className="text-[9.5px] font-bold uppercase tracking-wider text-gray-600">
+                        Active Customer Quote
+                      </span>
+                    </div>
+                    <span className="text-[13px] font-black text-[#0369a1] block truncate mt-0.5">
                       {data.selectedPaxCount ? `${String(data.selectedPaxCount).padStart(2, '0')} Pax` : "04 Pax"} · {data.selectedVehicle || "Swift Dzire / Sedan"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-4 text-right">
+                  <div className="flex items-center gap-3 text-right">
                     <div>
                       <span className="text-[9px] font-bold uppercase tracking-wider text-gray-500 block">
-                        Per Pax Investment
+                        Per Pax Rate
                       </span>
-                      <span className="text-[12px] font-black text-[#0369a1]">
-                        ₹ {(data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499).toLocaleString('en-IN')}/- <span className="text-[9.5px] font-medium text-gray-600">/ person</span>
+                      <span className="text-[12.5px] font-black text-[#0369a1]">
+                        ₹ {(data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499).toLocaleString('en-IN')}/- <span className="text-[9px] font-medium text-gray-600 block">/ person</span>
                       </span>
                     </div>
-                    <div className="pl-3 border-l border-sky-200">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-gray-500 block">
+                    <div className="pl-3 border-l-2 border-sky-300">
+                      <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-800 block">
                         Total Package Cost
                       </span>
-                      <span className="text-[13.5px] font-black text-emerald-700">
-                        ₹ {(((data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499)) * (data.selectedPaxCount || 4)).toLocaleString('en-IN')}/- <span className="text-[9.5px] font-bold text-emerald-600">Total</span>
+                      <span className="text-[14px] font-black text-emerald-700">
+                        ₹ {(((data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499)) * (data.selectedPaxCount || 4)).toLocaleString('en-IN')}/- <span className="text-[9px] font-bold text-emerald-600 block">All-Inclusive Total</span>
                       </span>
                     </div>
                   </div>
