@@ -1590,8 +1590,12 @@ export const AULI_3D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "",
-  useCoverBanner: false,
+  coverBannerUrl: "/gallery/auli_package_banner.jpg",
+  useCoverBanner: true,
+  showAltitudeProfile: true,
+  showWinterPackingAdvisory: true,
+  showDynamicQrCodes: true,
+  qrCodeType: "all",
 
   days: [
     {
@@ -1733,8 +1737,12 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
   paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
   showPaxMatrixOnPrint: false,
   selectedPricingOption: "single_quote",
-  coverBannerUrl: "",
-  useCoverBanner: false,
+  coverBannerUrl: "/gallery/chopta_tungnath_banner.jpg",
+  useCoverBanner: true,
+  showAltitudeProfile: true,
+  showWinterPackingAdvisory: true,
+  showDynamicQrCodes: true,
+  qrCodeType: "all",
 
   days: [
     {

@@ -145,6 +145,32 @@ export const INITIAL_DHAM_GALLERY: DhamGalleryPhoto[] = [
   },
 
   // ❄️ Winter Holidays 2026-27 Curated Library Photos
+  // Official Graphic Poster Banners (Page 1)
+  {
+    id: "dham-auli-banner-2027",
+    url: "/gallery/auli_package_banner.jpg",
+    caption: "Auli Package (2N/3D Tour 2027) Official Graphic Banner",
+    dham: "auli",
+    dhamLabel: "Auli Snow Slopes",
+    isDefault: true
+  },
+  {
+    id: "dham-chopta-banner-2027",
+    url: "/gallery/chopta_tungnath_banner.jpg",
+    caption: "Chopta - Tungnath Package (2N/3D Tour 2027) Official Graphic Banner",
+    dham: "chopta_tungnath",
+    dhamLabel: "Chopta & Tungnath",
+    isDefault: true
+  },
+  {
+    id: "dham-auli-chopta-banner-2027",
+    url: "/gallery/auli_chopta_tungnath_banner.jpg",
+    caption: "Auli - Chopta - Tungnath Winter Expedition Official Graphic Banner",
+    dham: "auli",
+    dhamLabel: "Auli Snow Slopes",
+    isDefault: true
+  },
+
   // Auli & Joshimath
   {
     id: "dham-auli-ropeway",
