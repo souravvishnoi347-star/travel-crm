@@ -2374,9 +2374,11 @@ export default function ItineraryBuilder() {
 
             // Auto-migrate winter presets in localStorage
             if (parsed.title?.includes("AULI") || parsed.title?.includes("CHOPTA") || parsed.title?.includes("WINTER") || parsed.title?.includes("RISHIKESH")) {
-              if (parsed.coverBannerUrl === undefined) {
-                parsed.coverBannerUrl = "/gallery/auli_chopta_tungnath_banner.jpg";
+              if (parsed.useCoverBanner !== false) {
                 parsed.useCoverBanner = true;
+                if (!parsed.coverBannerUrl) {
+                  parsed.coverBannerUrl = "/gallery/auli_chopta_tungnath_banner.jpg";
+                }
               }
               if (parsed.days && Array.isArray(parsed.days)) {
                 // Auto-migrate Day 1 panoramic banner for Ukhimath / Devprayag route
@@ -3628,29 +3630,37 @@ ${data.motto}`;
   // MODULAR PAGE RENDERERS (Identical across Preview & Print)
   // =========================================================
   
-  const renderPage1 = (prefix: string) => (
-    <div
-      id={`${prefix}-itinerary-page-1`}
-      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
-      style={{ boxSizing: "border-box" }}
-    >
-      {/* Background Watermark */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
-      </div>
+  const renderPage1 = (prefix: string) => {
+    const isWinter = data.title.toLowerCase().includes("winter") || 
+                     data.title.toLowerCase().includes("auli") || 
+                     data.title.toLowerCase().includes("chopta") ||
+                     (data.subTitle && data.subTitle.toLowerCase().includes("winter"));
+    const showCoverBanner = data.useCoverBanner !== false && !!(data.coverBannerUrl || isWinter);
+    const resolvedCoverBannerUrl = data.coverBannerUrl || (isWinter ? "/gallery/auli_chopta_tungnath_banner.jpg" : "");
 
-      {/* Top Header Section: Either Graphic Cover Poster Banner OR Classic Text Header + Photo Strip */}
-      {data.useCoverBanner && data.coverBannerUrl ? (
-        <div className="relative z-10 w-full mb-1.5">
-          <div className="relative rounded-2xl overflow-hidden border-2 border-[#0369a1]/40 shadow-lg bg-slate-900 h-[385px] flex items-center justify-center">
-            <img 
-              src={data.coverBannerUrl} 
-              alt={data.title} 
-              className="w-full h-full object-cover object-center" 
-            />
-          </div>
+    return (
+      <div
+        id={`${prefix}-itinerary-page-1`}
+        className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+        style={{ boxSizing: "border-box" }}
+      >
+        {/* Background Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+          <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
         </div>
-      ) : (
+
+        {/* Top Header Section: Either Graphic Cover Poster Banner OR Classic Text Header + Photo Strip */}
+        {showCoverBanner && resolvedCoverBannerUrl ? (
+          <div className="relative z-10 w-full mb-1.5">
+            <div className="relative rounded-2xl overflow-hidden border-2 border-[#0369a1]/40 shadow-lg bg-slate-900 h-[385px] flex items-center justify-center">
+              <img 
+                src={resolvedCoverBannerUrl} 
+                alt={data.title} 
+                className="w-full h-full object-cover object-center" 
+              />
+            </div>
+          </div>
+        ) : (
         <>
           {/* Header / Logo */}
           <div className="relative z-10 flex flex-col items-center text-center pt-0.5">
@@ -3857,6 +3867,7 @@ ${data.motto}`;
       </div>
     </div>
   );
+};
 
   const renderDayCard = (day: DayPlan, dIdx: number, isShortTour: boolean) => {
     // Resolve day photos (explicit or smart keyword-based matching)
