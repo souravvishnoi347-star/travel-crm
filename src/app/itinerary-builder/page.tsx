@@ -79,10 +79,16 @@ export interface DayPlan {
   route: string;
   activities: string[];
   overnightStay: string;
+  distanceKm?: string;
+  driveTime?: string;
+  altitudeFt?: string;
+  mealsIncluded?: string;
+  dayHighlights?: string;
   photoUrl?: string;
   photoCaption?: string;
   photoUrl2?: string;
   photoCaption2?: string;
+  bannerPhotoUrl?: string;
 }
 
 export interface PricingTier {
@@ -92,6 +98,18 @@ export interface PricingTier {
   hotelCategory: string;
   meals: string;
   specialFeature: string;
+}
+
+export interface PaxVehicleSlab {
+  paxCount: number;
+  paxLabel: string;
+  vehicleName: string;
+  vehicleCategory: string;
+  roomsCount: string;
+  ratePerPax: number;
+  hotelCategory: string;
+  hotelSharing: string;
+  mealPlan: string;
 }
 
 export interface ItineraryData {
@@ -116,6 +134,13 @@ export interface ItineraryData {
   // Day plans
   days: DayPlan[];
 
+  // Dynamic Pax & Vehicle Sizing
+  selectedPaxCount?: number;
+  selectedVehicle?: string;
+  paxVehicleSlabs?: PaxVehicleSlab[];
+  showPaxMatrixOnPrint?: boolean;
+  selectedPricingOption?: "matrix_table" | "single_quote";
+
   // Pricing
   pricingSubtitle: string;
   pricingTiers: PricingTier[];
@@ -134,6 +159,13 @@ export interface ItineraryData {
   motto: string;
 
   // Visual Photos & Gallery
+  coverBannerUrl?: string;
+  useCoverBanner?: boolean;
+  customGroupSizing?: string;
+  customAssignedFleet?: string;
+  customMaxElevation?: string;
+  customMealPlan?: string;
+  customStayQuality?: string;
   photos?: ItineraryPhoto[];
   showPhotosPage1?: boolean;
   showPhotosPage3?: boolean;
@@ -234,6 +266,326 @@ export const WINTER_HOTEL_PHOTO_PRESETS: HotelPhoto[] = [
     location: "Joshimath / Rudraprayag",
     roomType: "Standard Heated Room",
     caption: "Conveniently located pre-inspected hotel with power backup and easy proximity to Auli cable car station"
+  }
+];
+
+export const DEFAULT_WINTER_PAX_SLABS_3D: PaxVehicleSlab[] = [
+  {
+    paxCount: 2,
+    paxLabel: "02 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "01 Double Room",
+    ratePerPax: 15499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 4,
+    paxLabel: "04 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "02 Double Rooms",
+    ratePerPax: 10499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 6,
+    paxLabel: "06 Pax",
+    vehicleName: "Ertiga / Bolero Neo",
+    vehicleCategory: "SUV",
+    roomsCount: "03 Double Rooms",
+    ratePerPax: 8999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 8,
+    paxLabel: "07 - 08 Pax",
+    vehicleName: "Innova / Innova Crysta",
+    vehicleCategory: "Luxury MPV",
+    roomsCount: "04 Double Rooms",
+    ratePerPax: 9499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 12,
+    paxLabel: "12 Pax",
+    vehicleName: "12-Seater Luxury Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "06 Double Rooms",
+    ratePerPax: 7999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 14,
+    paxLabel: "14 Pax",
+    vehicleName: "14-Seater Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "07 Double Rooms",
+    ratePerPax: 7499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 17,
+    paxLabel: "17 Pax",
+    vehicleName: "17-Seater Grand Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "08-09 Double Rooms",
+    ratePerPax: 6999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  }
+];
+
+export const DEFAULT_WINTER_PAX_SLABS_5D: PaxVehicleSlab[] = [
+  {
+    paxCount: 2,
+    paxLabel: "02 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "01 Double Room",
+    ratePerPax: 22999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 4,
+    paxLabel: "04 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "02 Double Rooms",
+    ratePerPax: 15999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 6,
+    paxLabel: "06 Pax",
+    vehicleName: "Ertiga / Bolero Neo",
+    vehicleCategory: "SUV",
+    roomsCount: "03 Double Rooms",
+    ratePerPax: 13499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 8,
+    paxLabel: "07 - 08 Pax",
+    vehicleName: "Innova / Innova Crysta",
+    vehicleCategory: "Luxury MPV",
+    roomsCount: "04 Double Rooms",
+    ratePerPax: 14499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 12,
+    paxLabel: "12 Pax",
+    vehicleName: "12-Seater Luxury Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "06 Double Rooms",
+    ratePerPax: 11999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 14,
+    paxLabel: "14 Pax",
+    vehicleName: "14-Seater Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "07 Double Rooms",
+    ratePerPax: 11299,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 17,
+    paxLabel: "17 Pax",
+    vehicleName: "17-Seater Grand Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "08-09 Double Rooms",
+    ratePerPax: 10499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  }
+];
+
+export const DEFAULT_WINTER_PAX_SLABS_6D: PaxVehicleSlab[] = [
+  {
+    paxCount: 2,
+    paxLabel: "02 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "01 Double Room",
+    ratePerPax: 27499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 4,
+    paxLabel: "04 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "02 Double Rooms",
+    ratePerPax: 18999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 6,
+    paxLabel: "06 Pax",
+    vehicleName: "Ertiga / Bolero Neo",
+    vehicleCategory: "SUV",
+    roomsCount: "03 Double Rooms",
+    ratePerPax: 15999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 8,
+    paxLabel: "07 - 08 Pax",
+    vehicleName: "Innova / Innova Crysta",
+    vehicleCategory: "Luxury MPV",
+    roomsCount: "04 Double Rooms",
+    ratePerPax: 16999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 12,
+    paxLabel: "12 Pax",
+    vehicleName: "12-Seater Luxury Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "06 Double Rooms",
+    ratePerPax: 13999,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 14,
+    paxLabel: "14 Pax",
+    vehicleName: "14-Seater Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "07 Double Rooms",
+    ratePerPax: 13299,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 17,
+    paxLabel: "17 Pax",
+    vehicleName: "17-Seater Grand Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "08-09 Double Rooms",
+    ratePerPax: 12499,
+    hotelCategory: "Deluxe Alpine Hotel (Heated)",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  }
+];
+
+export const DEFAULT_CHARDHAM_PAX_SLABS_10D: PaxVehicleSlab[] = [
+  {
+    paxCount: 2,
+    paxLabel: "02 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "01 Double Room",
+    ratePerPax: 34999,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 4,
+    paxLabel: "04 Pax",
+    vehicleName: "Swift Dzire / Etios",
+    vehicleCategory: "Sedan",
+    roomsCount: "02 Double Rooms",
+    ratePerPax: 24999,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 6,
+    paxLabel: "06 Pax",
+    vehicleName: "Ertiga / Bolero Neo",
+    vehicleCategory: "SUV",
+    roomsCount: "03 Double Rooms",
+    ratePerPax: 21999,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 8,
+    paxLabel: "07 - 08 Pax",
+    vehicleName: "Innova / Innova Crysta",
+    vehicleCategory: "Luxury MPV",
+    roomsCount: "04 Double Rooms",
+    ratePerPax: 23499,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 12,
+    paxLabel: "12 Pax",
+    vehicleName: "12-Seater Luxury Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "06 Double Rooms",
+    ratePerPax: 18999,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 14,
+    paxLabel: "14 Pax",
+    vehicleName: "14-Seater Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "07 Double Rooms",
+    ratePerPax: 17999,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
+  },
+  {
+    paxCount: 17,
+    paxLabel: "17 Pax",
+    vehicleName: "17-Seater Grand Tempo Traveller",
+    vehicleCategory: "Tempo Traveller",
+    roomsCount: "08-09 Double Rooms",
+    ratePerPax: 16999,
+    hotelCategory: "Standard Clean Hotel / Alpine Camp",
+    hotelSharing: "Double Sharing",
+    mealPlan: "Breakfast & Dinner (MAP Plan)"
   }
 ];
 
@@ -375,10 +727,10 @@ const CHARDHAM_PRESET: ItineraryData = {
       id: 10,
       dayNumber: 10,
       dateStr: "Day 10 (19 May)",
-      route: "Rishikesh / Haridwar → Local Sightseeing (Optional) & Departure Drop",
+      route: "Rishikesh / Haridwar Transit & Departure Drop",
       activities: [
         "Post breakfast, departure drive towards Haridwar / Dehradun along the scenic Ganga valley.",
-        "Rishikesh local sightseeing (Ram Jhula, Laxman Jhula & Triveni Ghat) is optional & subject to time/traffic; possible only if arriving before 06:00 PM.",
+        "Scenic drive along the Ganga valley with optional photo stop before timely transfer to station/airport.",
         "Timely transfer to Haridwar Railway Station or Dehradun Jolly Grant Airport for onward journey.",
         "Tour concludes with divine memories of Char Dham Yatra."
       ],
@@ -788,10 +1140,10 @@ export const DODHAM_6D_PRESET: ItineraryData = {
       id: 6,
       dayNumber: 6,
       dateStr: "Day 06",
-      route: "Pipalkoti → Rishikesh Sightseeing (Optional) → Haridwar Drop",
+      route: "Pipalkoti → Devprayag Sangam & Transit → Haridwar Drop",
       activities: [
-        "Post breakfast, drive towards Haridwar via Karnaprayag and Maa Dhari Devi Temple.",
-        "Rishikesh sightseeing (Ram Jhula, Laxman Jhula & Triveni Ghat) is optional & subject to time/traffic; possible only if arriving before 06:00 PM.",
+        "Post breakfast, drive towards Haridwar via Karnaprayag and sacred Maa Dhari Devi Temple.",
+        "En route stop at Devprayag to witness the sacred confluence of Alaknanda and Bhagirathi rivers before timely drop.",
         "Timely transfer to Haridwar Railway Station or Dehradun Airport for onward journey."
       ],
       overnightStay: "Tour Concludes (Happy Memories)"
@@ -882,15 +1234,28 @@ export const AULI_3D_PRESET: ItineraryData = {
   glanceDuration: "3 Days / 02 Nights",
   glanceDhams: "Auli · Joshimath · Gorson",
   glanceSector: "Haridwar ⇄ Joshimath / Auli",
-  glanceStartEnd: "Haridwar / Rishikesh / Dehradun",
+  glanceStartEnd: "Haridwar / Rishikesh / Dehradun Airport",
   glancePackages: "Winter Deluxe Package",
+
+  selectedPaxCount: 4,
+  selectedVehicle: "Swift Dzire / Sedan",
+  paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
+  showPaxMatrixOnPrint: false,
+  selectedPricingOption: "single_quote",
+  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
+  useCoverBanner: true,
 
   days: [
     {
       id: 1,
       dayNumber: 1,
       dateStr: "Day 01",
-      route: "Haridwar / Rishikesh / Dehradun → Devprayag → Joshimath",
+      route: "Haridwar / Rishikesh / Dehradun Airport → Devprayag → Joshimath",
+      distanceKm: "250 km",
+      driveTime: "8-9 hrs",
+      altitudeFt: "6,198 ft (Joshimath)",
+      mealsIncluded: "Dinner Included (MAP Plan)",
+      dayHighlights: "Devprayag Sangam & Alaknanda Valley",
       activities: [
         "Morning pickup from Haridwar Railway Station / Rishikesh / Dehradun Airport and proceed towards Joshimath.",
         "Drive along the scenic Alaknanda river valley; visit Devprayag Sangam (Bhagirathi & Alaknanda confluence) and Rudraprayag.",
@@ -905,6 +1270,11 @@ export const AULI_3D_PRESET: ItineraryData = {
       dayNumber: 2,
       dateStr: "Day 02",
       route: "Joshimath → Auli Cable Car / Ski Slopes & Gorson Bugyal → Joshimath",
+      distanceKm: "16 km / Cable Car",
+      driveTime: "25 mins ropeway",
+      altitudeFt: "10,010 ft (Auli) / 11,000 ft (Gorson)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Asia's Longest Ropeway, Mt. Nanda Devi & Snow Skiing",
       activities: [
         "Post breakfast, board the famous Joshimath-Auli Cable Car (ropeway) or take local mountain taxi up to Auli snow meadows.",
         "Marvel at the mesmerizing 180-degree panorama of Mt. Nanda Devi, Hathi-Ghodi Parvat, and Neelkanth peaks.",
@@ -921,26 +1291,32 @@ export const AULI_3D_PRESET: ItineraryData = {
       id: 3,
       dayNumber: 3,
       dateStr: "Day 03",
-      route: "Joshimath → Maa Dhari Devi Temple → Rishikesh → Haridwar / Dehradun Drop",
+      route: "Joshimath → Maa Dhari Devi Temple → Devprayag Sangam → Haridwar / Dehradun Airport Drop",
+      distanceKm: "250 km",
+      driveTime: "8-9 hrs",
+      altitudeFt: "1,200 ft (Haridwar / Dehradun Airport)",
+      mealsIncluded: "Breakfast Included (MAP Plan)",
+      dayHighlights: "Maa Dhari Devi Temple & Devprayag Sangam",
       activities: [
         "Early morning breakfast and check out from Joshimath hotel.",
         "Scenic downhill drive via Karnaprayag and Srinagar; visit sacred Maa Dhari Devi Temple on the river Alaknanda.",
-        "Optional evening visit to Rishikesh (Ram Jhula / Triveni Ghat) followed by drop at Haridwar Railway Station / Dehradun Airport."
+        "Witness the sacred confluence at Devprayag Sangam before timely drop at Haridwar Railway Station / Dehradun Airport."
       ],
       overnightStay: "Tour Concludes (Sweet Winter Memories)",
-      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
-      photoCaption: "Sacred Maa Dhari Devi Shrine & Holy Triveni Ghat Rishikesh",
-      photoUrl2: "/gallery/rishikesh_ram_jhula.png",
-      photoCaption2: "Sacred Ram Jhula over Holy River Ganga"
+      photoUrl: "/gallery/chardham_10d_img_18.jpg",
+      photoCaption: "Sacred Maa Dhari Devi Shrine on River Alaknanda",
+      photoUrl2: "/gallery/chardham_10d_img_19.jpg",
+      photoCaption2: "Devprayag Sangam - Holy Confluence of Bhagirathi & Alaknanda"
     }
   ],
 
   pricingSubtitle: "Special Auli Winter Holiday 3D/2N Package with dedicated private vehicle, 2 Nights stay in Joshimath and meal plan.",
   pricingTiers: [
-    { package: "Deluxe Winter Package", price: "₹ 8,500 / Pax", totalPackagePrice: "₹ 8,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe Heated / Clean Mountain Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle + Auli Excursion" },
-    { package: "Premium Winter Package", price: "₹ 12,000 / Pax", totalPackagePrice: "₹ 12,000 / Pax (Twin Sharing)", hotelCategory: "Premium 3-Star Resort in Joshimath", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova/Crysta + Bonfire" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Deluxe Heated Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + 2 Nights Joshimath" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Deluxe Heated Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe Heated Alpine Hotel", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
-  pricingNote: "Note: Rates are per person on twin/triple sharing. Cable car / ropeway tickets and ski gear payable directly on spot as per personal choice.",
+  pricingNote: "Note: Rates are per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
   inclusions: [
     "Dedicated Hill Vehicle (Swift Dzire / Ertiga / Innova / Tempo Traveller as per group size) Haridwar to Haridwar",
@@ -1001,17 +1377,30 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
   glanceDuration: "3 Days / 02 Nights",
   glanceDhams: "Chopta · Tungnath · Chandrashila",
   glanceSector: "Haridwar ⇄ Chopta Winter Circuit",
-  glanceStartEnd: "Haridwar / Rishikesh / Dehradun",
+  glanceStartEnd: "Haridwar / Rishikesh / Dehradun Airport",
   glancePackages: "Winter Adventure Package",
+
+  selectedPaxCount: 4,
+  selectedVehicle: "Swift Dzire / Sedan",
+  paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
+  showPaxMatrixOnPrint: false,
+  selectedPricingOption: "single_quote",
+  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
+  useCoverBanner: true,
 
   days: [
     {
       id: 1,
       dayNumber: 1,
       dateStr: "Day 01",
-      route: "Haridwar / Rishikesh / Dehradun → Devprayag → Rudraprayag → Chopta",
+      route: "Haridwar / Rishikesh / Dehradun Airport → Devprayag → Rudraprayag → Chopta",
+      distanceKm: "205 km",
+      driveTime: "7-8 hrs",
+      altitudeFt: "8,790 ft (Chopta Meadows)",
+      mealsIncluded: "Dinner Included (MAP Plan)",
+      dayHighlights: "Devprayag Sangam & Rhododendron Forests",
       activities: [
-        "Early morning pickup from Haridwar / Rishikesh / Dehradun; begin journey along the holy Ganga & Alaknanda rivers.",
+        "Early morning pickup from Haridwar Railway Station / Rishikesh / Dehradun Airport; begin journey along the holy Ganga & Alaknanda rivers.",
         "En route halt at sacred Devprayag (Sangam of Alaknanda & Bhagirathi) and Rudraprayag (Mandakini & Alaknanda).",
         "Ascend through pine and rhododendron forests to Chopta; check in at cozy Swiss cottage / mountain resort. Evening bonfire under star-lit snow skies."
       ],
@@ -1024,6 +1413,11 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
       dayNumber: 2,
       dateStr: "Day 02",
       route: "Chopta Base → Tungnath Temple & Chandrashila Snow Trek → Chopta",
+      distanceKm: "5 km trek (Tungnath) + 1.5 km (Chandrashila)",
+      driveTime: "Snow Trek (4-5 hrs)",
+      altitudeFt: "12,073 ft (Tungnath) / 13,123 ft (Chandrashila)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "World's Highest Shiva Shrine & 360° Snow Panorama",
       activities: [
         "Post warm breakfast, gear up for the thrilling winter trek from Chopta to Tungnath (3.5 km snow trail).",
         "Perform Darshan of the divine Tungnath Temple, the highest of the Panch Kedar shrines.",
@@ -1040,7 +1434,12 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
       id: 3,
       dayNumber: 3,
       dateStr: "Day 03",
-      route: "Chopta → Ukhimath Omkareshwar Temple → Rishikesh → Haridwar / Dehradun Drop",
+      route: "Chopta → Ukhimath Omkareshwar Temple → Devprayag → Haridwar / Dehradun Airport Drop",
+      distanceKm: "210 km",
+      driveTime: "7-8 hrs",
+      altitudeFt: "1,200 ft (Haridwar / Dehradun Airport)",
+      mealsIncluded: "Breakfast Included (MAP Plan)",
+      dayHighlights: "Ukhimath Omkareshwar (Kedarnath Winter Seat)",
       activities: [
         "Witness early morning sunrise bathing the Himalayan peaks in gold. Post breakfast, check out from Chopta.",
         "Drive to Ukhimath and visit holy Omkareshwar Temple, the revered winter seat of Lord Kedarnath.",
@@ -1054,10 +1453,11 @@ export const CHOPTA_3D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special Chopta & Tungnath Snow Holiday 3D/2N Package with 2 Nights Stay in Chopta, meals, and dedicated mountain vehicle.",
   pricingTiers: [
-    { package: "Standard Snow Trek", price: "₹ 7,500 / Pax", totalPackagePrice: "₹ 7,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Cab + Trek Assistance + Bonfire" },
-    { package: "Deluxe Heated Resort", price: "₹ 10,500 / Pax", totalPackagePrice: "₹ 10,500 / Pax (Twin Sharing)", hotelCategory: "Premium Mountain Resort / Heated Cottage", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Vehicle + Bonfire + Microspikes/Gaiters" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Snow Trek Assistance" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe Alpine Swiss Tent / Resort in Chopta", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
-  pricingNote: "Note: Rates per person on twin/triple sharing. Includes stay, transport, and meal plan.",
+  pricingNote: "Note: Rates per person on twin/double sharing. Includes 2 nights stay, dedicated hill transport, and MAP meal plan.",
 
   inclusions: [
     "Dedicated Private Hill Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) Haridwar to Haridwar",
@@ -1121,12 +1521,25 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
   glanceStartEnd: "Haridwar / Dehradun (both ways)",
   glancePackages: "Deluxe Leisure Package",
 
+  selectedPaxCount: 4,
+  selectedVehicle: "Swift Dzire / Sedan",
+  paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D,
+  showPaxMatrixOnPrint: false,
+  selectedPricingOption: "single_quote",
+  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
+  useCoverBanner: true,
+
   days: [
     {
       id: 1,
       dayNumber: 1,
       dateStr: "Day 01",
       route: "Haridwar / Dehradun Pickup → Rishikesh Divine Exploration & Ganga Aarti",
+      distanceKm: "45 km",
+      driveTime: "1-2 hrs",
+      altitudeFt: "1,200 ft (Rishikesh)",
+      mealsIncluded: "Dinner Included (MAP Plan)",
+      dayHighlights: "Ram Jhula & Divine Triveni Ghat Maha Ganga Aarti",
       activities: [
         "Morning pickup from Haridwar Railway Station or Dehradun Airport; transfer to Rishikesh and check in at hotel/resort.",
         "Visit the iconic Ram Jhula, Lakshman Jhula area, Geeta Bhawan, and popular riverside cafes along the Ganga.",
@@ -1144,6 +1557,11 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
       dayNumber: 2,
       dateStr: "Day 02",
       route: "Rishikesh → Dehradun Scenic Climb → Mussoorie Hill Station",
+      distanceKm: "78 km",
+      driveTime: "2.5-3 hrs",
+      altitudeFt: "6,580 ft (Mussoorie)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Kempty Falls & Rare Winterline Sunset Spectacle",
       activities: [
         "Post breakfast, check out from Rishikesh and drive towards Mussoorie ('Queen of the Hills') via scenic Rajpur Road / Dehradun bypass.",
         "Visit the famous Kempty Falls and picturesque Company Garden.",
@@ -1160,6 +1578,11 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
       dayNumber: 3,
       dateStr: "Day 03",
       route: "Mussoorie Sightseeing → George Everest / Lal Tibba → Dehradun / Haridwar Drop",
+      distanceKm: "60 km",
+      driveTime: "2 hrs",
+      altitudeFt: "1,400 ft (Dehradun Drop)",
+      mealsIncluded: "Breakfast Included (MAP Plan)",
+      dayHighlights: "Lal Tibba, Landour & Mall Road Vistas",
       activities: [
         "Early morning visit to Lal Tibba viewpoint (Landour) or Sir George Everest House for sweeping vistas of the snow-clad Himalayas and Doon valley.",
         "Breakfast and checkout from hotel; descend towards Dehradun.",
@@ -1174,13 +1597,14 @@ export const RISHIKESH_MUSSOORIE_3D_PRESET: ItineraryData = {
 
   pricingSubtitle: "Special Rishikesh & Mussoorie 3D/2N Holiday with 1st Night in Rishikesh and 2nd Night in Mussoorie.",
   pricingTiers: [
-    { package: "Deluxe Holiday Package", price: "₹ 6,800 / Pax", totalPackagePrice: "₹ 6,800 / Pax (Twin Sharing)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast Included (CP)", specialFeature: "Dedicated AC Sedan / SUV + Full Sightseeing" },
-    { package: "Premium Resort Package", price: "₹ 9,500 / Pax", totalPackagePrice: "₹ 9,500 / Pax (Twin Sharing)", hotelCategory: "4-Star Resort in Rishikesh & Luxury Hill Resort in Mussoorie", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova Crysta + Mall Road Stays" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 10,499 / Pax", totalPackagePrice: "₹ 10,499 / Pax (2 Double Rooms)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Sightseeing" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 15,499 / Pax", totalPackagePrice: "₹ 15,499 / Pax (1 Double Room)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 8,999 / Pax", totalPackagePrice: "₹ 8,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe 3-Star City & Hill Hotels", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
-  pricingNote: "Note: Rates based on twin sharing. Entry tickets to falls/cable cars and adventure activities at direct payment.",
+  pricingNote: "Note: Rates based on double sharing with dedicated private vehicle and MAP meals. Entry tickets to falls/cable cars at direct payment.",
 
   inclusions: [
-    "Dedicated AC Vehicle (Dzire / Etios / Ertiga / Innova) throughout the tour",
+    "Dedicated Private Vehicle (Dzire / Etios / Ertiga / Innova) throughout the tour",
     "01 Night Stay in Rishikesh (Deluxe Room)",
     "01 Night Stay in Mussoorie (Deluxe Mountain/Valley View Room)",
     "Daily Morning Breakfast at both hotels",
@@ -1233,35 +1657,54 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
   travelDates: "Nov 2026 – Mar 2027 Winter Season",
   duration: "5 Days / 04 Nights",
   startingPoint: "Haridwar / Rishikesh / Dehradun Airport",
-  routeCovered: "Haridwar – Devprayag – Rudraprayag – Ukhimath/Chopta – Tungnath – Mandal Valley – Joshimath – Auli – Joshimath/Rudraprayag – Haridwar",
+  routeCovered: "Haridwar – Devprayag – Rudraprayag – Ukhimath/Chopta – Tungnath – Mandal Valley – Joshimath – Auli – Joshimath/Rudraprayag – Haridwar / Dehradun Airport",
   overviewSummary: "The definitive winter holiday circuit of Uttarakhand! Experience the snow-draped alpine meadows of Chopta, the world's highest Shiva shrine at Tungnath, the summit views from Chandrashila (13,123 ft), and the skiing slopes and Asia's longest ropeway at Auli with panoramic views of Mt. Nanda Devi.",
   
   glanceDuration: "5 Days / 04 Nights",
   glanceDhams: "Chopta · Tungnath · Joshimath · Auli",
   glanceSector: "Haridwar ⇄ Chopta & Auli Winter Circuit",
-  glanceStartEnd: "Haridwar / Rishikesh / Dehradun",
+  glanceStartEnd: "Haridwar / Rishikesh / Dehradun Airport",
   glancePackages: "Winter Expedition Package",
+
+  selectedPaxCount: 4,
+  selectedVehicle: "Swift Dzire / Sedan",
+  paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_5D,
+  showPaxMatrixOnPrint: false,
+  selectedPricingOption: "single_quote",
+  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
+  useCoverBanner: true,
 
   days: [
     {
       id: 1,
       dayNumber: 1,
       dateStr: "Day 01",
-      route: "Haridwar / Rishikesh / Dehradun → Devprayag → Rudraprayag → Ukhimath / Chopta",
+      route: "Haridwar / Rishikesh / Dehradun Airport → Devprayag → Rudraprayag → Ukhimath / Chopta",
+      distanceKm: "205 km",
+      driveTime: "7-8 hrs",
+      altitudeFt: "4,300 ft (Ukhimath)",
+      mealsIncluded: "Dinner Included (MAP Plan)",
+      dayHighlights: "Devprayag Sangam & Mandakini Valley Views",
       activities: [
-        "Morning pickup from Haridwar Railway Station / Rishikesh / Dehradun; begin the scenic drive up the Garhwal Himalayas.",
+        "Morning pickup from Haridwar Railway Station / Rishikesh / Dehradun Airport; begin the scenic drive up the Garhwal Himalayas.",
         "En route visit the sacred confluence of Alaknanda and Bhagirathi at Devprayag, and Mandakini confluence at Rudraprayag.",
         "Drive through the Mandakini valley to Ukhimath / Chopta; check in at hotel/resort. Enjoy evening bonfire and hot dinner amidst mountain chill."
       ],
       overnightStay: "Ukhimath / Chopta",
-      photoUrl: "/gallery/ukhimath_temple.png",
-      photoCaption: "Sacred Ukhimath Omkareshwar Temple - Winter Seat of Kedarnath"
+      photoUrl: "/gallery/day1_ukhimath_devprayag_banner.jpg",
+      photoCaption: "Ukhimath Shri Omkareshwar Temple & Devprayag Sangam",
+      bannerPhotoUrl: "/gallery/day1_ukhimath_devprayag_banner.jpg"
     },
     {
       id: 2,
       dayNumber: 2,
       dateStr: "Day 02",
       route: "Chopta Base → Tungnath Temple & Chandrashila Snow Summit Trek → Ukhimath / Chopta",
+      distanceKm: "35 km drive + 5 km trek",
+      driveTime: "Full Day Snow Trek",
+      altitudeFt: "12,073 ft (Tungnath) / 13,123 ft (Chandrashila)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Highest Shiva Shrine Tungnath & Snow Summit Panorama",
       activities: [
         "Post breakfast, drive to Chopta meadow base and start the exhilarating snow trek to Tungnath (3.5 km).",
         "Reach the sacred 1,000-year-old Tungnath Temple (highest Shiva shrine in the world at 12,073 ft).",
@@ -1279,6 +1722,11 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
       dayNumber: 3,
       dateStr: "Day 03",
       route: "Ukhimath / Chopta → Scenic Mandal Valley & Gopeshwar → Joshimath / Rudraprayag",
+      distanceKm: "70 km",
+      driveTime: "3.5 hrs",
+      altitudeFt: "6,198 ft (Joshimath)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Mandal Forest Valley & Narsingh Temple Abode",
       activities: [
         "After breakfast, check out and drive towards Joshimath via the picturesque Mandal forest valley and Gopeshwar / Chamoli.",
         "Enjoy stunning views of river gorges and snow-capped peaks along the route.",
@@ -1293,6 +1741,11 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
       dayNumber: 4,
       dateStr: "Day 04",
       route: "Joshimath → Auli Cable Car, Snow Skiing Slopes & Gorson Bugyal → Joshimath / Rudraprayag",
+      distanceKm: "16 km / Cable Car",
+      driveTime: "Full Day Excursion",
+      altitudeFt: "10,010 ft (Auli) / 11,000 ft (Gorson)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Asia's Longest Cable Car, Mt. Nanda Devi & Skiing",
       activities: [
         "Full-day snow adventure in Auli! Take the scenic ropeway (cable car) from Joshimath or mountain taxi up to Auli slopes.",
         "Marvel at the up-close grandeur of Mt. Nanda Devi (India's second highest mountain), Hathi-Ghodi Parvat, and Dunagiri.",
@@ -1309,24 +1762,30 @@ export const AULI_CHOPTA_TUNGNATH_5D_PRESET: ItineraryData = {
       id: 5,
       dayNumber: 5,
       dateStr: "Day 05",
-      route: "Joshimath / Rudraprayag → Karnaprayag → Maa Dhari Devi → Rishikesh → Haridwar Drop",
+      route: "Joshimath / Rudraprayag → Karnaprayag → Maa Dhari Devi → Devprayag Sangam → Haridwar / Dehradun Airport Drop",
+      distanceKm: "250 km",
+      driveTime: "8-9 hrs",
+      altitudeFt: "1,200 ft (Haridwar / Dehradun Airport)",
+      mealsIncluded: "Breakfast Included (MAP Plan)",
+      dayHighlights: "Maa Dhari Devi Temple & Devprayag Sangam",
       activities: [
         "Post breakfast, check out and begin the return journey along the Alaknanda river valley.",
         "Stop at Karnaprayag Sangam and pay obeisance at the holy Maa Dhari Devi Temple near Srinagar.",
-        "Arrive at Rishikesh for brief sightseeing (Ram Jhula / Triveni Ghat) followed by drop at Haridwar Railway Station or Dehradun Airport."
+        "En route visit Devprayag to witness the sacred confluence of Alaknanda & Bhagirathi before timely drop at Haridwar / Dehradun Airport."
       ],
       overnightStay: "Tour Concludes (Sweet Winter Memories)",
-      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
-      photoCaption: "Sacred Maa Dhari Devi & Rishikesh Maha Ganga Aarti"
+      photoUrl: "/gallery/chardham_10d_img_18.jpg",
+      photoCaption: "Sacred Maa Dhari Devi Shrine & Devprayag Sangam"
     }
   ],
 
   pricingSubtitle: "Special 5D/4N Winter Snow Circuit: 2 Nights Ukhimath/Chopta + 2 Nights Joshimath/Rudraprayag.",
   pricingTiers: [
-    { package: "Deluxe Snow Package", price: "₹ 13,500 / Pax", totalPackagePrice: "₹ 13,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe Mountain View Hotels / Cottages", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Mountain Vehicle + Tungnath Trek + Auli Excursion" },
-    { package: "Premium Winter Package", price: "₹ 17,500 / Pax", totalPackagePrice: "₹ 17,500 / Pax (Twin Sharing)", hotelCategory: "Premium 3-Star Resorts with Heating Amenities", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova/Crysta + Bonfire + Microspikes" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (2 Double Rooms)", hotelCategory: "Deluxe Alpine Hotels & Heated Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Circuit" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 22,999 / Pax", totalPackagePrice: "₹ 22,999 / Pax (1 Double Room)", hotelCategory: "Deluxe Alpine Hotels & Heated Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 13,499 / Pax", totalPackagePrice: "₹ 13,499 / Pax (3 Double Rooms)", hotelCategory: "Deluxe Alpine Hotels & Heated Stays", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
-  pricingNote: "Note: Rates per person on twin/triple sharing. Cable car tickets & ski rentals payable on spot as per personal choice.",
+  pricingNote: "Note: Rates per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
   inclusions: [
     "Dedicated Hill Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) Haridwar to Haridwar",
@@ -1393,12 +1852,25 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
   glanceStartEnd: "Dehradun / Haridwar",
   glancePackages: "Grand Winter Package",
 
+  selectedPaxCount: 4,
+  selectedVehicle: "Swift Dzire / Sedan",
+  paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_6D,
+  showPaxMatrixOnPrint: false,
+  selectedPricingOption: "single_quote",
+  coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg",
+  useCoverBanner: true,
+
   days: [
     {
       id: 1,
       dayNumber: 1,
       dateStr: "Day 01",
       route: "Dehradun / Haridwar Pickup → Mussoorie ('Queen of the Hills')",
+      distanceKm: "60 km",
+      driveTime: "2 hrs",
+      altitudeFt: "6,580 ft (Mussoorie)",
+      mealsIncluded: "Dinner Included (MAP Plan)",
+      dayHighlights: "Kempty Falls & Rare Winterline Sunset",
       activities: [
         "Morning pickup from Dehradun Railway Station / Airport or Haridwar; scenic drive up to Mussoorie.",
         "Visit cascading Kempty Falls and historic Company Garden.",
@@ -1413,6 +1885,11 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       dayNumber: 2,
       dateStr: "Day 02",
       route: "Mussoorie → Dhanaulti Pine Forests → Tehri Lake Route → Ukhimath",
+      distanceKm: "175 km",
+      driveTime: "6-7 hrs",
+      altitudeFt: "4,300 ft (Ukhimath)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Tehri Lake Panorama & Omkareshwar Temple",
       activities: [
         "Post breakfast, check out from Mussoorie and embark on a breathtaking mountain drive via Dhanaulti and Chamba.",
         "Witness the vast blue expanse of Tehri Dam lake reservoir and traverse through Srinagar into Mandakini valley.",
@@ -1428,6 +1905,11 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       dayNumber: 3,
       dateStr: "Day 03",
       route: "Ukhimath → Chopta Base → Tungnath Temple & Chandrashila Snow Trek → Ukhimath",
+      distanceKm: "35 km drive + 5 km trek",
+      driveTime: "Full Day Snow Trek",
+      altitudeFt: "12,073 ft (Tungnath) / 13,123 ft (Chandrashila)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "World's Highest Shiva Temple in Snow & Chandrashila",
       activities: [
         "Early morning transfer to Chopta (Mini Switzerland of Uttarakhand) surrounded by snow-blanketed rhododendron forests.",
         "Trek up the snowy trail to Tungnath Temple (12,073 ft), the highest Shiva shrine on Earth.",
@@ -1445,6 +1927,11 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       dayNumber: 4,
       dateStr: "Day 04",
       route: "Ukhimath → Chamoli Valley & Mandal → Joshimath → Auli Snow Slopes",
+      distanceKm: "70 km",
+      driveTime: "3.5 hrs",
+      altitudeFt: "10,010 ft (Auli)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Auli Snow Slopes & Mt. Nanda Devi Views",
       activities: [
         "Post breakfast, check out and drive towards Joshimath via the picturesque Mandal forest valley.",
         "Arrive in Joshimath and check in at hotel. Proceed to Auli via the iconic Auli Cable Car (ropeway) or local mountain cab.",
@@ -1460,6 +1947,11 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       dayNumber: 5,
       dateStr: "Day 05",
       route: "Joshimath → Auli Gorson Bugyal / Narsingh Temple → Joshimath / Rudraprayag",
+      distanceKm: "20 km / Local Excursion",
+      driveTime: "Day Excursion",
+      altitudeFt: "11,000 ft (Gorson Bugyal)",
+      mealsIncluded: "Breakfast & Dinner (MAP Plan)",
+      dayHighlights: "Gorson Bugyal Snow Walk & Shankaracharya Math",
       activities: [
         "Morning excursion to Gorson Bugyal snow meadow or chairlift ride in Auli.",
         "Visit sacred Narsingh Temple in Joshimath (winter seat of Lord Badri Vishal) and Shankaracharya Math.",
@@ -1475,24 +1967,30 @@ export const AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET: ItineraryData = {
       id: 6,
       dayNumber: 6,
       dateStr: "Day 06",
-      route: "Joshimath / Rudraprayag → Devprayag Sangam → Rishikesh → Haridwar / Dehradun Drop",
+      route: "Joshimath / Rudraprayag → Maa Dhari Devi → Devprayag Sangam → Haridwar / Dehradun Drop",
+      distanceKm: "250 km",
+      driveTime: "8-9 hrs",
+      altitudeFt: "1,200 ft (Haridwar / Dehradun)",
+      mealsIncluded: "Breakfast Included (MAP Plan)",
+      dayHighlights: "Maa Dhari Devi Temple & Devprayag Sangam",
       activities: [
         "After breakfast, check out and drive down along the Alaknanda river valley.",
-        "En route stop at Devprayag to witness the sacred confluence of Alaknanda and Bhagirathi forming holy river Ganga.",
-        "Pass through Rishikesh with optional visit to Ram Jhula / Triveni Ghat before timely drop at Haridwar Railway Station or Dehradun Airport."
+        "En route visit the revered Maa Dhari Devi Temple and witness the sacred Sangam of Alaknanda and Bhagirathi at Devprayag.",
+        "Timely transfer to Haridwar Railway Station or Dehradun Airport for onward journey."
       ],
       overnightStay: "Tour Concludes (Sweet Winter Memories)",
-      photoUrl: "/gallery/rishikesh_ganga_aarti.webp",
-      photoCaption: "Maha Ganga Aarti at Triveni Ghat & Tour Conclusion"
+      photoUrl: "/gallery/chardham_10d_img_19.jpg",
+      photoCaption: "Sacred Devprayag Sangam & Tour Conclusion"
     }
   ],
 
   pricingSubtitle: "Special 6D/5N Grand Winter Tour: 1st Night Mussoorie, 2nd & 3rd Ukhimath, 4th Joshimath, 5th Joshimath/Rudraprayag.",
   pricingTiers: [
-    { package: "Grand Deluxe Package", price: "₹ 16,500 / Pax", totalPackagePrice: "₹ 16,500 / Pax (Twin Sharing)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Private Vehicle + Full Hills & Snow Circuit" },
-    { package: "Grand Premium Package", price: "₹ 21,500 / Pax", totalPackagePrice: "₹ 21,500 / Pax (Twin Sharing)", hotelCategory: "Premium 3/4-Star Hotels with Heating", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Innova Crysta + Mall Road Hotel + Bonfire" }
+    { package: "04 Pax (Swift Dzire / Sedan)", price: "₹ 18,999 / Pax", totalPackagePrice: "₹ 18,999 / Pax (2 Double Rooms)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Full Grand Circuit" },
+    { package: "02 Pax (Swift Dzire / Sedan)", price: "₹ 27,499 / Pax", totalPackagePrice: "₹ 27,499 / Pax (1 Double Room)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Swift Dzire + Couple Privacy" },
+    { package: "06 Pax (Ertiga / Bolero Neo)", price: "₹ 15,999 / Pax", totalPackagePrice: "₹ 15,999 / Pax (3 Double Rooms)", hotelCategory: "Deluxe 3-Star Hotels & Mountain Resorts", meals: "Breakfast & Dinner (MAP)", specialFeature: "Dedicated Ertiga / Bolero Neo" }
   ],
-  pricingNote: "Note: Rates per person on twin/triple sharing. Cable car/ropeway, snow equipment rentals and personal activities payable directly on spot.",
+  pricingNote: "Note: Rates per person on double sharing basis with dedicated hill vehicle and MAP meal plan. Cable car tickets & ski rentals payable on spot.",
 
   inclusions: [
     "Dedicated Mountain Vehicle (Dzire / Ertiga / Innova / Tempo Traveller) throughout the 6-day circuit",
@@ -1694,6 +2192,17 @@ export default function ItineraryBuilder() {
   const [isDownloading, setIsDownloading] = useState(false);
   const [copiedShare, setCopiedShare] = useState(false);
 
+  // Active Pax & Vehicle Slabs for current itinerary
+  const activeSlabs: PaxVehicleSlab[] = (data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0)
+    ? data.paxVehicleSlabs
+    : (data.title.toLowerCase().includes("5d") || data.days.length === 5)
+    ? DEFAULT_WINTER_PAX_SLABS_5D
+    : (data.title.toLowerCase().includes("6d") || data.days.length === 6)
+    ? DEFAULT_WINTER_PAX_SLABS_6D
+    : (data.title.toLowerCase().includes("chardham") || data.days.length >= 10)
+    ? DEFAULT_CHARDHAM_PAX_SLABS_10D
+    : DEFAULT_WINTER_PAX_SLABS_3D;
+
   // Dynamically compute the exact fit-to-screen or fit-width scale factor
   useEffect(() => {
     const updateScale = () => {
@@ -1865,7 +2374,24 @@ export default function ItineraryBuilder() {
 
             // Auto-migrate winter presets in localStorage
             if (parsed.title?.includes("AULI") || parsed.title?.includes("CHOPTA") || parsed.title?.includes("WINTER") || parsed.title?.includes("RISHIKESH")) {
+              if (parsed.coverBannerUrl === undefined) {
+                parsed.coverBannerUrl = "/gallery/auli_chopta_tungnath_banner.jpg";
+                parsed.useCoverBanner = true;
+              }
               if (parsed.days && Array.isArray(parsed.days)) {
+                // Auto-migrate Day 1 panoramic banner for Ukhimath / Devprayag route
+                if (parsed.days[0] && (
+                  parsed.days[0].photoUrl?.includes("ukhimath") ||
+                  parsed.days[0].route?.toLowerCase().includes("ukhimath") ||
+                  parsed.title?.includes("AULI") ||
+                  parsed.title?.includes("CHOPTA")
+                )) {
+                  parsed.days[0].bannerPhotoUrl = "/gallery/day1_ukhimath_devprayag_banner.jpg";
+                  parsed.days[0].photoUrl = "/gallery/day1_ukhimath_devprayag_banner.jpg";
+                  parsed.days[0].photoCaption = "Ukhimath Shri Omkareshwar Temple & Devprayag Sangam";
+                  parsed.days[0].photoUrl2 = undefined;
+                  parsed.days[0].photoCaption2 = undefined;
+                }
                 parsed.days = parsed.days.map((d: any) => {
                   if (!d.photoUrl) {
                     if (d.route?.toLowerCase().includes("auli") || d.activities?.some((a: string) => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing"))) {
@@ -1893,6 +2419,52 @@ export default function ItineraryBuilder() {
               if (!parsed.hotelPhotos || parsed.hotelPhotos.length === 0 || parsed.hotelPhotos[0]?.location?.includes("Barkot")) {
                 parsed.hotelPhotos = WINTER_HOTEL_PHOTO_PRESETS;
               }
+            }
+
+            // Cleanse AC word from vehicle names across all loaded itineraries (mountain norm)
+            if (Array.isArray(parsed.paxVehicleSlabs)) {
+              parsed.paxVehicleSlabs = parsed.paxVehicleSlabs.map((s: any) => ({
+                ...s,
+                vehicleName: typeof s.vehicleName === "string" ? s.vehicleName.replace(/^AC\s+/i, "") : s.vehicleName
+              }));
+            }
+            if (typeof parsed.selectedVehicle === "string") {
+              parsed.selectedVehicle = parsed.selectedVehicle.replace(/^AC\s+/i, "");
+            }
+            if (Array.isArray(parsed.pricingTiers)) {
+              parsed.pricingTiers = parsed.pricingTiers.map((t: any) => ({
+                ...t,
+                package: typeof t.package === "string" ? t.package.replace(/\(AC\s+/i, "(") : t.package,
+                specialFeature: typeof t.specialFeature === "string" ? t.specialFeature.replace(/\bAC\s+/gi, "") : t.specialFeature
+              }));
+            }
+
+            // Remove Triveni Ghat from non-Rishikesh packages (unfeasible on return mountain route)
+            if (parsed.title && !parsed.title.toUpperCase().includes("RISHIKESH") && Array.isArray(parsed.days)) {
+              parsed.days = parsed.days.map((d: any) => {
+                if (Array.isArray(d.activities)) {
+                  d.activities = d.activities.map((a: string) =>
+                    a.replace(/,\s*Laxman\s*Jhula\s*&\s*Triveni\s*Ghat/gi, "")
+                     .replace(/\s*\/\s*Triveni\s*Ghat/gi, "")
+                     .replace(/\s*&\s*Triveni\s*Ghat/gi, "")
+                     .replace(/\bTriveni\s*Ghat\b/gi, "Devprayag Sangam")
+                  );
+                }
+                if (typeof d.route === "string" && d.route.includes("Triveni")) {
+                  d.route = d.route.replace(/\s*\/\s*Triveni\s*Ghat/gi, "").replace(/\bTriveni\s*Ghat\b/gi, "Devprayag Sangam");
+                }
+                if (typeof d.dayHighlights === "string" && d.dayHighlights.includes("Triveni")) {
+                  d.dayHighlights = d.dayHighlights.replace(/\bTriveni\s*Ghat\b/gi, "Devprayag Sangam");
+                }
+                if (typeof d.photoCaption === "string" && d.photoCaption.includes("Triveni")) {
+                  d.photoCaption = d.photoCaption.replace(/\s*&\s*Holy\s*Triveni\s*Ghat\s*Rishikesh/gi, " on River Alaknanda")
+                                                .replace(/\bTriveni\s*Ghat\b/gi, "Devprayag Sangam");
+                  if (typeof d.photoUrl === "string" && d.photoUrl.includes("rishikesh_ganga_aarti")) {
+                    d.photoUrl = "/gallery/chardham_10d_img_18.jpg";
+                  }
+                }
+                return d;
+              });
             }
 
             setData(parsed);
@@ -2499,6 +3071,49 @@ SCHEMA:
     });
   };
 
+  // Pax & Vehicle Slabs handlers
+  const selectPaxSlab = (slab: PaxVehicleSlab) => {
+    const updatedPricingTiers: PricingTier[] = [
+      {
+        package: `${slab.paxLabel} (${slab.vehicleName})`,
+        price: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax`,
+        totalPackagePrice: `₹ ${slab.ratePerPax.toLocaleString('en-IN')} / Pax (${slab.roomsCount})`,
+        hotelCategory: `${slab.hotelCategory || "Deluxe Alpine Hotel (Heated)"} — ${slab.roomsCount}`,
+        meals: slab.mealPlan || "Breakfast & Dinner (MAP Plan)",
+        specialFeature: `Dedicated ${slab.vehicleName} (Private Hill Chauffeur)`
+      }
+    ];
+
+    setData({
+      ...data,
+      selectedPaxCount: slab.paxCount,
+      selectedVehicle: slab.vehicleName,
+      showPaxMatrixOnPrint: false, // User requested: ONLY particular package appears in group pricing section!
+      selectedPricingOption: "single_quote",
+      pricingSubtitle: `Confirmed Private Quotation for ${slab.paxLabel} with Dedicated ${slab.vehicleName}, ${slab.roomsCount} and ${slab.mealPlan || "MAP Meals"}.`,
+      pricingTiers: updatedPricingTiers,
+      preparedFor: data.preparedFor.includes("Pax") || data.preparedFor.toLowerCase().includes("valued") || data.preparedFor.toLowerCase().includes("group")
+        ? `${slab.paxLabel} Private Tour Group`
+        : data.preparedFor
+    });
+  };
+
+  const selectAllPaxMatrix = () => {
+    setData({
+      ...data,
+      showPaxMatrixOnPrint: true,
+      selectedPricingOption: "matrix_table",
+      pricingSubtitle: "Group Sizing & Mountain Fleet Investment Matrix covering all group sizes with verified stays and MAP meals."
+    });
+  };
+
+  const updateSlabField = (index: number, field: keyof PaxVehicleSlab, value: any) => {
+    if (!data.paxVehicleSlabs) return;
+    const slabs = [...data.paxVehicleSlabs];
+    slabs[index] = { ...slabs[index], [field]: value };
+    setData({ ...data, paxVehicleSlabs: slabs });
+  };
+
   // Inclusions / Exclusions operations
   const updateInclusion = (index: number, val: string) => {
     const arr = [...data.inclusions];
@@ -3024,88 +3639,155 @@ ${data.motto}`;
         <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
       </div>
 
-      {/* Header / Logo */}
-      <div className="relative z-10 flex flex-col items-center text-center pt-0.5">
-        <img src="/logo.png" alt="Travel to Uttarakhand" className="h-20 w-auto object-contain mb-1 drop-shadow-xs" />
-        <p className="text-xs uppercase tracking-widest text-[#0369a1] font-black">Travel to Uttarakhand</p>
-        
-        <h1 className="text-2xl sm:text-[27px] font-serif font-black text-[#0369a1] tracking-tight mt-1.5 uppercase leading-tight">
-          {data.title}
-        </h1>
-        <p className="text-[13px] font-black tracking-wider text-[#dc2626] uppercase mt-0.5">
-          {data.subTitle}
-        </p>
-        <p className="text-[12.5px] text-gray-700 font-bold italic mt-0.5">
-          {data.spiritualHeadline}
-        </p>
-        <p className="text-[12px] text-gray-600 tracking-wide mt-0.5 font-semibold">
-          {data.dhamsSubtitle}
-        </p>
-      </div>
-
-      {/* Visual Photo Strip Showcase - Spacious & Uncropped */}
-      {data.showPhotosPage1 !== false && data.photos && data.photos.length > 0 && (
-        <div className="relative z-10 my-2.5">
-          <div className={`grid gap-2.5 ${
-            data.photos.length === 1 ? 'grid-cols-1' : 
-            data.photos.length === 2 ? 'grid-cols-2' : 
-            'grid-cols-3'
-          }`}>
-            {data.photos.slice(0, 3).map((photo, pIdx) => {
-              const isContain = photo.fit !== "cover";
-              const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-              const fitClass = isContain ? "object-contain" : "object-cover";
-
-              return (
-                <div key={photo.id || pIdx} className="relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-slate-900 h-40 flex flex-col justify-between">
-                  <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center p-1 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
-                    <img 
-                      src={photo.url} 
-                      alt="" 
-                      aria-hidden="true" 
-                      className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                    />
-                    <img 
-                      src={photo.url} 
-                      alt={photo.caption || `Highlight ${pIdx + 1}`} 
-                      className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass} drop-shadow-sm`}
-                    />
-                  </div>
-                  {photo.caption && (
-                    <div className="relative z-10 bg-gradient-to-r from-sky-950 via-[#0369a1] to-sky-950 px-2.5 py-1.5 text-center border-t border-sky-400/30 shrink-0">
-                      <p className="text-[11px] font-black text-white tracking-wide leading-tight line-clamp-1 drop-shadow-xs">
-                        {photo.caption}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+      {/* Top Header Section: Either Graphic Cover Poster Banner OR Classic Text Header + Photo Strip */}
+      {data.useCoverBanner && data.coverBannerUrl ? (
+        <div className="relative z-10 w-full mb-1.5">
+          <div className="relative rounded-2xl overflow-hidden border-2 border-[#0369a1]/40 shadow-lg bg-slate-900 h-[385px] flex items-center justify-center">
+            <img 
+              src={data.coverBannerUrl} 
+              alt={data.title} 
+              className="w-full h-full object-cover object-center" 
+            />
           </div>
         </div>
+      ) : (
+        <>
+          {/* Header / Logo */}
+          <div className="relative z-10 flex flex-col items-center text-center pt-0.5">
+            <img src="/logo.png" alt="Travel to Uttarakhand" className="h-20 w-auto object-contain mb-1 drop-shadow-xs" />
+            <p className="text-xs uppercase tracking-widest text-[#0369a1] font-black">Travel to Uttarakhand</p>
+            
+            <h1 className="text-2xl sm:text-[27px] font-serif font-black text-[#0369a1] tracking-tight mt-1.5 uppercase leading-tight">
+              {data.title}
+            </h1>
+            <p className="text-[13px] font-black tracking-wider text-[#dc2626] uppercase mt-0.5">
+              {data.subTitle}
+            </p>
+            <p className="text-[12.5px] text-gray-700 font-bold italic mt-0.5">
+              {data.spiritualHeadline}
+            </p>
+            <p className="text-[12px] text-gray-600 tracking-wide mt-0.5 font-semibold">
+              {data.dhamsSubtitle}
+            </p>
+          </div>
+
+          {/* Visual Photo Strip Showcase - Spacious & Uncropped (Supports 3 or 4 Photo Collage) */}
+          {data.showPhotosPage1 !== false && data.photos && data.photos.length > 0 && (
+            <div className="relative z-10 my-2">
+              {(() => {
+                const photoCount = data.photos.length >= 4 ? 4 : data.photos.length;
+                const slicePhotos = data.photos.slice(0, photoCount);
+                const gridColsClass = photoCount === 1 ? 'grid-cols-1' : photoCount === 2 ? 'grid-cols-2' : photoCount === 4 ? 'grid-cols-4' : 'grid-cols-3';
+                const cardHeightClass = photoCount === 4 ? 'h-32' : photoCount === 3 ? 'h-36' : 'h-40';
+
+                return (
+                  <div className={`grid gap-2 ${gridColsClass}`}>
+                    {slicePhotos.map((photo, pIdx) => {
+                      const isContain = photo.fit !== "cover";
+                      const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
+                      const fitClass = isContain ? "object-contain" : "object-cover";
+
+                      return (
+                        <div key={photo.id || pIdx} className={`relative rounded-xl overflow-hidden border-2 border-[#0369a1]/30 shadow-md bg-slate-900 ${cardHeightClass} flex flex-col justify-between`}>
+                          <div className="flex-1 w-full relative overflow-hidden flex items-center justify-center p-0.5 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950">
+                            <img 
+                              src={photo.url} 
+                              alt="" 
+                              aria-hidden="true" 
+                              className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                            />
+                            <img 
+                              src={photo.url} 
+                              alt={photo.caption || `Highlight ${pIdx + 1}`} 
+                              className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass} drop-shadow-sm`}
+                            />
+                          </div>
+                          {photo.caption && (
+                            <div className="relative z-10 bg-gradient-to-r from-sky-950 via-[#0369a1] to-sky-950 px-1.5 py-1 text-center border-t border-sky-400/30 shrink-0">
+                              <p className="text-[10px] font-black text-white tracking-wide leading-tight line-clamp-1 drop-shadow-xs">
+                                {photo.caption}
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+        </>
       )}
 
+      {/* 5-Box Key Tour Metrics Bar */}
+      <div className="relative z-10 grid grid-cols-5 gap-1.5 my-1.5 p-1.5 bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50/60 rounded-xl border border-sky-200 shadow-2xs text-center">
+        <div className="bg-white/90 rounded-lg p-1 border border-sky-100 flex flex-col justify-center">
+          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Group Sizing</span>
+          <span className="text-[11px] font-black text-sky-900 truncate">
+            {data.customGroupSizing || (data.selectedPaxCount ? `${String(data.selectedPaxCount).padStart(2, '0')} Pax Group` : (data.preparedFor.includes("Pax") ? data.preparedFor.split(" ")[0] + " Pax" : "Private Group"))}
+          </span>
+        </div>
+        <div className="bg-white/90 rounded-lg p-1 border border-sky-100 flex flex-col justify-center">
+          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Assigned Fleet</span>
+          <span className="text-[11px] font-black text-sky-900 truncate" title={data.customAssignedFleet || data.selectedVehicle || "Dedicated Vehicle"}>
+            {data.customAssignedFleet || data.selectedVehicle?.split("/")[0]?.replace("AC", "").trim() || "Dedicated Fleet"}
+          </span>
+        </div>
+        <div className="bg-white/90 rounded-lg p-1 border border-sky-100 flex flex-col justify-center">
+          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Max Elevation</span>
+          <span className="text-[11px] font-black text-emerald-800 truncate">
+            {data.customMaxElevation || (
+              data.days.some(d => d.altitudeFt?.includes("13,123")) ? "13,123 Ft" : 
+              data.days.some(d => d.altitudeFt?.includes("12,073")) ? "12,073 Ft" : 
+              data.days.some(d => d.altitudeFt?.includes("10,010")) ? "10,010 Ft" : 
+              data.title.includes("Chardham") ? "11,755 Ft" : "Himalayan Ridge"
+            )}
+          </span>
+        </div>
+        <div className="bg-white/90 rounded-lg p-1 border border-sky-100 flex flex-col justify-center">
+          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Meal Plan</span>
+          <span className="text-[11px] font-black text-amber-900 truncate">
+            {data.customMealPlan || (
+              data.pricingTiers[0]?.meals?.includes("MAP") || data.pricingTiers[0]?.meals?.toLowerCase().includes("dinner") ? "MAP (B'fast+Din)" : "Breakfast (CP)"
+            )}
+          </span>
+        </div>
+        <div className="bg-white/90 rounded-lg p-1 border border-sky-100 flex flex-col justify-center">
+          <span className="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Stay Quality</span>
+          <span className="text-[11px] font-black text-indigo-900 truncate">
+            {data.customStayQuality || "Verified Clean"}
+          </span>
+        </div>
+      </div>
+
       {/* Summary Details Table - Bold, Clear & Highly Readable on Mobile */}
-      <div className="relative z-10 my-2.5 border-t-2 border-b-2 border-sky-100 py-3 text-[13px] space-y-2">
+      <div className="relative z-10 my-1.5 border-t-2 border-b-2 border-sky-100 py-2.5 text-[12.5px] space-y-1.5">
         <div className="grid grid-cols-[135px_1fr] items-start">
-          <span className="font-black text-gray-800 text-[13px]">Prepared For</span>
-          <span className="font-black text-[#0369a1] text-[14.5px]">{data.preparedFor}</span>
+          <span className="font-black text-gray-800 text-[12.5px]">Prepared For</span>
+          <span className="font-black text-[#0369a1] text-[14px]">{data.preparedFor}</span>
         </div>
         <div className="grid grid-cols-[135px_1fr] items-start">
-          <span className="font-black text-gray-800 text-[13px]">Travel Dates</span>
-          <span className="font-bold text-gray-950 text-[13px]">{data.travelDates}</span>
+          <span className="font-black text-gray-800 text-[12.5px]">Assigned Vehicle</span>
+          <span className="font-bold text-[#0369a1] text-[12.5px]">
+            {data.selectedVehicle || "Dedicated Mountain Vehicle"} {data.selectedPaxCount ? `(${String(data.selectedPaxCount).padStart(2, '0')} Pax Private Tour)` : ""}
+          </span>
         </div>
         <div className="grid grid-cols-[135px_1fr] items-start">
-          <span className="font-black text-gray-800 text-[13px]">Duration</span>
-          <span className="font-bold text-gray-950 text-[13px]">{data.duration}</span>
+          <span className="font-black text-gray-800 text-[12.5px]">Travel Dates</span>
+          <span className="font-bold text-gray-950 text-[12.5px]">{data.travelDates}</span>
         </div>
         <div className="grid grid-cols-[135px_1fr] items-start">
-          <span className="font-black text-gray-800 text-[13px]">Starting Point</span>
-          <span className="font-bold text-gray-950 text-[13px]">{data.startingPoint}</span>
+          <span className="font-black text-gray-800 text-[12.5px]">Duration</span>
+          <span className="font-bold text-gray-950 text-[12.5px]">{data.duration}</span>
         </div>
         <div className="grid grid-cols-[135px_1fr] items-start">
-          <span className="font-black text-gray-800 text-[13px]">Route Covered</span>
-          <span className="text-[12.5px] text-gray-900 leading-snug font-bold">{data.routeCovered}</span>
+          <span className="font-black text-gray-800 text-[12.5px]">Starting Point</span>
+          <span className="font-bold text-gray-950 text-[12.5px]">{data.startingPoint}</span>
+        </div>
+        <div className="grid grid-cols-[135px_1fr] items-start">
+          <span className="font-black text-gray-800 text-[12.5px]">Route Covered</span>
+          <span className="text-[12px] text-gray-900 leading-snug font-bold">{data.routeCovered}</span>
         </div>
       </div>
 
@@ -3176,6 +3858,202 @@ ${data.motto}`;
     </div>
   );
 
+  const renderDayCard = (day: DayPlan, dIdx: number, isShortTour: boolean) => {
+    // Resolve day photos (explicit or smart keyword-based matching)
+    const primaryPhotoUrl = day.photoUrl || (
+      day.route.toLowerCase().includes("auli") || day.activities.some(a => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing") || a.toLowerCase().includes("cable car"))
+        ? "/gallery/auli_ropeway.jpg"
+        : day.route.toLowerCase().includes("tungnath") || day.activities.some(a => a.toLowerCase().includes("tungnath"))
+        ? "/gallery/tungnath_temple_snow.jpg"
+        : day.route.toLowerCase().includes("chandrashila") || day.activities.some(a => a.toLowerCase().includes("chandrashila"))
+        ? "/gallery/chandrashila_summit.jpg"
+        : day.route.toLowerCase().includes("chopta") || day.activities.some(a => a.toLowerCase().includes("chopta"))
+        ? "/gallery/chopta_snow_meadows.jpg"
+        : day.route.toLowerCase().includes("mussoorie") || day.activities.some(a => a.toLowerCase().includes("mussoorie") || a.toLowerCase().includes("mall road") || a.toLowerCase().includes("winterline"))
+        ? "/gallery/mussoorie_winterline.jpeg"
+        : day.route.toLowerCase().includes("rishikesh") || day.activities.some(a => a.toLowerCase().includes("rishikesh") || a.toLowerCase().includes("aarti") || a.toLowerCase().includes("jhula"))
+        ? "/gallery/rishikesh_ganga_aarti.webp"
+        : day.route.toLowerCase().includes("joshimath") || day.activities.some(a => a.toLowerCase().includes("joshimath"))
+        ? "/gallery/joshimath_stay.jpeg"
+        : day.route.toLowerCase().includes("ukhimath") || day.activities.some(a => a.toLowerCase().includes("ukhimath"))
+        ? "/gallery/ukhimath_temple.png"
+        : data.photos && data.photos[dIdx]
+        ? data.photos[dIdx].url
+        : null
+    );
+
+    const isDayBanner = !!(day.bannerPhotoUrl || primaryPhotoUrl?.includes("banner") || primaryPhotoUrl?.includes("ukhimath_devprayag"));
+
+    const primaryCaption = day.photoCaption || (
+      isDayBanner 
+        ? "Ukhimath Shri Omkareshwar Temple & Devprayag Sangam" 
+        : (data.photos?.find(p => p.url === primaryPhotoUrl)?.caption || `Day ${day.dayNumber} Sightseeing Highlight`)
+    );
+
+    const secondaryPhotoUrl = isDayBanner ? null : day.photoUrl2 || (
+      day.route.toLowerCase().includes("auli") && primaryPhotoUrl !== "/gallery/auli_skiing.jpg" ? "/gallery/auli_skiing.jpg" :
+      day.route.toLowerCase().includes("tungnath") && primaryPhotoUrl !== "/gallery/chandrashila_summit.jpg" ? "/gallery/chandrashila_summit.jpg" :
+      day.route.toLowerCase().includes("mussoorie") && primaryPhotoUrl !== "/gallery/mussoorie_mall_road.webp" ? "/gallery/mussoorie_mall_road.webp" :
+      day.route.toLowerCase().includes("rishikesh") && !day.route.toLowerCase().includes("chopta") && !day.route.toLowerCase().includes("ukhimath") && primaryPhotoUrl !== "/gallery/rishikesh_ram_jhula.png" ? "/gallery/rishikesh_ram_jhula.png" : null
+    );
+
+    const secondaryCaption = day.photoCaption2 || (
+      data.photos?.find(p => p.url === secondaryPhotoUrl)?.caption || (
+        secondaryPhotoUrl === "/gallery/auli_skiing.jpg" ? "Thrilling Auli Snow Skiing & Slopes" :
+        secondaryPhotoUrl === "/gallery/chandrashila_summit.jpg" ? "Chandrashila 360° Himalayan Panorama" :
+        secondaryPhotoUrl === "/gallery/mussoorie_mall_road.webp" ? "Mussoorie Mall Road & Misty Hills" :
+        secondaryPhotoUrl === "/gallery/rishikesh_ram_jhula.png" ? "Sacred Ram Jhula over Ganga" : ""
+      )
+    );
+
+    return (
+      <div key={day.id} className={isShortTour ? "bg-white rounded-xl border border-sky-200/90 shadow-2xs overflow-hidden" : "text-xs space-y-0.5"}>
+        {/* Header Bar */}
+        <div className={`bg-[#0369a1] text-white font-bold tracking-wide flex items-center justify-between shadow-xs ${isShortTour ? "px-3.5 py-1.5 text-[12px]" : "px-2.5 py-1 rounded-md text-[11px]"}`}>
+          <div className="flex items-center gap-2 min-w-0 pr-2">
+            <span className="bg-white/20 text-white px-2 py-0.5 rounded font-black text-[11.5px] shrink-0 tracking-wider">
+              DAY {day.dayNumber}
+            </span>
+            {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
+              <span className="text-sky-100 font-semibold text-[11px] shrink-0">
+                ({day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()})
+              </span>
+            )}
+            <span className="opacity-75 shrink-0">·</span>
+            <span className="truncate font-bold text-[12px]">{day.route}</span>
+          </div>
+          {day.overnightStay && (
+            <span className="text-[10.5px] bg-sky-950/90 border border-sky-400/40 px-2.5 py-0.5 rounded-md font-bold shrink-0 ml-2 text-white shadow-2xs whitespace-nowrap">
+              🏨 Stay: {day.overnightStay}
+            </span>
+          )}
+        </div>
+
+        {/* Day Smart Travel Metrics Pill Bar */}
+        {(day.distanceKm || day.driveTime || day.altitudeFt || day.mealsIncluded || day.dayHighlights) && (
+          <div className="flex flex-wrap items-center gap-1.5 px-3 py-1 bg-gradient-to-r from-sky-50/90 via-blue-50/50 to-amber-50/30 border-b border-sky-100/90 text-[10px] font-bold text-gray-800">
+            {day.distanceKm && (
+              <span className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded shadow-2xs border border-sky-200/70 text-sky-900">
+                🚗 <span>{day.distanceKm}</span> {day.driveTime && <span className="text-gray-500 font-semibold">({day.driveTime})</span>}
+              </span>
+            )}
+            {day.altitudeFt && (
+              <span className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded shadow-2xs border border-sky-200/70 text-emerald-900">
+                🏔️ <span>{day.altitudeFt}</span>
+              </span>
+            )}
+            {day.mealsIncluded && (
+              <span className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded shadow-2xs border border-sky-200/70 text-amber-900">
+                🍽️ <span>{day.mealsIncluded}</span>
+              </span>
+            )}
+            {day.dayHighlights && (
+              <span className="inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded shadow-2xs border border-sky-200/70 text-indigo-900 ml-auto font-black truncate max-w-[280px]">
+                ✦ <span>{day.dayHighlights}</span>
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Day Content */}
+        {isShortTour ? (
+          <div className="p-2 space-y-1.5">
+            {/* Activities Bullet Points - Large & Clear */}
+            <ul className="text-gray-950 space-y-1 text-[12px] font-medium leading-relaxed pl-3">
+              {day.activities.map((act, aIdx) => (
+                <li key={aIdx}>
+                  – {act}
+                </li>
+              ))}
+            </ul>
+
+            {/* Day Related Photo Banner (Panorama) or Standard Photo Strip right after activities */}
+            {isDayBanner ? (
+              <div className="pt-1 border-t border-sky-100/90">
+                <div className="w-full h-24 sm:h-[105px] rounded-lg overflow-hidden border border-sky-300/90 bg-gradient-to-r from-sky-950 via-slate-900 to-sky-950 shadow-2xs relative flex items-center justify-center p-0.5">
+                  <img 
+                    src={day.bannerPhotoUrl || primaryPhotoUrl || "/gallery/day1_ukhimath_devprayag_banner.jpg"} 
+                    alt="" 
+                    aria-hidden="true" 
+                    className="absolute inset-0 w-full h-full object-cover opacity-25 filter blur-xs"
+                  />
+                  <img 
+                    src={day.bannerPhotoUrl || primaryPhotoUrl || "/gallery/day1_ukhimath_devprayag_banner.jpg"} 
+                    alt={primaryCaption || `Day ${day.dayNumber} Sightseeing Excursion`} 
+                    className="relative z-10 max-h-full max-w-full object-contain drop-shadow-sm"
+                  />
+                  <span className="absolute bottom-1 right-1.5 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
+                    Day {day.dayNumber} Excursion
+                  </span>
+                </div>
+              </div>
+            ) : primaryPhotoUrl ? (
+              <div className="pt-1 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
+                <div className={`${secondaryPhotoUrl ? 'w-32 h-16' : 'w-40 h-20'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
+                  <img 
+                    src={primaryPhotoUrl} 
+                    alt="" 
+                    aria-hidden="true" 
+                    className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                  />
+                  <img 
+                    src={primaryPhotoUrl} 
+                    alt={primaryCaption} 
+                    className="relative z-10 max-h-full max-w-full object-cover"
+                  />
+                  <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
+                    Day {day.dayNumber}
+                  </span>
+                </div>
+
+                {secondaryPhotoUrl && (
+                  <div className="w-32 h-16 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
+                    <img 
+                      src={secondaryPhotoUrl} 
+                      alt="" 
+                      aria-hidden="true" 
+                      className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                    />
+                    <img 
+                      src={secondaryPhotoUrl} 
+                      alt={secondaryCaption} 
+                      className="relative z-10 max-h-full max-w-full object-cover"
+                    />
+                    <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
+                      Day {day.dayNumber}
+                    </span>
+                  </div>
+                )}
+
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                  <p className="text-[11px] font-black text-[#0369a1] flex items-center gap-1">
+                    <span>📸 Day {day.dayNumber} Sightseeing & Excursion</span>
+                  </p>
+                  <p className="text-[11px] text-gray-950 font-bold mt-0.5 leading-snug">
+                    {primaryCaption}
+                  </p>
+                  {secondaryCaption && (
+                    <p className="text-[10px] text-gray-700 font-semibold mt-0.5 leading-snug">
+                      • {secondaryCaption}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        ) : (
+          <ul className="pl-3 space-y-0.5 text-gray-950 text-[11px] font-medium leading-snug">
+            {day.activities.map((act, aIdx) => (
+              <li key={aIdx}>
+                – {act}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  };
+
   const renderPage2 = (prefix: string) => {
     const isShortTour = data.days.length <= 6;
     const isWinter = data.title.toLowerCase().includes("winter") || 
@@ -3185,6 +4063,12 @@ ${data.motto}`;
     const displayHotelPhotos = (data.hotelPhotos && data.hotelPhotos.length > 0) 
       ? data.hotelPhotos 
       : (isWinter ? WINTER_HOTEL_PHOTO_PRESETS : CURATED_HOTEL_PHOTO_PRESETS);
+
+    // If it's a short tour with > 3 days (e.g. 4D, 5D, 6D), Page 2 cleanly shows Days 1 to 3
+    // and Days 4+ continue onto Page 3 with zero cut off!
+    const page2Days = isShortTour && data.days.length > 3 
+      ? data.days.slice(0, 3) 
+      : data.days.slice(0, 10);
 
     return (
       <div
@@ -3201,159 +4085,33 @@ ${data.motto}`;
           <h2 className="text-lg font-serif font-black text-[#0369a1] border-b-2 border-[#0369a1] pb-1 mb-1.5 flex items-center justify-between">
             <span>Detailed Day-Wise Itinerary ({data.duration || `${data.days.length} Days / ${Math.max(1, data.days.length - 1)} Nights Plan`})</span>
             <span className="text-[11px] font-sans font-black text-sky-800 bg-sky-50 border border-sky-200 px-3 py-0.5 rounded-full">
-              Complete Day 1 to Day {Math.min(10, data.days.length)} Plan
+              {isShortTour && data.days.length > 3 
+                ? `Part 1 · Days 1 to 3 of ${data.days.length} Days` 
+                : `Complete Day 1 to Day ${Math.min(10, data.days.length)} Plan`}
             </span>
           </h2>
 
           {/* DAY-WISE ITINERARY CARDS WITH DIRECTLY LINKED PHOTOS */}
           <div className={isShortTour ? (data.days.length <= 3 ? "space-y-2.5" : "space-y-1.5") : "space-y-1.5"}>
-            {data.days.slice(0, 10).map((day, dIdx) => {
-              // Resolve day photos (explicit or smart keyword-based matching)
-              const primaryPhotoUrl = day.photoUrl || (
-                day.route.toLowerCase().includes("auli") || day.activities.some(a => a.toLowerCase().includes("auli") || a.toLowerCase().includes("skiing") || a.toLowerCase().includes("cable car"))
-                  ? "/gallery/auli_ropeway.jpg"
-                  : day.route.toLowerCase().includes("tungnath") || day.activities.some(a => a.toLowerCase().includes("tungnath"))
-                  ? "/gallery/tungnath_temple_snow.jpg"
-                  : day.route.toLowerCase().includes("chandrashila") || day.activities.some(a => a.toLowerCase().includes("chandrashila"))
-                  ? "/gallery/chandrashila_summit.jpg"
-                  : day.route.toLowerCase().includes("chopta") || day.activities.some(a => a.toLowerCase().includes("chopta"))
-                  ? "/gallery/chopta_snow_meadows.jpg"
-                  : day.route.toLowerCase().includes("mussoorie") || day.activities.some(a => a.toLowerCase().includes("mussoorie") || a.toLowerCase().includes("mall road") || a.toLowerCase().includes("winterline"))
-                  ? "/gallery/mussoorie_winterline.jpeg"
-                  : day.route.toLowerCase().includes("rishikesh") || day.activities.some(a => a.toLowerCase().includes("rishikesh") || a.toLowerCase().includes("aarti") || a.toLowerCase().includes("jhula"))
-                  ? "/gallery/rishikesh_ganga_aarti.webp"
-                  : day.route.toLowerCase().includes("joshimath") || day.activities.some(a => a.toLowerCase().includes("joshimath"))
-                  ? "/gallery/joshimath_stay.jpeg"
-                  : day.route.toLowerCase().includes("ukhimath") || day.activities.some(a => a.toLowerCase().includes("ukhimath"))
-                  ? "/gallery/ukhimath_temple.png"
-                  : data.photos && data.photos[dIdx]
-                  ? data.photos[dIdx].url
-                  : null
-              );
-
-              const primaryCaption = day.photoCaption || (
-                data.photos?.find(p => p.url === primaryPhotoUrl)?.caption || `Day ${day.dayNumber} Sightseeing Highlight`
-              );
-
-              const secondaryPhotoUrl = day.photoUrl2 || (
-                day.route.toLowerCase().includes("auli") && primaryPhotoUrl !== "/gallery/auli_skiing.jpg" ? "/gallery/auli_skiing.jpg" :
-                day.route.toLowerCase().includes("tungnath") && primaryPhotoUrl !== "/gallery/chandrashila_summit.jpg" ? "/gallery/chandrashila_summit.jpg" :
-                day.route.toLowerCase().includes("mussoorie") && primaryPhotoUrl !== "/gallery/mussoorie_mall_road.webp" ? "/gallery/mussoorie_mall_road.webp" :
-                day.route.toLowerCase().includes("rishikesh") && primaryPhotoUrl !== "/gallery/rishikesh_ram_jhula.png" ? "/gallery/rishikesh_ram_jhula.png" : null
-              );
-
-              const secondaryCaption = day.photoCaption2 || (
-                data.photos?.find(p => p.url === secondaryPhotoUrl)?.caption || (
-                  secondaryPhotoUrl === "/gallery/auli_skiing.jpg" ? "Thrilling Auli Snow Skiing & Slopes" :
-                  secondaryPhotoUrl === "/gallery/chandrashila_summit.jpg" ? "Chandrashila 360° Himalayan Panorama" :
-                  secondaryPhotoUrl === "/gallery/mussoorie_mall_road.webp" ? "Mussoorie Mall Road & Misty Hills" :
-                  secondaryPhotoUrl === "/gallery/rishikesh_ram_jhula.png" ? "Sacred Ram Jhula over Ganga" : ""
-                )
-              );
-
-              return (
-                <div key={day.id} className={isShortTour ? "bg-white rounded-xl border border-sky-200/90 shadow-2xs overflow-hidden" : "text-xs space-y-0.5"}>
-                  {/* Header Bar */}
-                  <div className={`bg-[#0369a1] text-white font-bold tracking-wide flex items-center justify-between shadow-xs ${isShortTour ? "px-3.5 py-1.5 text-[12px]" : "px-2.5 py-1 rounded-md text-[11px]"}`}>
-                    <div className="flex items-center gap-2 min-w-0 pr-2">
-                      <span className="bg-white/20 text-white px-2 py-0.5 rounded font-black text-[11.5px] shrink-0 tracking-wider">
-                        DAY {day.dayNumber}
-                      </span>
-                      {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
-                        <span className="text-sky-100 font-semibold text-[11px] shrink-0">
-                          ({day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()})
-                        </span>
-                      )}
-                      <span className="opacity-75 shrink-0">·</span>
-                      <span className="truncate font-bold text-[12px]">{day.route}</span>
-                    </div>
-                    {day.overnightStay && (
-                      <span className="text-[10.5px] bg-sky-950/90 border border-sky-400/40 px-2.5 py-0.5 rounded-md font-bold shrink-0 ml-2 text-white shadow-2xs whitespace-nowrap">
-                        🏨 Stay: {day.overnightStay}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Day Content */}
-                  {isShortTour ? (
-                    <div className="p-2 space-y-1.5">
-                      {/* Activities Bullet Points - Large & Clear */}
-                      <ul className="text-gray-950 space-y-1 text-[12px] font-medium leading-relaxed pl-3">
-                        {day.activities.map((act, aIdx) => (
-                          <li key={aIdx}>
-                            – {act}
-                          </li>
-                        ))}
-                      </ul>
-
-                      {/* Day 1, Day 2, Day 3 Related Photo Strip right after activities */}
-                      {primaryPhotoUrl && (
-                        <div className="pt-1 border-t border-sky-100/90 flex items-center gap-2.5 bg-gradient-to-r from-sky-50/70 via-blue-50/30 to-transparent p-1.5 rounded-lg">
-                          <div className={`${secondaryPhotoUrl ? 'w-32 h-16' : 'w-40 h-20'} rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5`}>
-                            <img 
-                              src={primaryPhotoUrl} 
-                              alt="" 
-                              aria-hidden="true" 
-                              className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                            />
-                            <img 
-                              src={primaryPhotoUrl} 
-                              alt={primaryCaption} 
-                              className="relative z-10 max-h-full max-w-full object-cover"
-                            />
-                            <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
-                              Day {day.dayNumber}
-                            </span>
-                          </div>
-
-                          {secondaryPhotoUrl && (
-                            <div className="w-32 h-16 rounded-lg overflow-hidden border border-sky-200 bg-slate-900 shrink-0 relative shadow-2xs flex items-center justify-center p-0.5">
-                              <img 
-                                src={secondaryPhotoUrl} 
-                                alt="" 
-                                aria-hidden="true" 
-                                className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                              />
-                              <img 
-                                src={secondaryPhotoUrl} 
-                                alt={secondaryCaption} 
-                                className="relative z-10 max-h-full max-w-full object-cover"
-                              />
-                              <span className="absolute bottom-1 right-1 z-20 text-[7.5px] font-bold px-1.5 py-0.2 rounded bg-black/80 text-white backdrop-blur-xs">
-                                Day {day.dayNumber}
-                              </span>
-                            </div>
-                          )}
-
-                          <div className="flex-1 min-w-0 flex flex-col justify-center">
-                            <p className="text-[11px] font-black text-[#0369a1] flex items-center gap-1">
-                              <span>📸 Day {day.dayNumber} Sightseeing & Excursion</span>
-                            </p>
-                            <p className="text-[11px] text-gray-950 font-bold mt-0.5 leading-snug">
-                              {primaryCaption}
-                            </p>
-                            {secondaryCaption && (
-                              <p className="text-[10px] text-gray-700 font-semibold mt-0.5 leading-snug">
-                                • {secondaryCaption}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <ul className="pl-3 space-y-0.5 text-gray-950 text-[11px] font-medium leading-snug">
-                      {day.activities.map((act, aIdx) => (
-                        <li key={aIdx}>
-                          – {act}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              );
-            })}
+            {page2Days.map((day, dIdx) => renderDayCard(day, dIdx, isShortTour))}
           </div>
+
+          {/* Continuation Banner on Page 2 for multi-part itineraries */}
+          {isShortTour && data.days.length > 3 && (
+            <div className="mt-2 p-2 bg-gradient-to-r from-sky-50 via-blue-50/70 to-sky-50 rounded-lg border border-sky-200/80 flex items-center justify-between text-[11px] font-bold text-sky-900 shadow-2xs">
+              <span className="flex items-center gap-1.5">
+                <span className="text-[#0369a1] font-black">✦ Continued on Page 3:</span>
+                <span className="text-gray-700 font-medium">
+                  {data.days.length === 4 
+                    ? `Day 4 (${data.days[3].route.split('→')[0].trim()} Adventure & Departure)` 
+                    : `Day 4 (${data.days[3].route.split('→')[1]?.trim() || 'Auli Snow Excursion'}) & Day 5 (${data.days[4]?.route.split('→')[data.days[4]?.route.split('→').length - 1]?.trim() || 'Return Journey'})`}
+                </span>
+              </span>
+              <span className="text-[10px] font-black text-[#0369a1] bg-white px-2.5 py-0.5 rounded-full border border-sky-300">
+                Turn to Page 3 ➔
+              </span>
+            </div>
+          )}
 
           {/* CONFIRMED STAYS & RESORTS SHOWCASE (Fills Page 2 gracefully for very short tours like 3D!) */}
           {data.days.length <= 3 && displayHotelPhotos && displayHotelPhotos.length > 0 && (
@@ -3499,235 +4257,302 @@ ${data.motto}`;
   );
 };
 
-  const renderPage3 = (prefix: string) => (
-    <div
-      id={`${prefix}-itinerary-page-3`}
-      className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
-      style={{ boxSizing: "border-box" }}
-    >
-      {/* Background Watermark */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
-        <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
-      </div>
+  const renderPage3 = (prefix: string) => {
+    const isShortTour = data.days.length <= 6;
+    const isWinter = data.title.toLowerCase().includes("winter") || 
+                     data.title.toLowerCase().includes("auli") || 
+                     data.title.toLowerCase().includes("chopta") ||
+                     (data.subTitle && data.subTitle.toLowerCase().includes("winter"));
+    const displayHotelPhotos = (data.hotelPhotos && data.hotelPhotos.length > 0) 
+      ? data.hotelPhotos 
+      : (isWinter ? WINTER_HOTEL_PHOTO_PRESETS : CURATED_HOTEL_PHOTO_PRESETS);
 
-      <div className="relative z-10 space-y-2.5">
-        
-        {/* Remaining Days (Only for large itineraries > 10 days) */}
-        {data.days.length > 10 && (
-          <div className="space-y-1.5">
-            <h4 className="text-[13px] font-serif font-black text-[#0369a1] border-b border-sky-100 pb-0.5 flex items-center justify-between">
-              <span>Detailed Day-Wise Itinerary (Continued — Days 11 to {data.days.length} of {data.days.length} Days)</span>
-              <span className="text-[11px] font-sans font-bold text-sky-800 bg-sky-50 border border-sky-200 px-2.5 py-0.5 rounded-full">
-                Part 2 · Extended Days
-              </span>
-            </h4>
-            {data.days.slice(10).map(day => (
-              <div key={day.id} className="text-xs space-y-0.5">
-                <div className="bg-[#0369a1] text-white px-2.5 py-1 rounded-md text-[11.5px] font-bold tracking-wide flex items-center gap-1.5">
-                  <span className="font-black">DAY {day.dayNumber}</span>
-                  {day.dateStr && !/^Day\s*\d+$/i.test(day.dateStr.trim()) && (
-                    <>
-                      <span className="opacity-75">·</span>
-                      <span className="font-semibold text-sky-100">{day.dateStr.replace(/^Day\s*[-–:]*\s*Day\s*\d*\s*[-–:]*/i, "").replace(/^Day\s*\d+\s*[-–:]*\s*/i, "").trim()}</span>
-                    </>
-                  )}
-                  <span className="opacity-75">·</span>
-                  <span className="truncate font-bold">{day.route}</span>
-                </div>
+    // Days to show at the top of Page 3:
+    // For short tours > 3 days (4D, 5D, 6D): Days 4+ (e.g. Day 4 and Day 5)
+    // For long tours > 10 days (11D, 12D): Days 11+
+    const page3Days = isShortTour && data.days.length > 3
+      ? data.days.slice(3)
+      : (!isShortTour && data.days.length > 10 ? data.days.slice(10) : []);
 
-                <ul className="pl-3 space-y-0.5 text-gray-950 text-[11px] font-medium">
-                  {day.activities.map((act, aIdx) => (
-                    <li key={aIdx} className="leading-tight">
-                      – {act}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="pl-3 text-[10.5px] text-amber-950 italic font-bold">
-                  Overnight Stay: {day.overnightStay}
-                </p>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Package Options & Pricing Table */}
-        <div className="space-y-1 pt-0.5">
-          <h3 className="text-lg font-serif font-black text-[#0369a1]">
-            Package Options & Pricing
-          </h3>
-          <p className="text-[12px] text-gray-700 font-medium leading-snug">
-            {data.pricingSubtitle}
-          </p>
-
-          <table className="w-full text-xs border border-sky-200 text-center mt-1.5 rounded-lg overflow-hidden">
-            <thead className="bg-[#0369a1] text-white font-bold text-[11.5px]">
-              <tr>
-                <th className="px-3.5 py-2 text-left">Package</th>
-                <th className="px-3 py-2">Price / Person</th>
-                <th className="px-3 py-2">Hotel Category</th>
-                <th className="px-3 py-2">Meals</th>
-                <th className="px-3 py-2">Special / Transport</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 text-[11.5px]">
-              {data.pricingTiers.map((tier, tIdx) => (
-                <tr key={tIdx} className={tIdx % 2 === 0 ? "bg-white" : "bg-gray-50/70"}>
-                  <td className="px-3.5 py-2 font-black text-gray-950 text-left text-[12px]">{tier.package}</td>
-                  <td className="px-3 py-2 font-black text-[#0369a1] text-[12.5px]">{tier.price}</td>
-                  <td className="px-3 py-2 text-gray-800 font-medium">{tier.hotelCategory}</td>
-                  <td className="px-3 py-2 text-gray-800 font-medium">{tier.meals}</td>
-                  <td className="px-3 py-2 text-gray-800 font-medium">{tier.specialFeature}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <p className="text-[10.5px] text-gray-600 font-semibold italic mt-0.5">
-            {data.pricingNote}
-          </p>
+    return (
+      <div
+        id={`${prefix}-itinerary-page-3`}
+        className="w-[794px] min-h-[1122px] h-[1122px] max-h-[1122px] bg-[#ffffff] shadow-2xl shrink-0 px-8 py-6 flex flex-col justify-between relative overflow-hidden text-gray-900 border-[10px] border-double border-[#0369a1]"
+        style={{ boxSizing: "border-box" }}
+      >
+        {/* Background Watermark */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-[0.03] pointer-events-none">
+          <img src="/logo.png" alt="watermark" className="w-[500px] h-[500px] object-contain" />
         </div>
 
-        {/* Confirmed Accommodation Standards Showcase */}
-        {data.showHotelPhotos !== false && data.hotelPhotos && data.hotelPhotos.length > 0 && (
-          <div className="pt-2.5 border-t border-gray-200 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <h4 className="text-[12.5px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
-                <span>🏨 Confirmed Accommodation Standards & Clean Stays</span>
-                <span className="text-[9px] font-bold px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
-                  Pre-inspected & Verified
+        <div className={`relative z-10 ${page3Days.length > 0 ? "space-y-1.5" : "space-y-2.5"}`}>
+          
+          {/* Detailed Day-Wise Itinerary Part 2 (Days 4+ for short tours, or Days 11+ for long tours) */}
+          {page3Days.length > 0 && (
+            <div className="space-y-1.5">
+              <h3 className="text-base font-serif font-black text-[#0369a1] border-b-2 border-[#0369a1] pb-1 flex items-center justify-between">
+                <span>
+                  Detailed Day-Wise Itinerary (Part 2 · {isShortTour ? `Days 4 to ${data.days.length}` : `Days 11 to ${data.days.length}`} of {data.days.length} Days)
                 </span>
-              </h4>
-              <span className="text-[10px] text-gray-600 font-semibold">Standard Clean Stays & Camps</span>
+                <span className="text-[10.5px] font-sans font-black text-sky-800 bg-sky-50 border border-sky-200 px-3 py-0.5 rounded-full">
+                  {isWinter ? "❄️ Auli Snow Slopes & Return Plan" : "✦ Concluding Circuit & Sightseeing"}
+                </span>
+              </h3>
+
+              <div className={isShortTour ? "space-y-1.5" : "space-y-1"}>
+                {page3Days.map((day, dIdx) => renderDayCard(day, isShortTour ? dIdx + 3 : dIdx + 10, isShortTour))}
+              </div>
             </div>
-            <div className={`grid gap-2.5 ${data.hotelPhotos.length === 1 ? 'grid-cols-1' : data.hotelPhotos.length === 2 ? 'grid-cols-2' : data.hotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
-              {data.hotelPhotos.slice(0, 4).map((hp, hIdx) => {
-                const isTent = hp.roomType?.toLowerCase().includes("tent");
-                const safeUrl = (isTent && (hp.url?.includes("32") || !hp.url)) || hp.url === "/gallery/chardham_10d_img_32.jpg"
-                  ? "/gallery/kedarnath_alpine_tent.jpg"
-                  : hp.url;
-                const isContain = hp.fit !== "cover";
-                const fitClass = isContain ? "object-contain" : "object-cover";
-                return (
-                  <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
-                    <div className="h-34 relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5">
-                      <img 
-                        src={safeUrl} 
-                        alt="" 
-                        aria-hidden="true" 
-                        className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                      />
-                      <img 
-                        src={safeUrl} 
-                        alt={hp.roomType || 'Accommodation'} 
-                        className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
-                      />
-                      <span className={`absolute top-1.5 right-1.5 z-20 text-[9px] font-black px-2 py-0.5 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
-                        {isTent ? '⛺ Tent Only' : '🏨 ' + (hp.roomType || 'Standard Room')}
-                      </span>
-                    </div>
-                    <div className="p-2 bg-sky-50/50 flex-1 flex flex-col justify-between">
-                      <div>
-                        <p className="text-[11.5px] font-black text-gray-950 leading-tight truncate">
-                          {isTent ? 'Alpine Camp / Tent Stay' : (hp.roomType || 'Standard Clean Room')}
+          )}
+
+          {/* Dynamic Pax & Vehicle Matrix Table OR Standard Pricing Table */}
+          <div className="space-y-1 pt-0.5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-serif font-black text-[#0369a1] flex items-center gap-2">
+                <span>{data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? "Group Sizing, Vehicle & Pricing Matrix" : "Package Options & Pricing"}</span>
+                {data.selectedPaxCount && (
+                  <span className="text-[10px] font-sans font-black bg-sky-100 text-[#0369a1] border border-sky-300 px-2.5 py-0.5 rounded-full">
+                    Quoted for: {String(data.selectedPaxCount).padStart(2, '0')} Pax
+                  </span>
+                )}
+              </h3>
+              <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? "Dedicated Fleet · MAP Meals · Double Sharing" : "Standard Packages"}
+              </span>
+            </div>
+
+            <p className="text-[11.5px] text-gray-700 font-medium leading-snug">
+              {data.pricingSubtitle}
+            </p>
+
+            {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && data.showPaxMatrixOnPrint !== false ? (
+              <div className="border border-sky-300 rounded-xl overflow-hidden mt-1.5 shadow-2xs">
+                <table className="w-full text-xs text-center">
+                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[11px]">
+                    <tr>
+                      <th className="px-3 py-2 text-left">Group Sizing</th>
+                      <th className="px-2.5 py-2 text-left">Dedicated Mountain Vehicle</th>
+                      <th className="px-2.5 py-2">Stay & Rooms</th>
+                      <th className="px-2.5 py-2">Meal Plan</th>
+                      <th className="px-3 py-2 text-right">Investment / Person</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 text-[11px]">
+                    {data.paxVehicleSlabs.map((slab, sIdx) => {
+                      const isSelected = data.selectedPaxCount === slab.paxCount;
+                      return (
+                        <tr 
+                          key={sIdx} 
+                          className={isSelected ? "bg-amber-50/90 font-bold border-l-4 border-l-amber-500" : (sIdx % 2 === 0 ? "bg-white" : "bg-sky-50/40")}
+                        >
+                          <td className="px-3 py-1.5 text-left font-black text-gray-900 flex items-center gap-1.5">
+                            <span className={isSelected ? "text-amber-900 font-black text-[11.5px]" : "text-gray-950 font-bold"}>
+                              {slab.paxLabel}
+                            </span>
+                            {isSelected && (
+                              <span className="text-[8.5px] font-black bg-amber-500 text-white px-1.5 py-0.2 rounded shadow-2xs uppercase tracking-wider">
+                                Selected
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-2.5 py-1.5 text-left text-gray-900 font-bold">
+                            🚗 {slab.vehicleName}
+                          </td>
+                          <td className="px-2.5 py-1.5 text-gray-800 font-medium">
+                            {slab.roomsCount}
+                          </td>
+                          <td className="px-2.5 py-1.5 text-gray-700 font-medium">
+                            {slab.mealPlan}
+                          </td>
+                          <td className="px-3 py-1.5 text-right font-black text-[#0369a1] text-[12px]">
+                            ₹ {slab.ratePerPax.toLocaleString('en-IN')}/- <span className="text-[9.5px] font-semibold text-gray-500">per pax</span>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <div className="border-2 border-sky-300 rounded-xl overflow-hidden mt-1.5 shadow-xs bg-white">
+                <table className="w-full text-xs text-center">
+                  <thead className="bg-gradient-to-r from-sky-900 via-[#0369a1] to-sky-900 text-white font-bold text-[11.5px]">
+                    <tr>
+                      <th className="px-3.5 py-2.5 text-left">Confirmed Package & Group</th>
+                      <th className="px-3 py-2.5">Price / Person</th>
+                      <th className="px-3 py-2.5">Hotel Category & Rooms</th>
+                      <th className="px-3 py-2.5">Meals Included</th>
+                      <th className="px-3 py-2.5">Dedicated Transport</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200 text-[11.5px]">
+                    {data.pricingTiers.map((tier, tIdx) => (
+                      <tr key={tIdx} className={tIdx % 2 === 0 ? "bg-sky-50/40" : "bg-white"}>
+                        <td className="px-3.5 py-3 font-black text-gray-950 text-left text-[12.5px]">
+                          <span className="flex items-center gap-1.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+                            <span>{tier.package}</span>
+                          </span>
+                        </td>
+                        <td className="px-3 py-3 font-black text-[#0369a1] text-[13.5px]">
+                          {tier.price}
+                        </td>
+                        <td className="px-3 py-3 text-gray-900 font-bold">
+                          {tier.hotelCategory}
+                        </td>
+                        <td className="px-3 py-3 text-gray-800 font-medium">
+                          {tier.meals}
+                        </td>
+                        <td className="px-3 py-3 font-black text-sky-950">
+                          {tier.specialFeature}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+
+            <p className="text-[10px] text-gray-600 font-semibold italic mt-1">
+              {data.pricingNote}
+            </p>
+          </div>
+
+          {/* Confirmed Accommodation Standards Showcase */}
+          {data.showHotelPhotos !== false && displayHotelPhotos && displayHotelPhotos.length > 0 && (
+            <div className="pt-2 border-t border-gray-200 space-y-1">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[12px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
+                  <span>{isWinter ? "🏨 Handpicked Winter Stays & Alpine Comfort" : "🏨 Confirmed Accommodation Standards & Clean Stays"}</span>
+                  <span className="text-[8.5px] font-bold px-2 py-0.2 bg-emerald-50 text-emerald-800 rounded-full border border-emerald-200">
+                    Pre-inspected & Verified
+                  </span>
+                </h4>
+                <span className="text-[9.5px] text-gray-600 font-semibold">{isWinter ? "Heated Rooms · Cozy Stays" : "Standard Clean Stays & Camps"}</span>
+              </div>
+              <div className={`grid gap-2 ${displayHotelPhotos.length === 1 ? 'grid-cols-1' : displayHotelPhotos.length === 2 ? 'grid-cols-2' : displayHotelPhotos.length === 3 ? 'grid-cols-3' : 'grid-cols-4'}`}>
+                {displayHotelPhotos.slice(0, page3Days.length > 0 ? 3 : 4).map((hp, hIdx) => {
+                  const isTent = hp.roomType?.toLowerCase().includes("tent");
+                  const safeUrl = (isTent && (hp.url?.includes("32") || !hp.url)) || hp.url === "/gallery/chardham_10d_img_32.jpg"
+                    ? "/gallery/kedarnath_alpine_tent.jpg"
+                    : hp.url;
+                  const isContain = hp.fit !== "cover";
+                  const fitClass = isContain ? "object-contain" : "object-cover";
+                  const photoHeight = page3Days.length > 0 ? "h-24" : "h-32";
+                  return (
+                    <div key={hp.id || hIdx} className="rounded-xl overflow-hidden border border-sky-200 shadow-2xs bg-white flex flex-col">
+                      <div className={`${photoHeight} relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5`}>
+                        <img 
+                          src={safeUrl} 
+                          alt="" 
+                          aria-hidden="true" 
+                          className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                        />
+                        <img 
+                          src={safeUrl} 
+                          alt={hp.roomType || 'Accommodation'} 
+                          className={`relative z-10 max-h-full max-w-full ${fitClass} ${hp.position || 'object-center'}`}
+                        />
+                        <span className={`absolute top-1 right-1 z-20 text-[8.5px] font-black px-1.5 py-0.2 rounded-md shadow-xs ${isTent ? 'bg-amber-600 text-white' : 'bg-[#0369a1] text-white'}`}>
+                          {isTent ? '⛺ Tent' : '🏨 ' + (hp.location?.split("/")[0]?.trim() || hp.roomType || 'Stay')}
+                        </span>
+                      </div>
+                      <div className="p-1.5 bg-sky-50/50 flex-1 flex flex-col justify-between">
+                        <p className="text-[10.5px] font-black text-gray-950 leading-tight truncate">
+                          {hp.hotelName || (isTent ? 'Alpine Camp / Tent' : (hp.roomType || 'Standard Clean Room'))}
                         </p>
-                        <p className="text-[10px] text-[#0369a1] font-bold flex items-center gap-1 mt-0.5">
-                          📍 {hp.location}
+                        <p className="text-[9px] text-[#0369a1] font-bold truncate mt-0.5">
+                          📍 {hp.location || "Uttarakhand"}
                         </p>
                       </div>
-                      {hp.caption && (
-                        <p className="text-[9.5px] text-gray-700 font-medium mt-1 leading-snug line-clamp-2">
-                          {hp.caption}
-                        </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Page 3 Destinations Gallery - Sacred Yatra Landmarks Showcase (Shown when page3Days is empty, so there's plenty of space) */}
+          {page3Days.length === 0 && data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
+            <div className="pt-2 border-t border-gray-200 space-y-1">
+              <div className="flex items-center justify-between">
+                <h4 className="text-[12px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
+                  <span>🛕 Sacred Yatra Destinations & Sightseeing Highlights</span>
+                  <span className="text-[8.5px] font-bold px-2 py-0.2 bg-sky-50 text-sky-800 rounded-full border border-sky-200">
+                    Visual Tour Guide
+                  </span>
+                </h4>
+                <span className="text-[9.5px] text-gray-600 font-semibold">Travel to Uttarakhand</span>
+              </div>
+              <div className={`grid gap-2 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                {data.photos.slice(0, 6).map((photo, pIdx) => {
+                  const isContain = photo.fit !== "cover";
+                  const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
+                  const fitClass = isContain ? "object-contain" : "object-cover";
+                  const landmarkHeightClass = (data.photos?.length || 0) <= 3 ? "h-36" : "h-28";
+
+                  return (
+                    <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/30 shadow-2xs bg-gray-50 flex flex-col">
+                      <div className={`${landmarkHeightClass} relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5`}>
+                        <img 
+                          src={photo.url} 
+                          alt="" 
+                          aria-hidden="true" 
+                          className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
+                        />
+                        <img 
+                          src={photo.url} 
+                          alt={photo.caption || `Landmark ${pIdx + 1}`} 
+                          className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass}`}
+                        />
+                      </div>
+                      {photo.caption && (
+                        <div className="py-1 px-1.5 bg-white border-t border-gray-100 text-center min-h-[24px] flex items-center justify-center shrink-0">
+                          <p className="text-[10px] font-black text-gray-900 line-clamp-1 px-1 leading-tight">
+                            {photo.caption}
+                          </p>
+                        </div>
                       )}
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Page 3 Destinations Gallery - Sacred Yatra Landmarks Showcase */}
-        {data.showPhotosPage3 !== false && data.photos && data.photos.length > 0 && (
-          <div className="pt-2.5 border-t border-gray-200 space-y-1.5">
-            <div className="flex items-center justify-between">
-              <h4 className="text-[12.5px] font-serif font-black text-[#0369a1] flex items-center gap-1.5">
-                <span>🛕 Sacred Yatra Destinations & Sightseeing Highlights</span>
-                <span className="text-[9px] font-bold px-2 py-0.5 bg-sky-50 text-sky-800 rounded-full border border-sky-200">
-                  Visual Tour Guide
-                </span>
-              </h4>
-              <span className="text-[10px] text-gray-600 font-semibold">Travel to Uttarakhand</span>
-            </div>
-            <div className={`grid gap-2.5 ${data.photos.length <= 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
-              {data.photos.slice(0, 6).map((photo, pIdx) => {
-                const isContain = photo.fit !== "cover";
-                const posClass = photo.position === "top" ? "object-top" : photo.position === "bottom" ? "object-bottom" : "object-center";
-                const fitClass = isContain ? "object-contain" : "object-cover";
-                const landmarkHeightClass = (data.photos?.length || 0) <= 3 ? "h-40" : "h-32";
-
-                return (
-                  <div key={photo.id || pIdx} className="rounded-xl overflow-hidden border border-[#0369a1]/30 shadow-2xs bg-gray-50 flex flex-col">
-                    <div className={`${landmarkHeightClass} relative overflow-hidden bg-slate-900 flex items-center justify-center p-0.5`}>
-                      <img 
-                        src={photo.url} 
-                        alt="" 
-                        aria-hidden="true" 
-                        className="absolute inset-0 w-full h-full object-cover opacity-20 filter blur-xs"
-                      />
-                      <img 
-                        src={photo.url} 
-                        alt={photo.caption || `Landmark ${pIdx + 1}`} 
-                        className={`relative z-10 max-h-full max-w-full ${fitClass} ${posClass}`}
-                      />
-                    </div>
-                    {photo.caption && (
-                      <div className="py-1 px-1.5 bg-white border-t border-gray-100 text-center min-h-[26px] flex items-center justify-center shrink-0">
-                        <p className="text-[10.5px] font-black text-gray-900 line-clamp-1 px-1 leading-tight">
-                          {photo.caption}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Page 3 Footer */}
-      <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
-        <span>Travel to Uttarakhand · {data.contactPhone}</span>
-        <div className="flex items-center gap-3">
-          <a 
-            href="https://traveltouttrakhand.com" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://traveltouttrakhand.com" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
-          >
-            <span>🌐 www.traveltouttrakhand.com</span>
-          </a>
-          <span className="text-gray-300">•</span>
-          <a 
-            href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
-            className="font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/60 border border-sky-200/80 shadow-2xs"
-          >
-            <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
-              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-            </svg>
-            <span>YouTube: @traveltouttarakhand</span>
-          </a>
+          )}
         </div>
-        <span>Page 3 of 4</span>
+
+        {/* Page 3 Footer */}
+        <div className="relative z-10 border-t border-gray-200 pt-2 flex justify-between items-center text-[11px] text-gray-600 font-medium">
+          <span>Travel to Uttarakhand · {data.contactPhone}</span>
+          <div className="flex items-center gap-3">
+            <a 
+              href="https://traveltouttrakhand.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              data-pdf-link="https://traveltouttrakhand.com" 
+              className="font-bold text-[#0369a1] hover:underline flex items-center gap-1"
+            >
+              <span>🌐 www.traveltouttrakhand.com</span>
+            </a>
+            <span className="text-gray-300">•</span>
+            <a 
+              href="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              data-pdf-link="https://youtube.com/@traveltouttarakhand?si=VZngU7DnLfieaSRl" 
+              className="font-bold text-[#0369a1] hover:underline flex items-center gap-1.5 px-2 py-0.5 rounded bg-sky-50/60 border border-sky-200/80 shadow-2xs"
+            >
+              <svg className="w-3.5 h-3.5 fill-[#FF0000] shrink-0" viewBox="0 0 24 24">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+              </svg>
+              <span>YouTube: @traveltouttarakhand</span>
+            </a>
+          </div>
+          <span>Page 3 of 4</span>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderPage4 = (prefix: string) => (
     <div
@@ -4109,6 +4934,81 @@ ${data.motto}`;
             </button>
           </div>
 
+          {/* 👥 Dynamic Pax & Vehicle Selector (Direct 1-Click Itinerary Quote) */}
+          <div className="bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50/70 border-2 border-sky-300 rounded-xl p-3 shadow-xs space-y-2.5">
+            <div className="flex items-center justify-between gap-1 flex-wrap">
+              <div className="flex items-center gap-1.5">
+                <span className="text-base">👥</span>
+                <span className="text-[11.5px] font-black uppercase tracking-wider text-sky-950">
+                  Select Group Pax (1-Click Quote):
+                </span>
+              </div>
+              <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${
+                data.showPaxMatrixOnPrint 
+                  ? "bg-amber-100 text-amber-900 border-amber-300"
+                  : "bg-emerald-100 text-emerald-900 border-emerald-300"
+              }`}>
+                {data.showPaxMatrixOnPrint ? "📊 Full Matrix Active" : `🎯 ${data.selectedPaxCount || 4} Pax Single Quote Active`}
+              </span>
+            </div>
+
+            <p className="text-[11px] text-gray-700 leading-snug">
+              Neeche se pax select kijiye — itinerary ke pricing section mein <b>sirf wahi particular package</b> quote hoga:
+            </p>
+
+            {/* Quick Pax Buttons */}
+            <div className="grid grid-cols-4 gap-1.5">
+              {activeSlabs.map((slab) => {
+                const isSelected = !data.showPaxMatrixOnPrint && (data.selectedPaxCount || 4) === slab.paxCount;
+                return (
+                  <button
+                    key={slab.paxCount}
+                    type="button"
+                    onClick={() => selectPaxSlab(slab)}
+                    className={`p-1.5 rounded-xl border text-center transition cursor-pointer flex flex-col justify-between ${
+                      isSelected
+                        ? "bg-[#0369a1] text-white border-[#0369a1] shadow-md ring-2 ring-sky-400 scale-[1.02]"
+                        : "bg-white text-gray-800 border-sky-200 hover:border-sky-400 hover:bg-sky-50 shadow-2xs"
+                    }`}
+                    title={`Quote specifically for ${slab.paxLabel} (${slab.vehicleName}) @ ₹${slab.ratePerPax.toLocaleString('en-IN')}`}
+                  >
+                    <span className={`text-[11.5px] font-black ${isSelected ? "text-white" : "text-sky-950"}`}>
+                      {slab.paxLabel}
+                    </span>
+                    <span className={`text-[9px] font-semibold truncate ${isSelected ? "text-sky-100" : "text-gray-500"}`}>
+                      {slab.vehicleCategory}
+                    </span>
+                    <span className={`text-[10px] font-black mt-0.5 ${isSelected ? "text-amber-200" : "text-emerald-700"}`}>
+                      ₹{slab.ratePerPax.toLocaleString('en-IN')}
+                    </span>
+                  </button>
+                );
+              })}
+
+              {/* Option to show Full Matrix Table */}
+              <button
+                type="button"
+                onClick={selectAllPaxMatrix}
+                className={`p-1.5 rounded-xl border text-center transition cursor-pointer flex flex-col justify-between ${
+                  data.showPaxMatrixOnPrint
+                    ? "bg-[#0369a1] text-white border-[#0369a1] shadow-md ring-2 ring-sky-400 scale-[1.02]"
+                    : "bg-white text-gray-800 border-sky-200 hover:border-sky-400 hover:bg-sky-50 shadow-2xs"
+                }`}
+                title="Display all 7 group sizes in the pricing matrix table on Page 3"
+              >
+                <span className={`text-[11.5px] font-black ${data.showPaxMatrixOnPrint ? "text-white" : "text-sky-950"}`}>
+                  📊 All Pax
+                </span>
+                <span className={`text-[9px] font-semibold truncate ${data.showPaxMatrixOnPrint ? "text-sky-100" : "text-gray-500"}`}>
+                  Full Matrix
+                </span>
+                <span className={`text-[9.5px] font-black mt-0.5 ${data.showPaxMatrixOnPrint ? "text-amber-200" : "text-sky-800"}`}>
+                  Table Mode
+                </span>
+              </button>
+            </div>
+          </div>
+
           {/* Custom Uploads Detected Banner */}
           {dhamGallery.filter(p => p.isCustom).length > 0 && !customPhotosBannerDismissed && (
             <div className="bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border border-amber-300 p-3 rounded-xl flex items-center justify-between gap-2 text-xs shadow-xs">
@@ -4326,6 +5226,76 @@ ${data.motto}`;
           {/* TAB 1: OVERVIEW & GLANCE */}
           {activeTab === "overview" && (
             <div className="space-y-4 text-xs">
+              {/* Cover Header Banner / Poster Mode (User uploaded poster) */}
+              <div className="p-3 bg-gradient-to-r from-sky-50 via-blue-50/50 to-indigo-50/40 rounded-xl border-2 border-sky-300 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-sky-950 flex items-center gap-1.5">
+                    <span>🖼️ Page 1 Top Header Style</span>
+                  </span>
+                  <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-sky-200">
+                    <button
+                      type="button"
+                      onClick={() => setData({ ...data, useCoverBanner: true, coverBannerUrl: data.coverBannerUrl || "/gallery/auli_chopta_tungnath_banner.jpg" })}
+                      className={`px-2 py-0.5 rounded text-[10px] font-black transition cursor-pointer ${
+                        data.useCoverBanner !== false && data.coverBannerUrl
+                          ? "bg-[#0369a1] text-white shadow-xs"
+                          : "text-gray-600 hover:text-sky-900"
+                      }`}
+                    >
+                      Poster Banner
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setData({ ...data, useCoverBanner: false })}
+                      className={`px-2 py-0.5 rounded text-[10px] font-black transition cursor-pointer ${
+                        data.useCoverBanner === false || !data.coverBannerUrl
+                          ? "bg-[#0369a1] text-white shadow-xs"
+                          : "text-gray-600 hover:text-sky-900"
+                      }`}
+                    >
+                      Classic Text
+                    </button>
+                  </div>
+                </div>
+
+                {data.useCoverBanner !== false && data.coverBannerUrl && (
+                  <div className="flex items-center gap-2.5 pt-1">
+                    <div className="w-24 h-14 rounded-lg overflow-hidden border border-sky-300 shadow-2xs shrink-0 bg-slate-900">
+                      <img 
+                        src={data.coverBannerUrl} 
+                        alt="Banner Preview" 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <input
+                        type="text"
+                        value={data.coverBannerUrl}
+                        onChange={e => setData({ ...data, coverBannerUrl: e.target.value, useCoverBanner: true })}
+                        className="w-full px-2 py-1 bg-white border border-sky-200 rounded text-[10.5px] font-medium"
+                        placeholder="Banner image path / URL"
+                      />
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setData({ ...data, coverBannerUrl: "/gallery/auli_chopta_tungnath_banner.jpg", useCoverBanner: true })}
+                          className="px-2 py-0.5 text-[9.5px] font-bold bg-sky-100 hover:bg-sky-200 text-sky-900 rounded border border-sky-300 transition cursor-pointer"
+                        >
+                          Auli-Chopta Poster
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setData({ ...data, useCoverBanner: false })}
+                          className="px-2 py-0.5 text-[9.5px] font-bold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 transition cursor-pointer"
+                        >
+                          Switch to Classic
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-gray-700 mb-1">Main Title</label>
@@ -4368,18 +5338,94 @@ ${data.motto}`;
                 </div>
               </div>
 
+              {/* TOP 5 METRICS PILL BAR (PAGE 1 HEADER) */}
+              <div className="bg-gradient-to-r from-sky-50 to-blue-50/70 p-3 rounded-xl border border-sky-200/90 space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black text-sky-900 uppercase tracking-wider">
+                    Top 5 Metrics Pill Bar (Page 1 Top Boxes)
+                  </span>
+                  <span className="text-[9.5px] text-gray-500 font-semibold">Live Editable</span>
+                </div>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <label className="block text-[10.5px] font-bold text-gray-700 mb-0.5">1. Group Sizing</label>
+                    <input
+                      type="text"
+                      placeholder={data.selectedPaxCount ? `${String(data.selectedPaxCount).padStart(2, '0')} Pax Group` : "04 Pax Group"}
+                      value={data.customGroupSizing || ""}
+                      onChange={e => setData({ ...data, customGroupSizing: e.target.value })}
+                      className="w-full px-2 py-1.5 bg-white border border-sky-200 rounded text-xs font-bold text-sky-950"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10.5px] font-bold text-gray-700 mb-0.5">2. Assigned Fleet</label>
+                    <input
+                      type="text"
+                      placeholder={data.selectedVehicle?.split("/")[0]?.replace("AC", "").trim() || "Swift Dzire"}
+                      value={data.customAssignedFleet || ""}
+                      onChange={e => setData({ ...data, customAssignedFleet: e.target.value })}
+                      className="w-full px-2 py-1.5 bg-white border border-sky-200 rounded text-xs font-bold text-sky-950"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10.5px] font-bold text-gray-700 mb-0.5">3. Max Elevation</label>
+                    <input
+                      type="text"
+                      placeholder="13,123 Ft"
+                      value={data.customMaxElevation || ""}
+                      onChange={e => setData({ ...data, customMaxElevation: e.target.value })}
+                      className="w-full px-2 py-1.5 bg-white border border-sky-200 rounded text-xs font-bold text-emerald-900"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10.5px] font-bold text-gray-700 mb-0.5">4. Meal Plan</label>
+                    <input
+                      type="text"
+                      placeholder="MAP (B'fast+Din)"
+                      value={data.customMealPlan || ""}
+                      onChange={e => setData({ ...data, customMealPlan: e.target.value })}
+                      className="w-full px-2 py-1.5 bg-white border border-sky-200 rounded text-xs font-bold text-amber-900"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-[10.5px] font-bold text-gray-700 mb-0.5">5. Stay Quality</label>
+                    <input
+                      type="text"
+                      placeholder="Verified Clean"
+                      value={data.customStayQuality || ""}
+                      onChange={e => setData({ ...data, customStayQuality: e.target.value })}
+                      className="w-full px-2 py-1.5 bg-white border border-sky-200 rounded text-xs font-bold text-indigo-950"
+                    />
+                  </div>
+                </div>
+              </div>
+
               <div className="bg-gray-50 p-3 rounded-xl border border-gray-200/80 space-y-3">
                 <span className="text-[11px] font-bold text-gray-500 uppercase tracking-wider">Client & Journey Details</span>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-medium text-gray-600 mb-0.5">Prepared For</label>
+                    <label className="block font-medium text-gray-600 mb-0.5">Prepared For (Client Name)</label>
                     <input
                       type="text"
                       value={data.preparedFor}
                       onChange={e => setData({ ...data, preparedFor: e.target.value })}
-                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-sky-950"
+                      placeholder="e.g. Mr. Dhiraj Kumar"
                     />
                   </div>
+                  <div>
+                    <label className="block font-medium text-gray-600 mb-0.5">Assigned Vehicle (Display)</label>
+                    <input
+                      type="text"
+                      value={data.selectedVehicle || ""}
+                      onChange={e => setData({ ...data, selectedVehicle: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-semibold text-gray-900"
+                      placeholder="e.g. Swift Dzire / Sedan"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-medium text-gray-600 mb-0.5">Travel Dates</label>
                     <input
@@ -4389,9 +5435,6 @@ ${data.motto}`;
                       className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
                     />
                   </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-medium text-gray-600 mb-0.5">Duration</label>
                     <input
@@ -4401,6 +5444,9 @@ ${data.motto}`;
                       className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
                     />
                   </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block font-medium text-gray-600 mb-0.5">Starting Point</label>
                     <input
@@ -4408,6 +5454,17 @@ ${data.motto}`;
                       value={data.startingPoint}
                       onChange={e => setData({ ...data, startingPoint: e.target.value })}
                       className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs"
+                      placeholder="e.g. Haridwar / Rishikesh / Dehradun Airport"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-medium text-gray-600 mb-0.5">Start / End Point (Glance)</label>
+                    <input
+                      type="text"
+                      value={data.glanceStartEnd}
+                      onChange={e => setData({ ...data, glanceStartEnd: e.target.value })}
+                      className="w-full px-2.5 py-1.5 bg-white border border-gray-200 rounded text-xs font-bold text-sky-950"
+                      placeholder="e.g. Haridwar / Rishikesh / Dehradun Airport"
                     />
                   </div>
                 </div>
@@ -4434,8 +5491,17 @@ ${data.motto}`;
               </div>
 
               <div className="bg-sky-50/40 p-3 rounded-xl border border-sky-200/80 space-y-2">
-                <span className="text-[11px] font-bold text-sky-900 uppercase tracking-wider">Quick Info (Glance Table)</span>
+                <span className="text-[11px] font-bold text-sky-900 uppercase tracking-wider">Quick Info (Glance Table on Page 1)</span>
                 <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="block text-[10px] text-gray-500">Duration (Glance)</label>
+                    <input
+                      type="text"
+                      value={data.glanceDuration}
+                      onChange={e => setData({ ...data, glanceDuration: e.target.value })}
+                      className="w-full px-2 py-1 bg-white border border-sky-200 rounded text-xs"
+                    />
+                  </div>
                   <div>
                     <label className="block text-[10px] text-gray-500">Dhams Covered</label>
                     <input
@@ -4452,6 +5518,25 @@ ${data.motto}`;
                       value={data.glanceSector}
                       onChange={e => setData({ ...data, glanceSector: e.target.value })}
                       className="w-full px-2 py-1 bg-white border border-sky-200 rounded text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] text-gray-500">Start / End Point</label>
+                    <input
+                      type="text"
+                      value={data.glanceStartEnd}
+                      onChange={e => setData({ ...data, glanceStartEnd: e.target.value })}
+                      className="w-full px-2 py-1 bg-white border border-sky-200 rounded text-xs font-bold text-sky-950"
+                      placeholder="Haridwar / Rishikesh / Dehradun Airport"
+                    />
+                  </div>
+                  <div className="col-span-2">
+                    <label className="block text-[10px] text-gray-500">Packages Available</label>
+                    <input
+                      type="text"
+                      value={data.glancePackages}
+                      onChange={e => setData({ ...data, glancePackages: e.target.value })}
+                      className="w-full px-2 py-1 bg-white border border-sky-200 rounded text-xs font-bold text-[#0369a1]"
                     />
                   </div>
                 </div>
@@ -4507,6 +5592,67 @@ ${data.motto}`;
                           onChange={e => updateDayField(day.id, "route", e.target.value)}
                           className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-xs font-semibold"
                         />
+                      </div>
+                    </div>
+
+                    {/* Smart Travel Metrics for Day */}
+                    <div className="p-2 bg-sky-50/60 rounded-lg border border-sky-100 space-y-1.5">
+                      <span className="text-[10px] font-black text-sky-900 block uppercase tracking-wider">
+                        ⚡ Smart Travel Metrics & Elevation
+                      </span>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="block text-[9.5px] font-medium text-gray-600 mb-0.5">🚗 Distance (km)</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 250 km"
+                            value={day.distanceKm || ""}
+                            onChange={e => updateDayField(day.id, "distanceKm", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9.5px] font-medium text-gray-600 mb-0.5">⏱️ Drive Time</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 8-9 hrs"
+                            value={day.driveTime || ""}
+                            onChange={e => updateDayField(day.id, "driveTime", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9.5px] font-medium text-gray-600 mb-0.5">🏔️ Max Altitude</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. 10,010 ft"
+                            value={day.altitudeFt || ""}
+                            onChange={e => updateDayField(day.id, "altitudeFt", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-[9.5px] font-medium text-gray-600 mb-0.5">🍽️ Meals Included</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Breakfast & Dinner (MAP)"
+                            value={day.mealsIncluded || ""}
+                            onChange={e => updateDayField(day.id, "mealsIncluded", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[9.5px] font-medium text-gray-600 mb-0.5">✦ Day Key Highlight</label>
+                          <input
+                            type="text"
+                            placeholder="e.g. Auli Cable Car & Skiing"
+                            value={day.dayHighlights || ""}
+                            onChange={e => updateDayField(day.id, "dayHighlights", e.target.value)}
+                            className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -4597,13 +5743,13 @@ ${data.motto}`;
                     </div>
 
                     {/* Day Photo & Caption Editor */}
-                    <div className="pt-2 border-t border-gray-200/80">
-                      <div className="flex items-center justify-between mb-1">
+                    <div className="pt-2 border-t border-gray-200/80 space-y-1.5">
+                      <div className="flex items-center justify-between">
                         <label className="text-[10px] font-medium text-sky-800 flex items-center gap-1">
                           <ImageIcon className="w-3 h-3 text-sky-600" />
                           <span>Day {day.dayNumber} Visual Highlight Photo & Caption</span>
                         </label>
-                        {day.photoUrl && (
+                        {(day.photoUrl || day.bannerPhotoUrl) && (
                           <button
                             type="button"
                             onClick={() => {
@@ -4611,6 +5757,7 @@ ${data.motto}`;
                               updateDayField(day.id, "photoCaption", "");
                               updateDayField(day.id, "photoUrl2", "");
                               updateDayField(day.id, "photoCaption2", "");
+                              updateDayField(day.id, "bannerPhotoUrl", "");
                             }}
                             className="text-[9px] text-rose-500 hover:underline cursor-pointer"
                           >
@@ -4618,13 +5765,52 @@ ${data.motto}`;
                           </button>
                         )}
                       </div>
+                      
+                      {day.dayNumber === 1 && (
+                        <div className="flex items-center gap-2 p-1.5 bg-sky-50/80 rounded-lg border border-sky-200">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateDayField(day.id, "bannerPhotoUrl", "/gallery/day1_ukhimath_devprayag_banner.jpg");
+                              updateDayField(day.id, "photoUrl", "/gallery/day1_ukhimath_devprayag_banner.jpg");
+                              updateDayField(day.id, "photoCaption", "Ukhimath Shri Omkareshwar Temple & Devprayag Sangam");
+                            }}
+                            className={`px-2 py-1 rounded text-[9.5px] font-bold transition cursor-pointer ${
+                              day.bannerPhotoUrl || day.photoUrl?.includes("ukhimath_devprayag")
+                                ? "bg-[#0369a1] text-white shadow-2xs"
+                                : "bg-white text-sky-900 border border-sky-300 hover:bg-sky-100"
+                            }`}
+                          >
+                            ✦ Use Ukhimath & Devprayag Panorama
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              updateDayField(day.id, "bannerPhotoUrl", "");
+                              updateDayField(day.id, "photoUrl", "/gallery/ukhimath_temple.png");
+                              updateDayField(day.id, "photoCaption", "Sacred Ukhimath Omkareshwar Temple");
+                            }}
+                            className={`px-2 py-1 rounded text-[9.5px] font-bold transition cursor-pointer ${
+                              !day.bannerPhotoUrl && !day.photoUrl?.includes("ukhimath_devprayag")
+                                ? "bg-[#0369a1] text-white shadow-2xs"
+                                : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-100"
+                            }`}
+                          >
+                            Standard Photos
+                          </button>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-2 gap-2">
                         <div>
                           <input
                             type="text"
                             placeholder="Image URL or /gallery/..."
-                            value={day.photoUrl || ""}
-                            onChange={e => updateDayField(day.id, "photoUrl", e.target.value)}
+                            value={day.bannerPhotoUrl || day.photoUrl || ""}
+                            onChange={e => {
+                              updateDayField(day.id, "photoUrl", e.target.value);
+                              if (day.bannerPhotoUrl) updateDayField(day.id, "bannerPhotoUrl", e.target.value);
+                            }}
                             className="w-full px-2 py-1 bg-white border border-gray-200 rounded text-[11px]"
                           />
                         </div>
@@ -4645,11 +5831,170 @@ ${data.motto}`;
             </div>
           )}
 
-          {/* TAB 3: PRICING TIERS */}
+          {/* TAB 3: PRICING TIERS & DYNAMIC PAX VEHICLE CALCULATOR */}
           {activeTab === "pricing" && (
             <div className="space-y-4 text-xs">
-              <div className="flex items-center justify-between">
-                <span className="font-semibold text-gray-700">Package Options & Multi-Tier Pricing</span>
+              
+              {/* DYNAMIC PAX & MOUNTAIN VEHICLE PRICING CALCULATOR */}
+              <div className="p-3 bg-gradient-to-r from-sky-50 via-blue-50/70 to-indigo-50/60 border border-sky-300 rounded-xl space-y-3 shadow-xs">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-base">🚗</span>
+                    <span className="font-black text-sky-950 text-[12px] uppercase tracking-wider">
+                      Dynamic Pax & Mountain Vehicle Pricing
+                    </span>
+                  </div>
+                  <span className="text-[10px] bg-sky-200/80 text-sky-900 font-black px-2 py-0.5 rounded-full">
+                    Slab Calculator
+                  </span>
+                </div>
+
+                <p className="text-[11px] text-gray-700 leading-snug">
+                  Select customer group size to automatically adjust vehicle type, per-head price, and room count. Or print the full group matrix table directly on Page 3!
+                </p>
+
+                {/* Quick-Click Pax Selection Chips */}
+                <div>
+                  <label className="block text-[10.5px] font-bold text-sky-950 mb-1.5">
+                    ⚡ 1-Click Select Quoted Group Size:
+                  </label>
+                  <div className="grid grid-cols-4 gap-1.5 sm:grid-cols-7">
+                    {(data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 ? data.paxVehicleSlabs : DEFAULT_WINTER_PAX_SLABS_3D).map((slab) => {
+                      const isSelected = (data.selectedPaxCount || 4) === slab.paxCount;
+                      return (
+                        <button
+                          key={slab.paxCount}
+                          type="button"
+                          onClick={() => selectPaxSlab(slab)}
+                          className={`p-1.5 rounded-lg border text-center transition cursor-pointer flex flex-col justify-between ${
+                            isSelected
+                              ? "bg-[#0369a1] text-white border-[#0369a1] shadow-md ring-2 ring-sky-300"
+                              : "bg-white text-gray-800 border-sky-200 hover:border-sky-400 hover:bg-sky-50 shadow-2xs"
+                          }`}
+                        >
+                          <span className={`text-[11px] font-black leading-tight ${isSelected ? "text-white" : "text-sky-950"}`}>
+                            {slab.paxLabel}
+                          </span>
+                          <span className={`text-[9px] font-semibold truncate mt-0.5 ${isSelected ? "text-sky-100" : "text-gray-600"}`}>
+                            {slab.vehicleCategory}
+                          </span>
+                          <span className={`text-[10px] font-black mt-1 ${isSelected ? "text-amber-200" : "text-emerald-700"}`}>
+                            ₹{slab.ratePerPax.toLocaleString('en-IN')}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Active Selected Quote Info Card */}
+                <div className="p-2.5 bg-white rounded-lg border border-sky-200 shadow-2xs flex items-center justify-between flex-wrap gap-2">
+                  <div>
+                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-gray-500 block">
+                      Active Customer Quote
+                    </span>
+                    <span className="text-[12px] font-black text-[#0369a1]">
+                      {data.selectedPaxCount ? `${String(data.selectedPaxCount).padStart(2, '0')} Pax` : "04 Pax"} · {data.selectedVehicle || "Swift Dzire / Sedan"}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[9.5px] font-bold uppercase tracking-wider text-gray-500 block">
+                      Per Pax Investment
+                    </span>
+                    <span className="text-[13px] font-black text-emerald-700">
+                      ₹ {(data.paxVehicleSlabs?.find(s => s.paxCount === (data.selectedPaxCount || 4))?.ratePerPax || 10499).toLocaleString('en-IN')}/- <span className="text-[10px] font-medium text-gray-600">/ Person</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* Print Options & Toggles */}
+                <div className="flex items-center justify-between pt-1 border-t border-sky-200/80">
+                  <label className="flex items-center gap-2 cursor-pointer text-gray-900 font-bold select-none text-[11px]">
+                    <input
+                      type="checkbox"
+                      checked={data.showPaxMatrixOnPrint !== false}
+                      onChange={e => setData({ ...data, showPaxMatrixOnPrint: e.target.checked })}
+                      className="rounded border-gray-300 text-sky-600 focus:ring-sky-500 w-4 h-4 cursor-pointer"
+                    />
+                    <span>Print Group Sizing & Vehicle Matrix Table on Page 3 (PDF)</span>
+                  </label>
+                  {!data.paxVehicleSlabs && (
+                    <button
+                      type="button"
+                      onClick={() => setData({ ...data, paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D, showPaxMatrixOnPrint: true })}
+                      className="text-[10px] text-sky-700 hover:underline font-bold"
+                    >
+                      Initialize Slabs
+                    </button>
+                  )}
+                </div>
+
+                {/* Editable Slabs Rates Table */}
+                {data.paxVehicleSlabs && data.paxVehicleSlabs.length > 0 && (
+                  <div className="space-y-1.5 pt-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10.5px] font-black text-gray-800">
+                        Edit Group Sizing Rates & Vehicles:
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setData({ ...data, paxVehicleSlabs: DEFAULT_WINTER_PAX_SLABS_3D })}
+                        className="text-[10px] text-sky-600 hover:text-sky-800 font-bold cursor-pointer"
+                      >
+                        Reset to 3D Slabs
+                      </button>
+                    </div>
+                    <div className="max-h-48 overflow-y-auto rounded-lg border border-gray-200 bg-white">
+                      <table className="w-full text-[10.5px] text-left">
+                        <thead className="bg-gray-100 text-gray-700 font-bold sticky top-0">
+                          <tr>
+                            <th className="p-1.5">Pax</th>
+                            <th className="p-1.5">Vehicle</th>
+                            <th className="p-1.5">Rooms</th>
+                            <th className="p-1.5 text-right">Rate / Pax (₹)</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-gray-100">
+                          {data.paxVehicleSlabs.map((slab, sIdx) => (
+                            <tr key={sIdx} className={data.selectedPaxCount === slab.paxCount ? "bg-sky-50" : ""}>
+                              <td className="p-1.5 font-bold text-gray-900 whitespace-nowrap">
+                                {slab.paxLabel}
+                              </td>
+                              <td className="p-1">
+                                <input
+                                  type="text"
+                                  value={slab.vehicleName}
+                                  onChange={e => updateSlabField(sIdx, "vehicleName", e.target.value)}
+                                  className="w-full px-1.5 py-0.5 border border-gray-200 rounded text-[10.5px]"
+                                />
+                              </td>
+                              <td className="p-1">
+                                <input
+                                  type="text"
+                                  value={slab.roomsCount}
+                                  onChange={e => updateSlabField(sIdx, "roomsCount", e.target.value)}
+                                  className="w-full px-1.5 py-0.5 border border-gray-200 rounded text-[10.5px]"
+                                />
+                              </td>
+                              <td className="p-1 text-right">
+                                <input
+                                  type="number"
+                                  value={slab.ratePerPax}
+                                  onChange={e => updateSlabField(sIdx, "ratePerPax", parseInt(e.target.value) || 0)}
+                                  className="w-20 px-1.5 py-0.5 border border-gray-200 rounded text-[10.5px] font-bold text-emerald-700 text-right"
+                                />
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between pt-2">
+                <span className="font-semibold text-gray-700">Manual / Custom Multi-Tier Pricing</span>
                 <button
                   onClick={addTier}
                   className="flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold text-xs cursor-pointer shadow-xs"
@@ -4759,11 +6104,20 @@ ${data.motto}`;
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
+                      checked={data.useCoverBanner !== false && !!data.coverBannerUrl}
+                      onChange={e => setData({ ...data, useCoverBanner: e.target.checked, coverBannerUrl: data.coverBannerUrl || "/gallery/auli_chopta_tungnath_banner.jpg" })}
+                      className="rounded text-sky-600 focus:ring-sky-500"
+                    />
+                    <span className="text-sky-950 font-bold">Use Graphic Poster Banner on Page 1 (Auli-Chopta Edition)</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
                       checked={data.showPhotosPage1 !== false}
                       onChange={e => setData({ ...data, showPhotosPage1: e.target.checked })}
                       className="rounded text-sky-600 focus:ring-sky-500"
                     />
-                    <span className="text-gray-700 font-medium">Show Photo Strip on Page 1 (Cover / Journey Glance)</span>
+                    <span className="text-gray-700 font-medium">Show Photo Strip on Page 1 (When using Classic Text layout)</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input
