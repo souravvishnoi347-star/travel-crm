@@ -45,8 +45,11 @@ import {
   QrCode,
   Compass,
   ExternalLink,
-  Send
+  Send,
+  PanelLeftClose,
+  PanelLeftOpen
 } from "lucide-react";
+import { useSidebar } from "@/context/SidebarContext";
 import { supabase } from "@/lib/supabase";
 import { saveDocumentToHub } from "@/lib/documentsHub";
 import { 
@@ -2507,6 +2510,9 @@ export default function ItineraryBuilder() {
   const [galleryModalCategory, setGalleryModalCategory] = useState<string>("all");
   const [customPhotosBannerDismissed, setCustomPhotosBannerDismissed] = useState(false);
   const dhamFileInputRef = useRef<HTMLInputElement>(null);
+
+  // Sidebar control
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   // Preview Controls
   const [activePreviewPage, setActivePreviewPage] = useState<number | "all">(1);
@@ -5290,31 +5296,64 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
   );
 
   return (
-    <div className="flex flex-col lg:flex-row gap-5 w-full h-[calc(100vh-5rem)]">
+    <div className="flex flex-col lg:flex-row gap-4 sm:gap-5 w-full h-[calc(100vh-5rem)]">
       
       {/* LEFT COLUMN: Controls, AI Generator, and Editing Tabs (Can be collapsed for full preview) */}
       {!isFormCollapsed && (
-        <div className="w-full lg:w-[38%] bg-white rounded-2xl shadow-xs border border-gray-100 p-5 overflow-y-auto shrink-0 h-full space-y-5 transition-all duration-300 custom-scrollbar">
+        <div className={`bg-white rounded-2xl shadow-xs border border-gray-100 p-4 sm:p-5 overflow-y-auto shrink-0 h-full space-y-5 transition-all duration-300 custom-scrollbar ${
+          isSidebarCollapsed 
+            ? "w-full lg:w-[44%] xl:w-[42%] 2xl:w-[40%] min-w-[400px] max-w-[620px]" 
+            : "w-full lg:w-[41%] xl:w-[39%] min-w-[360px] max-w-[540px]"
+        }`}>
           
-          {/* Header with Title & Reset Button */}
-          <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center font-bold">
+          {/* Header with Title & Action Buttons */}
+          <div className="flex items-center justify-between pb-3 border-b border-gray-100 gap-2">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-sky-100 text-[#0369a1] flex items-center justify-center font-bold shrink-0">
                 <Map className="w-5 h-5" />
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900 leading-tight">Brochure & Itinerary Studio</h1>
-                <p className="text-xs text-gray-500">Chardham Luxury Edition • 100% Editable</p>
+              <div className="min-w-0">
+                <h1 className="text-base sm:text-lg font-bold text-gray-900 leading-tight truncate">
+                  Brochure & Itinerary Studio
+                </h1>
+                <p className="text-xs text-gray-500 truncate">Chardham Luxury Edition • 100% Editable</p>
               </div>
             </div>
-            <button
-              onClick={() => setData(CHARDHAM_PRESET)}
-              className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-3 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
-              title="Reload standard 10-day Chardham Yatra preset"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset
-            </button>
+
+            <div className="flex items-center gap-2 shrink-0">
+              {/* Quick Sidebar Open/Close Toggle Button */}
+              <button
+                type="button"
+                onClick={toggleSidebar}
+                title={isSidebarCollapsed ? "Open CRM Menu (Ctrl+B)" : "Close CRM Menu for Wider Studio & Preview (Ctrl+B)"}
+                className={`hidden lg:flex items-center gap-1.5 text-xs font-bold px-2.5 py-1.5 rounded-lg border transition cursor-pointer shadow-2xs ${
+                  isSidebarCollapsed 
+                    ? "bg-[#0b1329] text-sky-400 hover:text-white border-slate-700 hover:bg-slate-800" 
+                    : "bg-sky-50 text-[#0369a1] hover:bg-sky-100 border-sky-200"
+                }`}
+              >
+                {isSidebarCollapsed ? (
+                  <>
+                    <PanelLeftOpen className="w-3.5 h-3.5" />
+                    <span>Open Menu</span>
+                  </>
+                ) : (
+                  <>
+                    <PanelLeftClose className="w-3.5 h-3.5" />
+                    <span>Close Menu</span>
+                  </>
+                )}
+              </button>
+
+              <button
+                onClick={() => setData(CHARDHAM_PRESET)}
+                className="flex items-center gap-1.5 text-xs font-semibold text-gray-600 hover:text-sky-600 bg-gray-50 hover:bg-sky-50 px-2.5 py-1.5 rounded-lg transition cursor-pointer border border-gray-200"
+                title="Reload standard 10-day Chardham Yatra preset"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Reset</span>
+              </button>
+            </div>
           </div>
 
           {/* ❄️ Winter Holidays 2026-27 Shortcuts Bar (Special Focus) */}
@@ -5332,60 +5371,65 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
               <span className="text-[10.5px] text-blue-700 font-semibold">⚡ 1-Click Load Itinerary + Confirmed Stays</span>
             </div>
 
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {/* 1. Auli (3D/2N) */}
               <button
                 type="button"
                 onClick={() => setData(AULI_3D_PRESET)}
-                className="px-2.5 py-1.5 bg-white hover:bg-sky-600 text-sky-950 hover:text-white border border-sky-300 hover:border-sky-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                className="px-2.5 py-2 bg-white hover:bg-sky-600 text-sky-950 hover:text-white border border-sky-300 hover:border-sky-600 rounded-xl text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center justify-between gap-1.5 group"
                 title="Auli (3D/2N) • 2 Nights Stay in Joshimath"
               >
-                <span>🏔️ Auli (3D/2N)</span>
-                <span className="text-[10px] text-sky-700 group-hover:text-sky-100 bg-sky-50 group-hover:bg-sky-700/60 px-1.5 py-0.5 rounded font-medium border border-sky-200 group-hover:border-transparent">2N Joshimath</span>
+                <span className="font-bold truncate">🏔️ Auli (3D/2N)</span>
+                <span className="text-[10px] text-sky-700 group-hover:text-sky-100 bg-sky-50 group-hover:bg-sky-700/60 px-1.5 py-0.5 rounded font-medium border border-sky-200 group-hover:border-transparent shrink-0">2N Joshimath</span>
               </button>
 
               {/* 2. Chopta (3D/2N) */}
               <button
                 type="button"
                 onClick={() => setData(CHOPTA_3D_PRESET)}
-                className="px-2.5 py-1.5 bg-white hover:bg-emerald-600 text-emerald-950 hover:text-white border border-emerald-300 hover:border-emerald-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                className="px-2.5 py-2 bg-white hover:bg-emerald-600 text-emerald-950 hover:text-white border border-emerald-300 hover:border-emerald-600 rounded-xl text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center justify-between gap-1.5 group"
                 title="Chopta (3D/2N) • 2 Nights Stay in Chopta"
               >
-                <span>🌲 Chopta (3D/2N)</span>
-                <span className="text-[10px] text-emerald-700 group-hover:text-emerald-100 bg-emerald-50 group-hover:bg-emerald-700/60 px-1.5 py-0.5 rounded font-medium border border-emerald-200 group-hover:border-transparent">2N Chopta</span>
+                <span className="font-bold truncate">🌲 Chopta (3D/2N)</span>
+                <span className="text-[10px] text-emerald-700 group-hover:text-emerald-100 bg-emerald-50 group-hover:bg-emerald-700/60 px-1.5 py-0.5 rounded font-medium border border-emerald-200 group-hover:border-transparent shrink-0">2N Chopta</span>
               </button>
 
               {/* 3. Rishikesh + Mussoorie (3D/2N) */}
               <button
                 type="button"
                 onClick={() => setData(RISHIKESH_MUSSOORIE_3D_PRESET)}
-                className="px-2.5 py-1.5 bg-white hover:bg-purple-600 text-purple-950 hover:text-white border border-purple-300 hover:border-purple-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                className="px-2.5 py-2 bg-white hover:bg-purple-600 text-purple-950 hover:text-white border border-purple-300 hover:border-purple-600 rounded-xl text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center justify-between gap-1.5 group"
                 title="Rishikesh + Mussoorie (3D/2N) • 1st Night Rishikesh, 2nd Night Mussoorie"
               >
-                <span>🧘‍♂️ Rishikesh + Mussoorie (3D/2N)</span>
-                <span className="text-[10px] text-purple-700 group-hover:text-purple-100 bg-purple-50 group-hover:bg-purple-700/60 px-1.5 py-0.5 rounded font-medium border border-purple-200 group-hover:border-transparent">1N Rishi + 1N Muss</span>
+                <span className="font-bold truncate">🧘‍♂️ Rishikesh + Muss (3D)</span>
+                <span className="text-[10px] text-purple-700 group-hover:text-purple-100 bg-purple-50 group-hover:bg-purple-700/60 px-1.5 py-0.5 rounded font-medium border border-purple-200 group-hover:border-transparent shrink-0">1N Rishi + 1N Muss</span>
               </button>
 
               {/* 4. Auli + Chopta + Tungnath (5D/4N) */}
               <button
                 type="button"
                 onClick={() => setData(AULI_CHOPTA_TUNGNATH_5D_PRESET)}
-                className="px-2.5 py-1.5 bg-white hover:bg-indigo-600 text-indigo-950 hover:text-white border border-indigo-300 hover:border-indigo-600 rounded-lg text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                className="px-2.5 py-2 bg-white hover:bg-indigo-600 text-indigo-950 hover:text-white border border-indigo-300 hover:border-indigo-600 rounded-xl text-xs font-semibold transition cursor-pointer shadow-2xs flex items-center justify-between gap-1.5 group"
                 title="Auli + Chopta + Tungnath (5D/4N) • 2N Ukhimath/Chopta + 2N Joshimath/Rudraprayag"
               >
-                <span>❄️ Auli + Chopta + Tungnath (5D/4N)</span>
-                <span className="text-[10px] text-indigo-700 group-hover:text-indigo-100 bg-indigo-50 group-hover:bg-indigo-700/60 px-1.5 py-0.5 rounded font-medium border border-indigo-200 group-hover:border-transparent">2N Ukhimath + 2N Joshimath</span>
+                <span className="font-bold truncate">❄️ Auli + Chopta (5D)</span>
+                <span className="text-[10px] text-indigo-700 group-hover:text-indigo-100 bg-indigo-50 group-hover:bg-indigo-700/60 px-1.5 py-0.5 rounded font-medium border border-indigo-200 group-hover:border-transparent shrink-0">2N Ukhi + 2N Joshi</span>
               </button>
 
               {/* 5. Auli + Chopta + Tungnath + Mussoorie (6D/5N) */}
               <button
                 type="button"
                 onClick={() => setData(AULI_CHOPTA_TUNGNATH_MUSSOORIE_6D_PRESET)}
-                className="px-2.5 py-1.5 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-600 hover:to-orange-600 text-amber-950 hover:text-white border border-amber-300 hover:border-amber-600 rounded-lg text-xs font-bold transition cursor-pointer shadow-2xs flex items-center gap-1.5 group"
+                className="col-span-1 sm:col-span-2 px-3 py-2 bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-600 hover:to-orange-600 text-amber-950 hover:text-white border border-amber-300 hover:border-amber-600 rounded-xl text-xs font-bold transition cursor-pointer shadow-2xs flex items-center justify-between gap-2 group"
                 title="Auli + Chopta + Tungnath + Mussoorie (6D/5N) • 1N Mussoorie, 2N & 3N Ukhimath, 4N Joshimath, 5N Joshimath/Rudraprayag"
               >
-                <span>👑 Auli + Chopta + Tungnath + Mussoorie (6D/5N)</span>
-                <span className="text-[10px] text-amber-800 group-hover:text-amber-100 bg-amber-100/80 group-hover:bg-amber-700/60 px-1.5 py-0.5 rounded font-semibold border border-amber-200 group-hover:border-transparent">1N Muss + 2N Ukhi + 1N Joshi + 1N Joshi/Rudra</span>
+                <span className="font-black flex items-center gap-1.5 truncate">
+                  <span>👑</span>
+                  <span>Auli + Chopta + Tungnath + Mussoorie (6D/5N)</span>
+                </span>
+                <span className="text-[10px] text-amber-800 group-hover:text-amber-100 bg-amber-100/90 group-hover:bg-amber-700/60 px-2 py-0.5 rounded font-bold border border-amber-200 group-hover:border-transparent shrink-0">
+                  1N Muss + 2N Ukhi + 1N Joshi + 1N Rudra
+                </span>
               </button>
             </div>
           </div>
@@ -7892,13 +7936,26 @@ _Please find the attached complete 4-Page Official PDF Itinerary with day-wise i
       )}
 
       {/* RIGHT COLUMN: Live Multi-Page Luxury Brochure Preview (Auto-Fitted & Perfectly Proportioned) */}
-      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "w-full lg:w-[62%]"}`}>
+      <div className={`flex flex-col gap-3 transition-all duration-300 h-full ${isFormCollapsed ? "w-full" : "flex-1 min-w-0"}`}>
         
         {/* Sleek Top Toolbar (No awkward wrapping) */}
-        <div className="bg-white px-4 py-2.5 rounded-2xl shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-3 shrink-0">
+        <div className="bg-white px-3 sm:px-4 py-2.5 rounded-2xl shadow-xs border border-gray-100 flex flex-wrap items-center justify-between gap-2.5 shrink-0">
           
           {/* Left: Page Navigator */}
           <div className="flex items-center gap-2">
+            {/* Quick Toggle for CRM Sidebar */}
+            <button
+              onClick={toggleSidebar}
+              className={`hidden lg:flex p-1.5 rounded-lg text-xs font-bold transition cursor-pointer border ${
+                isSidebarCollapsed 
+                  ? "bg-[#0b1329] text-sky-400 hover:bg-slate-800 border-slate-700 shadow-xs" 
+                  : "bg-gray-100 hover:bg-gray-200 text-gray-700 border-gray-200"
+              }`}
+              title={isSidebarCollapsed ? "Open CRM Menu (Ctrl+B)" : "Close CRM Menu for Wider Preview (Ctrl+B)"}
+            >
+              {isSidebarCollapsed ? <PanelLeftOpen className="w-3.5 h-3.5" /> : <PanelLeftClose className="w-3.5 h-3.5" />}
+            </button>
+
             <button
               onClick={() => setIsFormCollapsed(!isFormCollapsed)}
               className="p-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs transition cursor-pointer"

@@ -19,9 +19,11 @@ import {
   FolderArchive,
   MessageSquare,
   Calculator,
-  ChevronRight
+  ChevronRight,
+  PanelLeftClose
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useSidebar } from "@/context/SidebarContext";
 
 interface NavItem {
   name: string;
@@ -70,6 +72,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   return (
     <>
@@ -110,7 +113,9 @@ export function Sidebar() {
 
       {/* Sidebar Desktop & Mobile Drawer */}
       <div
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#0b1329] border-r border-slate-800/80 flex flex-col transform transition-transform duration-300 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#0b1329] border-r border-slate-800/80 flex flex-col transform transition-transform duration-300 ease-in-out ${
+          isSidebarCollapsed ? "lg:-translate-x-full" : "lg:translate-x-0"
+        } ${
           mobileMenuOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -138,6 +143,18 @@ export function Sidebar() {
               </span>
             </div>
           </Link>
+
+          {/* Desktop Collapse Button */}
+          <button
+            onClick={toggleSidebar}
+            title="Collapse Sidebar (Ctrl+B)"
+            className="hidden lg:flex p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/80 transition cursor-pointer shrink-0"
+            aria-label="Collapse sidebar"
+          >
+            <PanelLeftClose size={18} />
+          </button>
+
+          {/* Mobile Close Button */}
           <button
             onClick={() => setMobileMenuOpen(false)}
             className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
+import { SidebarProvider } from "@/context/SidebarContext";
 import { CrmLayout } from "@/components/CrmLayout";
 
 export const metadata: Metadata = {
@@ -17,9 +18,11 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased bg-slate-100 text-slate-900 min-h-screen">
         <AuthProvider>
-          <CrmLayout>
-            {children}
-          </CrmLayout>
+          <SidebarProvider>
+            <CrmLayout>
+              {children}
+            </CrmLayout>
+          </SidebarProvider>
         </AuthProvider>
       </body>
     </html>

@@ -1,13 +1,15 @@
 "use client";
 
 import { useAuth } from "@/context/AuthContext";
+import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar";
 import { GlobalSearch } from "@/components/GlobalSearch";
 import { AuthScreen } from "@/components/AuthScreen";
-import { Loader2, LogOut, ShieldCheck, MapPin, Phone } from "lucide-react";
+import { Loader2, LogOut, ShieldCheck, MapPin, Phone, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 
 export function CrmLayout({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading, user, logout } = useAuth();
+  const { isSidebarCollapsed, toggleSidebar } = useSidebar();
 
   if (isLoading) {
     return (
@@ -32,9 +34,35 @@ export function CrmLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Sidebar />
-      <main className="lg:pl-72 flex-1 flex flex-col min-h-screen pt-16 lg:pt-0">
-        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 md:px-6 py-2.5 flex items-center justify-between shadow-2xs">
-          <GlobalSearch />
+      <main className={`flex-1 flex flex-col min-h-screen pt-16 lg:pt-0 transition-all duration-300 ease-in-out ${
+        isSidebarCollapsed ? "lg:pl-0" : "lg:pl-72"
+      }`}>
+        <header className="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b border-gray-200/80 px-4 md:px-6 py-2.5 flex items-center justify-between shadow-2xs gap-3">
+          <div className="flex items-center gap-3 flex-1 max-w-xl">
+            {/* Desktop Sidebar Open/Close Toggle Button */}
+            <button
+              onClick={toggleSidebar}
+              title={isSidebarCollapsed ? "Open Sidebar Menu (Ctrl+B)" : "Close Sidebar for Full Width Studio (Ctrl+B)"}
+              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition cursor-pointer shrink-0 shadow-2xs ${
+                isSidebarCollapsed 
+                  ? "bg-[#0b1329] text-sky-400 hover:text-white hover:bg-slate-800 border-slate-700 hover:shadow-xs"
+                  : "bg-white text-slate-700 hover:text-sky-700 hover:bg-sky-50 border-gray-200 hover:border-sky-300"
+              }`}
+            >
+              {isSidebarCollapsed ? (
+                <>
+                  <PanelLeftOpen className="w-4 h-4 text-sky-400" />
+                  <span className="font-extrabold tracking-wide">Open Menu</span>
+                </>
+              ) : (
+                <>
+                  <PanelLeftClose className="w-4 h-4 text-slate-500" />
+                  <span className="hidden xl:inline text-slate-600 font-semibold">Close Panel</span>
+                </>
+              )}
+            </button>
+            <GlobalSearch />
+          </div>
           <div className="flex items-center gap-2.5 text-xs">
             <a 
               href="https://traveltouttrakhand.com" 
@@ -67,7 +95,7 @@ export function CrmLayout({ children }: { children: React.ReactNode }) {
             </div>
           </div>
         </header>
-        <div className="flex-1 w-full mx-auto p-4 md:p-6 lg:p-8">
+        <div className="flex-1 w-full mx-auto p-3 sm:p-4 lg:p-5">
           {children}
         </div>
       </main>
